@@ -61,5 +61,26 @@ export const Spacing = {
   six: 64,
 } as const;
 
+/** Default app text scale — use these for `fontSize` instead of raw numbers. */
+export const FontSize = {
+  xss: 10,
+  xs: 11,
+  sm: 12,
+  md: 14,
+  lg: 15,
+  xl: 16,
+  xxl: 20,
+} as const;
+
+export type FontSizeKey = keyof typeof FontSize;
+
+/**
+ * Larger template headings (`ThemedText` marketing blocks) — outside the compact UI scale.
+ */
+export const TemplateHeadingFontSize = {
+  subtitle: 32,
+  title: 48,
+} as const;
+
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
