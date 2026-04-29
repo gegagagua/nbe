@@ -1,20 +1,14 @@
-import { Text, View } from 'react-native';
+import { View } from "react-native";
+import { SvgXml } from "react-native-svg";
 
-import { LoginCopy } from '@/constants/login-copy';
+import { logoSvg } from "@/constants/logo-svg";
 
-import { loginBrandHeaderStyles } from './login-brand-header.styles';
+import { loginBrandHeaderStyles } from "./login-brand-header.styles";
 
 export function LoginBrandHeader() {
   return (
-    <View style={loginBrandHeaderStyles.row}>
-      <View style={loginBrandHeaderStyles.markStack}>
-        <View style={loginBrandHeaderStyles.markTop} />
-        <View style={loginBrandHeaderStyles.markBottom} />
-      </View>
-      <View style={loginBrandHeaderStyles.textBlock}>
-        <Text style={loginBrandHeaderStyles.geo}>{LoginCopy.brandGeo}</Text>
-        <Text style={loginBrandHeaderStyles.en}>{LoginCopy.brandEn}</Text>
-      </View>
+    <View style={loginBrandHeaderStyles.container}>
+      <SvgXml xml={logoSvg} width={146} height={47} />
     </View>
   );
 }

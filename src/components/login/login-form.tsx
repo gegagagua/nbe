@@ -1,15 +1,21 @@
-import { Controller } from 'react-hook-form';
-import { Text, View } from 'react-native';
+import { Controller } from "react-hook-form";
+import { Pressable, Text, View } from "react-native";
 
-import { LoginCopy } from '@/constants/login-copy';
-import type { LoginFormProps } from '@/types/login';
+import { LoginCopy } from "@/constants/login-copy";
+import type { LoginFormProps } from "@/types/login";
 
-import { LoginBrandHeader } from './login-brand-header';
-import { LoginPrimaryButton } from './login-primary-button';
-import { LoginTextField } from './login-text-field';
-import { loginFormStyles } from './login-form.styles';
+import { LoginBrandHeader } from "./login-brand-header";
+import { loginFormStyles } from "./login-form.styles";
+import { LoginPrimaryButton } from "./login-primary-button";
+import { LoginTextField } from "./login-text-field";
 
-export function LoginForm({ control, errors, onSubmit, submitDisabled }: LoginFormProps) {
+export function LoginForm({
+  control,
+  errors,
+  onSubmit,
+  submitDisabled,
+  onGuestPress,
+}: LoginFormProps) {
   return (
     <View style={loginFormStyles.card}>
       <LoginBrandHeader />
@@ -29,7 +35,9 @@ export function LoginForm({ control, errors, onSubmit, submitDisabled }: LoginFo
             )}
           />
           {errors.username?.message ? (
-            <Text style={loginFormStyles.fieldError}>{errors.username.message}</Text>
+            <Text style={loginFormStyles.fieldError}>
+              {errors.username.message}
+            </Text>
           ) : null}
         </View>
         <View style={loginFormStyles.fieldRow}>
@@ -48,7 +56,9 @@ export function LoginForm({ control, errors, onSubmit, submitDisabled }: LoginFo
             )}
           />
           {errors.password?.message ? (
-            <Text style={loginFormStyles.fieldError}>{errors.password.message}</Text>
+            <Text style={loginFormStyles.fieldError}>
+              {errors.password.message}
+            </Text>
           ) : null}
         </View>
       </View>
@@ -57,6 +67,9 @@ export function LoginForm({ control, errors, onSubmit, submitDisabled }: LoginFo
         onPress={() => void onSubmit()}
         disabled={submitDisabled}
       />
+      <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
+        <Text style={loginFormStyles.guestLinkText}>{LoginCopy.guestLink}</Text>
+      </Pressable>
     </View>
   );
 }

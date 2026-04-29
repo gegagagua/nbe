@@ -27,4 +27,13 @@ export const loginFormStyles = StyleSheet.create({
     color: LoginPalette.errorText,
     fontSize: LoginTypography.fieldValidation,
   },
+  guestLink: {
+    alignItems: 'center',
+    paddingTop: LoginLayout.fieldGap,
+  },
+  guestLinkText: {
+    color: LoginPalette.placeholderMuted,
+    fontSize: LoginTypography.fieldValidation,
+    textDecorationLine: 'underline',
+  },
 });

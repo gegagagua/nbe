@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { LoginInteraction, LoginLayout, LoginPalette, LoginTypography } from '@/constants/login';
+import { LoginLayout, LoginPalette, LoginTypography } from '@/constants/login';
 import { Spacing } from '@/constants/theme';
 
 export const loginFooterStyles = StyleSheet.create({
@@ -25,13 +25,6 @@ export const loginFooterStyles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
     maxWidth: LoginLayout.footerRightMaxWidth,
-  },
-  agencyMark: {
-    width: LoginLayout.agencyMarkSize,
-    height: LoginLayout.agencyMarkSize,
-    borderRadius: LoginLayout.agencyMarkRadius,
-    backgroundColor: LoginPalette.onPrimary,
-    opacity: LoginInteraction.agencyMarkOpacity,
   },
   agencyText: {
     flexShrink: 1,

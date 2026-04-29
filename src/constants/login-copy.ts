@@ -11,5 +11,6 @@ export const LoginCopy = {
   loginUnauthorized: 'მომხმარებლის სახელი ან პაროლი არასწორია.',
   loginNetworkError: 'ქსელში შეცდომა. სცადეთ თავიდან.',
   loginGenericError: 'შესვლა ვერ მოხერხდა. სცადეთ თავიდან.',
+  guestLink: 'ავტორიზაციის გარეშე გაგრძელება',
   sessionBootLoadingA11yLabel: 'სესიის შემოწმება',
 } as const;

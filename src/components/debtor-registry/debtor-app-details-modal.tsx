@@ -24,8 +24,10 @@ export function DebtorAppDetailsModal({ app, onClose }: Props) {
     return null;
   }
 
-  const firstApplicant = app.applicants[0];
-  const canEdit = app.status.name === 'განცხადება';
+  const firstApplicant = app.applicants?.[0];
+  const requestedPerson = app.requestedPerson;
+  const statusName = app.status?.name ?? '-';
+  const canEdit = statusName === 'განცხადება';
   const title = `${DebtorRegistryCopy.detailsTitlePrefix} ${app.id}`;
 
   const openStatement = async () => {
@@ -60,17 +62,17 @@ export function DebtorAppDetailsModal({ app, onClose }: Props) {
             <View style={s.row}>
               <View style={s.cell}>
                 <Text style={s.label}>პირადი ნომერი</Text>
-                <Text style={s.value}>{firstApplicant?.idnumber ?? app.requestedPerson.idnumber ?? '-'}</Text>
+                <Text style={s.value}>{firstApplicant?.idnumber ?? requestedPerson?.idnumber ?? '-'}</Text>
               </View>
               <View style={s.cell}>
                 <Text style={s.label}>სახელი, გვარი</Text>
-                <Text style={s.value}>{firstApplicant?.name ?? app.requestedPerson.personName ?? '-'}</Text>
+                <Text style={s.value}>{firstApplicant?.name ?? requestedPerson?.personName ?? '-'}</Text>
               </View>
             </View>
             <View style={s.row}>
               <View style={s.cell}>
                 <Text style={s.label}>მისამართი</Text>
-                <Text style={s.value}>{firstApplicant?.address ?? app.requestedPerson.address ?? '-'}</Text>
+                <Text style={s.value}>{firstApplicant?.address ?? requestedPerson?.address ?? '-'}</Text>
               </View>
               <View style={s.cell}>
                 <Text style={s.label}>ჩანაწერი</Text>
@@ -84,7 +86,7 @@ export function DebtorAppDetailsModal({ app, onClose }: Props) {
               </View>
               <View style={s.cell}>
                 <Text style={s.label}>სტატუსი</Text>
-                <Text style={s.value}>{app.status.name}</Text>
+                <Text style={s.value}>{statusName}</Text>
               </View>
             </View>
           </ScrollView>

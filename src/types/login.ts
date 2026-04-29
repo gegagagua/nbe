@@ -12,6 +12,7 @@ export type LoginFormProps = {
   errors: FieldErrors<LoginFormValues>;
   onSubmit: () => void;
   submitDisabled: boolean;
+  onGuestPress: () => void;
 };
 
 export type LoginPrimaryButtonProps = {

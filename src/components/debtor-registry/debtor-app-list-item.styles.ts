@@ -59,4 +59,21 @@ export const debtorAppListItemStyles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'right',
   },
+  actionButton: {
+    marginTop: Spacing.one,
+    alignSelf: 'flex-end',
+    minWidth: 92,
+    height: 34,
+    borderRadius: DebtorRegistryLayout.buttonRadius,
+    borderWidth: 1,
+    borderColor: DebtorRegistryPalette.inputBorder,
+    backgroundColor: DebtorRegistryPalette.inputBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionText: {
+    color: DebtorRegistryPalette.buttonBg,
+    fontSize: DebtorRegistryTypography.body,
+    fontWeight: '700',
+  },
 });

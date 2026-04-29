@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "NBE-n-R4DF",
+    "name": "NBE",
     "slug": "NBE-n-R4DF",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.infomygov.appNBEnR4DF"
+      "bundleIdentifier": "com.infomygov.appNBEnR4DF",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +22,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.infomygov.appNBEnR4DF"
+      "package": "ge.gov.nbe.app"
     },
     "web": {
       "output": "static",

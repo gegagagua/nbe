@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 
+import { isGuestMode } from '@/lib/guest-mode';
 import { getSessionToken } from '@/lib/session-token-storage';
 
 export function useLoginIndexSessionRedirect() {
@@ -14,7 +15,7 @@ export function useLoginIndexSessionRedirect() {
         return;
       }
       if (token) {
-        router.replace('/home');
+        router.replace('/dashboard');
         return;
       }
       setCanShowLogin(true);
@@ -37,7 +38,7 @@ export function useHomeRouteSessionGuard() {
       if (cancelled) {
         return;
       }
-      if (!token) {
+      if (!token && !isGuestMode()) {
         router.replace('/');
         return;
       }

@@ -47,15 +47,15 @@ export type DebtorRegistryApplication = {
   createdBy: DebtorRegistryUser;
   regnumber: string | null;
   regDate: string | null;
-  status: DebtorRegistryStatus;
+  status?: DebtorRegistryStatus | null;
   statusDate: string;
   statusUser: DebtorRegistryUser;
-  trType: DebtorRegistryStatus;
+  trType?: DebtorRegistryStatus | null;
   caseNo: string | null;
   caseDate: string | null;
   caseTrackId: number | null;
-  requestedPerson: DebtorRegistryPerson;
-  applicants: DebtorRegistryApplicant[];
+  requestedPerson?: DebtorRegistryPerson | null;
+  applicants?: DebtorRegistryApplicant[];
 };
 
 export type DebtorRegistryPage = {

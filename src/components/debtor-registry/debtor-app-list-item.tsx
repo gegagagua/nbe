@@ -13,7 +13,7 @@ function formatDate(value: string | null) {
 }
 
 function formatApplicant(app: DebtorRegistryApplication) {
-  const first = app.applicants[0];
+  const first = app.applicants?.[0];
   if (!first) {
     return 'განმცხადებელი: -';
   }
@@ -28,32 +28,43 @@ type Props = {
 
 export function DebtorAppListItem({ app, onPress }: Props) {
   const cardId = app.regnumber ?? `(${app.id})`;
-  const requestedId = app.requestedPerson.idnumber ?? '-';
+  const requestedId = app.requestedPerson?.idnumber ?? '-';
+  const requestedName = app.requestedPerson?.personName ?? '-';
+  const requestedAddress = app.requestedPerson?.address ?? '-';
+  const statusName = app.status?.name ?? '-';
+  const trTypeName = app.trType?.name ?? '-';
 
   return (
-    <Pressable style={({ pressed }) => [s.card, pressed && s.cardPressed]} onPress={() => onPress(app)}>
+    <View style={s.card}>
       <View style={s.topRow}>
         <Text style={s.leftTop}>{cardId}</Text>
         <Text style={s.rightTop}>{formatDate(app.createdDate)}</Text>
       </View>
       <Text style={s.rowText}>
-        სტატუსი: {app.status.name} | რეგ.თარიღი: {formatDate(app.regDate)}
+        სტატუსი: {statusName} | რეგ.თარიღი: {formatDate(app.regDate)}
       </Text>
       <Text style={s.rowText}>
         საქმის ნომერი: {app.caseNo ?? '-'} | საქმის თარიღი: {formatDate(app.caseDate)}
       </Text>
       <Text style={s.rowText}>
-        ტრანზაქცია: {app.trType.name} | #{app.id}
+        ტრანზაქცია: {trTypeName} | #{app.id}
       </Text>
       <Text style={s.rowText}>{formatApplicant(app)}</Text>
 
       <View style={s.personBox}>
         <Text style={s.personName}>
-          {app.requestedPerson.personName ?? '-'} ({requestedId})
+          {requestedName} ({requestedId})
         </Text>
-        <Text style={s.personAddress}>{app.requestedPerson.address ?? '-'}</Text>
+        <Text style={s.personAddress}>{requestedAddress}</Text>
       </View>
-      <Text style={s.detailHint}>{DebtorRegistryCopy.detailsOpenHint}</Text>
-    </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={DebtorRegistryCopy.detailsOpenHint}
+        style={({ pressed }) => [s.actionButton, pressed && s.cardPressed]}
+        onPress={() => onPress(app)}
+      >
+        <Text style={s.actionText}>{DebtorRegistryCopy.statementAction}</Text>
+      </Pressable>
+    </View>
   );
 }

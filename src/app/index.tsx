@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
 
 import { LoginForm } from '@/components/login/login-form';
@@ -6,9 +7,15 @@ import { LoginPalette } from '@/constants/login';
 import { LoginCopy } from '@/constants/login-copy';
 import { useLoginForm } from '@/hooks/use-login-form';
 import { useLoginIndexSessionRedirect } from '@/hooks/use-session-navigation';
+import { setGuestMode } from '@/lib/guest-mode';
 
 function LoginScreenContent() {
   const login = useLoginForm();
+
+  function handleGuestPress() {
+    setGuestMode(true);
+    router.replace('/dashboard');
+  }
 
   return (
     <LoginScreenLayout>
@@ -17,6 +24,7 @@ function LoginScreenContent() {
         errors={login.errors}
         onSubmit={login.onSubmit}
         submitDisabled={login.submitDisabled}
+        onGuestPress={handleGuestPress}
       />
     </LoginScreenLayout>
   );

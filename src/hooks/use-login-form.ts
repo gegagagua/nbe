@@ -32,7 +32,7 @@ export function useLoginForm(): LoginFormState {
         firstName: data.user.firstName ?? '',
         lastName: data.user.lastName ?? '',
       });
-      router.replace('/home');
+      router.replace('/dashboard');
     },
     onError: (err) => {
       showErrorToast(mapLoginError(err), err);

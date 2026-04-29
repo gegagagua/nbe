@@ -7,14 +7,16 @@ import type { HomeNavItem } from "@/types/home-dashboard";
 import { HomeNavCard } from "./home-nav-card";
 import { homeNavGridStyles } from "./home-nav-grid.styles";
 
+const homeRouteByNavItemId: Record<string, "/cases" | "/debtors" | undefined> = {
+  cases: "/cases",
+  debtors: "/debtors",
+};
+
 export function HomeNavGrid() {
   const onCardPress = (item: HomeNavItem) => {
-    if (item.id === "cases") {
-      router.push("/cases");
-      return;
-    }
-    if (item.id === "debtors") {
-      router.push("/debtors");
+    const route = homeRouteByNavItemId[item.id];
+    if (route) {
+      router.push(route);
     }
   };
 
