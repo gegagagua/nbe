@@ -2,19 +2,21 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import {
-    HomeDashboardLayoutConst,
-    HomeDashboardPalette,
-} from "@/constants/home-dashboard";
+import { HomeDashboardPalette } from "@/constants/home-dashboard";
+import { Spacing } from "@/constants/theme";
 import type { HomeNavCardProps } from "@/types/home-dashboard";
 
 import { homeNavCardStyles, navTabBackground } from "./home-nav-card.styles";
 
-export function HomeNavCard({ item, onPress }: HomeNavCardProps) {
+export function HomeNavCard({
+  item,
+  onPress,
+  fullWidth,
+}: HomeNavCardProps & { fullWidth?: boolean }) {
   const tabColor = navTabBackground[item.accent];
 
   return (
-    <View style={homeNavCardStyles.wrap}>
+    <View style={[homeNavCardStyles.wrap, fullWidth && { width: "100%" }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={item.title}
@@ -22,6 +24,7 @@ export function HomeNavCard({ item, onPress }: HomeNavCardProps) {
         android_ripple={{ color: "rgba(43, 67, 108, 0.12)", foreground: true }}
         style={({ pressed }) => [
           homeNavCardStyles.card,
+          fullWidth && { paddingBottom: Spacing.one },
           pressed && homeNavCardStyles.cardPressed,
         ]}
       >
@@ -33,7 +36,7 @@ export function HomeNavCard({ item, onPress }: HomeNavCardProps) {
                   typeof MaterialCommunityIcons
                 >["name"]
               }
-              size={HomeDashboardLayoutConst.navCardIconSize}
+              size={24}
               color={HomeDashboardPalette.headerText}
             />
           </View>

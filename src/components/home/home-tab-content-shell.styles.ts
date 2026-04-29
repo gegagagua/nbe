@@ -1,7 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import { HomeDashboardPalette } from '@/constants/home-dashboard';
-import { Spacing } from '@/constants/theme';
+import { HomeDashboardPalette } from "@/constants/home-dashboard";
 
 export const homeTabContentShellStyles = StyleSheet.create({
   page: {
@@ -10,7 +9,5 @@ export const homeTabContentShellStyles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    paddingHorizontal: Spacing.three,
-    paddingTop: Spacing.three,
   },
 });

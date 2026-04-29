@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { HomeDashboardLayoutConst, HomeDashboardPalette } from '@/constants/home-dashboard';
 import { LoginLayout } from '@/constants/login';
-import { Spacing } from '@/constants/theme';
+import { FontSize, Spacing } from '@/constants/theme';
 
 export const homeHeaderStyles = StyleSheet.create({
   bar: {
@@ -16,6 +16,12 @@ export const homeHeaderStyles = StyleSheet.create({
   logoWrap: {
     flexShrink: 1,
     maxWidth: '58%',
+  },
+  logoText: {
+    color: HomeDashboardPalette.headerText,
+    fontSize: FontSize.xxl,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
   actions: {
     flexDirection: 'row',

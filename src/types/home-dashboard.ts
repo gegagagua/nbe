@@ -20,4 +20,5 @@ export type HomeHeaderProps = {
 export type HomeNavCardProps = {
   item: HomeNavItem;
   onPress?: () => void;
+  fullWidth?: boolean;
 };

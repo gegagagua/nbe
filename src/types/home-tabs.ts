@@ -5,3 +5,8 @@ export type HomeSecondaryScreenProps = {
   description: string;
   points: readonly string[];
 };
+
+export type HomeFaqItem = {
+  question: string;
+  answer: string;
+};

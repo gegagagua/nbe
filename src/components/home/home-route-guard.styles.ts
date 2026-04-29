@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const homeRouteStyles = StyleSheet.create({
+export const homeRouteGuardStyles = StyleSheet.create({
   boot: {
     flex: 1,
     alignItems: 'center',

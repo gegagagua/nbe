@@ -1,17 +1,15 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, View } from 'react-native';
-import { SvgUri } from 'react-native-svg';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Pressable, Text, View } from "react-native";
 
 import {
-  HomeDashboardAssets,
-  HomeDashboardLayoutConst,
-  HomeDashboardPalette,
-} from '@/constants/home-dashboard';
-import { HomeDashboardCopy } from '@/constants/home-dashboard-copy';
-import { signOut } from '@/lib/sign-out';
-import type { HomeHeaderProps } from '@/types/home-dashboard';
+    HomeDashboardLayoutConst,
+    HomeDashboardPalette,
+} from "@/constants/home-dashboard";
+import { HomeDashboardCopy } from "@/constants/home-dashboard-copy";
+import { signOut } from "@/lib/sign-out";
+import type { HomeHeaderProps } from "@/types/home-dashboard";
 
-import { homeHeaderStyles } from './home-header.styles';
+import { homeHeaderStyles } from "./home-header.styles";
 
 export function HomeHeader({ displayName }: HomeHeaderProps) {
   const profileA11yLabel = displayName.trim() || HomeDashboardCopy.userFallback;
@@ -24,11 +22,7 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
         accessibilityRole="image"
         accessibilityLabel={HomeDashboardCopy.headerLogoA11yLabel}
       >
-        <SvgUri
-          uri={HomeDashboardAssets.headerLogoUri}
-          width={HomeDashboardLayoutConst.headerLogoWidth}
-          height={HomeDashboardLayoutConst.headerLogoHeight}
-        />
+        <Text style={homeHeaderStyles.logoText}>NBE</Text>
       </View>
       <View style={homeHeaderStyles.actions}>
         <Pressable

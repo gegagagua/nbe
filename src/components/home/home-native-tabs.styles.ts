@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { HomeTabsLayout, HomeTabsPalette } from "@/constants/home-tabs";
 import { Spacing } from "@/constants/theme";
 
-export const tabsLayoutStyles = StyleSheet.create({
+export const homeNativeTabsStyles = StyleSheet.create({
   tabBar: {
     position: "absolute",
     left: Spacing.three,

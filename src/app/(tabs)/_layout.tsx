@@ -2,20 +2,19 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 
+import { homeNativeTabsStyles } from "@/components/home/home-native-tabs.styles";
+import { homeRouteGuardStyles } from "@/components/home/home-route-guard.styles";
 import { HomeTabsPalette } from "@/constants/home-tabs";
 import { LoginPalette } from "@/constants/login";
 import { LoginCopy } from "@/constants/login-copy";
 import { useHomeRouteSessionGuard } from "@/hooks/use-session-navigation";
-
-import { homeRouteStyles } from "../home-route.styles";
-import { tabsLayoutStyles } from "./tabs-layout.styles";
 
 export default function AppTabsLayout() {
   const canShowTabs = useHomeRouteSessionGuard();
 
   if (!canShowTabs) {
     return (
-      <View style={homeRouteStyles.boot}>
+      <View style={homeRouteGuardStyles.boot}>
         <ActivityIndicator
           size="large"
           color={LoginPalette.primary}
@@ -37,10 +36,14 @@ export default function AppTabsLayout() {
         tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
         tabBarIconStyle: { marginTop: 0 },
         tabBarItemStyle: [
-          tabsLayoutStyles.tabItem,
-          { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4 },
+          homeNativeTabsStyles.tabItem,
+          {
+            borderRadius: 12,
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+          },
         ],
-        tabBarStyle: tabsLayoutStyles.tabBar,
+        tabBarStyle: homeNativeTabsStyles.tabBar,
         sceneStyle: { paddingBottom: 82 },
       }}
     >

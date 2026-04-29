@@ -25,10 +25,10 @@ export const HomeDashboardAssets = {
 export const HomeDashboardLayoutConst = {
   cardRadius: 18,
   tabWidth: 52,
-  tabHeight: 38,
+  tabHeight: 40,
   /** Half tab height — badge sits on the top edge of the card. */
   tabAnchorOffset: 17,
-  cardMinHeight: 118,
+  cardMinHeight: 100,
   gridGap: Spacing.four,
   headerPaddingV: Spacing.three,
   headerIconGap: Spacing.two,
