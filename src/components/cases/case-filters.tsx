@@ -1,12 +1,14 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { CaseManagementCopy as C } from '@/constants/case-management-copy';
+import { DebtorRegistryLayout, DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { CaseFiltersProps, CaseSearchFilters } from '@/types/case-management';
 
-import { CaseParticipantSearch } from './case-participant-search';
-import { caseFiltersStyles as s } from './case-filters.styles';
 import { CaseFiltersAdvancedFields } from './case-filters-advanced-fields';
+import { caseFiltersStyles as s } from './case-filters.styles';
+import { CaseParticipantSearch } from './case-participant-search';
 
 export function CaseFilters({ values, onChange, onSearch, onClear }: CaseFiltersProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -18,24 +20,21 @@ export function CaseFilters({ values, onChange, onSearch, onClear }: CaseFilters
     <View style={s.panel}>
       <View style={s.titleRow}>
         <Text style={s.title}>{C.filtersTitle}</Text>
-        <Pressable style={s.toggleButton} onPress={() => setIsPanelOpen((v) => !v)}>
-          <Text style={s.toggleText}>
-            {isPanelOpen ? C.filtersPanelCollapse : C.filtersPanelExpand}
-          </Text>
+        <Pressable
+          style={s.toggleButton}
+          onPress={() => setIsPanelOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityLabel={isPanelOpen ? C.filtersPanelCollapse : C.filtersPanelExpand}
+        >
+          <MaterialCommunityIcons
+            name={isPanelOpen ? 'chevron-up' : 'chevron-down'}
+            size={DebtorRegistryLayout.filterPanelIconSize}
+            color={DebtorRegistryPalette.textPrimary}
+          />
         </Pressable>
       </View>
       {isPanelOpen && (
-        <>
-          <CaseParticipantSearch values={values} onChange={onChange} />
-          <View style={s.titleRow}>
-            <View style={s.titleRowSpacer} />
-            <Pressable style={s.toggleButton} onPress={() => setIsAdvancedExpanded((v) => !v)}>
-              <Text style={s.toggleText}>
-                {isAdvancedExpanded ? C.filtersCollapse : C.filtersExpand}
-              </Text>
-            </Pressable>
-          </View>
-        </>
+        <CaseParticipantSearch values={values} onChange={onChange} />
       )}
       {isPanelOpen && isAdvancedExpanded && (
         <CaseFiltersAdvancedFields values={values} setValue={setValue} />

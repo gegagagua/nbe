@@ -1,5 +1,5 @@
 import { LoginPalette } from '@/constants/login';
-import { Space, Typography } from '@/constants/theme';
+import { FontSize, Space, Typography } from '@/constants/theme';
 
 export const DebtorRegistryPalette = {
   pageBg: '#eef2f7',
@@ -25,6 +25,7 @@ export const DebtorRegistryLayout = {
   listRowGap: Space.small,
   inputHeight: 36,
   modalRadius: 12,
+  filterPanelIconSize: FontSize.xxl,
 } as const;
 
 export const DebtorRegistryTypography = {

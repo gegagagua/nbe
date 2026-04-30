@@ -46,12 +46,9 @@ export const caseFiltersStyles = StyleSheet.create({
     borderRadius: DebtorRegistryLayout.buttonRadius,
     backgroundColor: DebtorRegistryPalette.inputBg,
     paddingHorizontal: Spacing.two,
-    paddingVertical: Spacing.one,
-  },
-  toggleText: {
-    fontSize: DebtorRegistryTypography.label,
-    fontWeight: '700',
-    color: DebtorRegistryPalette.textPrimary,
+    paddingVertical: Spacing.two,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
     fontSize: DebtorRegistryTypography.label,
@@ -69,7 +66,7 @@ export const caseFiltersStyles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    gap: Spacing.one,
+    gap: Spacing.two,
   },
   half: {
     flex: 1,
@@ -83,7 +80,7 @@ export const caseFiltersStyles = StyleSheet.create({
     marginTop: Spacing.one,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.one,
+    gap: Spacing.two,
   },
   searchButton: {
     flex: 1,

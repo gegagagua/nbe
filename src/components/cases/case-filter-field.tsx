@@ -1,27 +1,23 @@
-import { Text, TextInput } from 'react-native';
-
-import { caseFiltersStyles as s } from './case-filters.styles';
+import { Input } from '@/components/ui/input';
+import type { InputProps } from '@/types/input';
 
 export function CaseFilterField({
-  label,
+  placeholder,
   value,
   onChangeText,
-  placeholder,
+  keyboardType,
 }: {
-  label: string;
+  placeholder: string;
   value: string;
   onChangeText: (v: string) => void;
-  placeholder?: string;
+  keyboardType?: InputProps['keyboardType'];
 }) {
   return (
-    <>
-      <Text style={s.label}>{label}</Text>
-      <TextInput
-        style={s.input}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-      />
-    </>
+    <Input
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      keyboardType={keyboardType}
+    />
   );
 }
