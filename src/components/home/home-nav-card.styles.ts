@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 
 import {
-    HomeDashboardLayoutConst,
-    HomeDashboardPalette,
-} from "@/constants/home-dashboard";
-import { FontSize, Spacing } from "@/constants/theme";
+  HomeDashboardLayoutConst,
+  HomeDashboardPalette,
+} from '@/constants/home-dashboard';
+import { FontSize, Spacing } from '@/constants/theme';
 import type { HomeNavAccent } from "@/types/home-dashboard";
 
 export const navTabBackground: Record<HomeNavAccent, string> = {
@@ -40,6 +40,9 @@ export const homeNavCardStyles = StyleSheet.create({
   cardPressed: {
     opacity: HomeDashboardLayoutConst.cardPressedOpacity,
     transform: [{ scale: 0.985 }],
+  },
+  cardDisabled: {
+    opacity: HomeDashboardLayoutConst.navCardDisabledOpacity,
   },
   tabAnchor: {
     position: "absolute",

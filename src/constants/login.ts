@@ -24,3 +24,9 @@ export const LoginInteraction = {
   pressedOpacity: 0.92,
   agencyMarkOpacity: 0.95,
 } as const;
+
+/** Login header SVG mark (`logo-only.svg` viewBox 47×48, height-led layout). */
+export const LoginBrandLogoMarkSize = {
+  width: 46,
+  height: 47,
+} as const;

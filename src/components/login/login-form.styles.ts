@@ -5,10 +5,19 @@ import { LoginElevation, LoginPalette } from "@/constants/login";
 import { Radius, Space, Typography } from "@/constants/theme";
 
 export const loginFormStyles = StyleSheet.create({
-  card: {
-    width: "100%",
+  stack: {
+    width: '100%',
     maxWidth: Layout.cardMaxWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
+  },
+  brandDivider: {
+    height: 1,
+    alignSelf: 'stretch',
+    backgroundColor: LoginPalette.logoRed,
+    marginBottom: Space.medium,
+  },
+  card: {
+    width: '100%',
     backgroundColor: LoginPalette.cardBackground,
     borderRadius: Radius.medium,
     padding: Space.large,

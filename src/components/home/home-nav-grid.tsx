@@ -15,6 +15,9 @@ const homeRouteByNavItemId: Record<string, "/cases" | "/debtors" | undefined> =
 
 export function HomeNavGrid() {
   const onCardPress = (item: HomeNavItem) => {
+    if (item.disabled) {
+      return;
+    }
     const route = homeRouteByNavItemId[item.id];
     if (route) {
       router.push(route);

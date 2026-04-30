@@ -1,12 +1,12 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import type { ComponentProps } from "react";
-import { Pressable, Text, View } from "react-native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
-import { HomeDashboardPalette } from "@/constants/home-dashboard";
-import { Spacing } from "@/constants/theme";
-import type { HomeNavCardProps } from "@/types/home-dashboard";
+import { HomeDashboardPalette } from '@/constants/home-dashboard';
+import { Spacing } from '@/constants/theme';
+import type { HomeNavCardProps } from '@/types/home-dashboard';
 
-import { homeNavCardStyles, navTabBackground } from "./home-nav-card.styles";
+import { homeNavCardStyles, navTabBackground } from './home-nav-card.styles';
 
 export function HomeNavCard({
   item,
@@ -14,27 +14,34 @@ export function HomeNavCard({
   fullWidth,
 }: HomeNavCardProps & { fullWidth?: boolean }) {
   const tabColor = navTabBackground[item.accent];
+  const disabled = item.disabled === true;
 
   return (
-    <View style={[homeNavCardStyles.wrap, fullWidth && { width: "100%" }]}>
+    <View style={[homeNavCardStyles.wrap, fullWidth && { width: '100%' }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={item.title}
+        accessibilityState={{ disabled }}
+        disabled={disabled}
         onPress={onPress}
-        android_ripple={{ color: "rgba(43, 67, 108, 0.12)", foreground: true }}
+        android_ripple={
+          disabled
+            ? undefined
+            : { color: 'rgba(43, 67, 108, 0.12)', foreground: true }
+        }
         style={({ pressed }) => [
           homeNavCardStyles.card,
           fullWidth && { paddingBottom: Spacing.one },
-          pressed && homeNavCardStyles.cardPressed,
-        ]}
-      >
+          disabled && homeNavCardStyles.cardDisabled,
+          pressed && !disabled && homeNavCardStyles.cardPressed,
+        ]}>
         <View style={homeNavCardStyles.tabAnchor} pointerEvents="none">
           <View style={[homeNavCardStyles.tab, { backgroundColor: tabColor }]}>
             <MaterialCommunityIcons
               name={
                 item.icon as ComponentProps<
                   typeof MaterialCommunityIcons
-                >["name"]
+                >['name']
               }
               size={24}
               color={HomeDashboardPalette.headerText}

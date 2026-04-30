@@ -1,27 +1,39 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from "react-native";
 
-import { LoginPalette } from '@/constants/login';
-import { LetterSpacing } from '@/constants/letter-spacing';
-import { LineHeight, Space, Typography } from '@/constants/theme';
+import { LetterSpacing } from "@/constants/letter-spacing";
+import { LoginPalette } from "@/constants/login";
+import { Space, Typography } from "@/constants/theme";
 
 export const loginBrandHeaderStyles = StyleSheet.create({
   container: {
-    marginBottom: Space.medium,
-    alignItems: 'center',
+    alignItems: "center",
+    marginBottom: Space.extraLarge,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: Space.medium,
   },
-  title: {
-    fontSize: Typography.large,
-    fontWeight: '700',
+  brandEn: {
+    fontSize: Typography.small,
+    fontWeight: "700",
     color: LoginPalette.titleText,
-    textAlign: 'center',
-    lineHeight: LineHeight.comfortable,
-    marginTop: Platform.select({
-      ios: Space.large,
-      default: Space.medium,
-    }),
+
+    letterSpacing: LetterSpacing.headerLogoEn,
+    textTransform: "uppercase",
+  },
+  brandGeo: {
+    fontSize: Typography.small,
+    fontWeight: "700",
+    color: LoginPalette.titleText,
+
     letterSpacing: Platform.select({
       ios: LetterSpacing.brandTitleIos,
       default: LetterSpacing.none,
     }),
+  },
+  brandDivider: {
+    height: 1,
+    alignSelf: "stretch",
+    backgroundColor: LoginPalette.logoRed,
+    marginVertical: Space.extraSmall,
   },
 });
