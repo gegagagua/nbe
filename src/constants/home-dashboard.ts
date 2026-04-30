@@ -28,7 +28,10 @@ export const HomeDashboardLayoutConst = {
   tabHeight: 40,
   /** Half tab height — badge sits on the top edge of the card. */
   tabAnchorOffset: 17,
-  cardMinHeight: 100,
+  /** ნავ-ბარათის ფიქსირებული სიმაღლე (აიქონის ზონის ქვემოთ კონტენტი იცენტრება). */
+  cardHeight: 120,
+  /** სათაურის ზონა აიქონის ქვემოთ (tabAnchor + tab). */
+  cardBodyTopInset: 58,
   gridGap: Space.large,
   headerPaddingV: Space.medium,
   headerIconGap: Space.small,

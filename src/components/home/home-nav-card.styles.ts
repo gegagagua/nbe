@@ -3,8 +3,8 @@ import { StyleSheet } from "react-native";
 import {
   HomeDashboardLayoutConst,
   HomeDashboardPalette,
-} from '@/constants/home-dashboard';
-import { FontSize, Spacing } from '@/constants/theme';
+} from "@/constants/home-dashboard";
+import { FontSize, Spacing } from "@/constants/theme";
 import type { HomeNavAccent } from "@/types/home-dashboard";
 
 export const navTabBackground: Record<HomeNavAccent, string> = {
@@ -23,11 +23,9 @@ export const homeNavCardStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: HomeDashboardPalette.cardBorder,
     borderRadius: HomeDashboardLayoutConst.cardRadius,
-    paddingTop: Spacing.five,
-    paddingBottom: Spacing.five,
+    height: HomeDashboardLayoutConst.cardHeight,
     paddingHorizontal: Spacing.three,
     alignItems: "center",
-    minHeight: HomeDashboardLayoutConst.cardMinHeight,
     shadowColor: "#0f172a",
     shadowOffset: {
       width: 0,
@@ -36,6 +34,13 @@ export const homeNavCardStyles = StyleSheet.create({
     shadowOpacity: HomeDashboardLayoutConst.cardShadowOpacity,
     shadowRadius: HomeDashboardLayoutConst.cardShadowRadius,
     elevation: HomeDashboardLayoutConst.cardElevation,
+  },
+  cardBody: {
+    flex: 1,
+    width: "100%",
+    paddingTop: HomeDashboardLayoutConst.cardBodyTopInset,
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardPressed: {
     opacity: HomeDashboardLayoutConst.cardPressedOpacity,
@@ -66,7 +71,6 @@ export const homeNavCardStyles = StyleSheet.create({
     elevation: 3,
   },
   title: {
-    marginTop: Spacing.five,
     textAlign: "center",
     fontSize: FontSize.md,
     fontWeight: "700",

@@ -5,7 +5,7 @@ import { FontSize } from '@/constants/theme';
 
 export const caseListStyles = StyleSheet.create({
   wrap: {
-    flex: 1,
+    width: '100%',
     gap: DebtorRegistryLayout.listRowGap,
   },
   stateText: {

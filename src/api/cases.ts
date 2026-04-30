@@ -28,7 +28,12 @@ function buildSearchData(filters: CaseSearchFilters) {
     ...(filters.participantTypeId?.trim()
       ? { participantTypeId: filters.participantTypeId.trim() }
       : {}),
-    ...(filters.idnumber?.trim() ? { idnumber: filters.idnumber.trim() } : {}),
+    ...(filters.idnumber?.trim() || filters.legalIdentificationCode?.trim()
+      ? {
+          idnumber:
+            filters.idnumber?.trim() || filters.legalIdentificationCode?.trim() || '',
+        }
+      : {}),
     ...(filters.firstName?.trim() ? { firstName: filters.firstName.trim() } : {}),
     ...(filters.lastName?.trim() ? { lastName: filters.lastName.trim() } : {}),
     ...(filters.address?.trim() ? { address: filters.address.trim() } : {}),

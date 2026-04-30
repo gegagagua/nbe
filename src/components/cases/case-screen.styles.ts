@@ -1,11 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 import {
   DebtorRegistryLayout,
   DebtorRegistryPalette,
   DebtorRegistryTypography,
-} from '@/constants/debtor-registry';
-import { Space, Typography } from '@/constants/theme';
+} from "@/constants/debtor-registry";
+import { Space } from "@/constants/theme";
 
 export const caseScreenStyles = StyleSheet.create({
   page: {
@@ -15,62 +15,38 @@ export const caseScreenStyles = StyleSheet.create({
   body: {
     flex: 1,
   },
-  content: {
+  scroll: {
     flex: 1,
-    paddingHorizontal: Space.large,
-    paddingVertical: Space.large,
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: Space.medium,
+    paddingTop: Space.large,
+    paddingBottom: Space.extraLarge,
     gap: DebtorRegistryLayout.pageGap,
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   title: {
     fontSize: DebtorRegistryTypography.title,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
   notifWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Space.small,
+    marginBottom: Space.small,
   },
   notifText: {
     fontSize: DebtorRegistryTypography.title,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
   listWrap: {
-    flex: 1,
-  },
-  pagination: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: Space.small,
-  },
-  pageText: {
-    color: DebtorRegistryPalette.textPrimary,
-    fontSize: Typography.small,
-    fontWeight: '600',
-  },
-  pageButton: {
-    minWidth: 86,
-    height: 34,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: DebtorRegistryPalette.inputBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: DebtorRegistryPalette.inputBg,
-  },
-  pageButtonDisabled: {
-    opacity: 0.45,
-  },
-  pageButtonText: {
-    color: DebtorRegistryPalette.textPrimary,
-    fontSize: Typography.small,
-    fontWeight: '700',
+    width: "100%",
   },
 });

@@ -28,10 +28,14 @@ export function useLoginIndexSessionRedirect() {
   return canShowLogin;
 }
 
-export function useHomeRouteSessionGuard() {
-  const [canShowHome, setCanShowHome] = useState(false);
+export function useHomeRouteSessionGuard(options?: { skip?: boolean }) {
+  const skip = options?.skip === true;
+  const [canShowHome, setCanShowHome] = useState(skip);
 
   useEffect(() => {
+    if (skip) {
+      return;
+    }
     let cancelled = false;
     void (async () => {
       const token = await getSessionToken();
@@ -47,7 +51,7 @@ export function useHomeRouteSessionGuard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [skip]);
 
   return canShowHome;
 }

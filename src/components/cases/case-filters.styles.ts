@@ -8,6 +8,10 @@ import {
 import { Spacing } from '@/constants/theme';
 
 export const caseFiltersStyles = StyleSheet.create({
+  participantBlock: {
+    gap: Spacing.two,
+    width: '100%',
+  },
   panel: {
     width: '100%',
     borderWidth: 1,
@@ -22,10 +26,19 @@ export const caseFiltersStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  titleRowSpacer: {
+    flex: 1,
+  },
   title: {
     fontSize: DebtorRegistryTypography.title,
     fontWeight: '700',
     color: DebtorRegistryPalette.textPrimary,
+  },
+  sectionTitle: {
+    fontSize: DebtorRegistryTypography.label,
+    fontWeight: '700',
+    color: DebtorRegistryPalette.textPrimary,
+    marginBottom: Spacing.one,
   },
   toggleButton: {
     borderWidth: 1,

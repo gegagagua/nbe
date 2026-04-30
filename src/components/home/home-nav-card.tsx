@@ -48,9 +48,11 @@ export function HomeNavCard({
             />
           </View>
         </View>
-        <Text style={homeNavCardStyles.title} numberOfLines={2}>
-          {item.title}
-        </Text>
+        <View style={homeNavCardStyles.cardBody}>
+          <Text style={homeNavCardStyles.title} numberOfLines={2}>
+            {item.title}
+          </Text>
+        </View>
       </Pressable>
     </View>
   );

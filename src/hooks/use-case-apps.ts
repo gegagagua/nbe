@@ -6,10 +6,15 @@ import { CaseManagementCopy } from '@/constants/case-management-copy';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { CaseSearchFilters } from '@/types/case-management';
 
-export function useCaseApps(filters: CaseSearchFilters, pageNumber: number) {
+export function useCaseApps(
+  filters: CaseSearchFilters,
+  pageNumber: number,
+  options?: { enabled?: boolean },
+) {
   const query = useQuery({
     queryKey: ['case-apps', filters, pageNumber],
     queryFn: () => searchCases(filters, pageNumber),
+    enabled: options?.enabled ?? true,
   });
 
   useEffect(() => {

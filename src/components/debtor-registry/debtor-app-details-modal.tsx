@@ -1,9 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import * as Linking from 'expo-linking';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
-import { DebtorRegistryCopy } from '@/constants/debtor-registry-copy';
 import { DebtorRegistryLinks } from '@/constants/debtor-registry';
+import { DebtorRegistryCopy } from '@/constants/debtor-registry-copy';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 

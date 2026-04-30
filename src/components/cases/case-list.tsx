@@ -6,13 +6,16 @@ import type { CaseListProps } from '@/types/case-management';
 import { CaseListItem } from './case-list-item';
 import { caseListStyles as s } from './case-list.styles';
 
-export function CaseList({ items, loading, empty }: CaseListProps) {
+export function CaseList({ items, loading, empty, emptyNoProceedings }: CaseListProps) {
   if (loading) {
     return <Text style={s.stateText}>{CaseManagementCopy.loadingMessage}</Text>;
   }
 
   if (empty) {
-    return <Text style={s.stateText}>{CaseManagementCopy.emptyMessage}</Text>;
+    const msg = emptyNoProceedings
+      ? CaseManagementCopy.emptyNoProceedingsMessage
+      : CaseManagementCopy.emptyMessage;
+    return <Text style={s.stateText}>{msg}</Text>;
   }
 
   return (
