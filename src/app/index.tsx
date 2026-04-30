@@ -17,6 +17,10 @@ function LoginScreenContent() {
     router.replace('/dashboard');
   }
 
+  function handleRegisterPress() {
+    router.push('/register');
+  }
+
   return (
     <LoginScreenLayout>
       <LoginForm
@@ -24,6 +28,7 @@ function LoginScreenContent() {
         errors={login.errors}
         onSubmit={login.onSubmit}
         submitDisabled={login.submitDisabled}
+        onRegisterPress={handleRegisterPress}
         onGuestPress={handleGuestPress}
       />
     </LoginScreenLayout>

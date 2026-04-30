@@ -5,8 +5,7 @@ import {
   DebtorRegistryPalette,
   DebtorRegistryTypography,
 } from '@/constants/debtor-registry';
-import { LoginLayout } from '@/constants/login';
-import { FontSize, Spacing } from '@/constants/theme';
+import { Space, Typography } from '@/constants/theme';
 
 export const caseScreenStyles = StyleSheet.create({
   page: {
@@ -18,8 +17,8 @@ export const caseScreenStyles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: LoginLayout.horizontalInset,
-    paddingVertical: LoginLayout.cardPadding,
+    paddingHorizontal: Space.large,
+    paddingVertical: Space.large,
     gap: DebtorRegistryLayout.pageGap,
   },
   titleRow: {
@@ -35,7 +34,7 @@ export const caseScreenStyles = StyleSheet.create({
   notifWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two,
+    gap: Space.small,
   },
   notifText: {
     fontSize: DebtorRegistryTypography.title,
@@ -49,11 +48,11 @@ export const caseScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: Spacing.two,
+    marginTop: Space.small,
   },
   pageText: {
     color: DebtorRegistryPalette.textPrimary,
-    fontSize: FontSize.sm,
+    fontSize: Typography.small,
     fontWeight: '600',
   },
   pageButton: {
@@ -71,7 +70,7 @@ export const caseScreenStyles = StyleSheet.create({
   },
   pageButtonText: {
     color: DebtorRegistryPalette.textPrimary,
-    fontSize: FontSize.sm,
+    fontSize: Typography.small,
     fontWeight: '700',
   },
 });

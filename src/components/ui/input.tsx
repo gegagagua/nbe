@@ -1,19 +1,20 @@
 import { TextInput, View } from 'react-native';
 
 import { LoginPalette } from '@/constants/login';
-import type { LoginTextFieldProps } from '@/types/login';
+import type { InputProps } from '@/types/input';
 
-import { loginTextFieldStyles } from './login-text-field.styles';
+import { inputStyles } from './input.styles';
 
-export function LoginTextField({
+export function Input({
   value,
   onChangeText,
   onBlur,
   placeholder,
   secureTextEntry,
+  keyboardType = 'default',
   autoCapitalize = 'none',
   errorMessage,
-}: LoginTextFieldProps) {
+}: InputProps) {
   return (
     <View>
       <TextInput
@@ -23,11 +24,12 @@ export function LoginTextField({
         placeholder={placeholder}
         placeholderTextColor={LoginPalette.placeholderMuted}
         secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoCorrect={false}
         style={[
-          loginTextFieldStyles.input,
-          errorMessage ? loginTextFieldStyles.inputError : null,
+          inputStyles.input,
+          errorMessage ? inputStyles.inputError : null,
         ]}
       />
     </View>

@@ -1,5 +1,5 @@
 import { LoginPalette } from "@/constants/login";
-import { Spacing } from "@/constants/theme";
+import { Space, Spacing } from "@/constants/theme";
 
 export const HomeDashboardPalette = {
   headerBg: LoginPalette.primary,
@@ -29,9 +29,9 @@ export const HomeDashboardLayoutConst = {
   /** Half tab height — badge sits on the top edge of the card. */
   tabAnchorOffset: 17,
   cardMinHeight: 100,
-  gridGap: Spacing.four,
-  headerPaddingV: Spacing.three,
-  headerIconGap: Spacing.two,
+  gridGap: Space.large,
+  headerPaddingV: Space.medium,
+  headerIconGap: Space.small,
   headerLogoWidth: 148,
   headerLogoHeight: 40,
   headerIconSize: 22,

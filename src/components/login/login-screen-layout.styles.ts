@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { LoginLayout, LoginPalette, LoginTypography } from '@/constants/login';
+import { LoginPalette } from '@/constants/login';
+import { Space, Typography } from '@/constants/theme';
 
 export const loginScreenLayoutStyles = StyleSheet.create({
   page: {
@@ -12,16 +13,22 @@ export const loginScreenLayoutStyles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    marginTop: LoginLayout.titleTop,
-    marginBottom: LoginLayout.fieldGap,
-    paddingHorizontal: LoginLayout.horizontalInset,
-    fontSize: LoginTypography.pageTitle,
+    marginTop: Space.large,
+    marginBottom: Space.medium,
+    paddingHorizontal: Space.large,
+    fontSize: Typography.extraLarge,
     fontWeight: '700',
     color: LoginPalette.titleText,
   },
   center: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: LoginLayout.horizontalInset,
+    paddingHorizontal: Space.large,
+  },
+  centerTop: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    paddingTop: Space.medium,
+    paddingHorizontal: Space.large,
   },
 });

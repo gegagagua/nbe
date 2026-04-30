@@ -1,12 +1,11 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import {
   DebtorRegistryLayout,
   DebtorRegistryPalette,
   DebtorRegistryTypography,
 } from '@/constants/debtor-registry';
-import { LoginLayout } from '@/constants/login';
-import { FontSize, Spacing } from '@/constants/theme';
+import { Space, Typography } from '@/constants/theme';
 
 export const debtorRegistryScreenStyles = StyleSheet.create({
   page: {
@@ -21,15 +20,15 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   },
   contentWrap: {
     flexGrow: 1,
-    paddingHorizontal: LoginLayout.horizontalInset,
-    paddingVertical: LoginLayout.cardPadding,
+    paddingHorizontal: Space.large,
+    paddingVertical: Space.large,
     gap: DebtorRegistryLayout.pageGap,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.one,
+    paddingHorizontal: Space.extraSmall,
   },
   titleText: {
     fontSize: DebtorRegistryTypography.title,
@@ -39,7 +38,7 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   notifWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two,
+    gap: Space.small,
   },
   notifText: {
     fontSize: DebtorRegistryTypography.title,
@@ -61,11 +60,11 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: Spacing.two,
+    marginTop: Space.small,
   },
   pageText: {
     color: DebtorRegistryPalette.textPrimary,
-    fontSize: FontSize.sm,
+    fontSize: Typography.small,
     fontWeight: '600',
   },
   pageButton: {
@@ -83,7 +82,7 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   },
   pageButtonText: {
     color: DebtorRegistryPalette.textPrimary,
-    fontSize: FontSize.sm,
+    fontSize: Typography.small,
     fontWeight: '700',
   },
 });

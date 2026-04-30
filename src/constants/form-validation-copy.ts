@@ -1,5 +1,15 @@
 export const FormValidationCopy = {
-  required: 'შეავსეთ ველი.',
-  requiredUsername: 'მიუთითეთ მომხმარებლის სახელი.',
-  requiredPassword: 'მიუთითეთ პაროლი.',
+  required: "შეავსეთ ველი.",
+  requiredUsername: "მიუთითეთ მომხმარებლის სახელი.",
+  requiredPassword: "მიუთითეთ პაროლი.",
+  requiredFirstName: "მიუთითეთ სახელი.",
+  requiredLastName: "მიუთითეთ გვარი.",
+  requiredPersonalId: "მიუთითეთ პირადი ნომერი.",
+  requiredPhone: "მიუთითეთ ტელეფონი.",
+  requiredCompanyName: "მიუთითეთ დასახელება.",
+  requiredIdentificationCode: "მიუთითეთ საიდენტიფიკაციო კოდი.",
+  requiredRepresentative: "მიუთითეთ წარმომადგენელი (სახელი, გვარი).",
+  invalidEmail: "მიუთითეთ სწორი ელ-ფოსტა.",
+  requiredConfirmPassword: "გაიმეორეთ პაროლი.",
+  passwordMismatch: "პაროლები არ ემთხვევა.",
 } as const;

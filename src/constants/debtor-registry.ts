@@ -1,5 +1,5 @@
 import { LoginPalette } from '@/constants/login';
-import { FontSize, Spacing } from '@/constants/theme';
+import { Space, Typography } from '@/constants/theme';
 
 export const DebtorRegistryPalette = {
   pageBg: '#eef2f7',
@@ -17,22 +17,22 @@ export const DebtorRegistryPalette = {
 } as const;
 
 export const DebtorRegistryLayout = {
-  pageGap: Spacing.three,
+  pageGap: Space.medium,
   panelRadius: 10,
   cardRadius: 10,
   buttonRadius: 8,
   panelWidthWeb: 250,
-  listRowGap: Spacing.two,
+  listRowGap: Space.small,
   inputHeight: 36,
   modalRadius: 12,
 } as const;
 
 export const DebtorRegistryTypography = {
-  title: FontSize.xl,
-  label: FontSize.sm,
-  input: FontSize.md,
-  body: FontSize.sm,
-  small: FontSize.xs,
+  title: Typography.large,
+  label: Typography.small,
+  input: Typography.medium,
+  body: Typography.small,
+  small: Typography.extraSmall,
 } as const;
 
 export const DebtorRegistryLinks = {

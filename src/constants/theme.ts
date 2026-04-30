@@ -74,6 +74,36 @@ export const FontSize = {
 
 export type FontSizeKey = keyof typeof FontSize;
 
+export const Typography = {
+  extraSmall: FontSize.xss,
+  small: FontSize.sm,
+  medium: FontSize.md,
+  large: FontSize.xl,
+  extraLarge: FontSize.xxl,
+} as const;
+
+export const Space = {
+  extraSmall: Spacing.one,
+  small: Spacing.two,
+  medium: Spacing.three,
+  large: Spacing.four,
+  extraLarge: Spacing.five,
+} as const;
+
+export const Radius = {
+  extraSmall: 4,
+  small: 8,
+  medium: 12,
+  large: 16,
+  extraLarge: 20,
+} as const;
+
+export const LineHeight = {
+  tight: 16,
+  normal: 18,
+  comfortable: 20,
+} as const;
+
 /**
  * Larger template headings (`ThemedText` marketing blocks) — outside the compact UI scale.
  */

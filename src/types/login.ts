@@ -5,6 +5,8 @@ import type { LoginFormValues } from '@/types/login-form-values';
 
 export type LoginScreenLayoutProps = {
   children: ReactNode;
+  title?: string;
+  contentAlign?: 'center' | 'top';
 };
 
 export type LoginFormProps = {
@@ -12,23 +14,8 @@ export type LoginFormProps = {
   errors: FieldErrors<LoginFormValues>;
   onSubmit: () => void;
   submitDisabled: boolean;
+  onRegisterPress: () => void;
   onGuestPress: () => void;
-};
-
-export type LoginPrimaryButtonProps = {
-  label: string;
-  onPress: () => void;
-  disabled?: boolean;
-};
-
-export type LoginTextFieldProps = {
-  value: string;
-  onChangeText: (value: string) => void;
-  onBlur?: () => void;
-  placeholder: string;
-  secureTextEntry?: boolean;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  errorMessage?: string;
 };
 
 export type LoginFormState = {

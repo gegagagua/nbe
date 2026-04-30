@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import { HomeDashboardLayoutConst, HomeDashboardPalette } from '@/constants/home-dashboard';
-import { LoginLayout } from '@/constants/login';
-import { FontSize, Spacing } from '@/constants/theme';
+import { Space, Typography } from '@/constants/theme';
 
 export const homeHeaderStyles = StyleSheet.create({
   bar: {
@@ -11,7 +10,7 @@ export const homeHeaderStyles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: HomeDashboardPalette.headerBg,
     paddingVertical: HomeDashboardLayoutConst.headerPaddingV,
-    paddingHorizontal: LoginLayout.horizontalInset,
+    paddingHorizontal: Space.large,
   },
   logoWrap: {
     flexShrink: 1,
@@ -19,18 +18,18 @@ export const homeHeaderStyles = StyleSheet.create({
   },
   logoText: {
     color: HomeDashboardPalette.headerText,
-    fontSize: FontSize.xxl,
+    fontSize: Typography.extraLarge,
     fontWeight: '800',
     letterSpacing: 1,
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two,
+    gap: Space.small,
   },
   actionPress: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Spacing.two,
+    padding: Space.small,
   },
 });

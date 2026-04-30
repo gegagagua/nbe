@@ -1,19 +1,20 @@
 import { Controller } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { LoginCopy } from "@/constants/login-copy";
 import type { LoginFormProps } from "@/types/login";
 
 import { LoginBrandHeader } from "./login-brand-header";
 import { loginFormStyles } from "./login-form.styles";
-import { LoginPrimaryButton } from "./login-primary-button";
-import { LoginTextField } from "./login-text-field";
 
 export function LoginForm({
   control,
   errors,
   onSubmit,
   submitDisabled,
+  onRegisterPress,
   onGuestPress,
 }: LoginFormProps) {
   return (
@@ -25,7 +26,7 @@ export function LoginForm({
             control={control}
             name="username"
             render={({ field: { onChange, onBlur, value } }) => (
-              <LoginTextField
+              <Input
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -45,7 +46,7 @@ export function LoginForm({
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
-              <LoginTextField
+              <Input
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -62,11 +63,19 @@ export function LoginForm({
           ) : null}
         </View>
       </View>
-      <LoginPrimaryButton
+      <Button
         label={LoginCopy.submit}
         onPress={() => void onSubmit()}
         disabled={submitDisabled}
       />
+      <Pressable
+        style={loginFormStyles.registerLink}
+        onPress={onRegisterPress}
+        accessibilityRole="link">
+        <Text style={loginFormStyles.registerLinkText}>
+          {LoginCopy.registrationLink}
+        </Text>
+      </Pressable>
       <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
         <Text style={loginFormStyles.guestLinkText}>{LoginCopy.guestLink}</Text>
       </Pressable>

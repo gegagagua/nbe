@@ -1,15 +1,17 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import { LoginElevation, LoginLayout, LoginPalette, LoginRadius, LoginTypography } from '@/constants/login';
+import { Layout } from "@/constants/layout";
+import { LoginElevation, LoginPalette } from "@/constants/login";
+import { Radius, Space, Typography } from "@/constants/theme";
 
 export const loginFormStyles = StyleSheet.create({
   card: {
-    width: '100%',
-    maxWidth: LoginLayout.cardMaxWidth,
-    alignSelf: 'center',
+    width: "100%",
+    maxWidth: Layout.cardMaxWidth,
+    alignSelf: "center",
     backgroundColor: LoginPalette.cardBackground,
-    borderRadius: LoginRadius.card,
-    padding: LoginLayout.cardPadding,
+    borderRadius: Radius.medium,
+    padding: Space.large,
     shadowColor: LoginPalette.primary,
     shadowOffset: { width: 0, height: LoginElevation.cardShadowOffsetY },
     shadowOpacity: LoginElevation.cardShadowOpacity,
@@ -17,23 +19,32 @@ export const loginFormStyles = StyleSheet.create({
     elevation: LoginElevation.cardAndroidElevation,
   },
   fields: {
-    gap: LoginLayout.fieldGap,
-    marginBottom: LoginLayout.fieldGap,
+    gap: Space.medium,
+    marginBottom: Space.medium,
   },
   fieldRow: {
-    gap: LoginLayout.brandTextGap,
+    gap: Space.extraSmall,
   },
   fieldError: {
     color: LoginPalette.errorText,
-    fontSize: LoginTypography.fieldValidation,
+    fontSize: Typography.small,
+  },
+  registerLink: {
+    alignItems: "center",
+    paddingTop: Space.extraSmall,
+  },
+  registerLinkText: {
+    color: LoginPalette.placeholderMuted,
+    fontSize: Typography.small,
+    marginTop: Space.extraSmall,
   },
   guestLink: {
-    alignItems: 'center',
-    paddingTop: LoginLayout.fieldGap,
+    alignItems: "center",
+    paddingTop: Space.medium,
   },
   guestLinkText: {
     color: LoginPalette.placeholderMuted,
-    fontSize: LoginTypography.fieldValidation,
-    textDecorationLine: 'underline',
+    fontSize: Typography.small,
+    textDecorationLine: "underline",
   },
 });
