@@ -1,5 +1,5 @@
 import type { z } from 'zod';
 
-import { loginFormSchema } from '@/schemas/login-form.schema';
+import type { createLoginFormSchema } from '@/schemas/login-form.schema';
 
-export type LoginFormValues = z.infer<typeof loginFormSchema>;
+export type LoginFormValues = z.infer<ReturnType<typeof createLoginFormSchema>>;

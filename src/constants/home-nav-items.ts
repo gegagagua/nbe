@@ -1,28 +1,27 @@
-import { HomeDashboardCopy as C } from '@/constants/home-dashboard-copy';
 import type { HomeNavItem } from '@/types/home-dashboard';
 
 export const homeNavItems: HomeNavItem[] = [
-  { id: 'cases', title: C.navCases, icon: 'briefcase', accent: 'red' },
+  { id: 'cases', titleKey: 'home.navCases', icon: 'briefcase', accent: 'red' },
   {
     id: 'simplified',
-    title: C.navSimplified,
+    titleKey: 'home.navSimplified',
     icon: 'file-document-edit-outline',
     accent: 'light',
     disabled: true,
   },
   {
     id: 'facts',
-    title: C.navFacts,
+    titleKey: 'home.navFacts',
     icon: 'file-document-outline',
     accent: 'red',
     disabled: true,
   },
   {
     id: 'assessment',
-    title: C.navAssessment,
+    titleKey: 'home.navAssessment',
     icon: 'view-grid',
     accent: 'slate',
     disabled: true,
   },
-  { id: 'debtors', title: C.navDebtors, icon: 'account-search', accent: 'slate' },
+  { id: 'debtors', titleKey: 'home.navDebtors', icon: 'account-search', accent: 'slate' },
 ];

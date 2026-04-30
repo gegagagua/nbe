@@ -1,4 +1,4 @@
 export * from '@/schemas/fields';
-export { loginFormSchema } from '@/schemas/login-form.schema';
-export { registerLegalSchema } from '@/schemas/register-legal.schema';
-export { registerPhysicalSchema } from '@/schemas/register-physical.schema';
+export { createLoginFormSchema } from '@/schemas/login-form.schema';
+export { createRegisterLegalSchema } from '@/schemas/register-legal.schema';
+export { createRegisterPhysicalSchema } from '@/schemas/register-physical.schema';

@@ -1,13 +1,14 @@
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
-import { LoginCopy } from '@/constants/login-copy';
 import { useRegisterPhysicalForm } from '@/hooks/use-register-physical-form';
 
 import { registerFormActionsStyles } from './register-form-actions.styles';
 import { RegisterFormField } from './register-form-field';
 
 export function RegisterPhysicalForm() {
+  const { t } = useTranslation();
   const { control, onSubmit, submitDisabled } = useRegisterPhysicalForm();
 
   return (
@@ -15,48 +16,48 @@ export function RegisterPhysicalForm() {
       <RegisterFormField
         control={control}
         name="firstName"
-        placeholder={LoginCopy.registerPhysicalFirstName}
+        placeholder={t('login.registerPhysicalFirstName')}
         autoCapitalize="words"
       />
       <RegisterFormField
         control={control}
         name="lastName"
-        placeholder={LoginCopy.registerPhysicalLastName}
+        placeholder={t('login.registerPhysicalLastName')}
         autoCapitalize="words"
       />
       <RegisterFormField
         control={control}
         name="personalId"
-        placeholder={LoginCopy.registerPhysicalPersonalId}
+        placeholder={t('login.registerPhysicalPersonalId')}
         keyboardType="number-pad"
       />
       <RegisterFormField
         control={control}
         name="email"
-        placeholder={LoginCopy.registerPhysicalEmail}
+        placeholder={t('login.registerPhysicalEmail')}
         keyboardType="email-address"
       />
       <RegisterFormField
         control={control}
         name="phone"
-        placeholder={LoginCopy.registerPhysicalPhone}
+        placeholder={t('login.registerPhysicalPhone')}
         keyboardType="phone-pad"
       />
       <RegisterFormField
         control={control}
         name="password"
-        placeholder={LoginCopy.registerPhysicalPassword}
+        placeholder={t('login.registerPhysicalPassword')}
         secureTextEntry
       />
       <RegisterFormField
         control={control}
         name="confirmPassword"
-        placeholder={LoginCopy.registerPasswordConfirm}
+        placeholder={t('login.registerPasswordConfirm')}
         secureTextEntry
       />
       <View style={registerFormActionsStyles.submit}>
         <Button
-          label={LoginCopy.registerSubmit}
+          label={t('login.registerSubmit')}
           onPress={() => void onSubmit()}
           disabled={submitDisabled}
         />

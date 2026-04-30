@@ -1,13 +1,20 @@
-import { HomeTabsCopy } from '@/constants/home-tabs';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { HomeSecondaryScreen } from './home-secondary-screen';
+import { HomeSecondaryScreen } from '@/components/home/home-secondary-screen';
 
 export function HomeContactScreen() {
+  const { t, i18n } = useTranslation();
+  const points = useMemo(
+    () => t('homeTabs.contactPoints', { returnObjects: true }) as string[],
+    [t, i18n.language],
+  );
+
   return (
     <HomeSecondaryScreen
-      title={HomeTabsCopy.contactTitle}
-      description={HomeTabsCopy.contactDescription}
-      points={HomeTabsCopy.contactPoints}
+      title={t('homeTabs.contactTitle')}
+      description={t('homeTabs.contactDescription')}
+      points={points}
     />
   );
 }

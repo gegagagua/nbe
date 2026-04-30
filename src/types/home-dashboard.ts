@@ -6,9 +6,16 @@ export type HomeDashboardLayoutProps = {
 
 export type HomeNavAccent = 'red' | 'slate' | 'light';
 
+export type HomeNavTitleKey =
+  | 'home.navCases'
+  | 'home.navSimplified'
+  | 'home.navFacts'
+  | 'home.navAssessment'
+  | 'home.navDebtors';
+
 export type HomeNavItem = {
   id: string;
-  title: string;
+  titleKey: HomeNavTitleKey;
   icon: string;
   accent: HomeNavAccent;
   disabled?: boolean;

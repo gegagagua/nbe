@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { LoginForm } from '@/components/login/login-form';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { LoginPalette } from '@/constants/login';
-import { LoginCopy } from '@/constants/login-copy';
 import { useLoginForm } from '@/hooks/use-login-form';
 import { useLoginIndexSessionRedirect } from '@/hooks/use-session-navigation';
 import { setGuestMode } from '@/lib/guest-mode';
@@ -36,6 +36,7 @@ function LoginScreenContent() {
 }
 
 export default function LoginRoute() {
+  const { t } = useTranslation();
   const canShowLogin = useLoginIndexSessionRedirect();
 
   if (!canShowLogin) {
@@ -44,7 +45,7 @@ export default function LoginRoute() {
         <ActivityIndicator
           size="large"
           color={LoginPalette.primary}
-          accessibilityLabel={LoginCopy.sessionBootLoadingA11yLabel}
+          accessibilityLabel={t('login.sessionBootLoadingA11yLabel')}
         />
       </LoginScreenLayout>
     );

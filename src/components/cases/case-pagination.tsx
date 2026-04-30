@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { CaseManagementCopy } from '@/constants/case-management-copy';
 import { formatRecordCount } from '@/utils/format-record-count';
 
 import { casePaginationStyles as s } from './case-pagination.styles';
@@ -13,7 +13,10 @@ function visiblePages(current: number, total: number): number[] {
   }
   const lastIdx = total - 1;
   const width = Math.min(WINDOW, total);
-  let start = Math.min(Math.max(0, current - Math.floor(width / 2)), Math.max(0, lastIdx - width + 1));
+  const start = Math.min(
+    Math.max(0, current - Math.floor(width / 2)),
+    Math.max(0, lastIdx - width + 1),
+  );
   return Array.from({ length: width }, (_, i) => start + i);
 }
 
@@ -30,17 +33,15 @@ export function CasePagination({
   totalRecords,
   onPageChange,
 }: CasePaginationProps) {
+  const { t } = useTranslation();
   const tp = Math.max(totalPages, 1);
   const last = tp - 1;
-  const disableFirst = pageNumber <= 0;
   const disablePrev = pageNumber <= 0;
   const disableNext = pageNumber >= last;
-  const disableLast = pageNumber >= last;
   const pages = visiblePages(pageNumber, tp);
-  const totalLabel = CaseManagementCopy.paginationTotalRecords.replace(
-    '{count}',
-    formatRecordCount(totalRecords),
-  );
+  const totalLabel = t('cases.paginationTotalRecords', {
+    count: formatRecordCount(totalRecords),
+  });
 
   return (
     <View style={s.wrap}>
@@ -50,7 +51,7 @@ export function CasePagination({
           style={[s.edgeBtn, disablePrev && s.edgeBtnDisabled]}
           disabled={disablePrev}
           onPress={() => onPageChange(Math.max(0, pageNumber - 1))}>
-          <Text style={s.edgeBtnText}>{CaseManagementCopy.previousPage}</Text>
+          <Text style={s.edgeBtnText}>{t('cases.previousPage')}</Text>
         </Pressable>
         {pages.map((idx) => {
           const active = idx === pageNumber;
@@ -67,7 +68,7 @@ export function CasePagination({
           style={[s.edgeBtn, disableNext && s.edgeBtnDisabled]}
           disabled={disableNext}
           onPress={() => onPageChange(Math.min(last, pageNumber + 1))}>
-          <Text style={s.edgeBtnText}>{CaseManagementCopy.nextPage}</Text>
+          <Text style={s.edgeBtnText}>{t('cases.nextPage')}</Text>
         </Pressable>
       </View>
       <Text style={s.pageIndicator}>

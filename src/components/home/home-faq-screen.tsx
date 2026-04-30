@@ -1,28 +1,29 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMemo, useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import {
-    HomeFaqItems,
-    HomeTabsCopy,
-    HomeTabsLayout,
-    HomeTabsPalette,
-} from "@/constants/home-tabs";
+import { HomeTabsLayout, HomeTabsPalette } from '@/constants/home-tabs';
+import type { HomeFaqItem } from '@/types/home-tabs';
 
-import { homeFaqScreenStyles } from "./home-faq-screen.styles";
+import { homeFaqScreenStyles } from './home-faq-screen.styles';
 
 export function HomeFaqScreen() {
+  const { t, i18n } = useTranslation();
   const [expandedIdx, setExpandedIdx] = useState(0);
+  const items = useMemo(
+    () => t('homeFaq.items', { returnObjects: true }) as HomeFaqItem[],
+    [t, i18n.language],
+  );
 
   return (
     <ScrollView
       style={homeFaqScreenStyles.scroll}
       contentContainerStyle={homeFaqScreenStyles.content}
       showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Text style={homeFaqScreenStyles.heading}>{HomeTabsCopy.faqTitle}</Text>
-      {HomeFaqItems.map((item, index) => {
+      keyboardShouldPersistTaps="handled">
+      <Text style={homeFaqScreenStyles.heading}>{t('homeTabs.faqTitle')}</Text>
+      {items.map((item, index) => {
         const isExpanded = expandedIdx === index;
         return (
           <View key={item.question} style={homeFaqScreenStyles.card}>
@@ -32,11 +33,10 @@ export function HomeFaqScreen() {
                 setExpandedIdx((prev) => (prev === index ? -1 : index))
               }
               accessibilityRole="button"
-              accessibilityLabel={item.question}
-            >
+              accessibilityLabel={item.question}>
               <Text style={homeFaqScreenStyles.question}>{item.question}</Text>
               <MaterialCommunityIcons
-                name={isExpanded ? "chevron-up" : "chevron-down"}
+                name={isExpanded ? 'chevron-up' : 'chevron-down'}
                 size={HomeTabsLayout.iconSize}
                 color={HomeTabsPalette.inactiveText}
               />

@@ -1,9 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { DebtorRegistryLinks } from '@/constants/debtor-registry';
-import { DebtorRegistryCopy } from '@/constants/debtor-registry-copy';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 
@@ -19,6 +19,7 @@ type Props = {
 };
 
 export function DebtorAppDetailsModal({ app, onClose }: Props) {
+  const { t } = useTranslation();
   const visible = app !== null;
   if (!app) {
     return null;
@@ -28,13 +29,13 @@ export function DebtorAppDetailsModal({ app, onClose }: Props) {
   const requestedPerson = app.requestedPerson;
   const statusName = app.status?.name ?? '-';
   const canEdit = statusName === 'განცხადება';
-  const title = `${DebtorRegistryCopy.detailsTitlePrefix} ${app.id}`;
+  const title = `${t('debtors.detailsTitlePrefix')} ${app.id}`;
 
   const openStatement = async () => {
     try {
       await Linking.openURL(DebtorRegistryLinks.statementBlobUrl);
     } catch (error) {
-      showErrorToast(DebtorRegistryCopy.statementOpenError, error);
+      showErrorToast(t('debtors.statementOpenError'), error);
     }
   };
 
@@ -52,40 +53,40 @@ export function DebtorAppDetailsModal({ app, onClose }: Props) {
           </View>
           <View style={s.statementWrap}>
             <Pressable onPress={() => void openStatement()}>
-              <Text style={s.statementText}>{DebtorRegistryCopy.statementAction}</Text>
+              <Text style={s.statementText}>{t('debtors.statementAction')}</Text>
             </Pressable>
           </View>
           <ScrollView contentContainerStyle={s.body}>
             <Text style={s.sectionTitle}>
-              {canEdit ? DebtorRegistryCopy.detailsEditableSection : DebtorRegistryCopy.detailsReadonlySection}
+              {canEdit ? t('debtors.detailsEditableSection') : t('debtors.detailsReadonlySection')}
             </Text>
             <View style={s.row}>
               <View style={s.cell}>
-                <Text style={s.label}>პირადი ნომერი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelPersonalId')}</Text>
                 <Text style={s.value}>{firstApplicant?.idnumber ?? requestedPerson?.idnumber ?? '-'}</Text>
               </View>
               <View style={s.cell}>
-                <Text style={s.label}>სახელი, გვარი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelFullName')}</Text>
                 <Text style={s.value}>{firstApplicant?.name ?? requestedPerson?.personName ?? '-'}</Text>
               </View>
             </View>
             <View style={s.row}>
               <View style={s.cell}>
-                <Text style={s.label}>მისამართი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelAddress')}</Text>
                 <Text style={s.value}>{firstApplicant?.address ?? requestedPerson?.address ?? '-'}</Text>
               </View>
               <View style={s.cell}>
-                <Text style={s.label}>ჩანაწერი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelRecord')}</Text>
                 <Text style={s.value}>{formatDate(app.createdDate)}</Text>
               </View>
             </View>
             <View style={s.row}>
               <View style={s.cell}>
-                <Text style={s.label}>საქმის ნომერი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelCaseNo')}</Text>
                 <Text style={s.value}>{app.caseNo ?? '-'}</Text>
               </View>
               <View style={s.cell}>
-                <Text style={s.label}>სტატუსი</Text>
+                <Text style={s.label}>{t('debtors.detailsLabelStatus')}</Text>
                 <Text style={s.value}>{statusName}</Text>
               </View>
             </View>

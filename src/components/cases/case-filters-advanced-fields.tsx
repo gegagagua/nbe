@@ -1,14 +1,21 @@
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { Input } from '@/components/ui/input';
-import { CaseManagementCopy as C } from '@/constants/case-management-copy';
 import type { CaseSearchFilters } from '@/types/case-management';
 
 import { CaseFilterField } from './case-filter-field';
+import { CaseFiltersAdvancedDates } from './case-filters-advanced-dates';
 import { CaseFilterToggleRow } from './case-filter-toggle-row';
 import { caseFiltersStyles as s } from './case-filters.styles';
 
 const initialSource: ('MANUAL' | 'ELECTRONIC')[] = ['MANUAL', 'ELECTRONIC'];
+
+const toggleRows = [
+  { key: 'automaticProcess' as const, labelKey: 'cases.autoProcessLabel' as const },
+  { key: 'updateByDate' as const, labelKey: 'cases.updateByDateLabel' as const },
+  { key: 'conditional' as const, labelKey: 'cases.conditionalLabel' as const },
+  { key: 'immediateEnf' as const, labelKey: 'cases.immediateEnfLabel' as const },
+];
 
 type Props = {
   values: CaseSearchFilters;
@@ -16,29 +23,32 @@ type Props = {
 };
 
 export function CaseFiltersAdvancedFields({ values, setValue }: Props) {
+  const { t } = useTranslation();
+  const datePh = t('cases.dateIsoPlaceholder');
+
   return (
     <>
       <CaseFilterField
-        placeholder={C.orgTypeLabel}
+        placeholder={t('cases.orgTypeLabel')}
         value={values.orgTypeId ?? ''}
         onChangeText={(v) => setValue('orgTypeId', v)}
       />
       <CaseFilterField
-        placeholder={C.orgLabel}
+        placeholder={t('cases.orgLabel')}
         value={values.organization ?? ''}
         onChangeText={(v) => setValue('organization', v)}
       />
       <CaseFilterField
-        placeholder={C.trTypeLabel}
+        placeholder={t('cases.trTypeLabel')}
         value={values.trTypeId ?? ''}
         onChangeText={(v) => setValue('trTypeId', v)}
       />
       <CaseFilterField
-        placeholder={C.transferStatusLabel}
+        placeholder={t('cases.transferStatusLabel')}
         value={values.transferStatusId ?? ''}
         onChangeText={(v) => setValue('transferStatusId', v)}
       />
-      <Text style={s.label}>{C.sourceLabel}</Text>
+      <Text style={s.label}>{t('cases.sourceLabel')}</Text>
       <View style={s.row}>
         {initialSource.map((item) => (
           <Pressable key={item} style={[s.input, s.half]} onPress={() => setValue('sourceType', item)}>
@@ -46,64 +56,35 @@ export function CaseFiltersAdvancedFields({ values, setValue }: Props) {
           </Pressable>
         ))}
       </View>
-      <Text style={s.label}>{C.regPeriodLabel}</Text>
-      <View style={s.row}>
-        <View style={s.half}>
-          <Input
-            value={values.regDateFrom ?? ''}
-            onChangeText={(v) => setValue('regDateFrom', v)}
-            placeholder="YYYY-MM-DD"
-          />
-        </View>
-        <View style={s.half}>
-          <Input
-            value={values.regDateTo ?? ''}
-            onChangeText={(v) => setValue('regDateTo', v)}
-            placeholder="YYYY-MM-DD"
-          />
-        </View>
-      </View>
-      <Text style={s.label}>{C.statusPeriodLabel}</Text>
-      <View style={s.row}>
-        <View style={s.half}>
-          <Input
-            value={values.statusDateFrom ?? ''}
-            onChangeText={(v) => setValue('statusDateFrom', v)}
-            placeholder="YYYY-MM-DD"
-          />
-        </View>
-        <View style={s.half}>
-          <Input
-            value={values.statusDateTo ?? ''}
-            onChangeText={(v) => setValue('statusDateTo', v)}
-            placeholder="YYYY-MM-DD"
-          />
-        </View>
-      </View>
+      <CaseFiltersAdvancedDates t={t} datePh={datePh} values={values} setValue={setValue} />
       <CaseFilterField
-        placeholder={C.participantTypeLabel}
+        placeholder={t('cases.participantTypeLabel')}
         value={values.participantTypeId ?? ''}
         onChangeText={(v) => setValue('participantTypeId', v)}
       />
       <CaseFilterField
-        placeholder={C.addressLabel}
+        placeholder={t('cases.addressLabel')}
         value={values.address ?? ''}
         onChangeText={(v) => setValue('address', v)}
       />
       <CaseFilterField
-        placeholder={C.cadastralCodeLabel}
+        placeholder={t('cases.cadastralCodeLabel')}
         value={values.cadastralCode ?? ''}
         onChangeText={(v) => setValue('cadastralCode', v)}
       />
       <CaseFilterField
-        placeholder={C.vehicleNoLabel}
+        placeholder={t('cases.vehicleNoLabel')}
         value={values.vehicleNumber ?? ''}
         onChangeText={(v) => setValue('vehicleNumber', v)}
       />
-      <CaseFilterToggleRow label={C.autoProcessLabel} value={values.automaticProcess} onChange={(v) => setValue('automaticProcess', v)} />
-      <CaseFilterToggleRow label={C.updateByDateLabel} value={values.updateByDate} onChange={(v) => setValue('updateByDate', v)} />
-      <CaseFilterToggleRow label={C.conditionalLabel} value={values.conditional} onChange={(v) => setValue('conditional', v)} />
-      <CaseFilterToggleRow label={C.immediateEnfLabel} value={values.immediateEnf} onChange={(v) => setValue('immediateEnf', v)} />
+      {toggleRows.map(({ key, labelKey }) => (
+        <CaseFilterToggleRow
+          key={key}
+          label={t(labelKey)}
+          value={values[key]}
+          onChange={(v) => setValue(key, v)}
+        />
+      ))}
     </>
   );
 }

@@ -1,15 +1,15 @@
 import { isAxiosError } from 'axios';
 
-import { LoginCopy } from '@/constants/login-copy';
+import i18n from '@/i18n/i18n';
 import { extractApiErrorMessage } from '@/lib/extract-api-error-message';
 
 export function mapLoginError(error: unknown): string {
   if (isAxiosError(error)) {
     if (error.code === 'ERR_NETWORK') {
-      return LoginCopy.loginNetworkError;
+      return i18n.t('login.loginNetworkError');
     }
     if (error.response?.status === 401) {
-      return LoginCopy.loginUnauthorized;
+      return i18n.t('login.loginUnauthorized');
     }
     const data = error.response?.data;
     const fromBody = extractApiErrorMessage(data);
@@ -17,5 +17,5 @@ export function mapLoginError(error: unknown): string {
       return fromBody;
     }
   }
-  return LoginCopy.loginGenericError;
+  return i18n.t('login.loginGenericError');
 }

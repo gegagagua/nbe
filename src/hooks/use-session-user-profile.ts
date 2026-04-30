@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { HomeDashboardCopy } from '@/constants/home-dashboard-copy';
+import i18n from '@/i18n/i18n';
 import { getSessionUserProfile } from '@/lib/session-user-profile-storage';
 
 export function useSessionUserProfile() {
-  const [displayName, setDisplayName] = useState<string>(HomeDashboardCopy.userFallback);
+  const [displayName, setDisplayName] = useState<string>(() =>
+    i18n.t('home.userFallback'),
+  );
 
   useEffect(() => {
     let active = true;
@@ -19,6 +21,21 @@ export function useSessionUserProfile() {
     });
     return () => {
       active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const onLang = () => {
+      void getSessionUserProfile().then((profile) => {
+        const name = profile
+          ? `${profile.firstName} ${profile.lastName}`.trim()
+          : '';
+        setDisplayName(name || i18n.t('home.userFallback'));
+      });
+    };
+    i18n.on('languageChanged', onLang);
+    return () => {
+      i18n.off('languageChanged', onLang);
     };
   }, []);
 

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { searchCases } from '@/api/cases';
-import { CaseManagementCopy } from '@/constants/case-management-copy';
+import i18n from '@/i18n/i18n';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { CaseSearchFilters } from '@/types/case-management';
 
@@ -19,7 +19,7 @@ export function useCaseApps(
 
   useEffect(() => {
     if (query.error) {
-      showErrorToast(CaseManagementCopy.listError, query.error);
+      showErrorToast(i18n.t('cases.listError'), query.error);
     }
   }, [query.error]);
 

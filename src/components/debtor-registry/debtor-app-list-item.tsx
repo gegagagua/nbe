@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { DebtorRegistryCopy } from '@/constants/debtor-registry-copy';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 
 import { debtorAppListItemStyles as s } from './debtor-app-list-item.styles';
@@ -12,27 +12,23 @@ function formatDate(value: string | null) {
   return value.replace('T', ' ');
 }
 
-function formatApplicant(app: DebtorRegistryApplication) {
-  const first = app.applicants?.[0];
-  if (!first) {
-    return 'განმცხადებელი: -';
-  }
-  const idNumber = first.idnumber ?? '-';
-  return `განმცხადებელი: ${first.name ?? '-'} (${idNumber})`;
-}
-
 type Props = {
   app: DebtorRegistryApplication;
   onPress: (app: DebtorRegistryApplication) => void;
 };
 
 export function DebtorAppListItem({ app, onPress }: Props) {
+  const { t } = useTranslation();
   const cardId = app.regnumber ?? `(${app.id})`;
   const requestedId = app.requestedPerson?.idnumber ?? '-';
   const requestedName = app.requestedPerson?.personName ?? '-';
   const requestedAddress = app.requestedPerson?.address ?? '-';
   const statusName = app.status?.name ?? '-';
   const trTypeName = app.trType?.name ?? '-';
+  const first = app.applicants?.[0];
+  const applicantLine = first
+    ? `${t('debtors.listApplicantPrefix')} ${first.name ?? '-'} (${first.idnumber ?? '-'})`
+    : `${t('debtors.listApplicantPrefix')} -`;
 
   return (
     <View style={s.card}>
@@ -41,15 +37,18 @@ export function DebtorAppListItem({ app, onPress }: Props) {
         <Text style={s.rightTop}>{formatDate(app.createdDate)}</Text>
       </View>
       <Text style={s.rowText}>
-        სტატუსი: {statusName} | რეგ.თარიღი: {formatDate(app.regDate)}
+        {t('debtors.listRowStatus', { status: statusName, regDate: formatDate(app.regDate) })}
       </Text>
       <Text style={s.rowText}>
-        საქმის ნომერი: {app.caseNo ?? '-'} | საქმის თარიღი: {formatDate(app.caseDate)}
+        {t('debtors.listRowCase', {
+          caseNo: app.caseNo ?? '-',
+          caseDate: formatDate(app.caseDate),
+        })}
       </Text>
       <Text style={s.rowText}>
-        ტრანზაქცია: {trTypeName} | #{app.id}
+        {t('debtors.listRowTr', { trType: trTypeName, id: String(app.id) })}
       </Text>
-      <Text style={s.rowText}>{formatApplicant(app)}</Text>
+      <Text style={s.rowText}>{applicantLine}</Text>
 
       <View style={s.personBox}>
         <Text style={s.personName}>
@@ -59,11 +58,10 @@ export function DebtorAppListItem({ app, onPress }: Props) {
       </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={DebtorRegistryCopy.detailsOpenHint}
+        accessibilityLabel={t('debtors.detailsOpenHint')}
         style={({ pressed }) => [s.actionButton, pressed && s.cardPressed]}
-        onPress={() => onPress(app)}
-      >
-        <Text style={s.actionText}>{DebtorRegistryCopy.statementAction}</Text>
+        onPress={() => onPress(app)}>
+        <Text style={s.actionText}>{t('debtors.statementAction')}</Text>
       </Pressable>
     </View>
   );

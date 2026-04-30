@@ -1,9 +1,9 @@
 import { Controller } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { LoginCopy } from '@/constants/login-copy';
 import type { LoginFormProps } from '@/types/login';
 
 import { LoginBrandHeader } from './login-brand-header';
@@ -17,6 +17,8 @@ export function LoginForm({
   onRegisterPress,
   onGuestPress,
 }: LoginFormProps) {
+  const { t } = useTranslation();
+
   return (
     <View style={loginFormStyles.stack}>
       <LoginBrandHeader />
@@ -31,7 +33,7 @@ export function LoginForm({
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder={LoginCopy.usernamePlaceholder}
+                  placeholder={t('login.usernamePlaceholder')}
                   errorMessage={errors.username?.message}
                 />
               )}
@@ -51,7 +53,7 @@ export function LoginForm({
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder={LoginCopy.passwordPlaceholder}
+                  placeholder={t('login.passwordPlaceholder')}
                   secureTextEntry
                   errorMessage={errors.password?.message}
                 />
@@ -65,7 +67,7 @@ export function LoginForm({
           </View>
         </View>
         <Button
-          label={LoginCopy.submit}
+          label={t('login.submit')}
           onPress={() => void onSubmit()}
           disabled={submitDisabled}
         />
@@ -74,11 +76,11 @@ export function LoginForm({
           onPress={onRegisterPress}
           accessibilityRole="link">
           <Text style={loginFormStyles.registerLinkText}>
-            {LoginCopy.registrationLink}
+            {t('login.registrationLink')}
           </Text>
         </Pressable>
         <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
-          <Text style={loginFormStyles.guestLinkText}>{LoginCopy.guestLink}</Text>
+          <Text style={loginFormStyles.guestLinkText}>{t('login.guestLink')}</Text>
         </Pressable>
       </View>
     </View>

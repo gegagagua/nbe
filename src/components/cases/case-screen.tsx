@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { CaseFilters } from '@/components/cases/case-filters';
 import { CaseList } from '@/components/cases/case-list';
@@ -13,28 +14,20 @@ import {
   USE_CASE_LIST_LAYOUT_MOCK,
   getCaseListLayoutMockSlice,
 } from '@/constants/case-list-layout-mock';
-import { CaseManagementCopy } from '@/constants/case-management-copy';
 import { useCaseApps } from '@/hooks/use-case-apps';
-// import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
-// import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
 import type { CaseSearchFilters } from '@/types/case-management';
 import { isCaseFiltersEmpty } from '@/utils/is-case-filters-empty';
 
 import { caseScreenStyles as s } from './case-screen.styles';
 
 export function CaseScreen() {
-  // დროებითი მოკი — პროფილი / წაუკიტებლები (ლოკალური საცავი და API გამორთული).
-  // const { displayName } = useSessionUserProfile();
-  // const { count, isLoading } = useUnreadNotificationsCount({
-  //   enabled: !USE_CASE_LIST_LAYOUT_MOCK,
-  // });
+  const { t } = useTranslation();
   const displayName = CASE_SCREEN_HEADER_MOCK.displayName;
   const count = CASE_SCREEN_HEADER_MOCK.unreadCount;
   const isLoading = CASE_SCREEN_HEADER_MOCK.unreadLoading;
   const [draftFilters, setDraftFilters] = useState<CaseSearchFilters>({});
   const [appliedFilters, setAppliedFilters] = useState<CaseSearchFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
-  // მოკის რეჟიმში `searchCases` არ იძახება (`enabled: false`).
   const query = useCaseApps(appliedFilters, pageNumber, {
     enabled: !USE_CASE_LIST_LAYOUT_MOCK,
   });
@@ -64,10 +57,10 @@ export function CaseScreen() {
         <ScrollView style={s.scroll} contentContainerStyle={s.content} showsVerticalScrollIndicator>
           <View>
             <View style={s.notifWrap}>
-              <Text style={s.notifText}>{CaseManagementCopy.notifications}</Text>
+              <Text style={s.notifText}>{t('cases.notifications')}</Text>
               <UnreadCountBadge count={count} loading={isLoading} />
             </View>
-            <Text style={s.title}>{CaseManagementCopy.pageTitle}</Text>
+            <Text style={s.title}>{t('cases.pageTitle')}</Text>
           </View>
           <CaseFilters
             values={draftFilters}

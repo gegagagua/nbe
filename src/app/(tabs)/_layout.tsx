@@ -1,15 +1,16 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 import { homeNativeTabsStyles } from "@/components/home/home-native-tabs.styles";
 import { homeRouteGuardStyles } from "@/components/home/home-route-guard.styles";
 import { HomeTabsPalette } from "@/constants/home-tabs";
 import { LoginPalette } from "@/constants/login";
-import { LoginCopy } from "@/constants/login-copy";
 import { useHomeRouteSessionGuard } from "@/hooks/use-session-navigation";
 
 export default function AppTabsLayout() {
+  const { t } = useTranslation();
   const canShowTabs = useHomeRouteSessionGuard();
 
   if (!canShowTabs) {
@@ -18,7 +19,7 @@ export default function AppTabsLayout() {
         <ActivityIndicator
           size="large"
           color={LoginPalette.primary}
-          accessibilityLabel={LoginCopy.sessionBootLoadingA11yLabel}
+          accessibilityLabel={t("login.sessionBootLoadingA11yLabel")}
         />
       </View>
     );
@@ -50,7 +51,7 @@ export default function AppTabsLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: "Home",
+          title: t("homeTabs.tabDashboard"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="home-variant"
@@ -63,7 +64,7 @@ export default function AppTabsLayout() {
       <Tabs.Screen
         name="faq"
         options={{
-          title: "FAQ",
+          title: t("homeTabs.tabFaq"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="help-circle-outline"
@@ -76,7 +77,7 @@ export default function AppTabsLayout() {
       <Tabs.Screen
         name="chat"
         options={{
-          title: "Chat",
+          title: t("homeTabs.tabChat"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="chat-processing-outline"
@@ -89,7 +90,7 @@ export default function AppTabsLayout() {
       <Tabs.Screen
         name="contact"
         options={{
-          title: "Contact",
+          title: t("homeTabs.tabContact"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="phone-outline"

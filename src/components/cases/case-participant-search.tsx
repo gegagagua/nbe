@@ -1,55 +1,56 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { CaseManagementCopy as C } from '@/constants/case-management-copy';
 import type { CaseFiltersProps, CaseSearchFilters } from '@/types/case-management';
 
 import { CaseFilterField } from './case-filter-field';
 import { caseFiltersStyles as s } from './case-filters.styles';
 
 export function CaseParticipantSearch({ values, onChange }: Pick<CaseFiltersProps, 'onChange' | 'values'>) {
+  const { t } = useTranslation();
   const setValue = <K extends keyof CaseSearchFilters>(key: K, value: CaseSearchFilters[K]) =>
     onChange({ ...values, [key]: value });
 
   return (
     <View style={s.participantBlock}>
-      <Text style={s.sectionTitle}>{C.participantSearchTitle}</Text>
+      <Text style={s.sectionTitle}>{t('cases.participantSearchTitle')}</Text>
       <CaseFilterField
-        placeholder={C.participantFilterAppRegPlaceholder}
+        placeholder={t('cases.participantFilterAppRegPlaceholder')}
         value={values.appRegNo ?? ''}
         onChangeText={(v) => setValue('appRegNo', v)}
       />
       <CaseFilterField
-        placeholder={C.participantFilterEnforcementSheetPlaceholder}
+        placeholder={t('cases.participantFilterEnforcementSheetPlaceholder')}
         value={values.postNumber ?? ''}
         onChangeText={(v) => setValue('postNumber', v)}
       />
       <CaseFilterField
-        placeholder={C.participantFilterPaymentIdPlaceholder}
+        placeholder={t('cases.participantFilterPaymentIdPlaceholder')}
         value={values.paymentIdentifier ?? ''}
         onChangeText={(v) => setValue('paymentIdentifier', v)}
       />
       <CaseFilterField
-        placeholder={C.participantFilterPersonalIdPlaceholder}
+        placeholder={t('cases.participantFilterPersonalIdPlaceholder')}
         value={values.idnumber ?? ''}
         onChangeText={(v) => setValue('idnumber', v)}
       />
       <CaseFilterField
-        placeholder={C.firstNameLabel}
+        placeholder={t('cases.firstNameLabel')}
         value={values.firstName ?? ''}
         onChangeText={(v) => setValue('firstName', v)}
       />
       <CaseFilterField
-        placeholder={C.lastNameLabel}
+        placeholder={t('cases.lastNameLabel')}
         value={values.lastName ?? ''}
         onChangeText={(v) => setValue('lastName', v)}
       />
       <CaseFilterField
-        placeholder={C.participantFilterLegalIdPlaceholder}
+        placeholder={t('cases.participantFilterLegalIdPlaceholder')}
         value={values.legalIdentificationCode ?? ''}
         onChangeText={(v) => setValue('legalIdentificationCode', v)}
       />
       <CaseFilterField
-        placeholder={C.organizationNameLabel}
+        placeholder={t('cases.organizationNameLabel')}
         value={values.organizationName ?? ''}
         onChangeText={(v) => setValue('organizationName', v)}
       />

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { searchDebtorApps } from '@/api/debtor-apps';
-import { DebtorRegistryCopy } from '@/constants/debtor-registry-copy';
+import i18n from '@/i18n/i18n';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { DebtorSearchFilters } from '@/types/debtor-registry';
 
@@ -14,7 +14,7 @@ export function useDebtorApps(filters: DebtorSearchFilters, pageNumber: number) 
 
   useEffect(() => {
     if (query.error) {
-      showErrorToast(DebtorRegistryCopy.listError, query.error);
+      showErrorToast(i18n.t('debtors.listError'), query.error);
     }
   }, [query.error]);
 

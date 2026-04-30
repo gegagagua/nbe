@@ -1,4 +1,4 @@
-export const DebtorRegistryCopy = {
+export const kaDebtors = {
   pageTitle: 'მოვალეთა რეესტრი',
   notifications: 'შეტყობინებები',
   filtersTitle: 'ფილტრები',
@@ -25,4 +25,14 @@ export const DebtorRegistryCopy = {
   detailsReadonlySection: 'რეგისტრაცია',
   previousPage: 'წინა',
   nextPage: 'შემდეგი',
+  detailsLabelPersonalId: 'პირადი ნომერი',
+  detailsLabelFullName: 'სახელი, გვარი',
+  detailsLabelAddress: 'მისამართი',
+  detailsLabelRecord: 'ჩანაწერი',
+  detailsLabelCaseNo: 'საქმის ნომერი',
+  detailsLabelStatus: 'სტატუსი',
+  listApplicantPrefix: 'განმცხადებელი:',
+  listRowStatus: 'სტატუსი: {{status}} | რეგ.თარიღი: {{regDate}}',
+  listRowCase: 'საქმის ნომერი: {{caseNo}} | საქმის თარიღი: {{caseDate}}',
+  listRowTr: 'ტრანზაქცია: {{trType}} | #{{id}}',
 } as const;

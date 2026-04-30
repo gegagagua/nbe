@@ -1,29 +1,28 @@
-import { useState } from "react";
-import { Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { useState } from 'react';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { DebtorAppList } from "@/components/debtor-registry/debtor-app-list";
-import { DebtorRegistryFilters } from "@/components/debtor-registry/debtor-registry-filters";
-import { HomeHeader } from "@/components/home/home-header";
-import { LoginFooter } from "@/components/login/login-footer";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
-import { UnreadCountBadge } from "@/components/ui/unread-count-badge";
-import { DebtorRegistryCopy } from "@/constants/debtor-registry-copy";
-import { useDebtorApps } from "@/hooks/use-debtor-apps";
-import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
-import { useUnreadNotificationsCount } from "@/hooks/use-unread-notifications-count";
-import type { DebtorSearchFilters } from "@/types/debtor-registry";
+import { DebtorAppList } from '@/components/debtor-registry/debtor-app-list';
+import { DebtorRegistryFilters } from '@/components/debtor-registry/debtor-registry-filters';
+import { HomeHeader } from '@/components/home/home-header';
+import { LoginFooter } from '@/components/login/login-footer';
+import { AppSafeArea } from '@/components/ui/app-safe-area';
+import { UnreadCountBadge } from '@/components/ui/unread-count-badge';
+import { useDebtorApps } from '@/hooks/use-debtor-apps';
+import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
+import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
+import type { DebtorSearchFilters } from '@/types/debtor-registry';
 
-import { debtorRegistryScreenStyles as s } from "./debtor-registry-screen.styles";
+import { debtorRegistryScreenStyles as s } from './debtor-registry-screen.styles';
 
 const initialFilters: DebtorSearchFilters = {};
 
 export function DebtorRegistryScreen() {
+  const { t } = useTranslation();
   const { displayName } = useSessionUserProfile();
   const { count, isLoading } = useUnreadNotificationsCount();
-  const [draftFilters, setDraftFilters] =
-    useState<DebtorSearchFilters>(initialFilters);
-  const [appliedFilters, setAppliedFilters] =
-    useState<DebtorSearchFilters>(initialFilters);
+  const [draftFilters, setDraftFilters] = useState<DebtorSearchFilters>(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState<DebtorSearchFilters>(initialFilters);
   const [pageNumber, setPageNumber] = useState(0);
   const query = useDebtorApps(appliedFilters, pageNumber);
   const items = query.data?.data ?? [];
@@ -47,22 +46,15 @@ export function DebtorRegistryScreen() {
     <View style={s.page}>
       <AppSafeArea style={s.body}>
         <HomeHeader displayName={displayName} />
-        <ScrollView
-          style={s.contentScroll}
-          contentContainerStyle={s.contentWrap}
-        >
+        <ScrollView style={s.contentScroll} contentContainerStyle={s.contentWrap}>
           <View style={s.titleRow}>
-            <Text style={s.titleText}>{DebtorRegistryCopy.pageTitle}</Text>
+            <Text style={s.titleText}>{t('debtors.pageTitle')}</Text>
             <View style={s.notifWrap}>
-              <Text style={s.notifText}>
-                {DebtorRegistryCopy.notifications}
-              </Text>
+              <Text style={s.notifText}>{t('debtors.notifications')}</Text>
               <UnreadCountBadge count={count} loading={isLoading} />
             </View>
           </View>
-          <View
-            style={[s.contentRow, Platform.OS === "web" && s.contentRowWeb]}
-          >
+          <View style={[s.contentRow, Platform.OS === 'web' && s.contentRowWeb]}>
             <DebtorRegistryFilters
               values={draftFilters}
               onChange={setDraftFilters}
@@ -70,23 +62,14 @@ export function DebtorRegistryScreen() {
               onClear={onClear}
             />
             <View style={s.listWrap}>
-              <DebtorAppList
-                items={items}
-                loading={query.isLoading}
-                empty={!query.isLoading && items.length === 0}
-              />
+              <DebtorAppList items={items} loading={query.isLoading} empty={!query.isLoading && items.length === 0} />
               {!query.isLoading && items.length > 0 && (
                 <View style={s.pagination}>
                   <Pressable
                     style={[s.pageButton, disablePrev && s.pageButtonDisabled]}
-                    onPress={() =>
-                      setPageNumber((curr) => Math.max(curr - 1, 0))
-                    }
-                    disabled={disablePrev}
-                  >
-                    <Text style={s.pageButtonText}>
-                      {DebtorRegistryCopy.previousPage}
-                    </Text>
+                    onPress={() => setPageNumber((curr) => Math.max(curr - 1, 0))}
+                    disabled={disablePrev}>
+                    <Text style={s.pageButtonText}>{t('debtors.previousPage')}</Text>
                   </Pressable>
                   <Text style={s.pageText}>
                     {pageNumber + 1} / {Math.max(totalPages, 1)}
@@ -94,11 +77,8 @@ export function DebtorRegistryScreen() {
                   <Pressable
                     style={[s.pageButton, disableNext && s.pageButtonDisabled]}
                     onPress={() => setPageNumber((curr) => curr + 1)}
-                    disabled={disableNext}
-                  >
-                    <Text style={s.pageButtonText}>
-                      {DebtorRegistryCopy.nextPage}
-                    </Text>
+                    disabled={disableNext}>
+                    <Text style={s.pageButtonText}>{t('debtors.nextPage')}</Text>
                   </Pressable>
                 </View>
               )}

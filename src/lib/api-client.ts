@@ -2,7 +2,7 @@ import axios, { isAxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 
 import { ApiConfig } from '@/constants/api';
-import { ToastCopy } from '@/constants/toast-copy';
+import i18n from '@/i18n/i18n';
 import { clearSessionToken, getSessionToken } from '@/lib/session-token-storage';
 import { clearSessionUserProfile } from '@/lib/session-user-profile-storage';
 import { showErrorToast } from '@/lib/show-error-toast';
@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
       await clearSessionUserProfile();
       return Promise.reject(error);
     }
-    showErrorToast(ToastCopy.sessionExpired, error);
+    showErrorToast(i18n.t('toast.sessionExpired'), error);
     await signOut();
     return Promise.reject(error);
   },

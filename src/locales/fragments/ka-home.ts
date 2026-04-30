@@ -1,4 +1,4 @@
-export const HomeDashboardCopy = {
+export const kaHome = {
   headerLogoGeo: 'აღსრულების ეროვნული ბიურო',
   headerLogoEn: 'NATIONAL BUREAU OF ENFORCEMENT',
   headerLogoA11yLabel:

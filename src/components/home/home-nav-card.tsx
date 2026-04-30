@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { HomeDashboardPalette } from '@/constants/home-dashboard';
 import { Spacing } from '@/constants/theme';
@@ -13,6 +14,8 @@ export function HomeNavCard({
   onPress,
   fullWidth,
 }: HomeNavCardProps & { fullWidth?: boolean }) {
+  const { t } = useTranslation();
+  const title = t(item.titleKey);
   const tabColor = navTabBackground[item.accent];
   const disabled = item.disabled === true;
 
@@ -20,7 +23,7 @@ export function HomeNavCard({
     <View style={[homeNavCardStyles.wrap, fullWidth && { width: '100%' }]}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={item.title}
+        accessibilityLabel={title}
         accessibilityState={{ disabled }}
         disabled={disabled}
         onPress={onPress}
@@ -50,7 +53,7 @@ export function HomeNavCard({
         </View>
         <View style={homeNavCardStyles.cardBody}>
           <Text style={homeNavCardStyles.title} numberOfLines={2}>
-            {item.title}
+            {title}
           </Text>
         </View>
       </Pressable>

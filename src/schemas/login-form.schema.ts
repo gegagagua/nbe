@@ -1,9 +1,11 @@
+import type { TFunction } from 'i18next';
 import { z } from 'zod';
 
-import { FormValidationCopy } from '@/constants/form-validation-copy';
 import { nonEmptyString, trimmedNonEmpty } from '@/schemas/fields';
 
-export const loginFormSchema = z.object({
-  username: trimmedNonEmpty(FormValidationCopy.requiredUsername),
-  password: nonEmptyString(FormValidationCopy.requiredPassword),
-});
+export function createLoginFormSchema(t: TFunction) {
+  return z.object({
+    username: trimmedNonEmpty(t('validation.requiredUsername')),
+    password: nonEmptyString(t('validation.requiredPassword')),
+  });
+}

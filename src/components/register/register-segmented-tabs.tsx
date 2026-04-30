@@ -1,6 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
-
-import { LoginCopy } from '@/constants/login-copy';
+import { useTranslation } from 'react-i18next';
 import type { RegisterSegmentedTabsProps } from '@/types/register';
 
 import { registerSegmentedTabsStyles } from './register-segmented-tabs.styles';
@@ -9,6 +8,8 @@ export function RegisterSegmentedTabs({
   value,
   onChange,
 }: RegisterSegmentedTabsProps) {
+  const { t } = useTranslation();
+
   return (
     <View style={registerSegmentedTabsStyles.row}>
       <Pressable
@@ -25,7 +26,7 @@ export function RegisterSegmentedTabs({
             value === 'physical' &&
               registerSegmentedTabsStyles.tabLabelSelected,
           ]}>
-          {LoginCopy.registerTabPhysical}
+          {t('login.registerTabPhysical')}
         </Text>
       </Pressable>
       <Pressable
@@ -41,7 +42,7 @@ export function RegisterSegmentedTabs({
             registerSegmentedTabsStyles.tabLabel,
             value === 'legal' && registerSegmentedTabsStyles.tabLabelSelected,
           ]}>
-          {LoginCopy.registerTabLegal}
+          {t('login.registerTabLegal')}
         </Text>
       </Pressable>
     </View>
