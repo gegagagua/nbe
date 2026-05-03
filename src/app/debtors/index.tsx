@@ -6,7 +6,7 @@ import { homeRouteGuardStyles } from '@/components/home/home-route-guard.styles'
 import { LoginPalette } from '@/constants/login';
 import { useHomeRouteSessionGuard } from '@/hooks/use-session-navigation';
 
-export default function DebtorsRoute() {
+export default function DebtorsIndexRoute() {
   const { t } = useTranslation();
   const canShowPage = useHomeRouteSessionGuard();
 
