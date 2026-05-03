@@ -7,13 +7,6 @@ export const enHomeTabs = {
     'Messages are kept in your conversation history.',
     'Get status updates in real time.',
   ],
-  contactTitle: 'Contact',
-  contactDescription: 'Contact channels for further assistance.',
-  contactPoints: [
-    'Hotline: +995 32 2 405 405',
-    'Email: info@nbe.gov.ge',
-    'Address: Tbilisi, David Aghmashenebeli Avenue',
-  ],
   tabDashboard: 'Home',
   tabFaq: 'FAQ',
   tabChat: 'Chat',

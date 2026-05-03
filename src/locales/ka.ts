@@ -5,6 +5,8 @@ import { kaCasesDetailUiB } from '@/locales/fragments/ka-cases-detail-ui-b';
 import { kaDebtors } from '@/locales/fragments/ka-debtors';
 import { homeFaqItemsKa } from '@/locales/fragments/ka-home-faq';
 import { kaHome } from '@/locales/fragments/ka-home';
+import { kaChatTab } from '@/locales/fragments/ka-chat-tab';
+import { kaContactTab } from '@/locales/fragments/ka-contact-tab';
 import { kaHomeTabs } from '@/locales/fragments/ka-home-tabs';
 import { kaToast } from '@/locales/fragments/ka-toast';
 
@@ -14,6 +16,8 @@ export const ka = {
   debtors: kaDebtors,
   home: kaHome,
   homeTabs: kaHomeTabs,
+  chatTab: kaChatTab,
+  contactTab: kaContactTab,
   homeFaq: { items: [...homeFaqItemsKa] },
   toast: kaToast,
 } as const;
