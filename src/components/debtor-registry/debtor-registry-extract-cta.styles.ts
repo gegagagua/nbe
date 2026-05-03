@@ -10,7 +10,7 @@ import { Space } from '@/constants/theme';
 
 export const debtorRegistryExtractCtaStyles = StyleSheet.create({
   wrap: {
-    marginTop: Space.large,
+    width: '100%',
   },
   press: {
     minHeight: DebtorRegistryLayout.extractCtaMinHeight,

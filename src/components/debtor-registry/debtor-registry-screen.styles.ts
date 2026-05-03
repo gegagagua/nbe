@@ -1,11 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 import {
   DebtorRegistryLayout,
   DebtorRegistryPalette,
   DebtorRegistryTypography,
-} from '@/constants/debtor-registry';
-import { Space, Typography } from '@/constants/theme';
+} from "@/constants/debtor-registry";
+import { Space, Typography } from "@/constants/theme";
 
 export const debtorRegistryScreenStyles = StyleSheet.create({
   page: {
@@ -14,35 +14,40 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   },
   body: {
     flex: 1,
+    flexDirection: "column",
+  },
+  scrollPane: {
+    flex: 1,
+    minHeight: 0,
   },
   contentScroll: {
     flex: 1,
   },
   contentWrap: {
     flexGrow: 1,
-    paddingHorizontal: Space.large,
+    paddingHorizontal: Space.medium,
     paddingVertical: Space.large,
     gap: DebtorRegistryLayout.pageGap,
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: Space.extraSmall,
   },
   titleText: {
     fontSize: DebtorRegistryTypography.title,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
   notifWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Space.small,
   },
   notifText: {
     fontSize: DebtorRegistryTypography.title,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
   contentRow: {
@@ -50,22 +55,22 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
     gap: DebtorRegistryLayout.pageGap,
   },
   contentRowWeb: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   listWrap: {
     flex: 1,
   },
   pagination: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: Space.small,
   },
   pageText: {
     color: DebtorRegistryPalette.textPrimary,
     fontSize: Typography.small,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   pageButton: {
     minWidth: 86,
@@ -73,8 +78,8 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: DebtorRegistryPalette.inputBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: DebtorRegistryPalette.inputBg,
   },
   pageButtonDisabled: {
@@ -83,6 +88,14 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   pageButtonText: {
     color: DebtorRegistryPalette.textPrimary,
     fontSize: Typography.small,
-    fontWeight: '700',
+    fontWeight: "700",
+  },
+  extractDock: {
+    paddingHorizontal: Space.large,
+    paddingTop: Space.medium,
+    paddingBottom: Space.small,
+    backgroundColor: DebtorRegistryPalette.cardBg,
+    borderTopWidth: 1,
+    borderTopColor: DebtorRegistryPalette.panelBorder,
   },
 });

@@ -35,37 +35,41 @@ export function DebtorRegistryScreenInner({
     <View style={s.page}>
       <AppSafeArea style={s.body}>
         <HomeHeader displayName={displayName} />
-        <ScrollView
-          style={s.contentScroll}
-          contentContainerStyle={s.contentWrap}
-          keyboardShouldPersistTaps="handled">
-          <View style={s.titleRow}>
-            <Text style={s.titleText}>{t('debtors.pageTitle')}</Text>
-          </View>
-          <View style={s.listWrap}>
-            <DebtorRegistryApplicationList items={items} loading={loading} empty={empty} />
-          </View>
-          {pageInfo && pageInfo.totalPages > 1 ? (
-            <View style={s.pagination}>
-              <Pressable
-                style={[s.pageButton, page <= 0 && s.pageButtonDisabled]}
-                disabled={page <= 0}
-                onPress={() => setPage((p) => Math.max(0, p - 1))}>
-                <Text style={s.pageButtonText}>{t('debtors.previousPage')}</Text>
-              </Pressable>
-              <Text style={s.pageText}>
-                {page + 1} / {pageInfo.totalPages}
-              </Text>
-              <Pressable
-                style={[s.pageButton, page >= pageInfo.totalPages - 1 && s.pageButtonDisabled]}
-                disabled={page >= pageInfo.totalPages - 1}
-                onPress={() => setPage((p) => p + 1)}>
-                <Text style={s.pageButtonText}>{t('debtors.nextPage')}</Text>
-              </Pressable>
+        <View style={s.scrollPane}>
+          <ScrollView
+            style={s.contentScroll}
+            contentContainerStyle={s.contentWrap}
+            keyboardShouldPersistTaps="handled">
+            <View style={s.titleRow}>
+              <Text style={s.titleText}>{t('debtors.pageTitle')}</Text>
             </View>
-          ) : null}
+            <View style={s.listWrap}>
+              <DebtorRegistryApplicationList items={items} loading={loading} empty={empty} />
+            </View>
+            {pageInfo && pageInfo.totalPages > 1 ? (
+              <View style={s.pagination}>
+                <Pressable
+                  style={[s.pageButton, page <= 0 && s.pageButtonDisabled]}
+                  disabled={page <= 0}
+                  onPress={() => setPage((p) => Math.max(0, p - 1))}>
+                  <Text style={s.pageButtonText}>{t('debtors.previousPage')}</Text>
+                </Pressable>
+                <Text style={s.pageText}>
+                  {page + 1} / {pageInfo.totalPages}
+                </Text>
+                <Pressable
+                  style={[s.pageButton, page >= pageInfo.totalPages - 1 && s.pageButtonDisabled]}
+                  disabled={page >= pageInfo.totalPages - 1}
+                  onPress={() => setPage((p) => p + 1)}>
+                  <Text style={s.pageButtonText}>{t('debtors.nextPage')}</Text>
+                </Pressable>
+              </View>
+            ) : null}
+          </ScrollView>
+        </View>
+        <View style={s.extractDock}>
           <DebtorRegistryExtractCta />
-        </ScrollView>
+        </View>
       </AppSafeArea>
       <LoginFooter />
     </View>
