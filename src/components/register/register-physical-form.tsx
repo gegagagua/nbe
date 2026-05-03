@@ -15,6 +15,12 @@ export function RegisterPhysicalForm() {
     <View>
       <RegisterFormField
         control={control}
+        name="username"
+        placeholder={t('login.registerUsername')}
+        autoCapitalize="none"
+      />
+      <RegisterFormField
+        control={control}
         name="firstName"
         placeholder={t('login.registerPhysicalFirstName')}
         autoCapitalize="words"

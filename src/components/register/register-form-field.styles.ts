@@ -1,12 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import { LoginPalette } from '@/constants/login';
-import { Space, Typography } from '@/constants/theme';
+import { LoginPalette } from "@/constants/login";
+import { Space, Typography } from "@/constants/theme";
 
 export const registerFormFieldStyles = StyleSheet.create({
   fieldRow: {
     gap: Space.extraSmall,
-    marginBottom: Space.medium,
+    marginBottom: Space.small,
   },
   fieldError: {
     color: LoginPalette.errorText,

@@ -16,6 +16,7 @@ export const enAuth = {
     registrationPageTitle: 'Registration',
     registerTabPhysical: 'Individual',
     registerTabLegal: 'Legal entity',
+    registerUsername: 'Username',
     registerPhysicalFirstName: 'First name',
     registerPhysicalLastName: 'Last name',
     registerPhysicalPersonalId: 'Personal ID number',

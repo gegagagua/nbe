@@ -7,6 +7,7 @@ import { createRegisterPhysicalSchema } from '@/schemas/register-physical.schema
 import type { RegisterPhysicalValues } from '@/types/register-form-values';
 
 const defaultValues: RegisterPhysicalValues = {
+  username: '',
   firstName: '',
   lastName: '',
   personalId: '',

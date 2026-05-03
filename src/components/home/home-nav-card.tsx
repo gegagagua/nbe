@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
 
 import { HomeDashboardPalette } from '@/constants/home-dashboard';
 import { Spacing } from '@/constants/theme';
@@ -46,7 +46,7 @@ export function HomeNavCard({
                   typeof MaterialCommunityIcons
                 >['name']
               }
-              size={24}
+              size={32}
               color={HomeDashboardPalette.headerText}
             />
           </View>

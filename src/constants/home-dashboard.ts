@@ -24,12 +24,12 @@ export const HomeDashboardAssets = {
 
 export const HomeDashboardLayoutConst = {
   cardRadius: 18,
-  tabWidth: 52,
-  tabHeight: 40,
+  tabWidth: 62,
+  tabHeight: 50,
   /** Half tab height — badge sits on the top edge of the card. */
   tabAnchorOffset: 17,
   /** ნავ-ბარათის ფიქსირებული სიმაღლე (აიქონის ზონის ქვემოთ კონტენტი იცენტრება). */
-  cardHeight: 120,
+  cardHeight: 140,
   /** სათაურის ზონა აიქონის ქვემოთ (tabAnchor + tab). */
   cardBodyTopInset: 58,
   gridGap: Space.large,

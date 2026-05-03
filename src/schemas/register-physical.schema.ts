@@ -6,6 +6,7 @@ import { trimmedNonEmpty } from '@/schemas/fields';
 export function createRegisterPhysicalSchema(t: TFunction) {
   return z
     .object({
+      username: trimmedNonEmpty(t('validation.requiredUsername')),
       firstName: trimmedNonEmpty(t('validation.requiredFirstName')),
       lastName: trimmedNonEmpty(t('validation.requiredLastName')),
       personalId: trimmedNonEmpty(t('validation.requiredPersonalId')),

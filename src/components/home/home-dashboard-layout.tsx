@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import type { HomeDashboardLayoutProps } from '@/types/home-dashboard';
 
@@ -10,7 +10,9 @@ export function HomeDashboardLayout({ children }: HomeDashboardLayoutProps) {
       style={homeDashboardLayoutStyles.scroll}
       contentContainerStyle={homeDashboardLayoutStyles.scrollContent}
       keyboardShouldPersistTaps="handled">
-      {children}
+        <View style={homeDashboardLayoutStyles.container}>
+          {children}
+        </View>
     </ScrollView>
   );
 }

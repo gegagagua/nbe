@@ -16,6 +16,7 @@ export const kaAuth = {
     registrationPageTitle: 'რეგისტრაცია',
     registerTabPhysical: 'ფიზიკური პირი',
     registerTabLegal: 'იურიდიული პირი',
+    registerUsername: 'მომხმარებელი',
     registerPhysicalFirstName: 'სახელი',
     registerPhysicalLastName: 'გვარი',
     registerPhysicalPersonalId: 'პირადი ნომერი',

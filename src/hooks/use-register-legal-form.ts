@@ -7,6 +7,7 @@ import { createRegisterLegalSchema } from '@/schemas/register-legal.schema';
 import type { RegisterLegalValues } from '@/types/register-form-values';
 
 const defaultValues: RegisterLegalValues = {
+  username: '',
   companyName: '',
   identificationCode: '',
   representativeName: '',

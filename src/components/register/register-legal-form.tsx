@@ -15,6 +15,12 @@ export function RegisterLegalForm() {
     <View>
       <RegisterFormField
         control={control}
+        name="username"
+        placeholder={t('login.registerUsername')}
+        autoCapitalize="none"
+      />
+      <RegisterFormField
+        control={control}
         name="companyName"
         placeholder={t('login.registerLegalCompanyName')}
         autoCapitalize="words"

@@ -6,6 +6,7 @@ import { trimmedNonEmpty } from '@/schemas/fields';
 export function createRegisterLegalSchema(t: TFunction) {
   return z
     .object({
+      username: trimmedNonEmpty(t('validation.requiredUsername')),
       companyName: trimmedNonEmpty(t('validation.requiredCompanyName')),
       identificationCode: trimmedNonEmpty(t('validation.requiredIdentificationCode')),
       representativeName: trimmedNonEmpty(t('validation.requiredRepresentative')),
