@@ -20,6 +20,8 @@ export const homeHeaderStyles = StyleSheet.create({
   logoWrap: {
     flexShrink: 1,
     maxWidth: "72%",
+    paddingVertical: Space.extraSmall,
+    paddingRight: Space.small,
   },
   logoGeo: {
     color: HomeDashboardPalette.headerText,

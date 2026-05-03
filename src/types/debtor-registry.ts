@@ -56,6 +56,7 @@ export type DebtorRegistryApplication = {
   caseTrackId: number | null;
   requestedPerson?: DebtorRegistryPerson | null;
   applicants?: DebtorRegistryApplicant[];
+  downloadUrl?: string | null;
 };
 
 export type DebtorRegistryPage = {

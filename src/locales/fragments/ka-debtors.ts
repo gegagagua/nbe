@@ -35,4 +35,11 @@ export const kaDebtors = {
   listRowStatus: 'სტატუსი: {{status}} | რეგ.თარიღი: {{regDate}}',
   listRowCase: 'საქმის ნომერი: {{caseNo}} | საქმის თარიღი: {{caseDate}}',
   listRowTr: 'ტრანზაქცია: {{trType}} | #{{id}}',
+  extractRequestButton: 'ამონაწერის მოთხოვნა',
+  extractRequestSoonToast:
+    'ამონაწერის მოთხოვნის მოდული მიერთდება სერვისის მიხედვით.',
+  listDownload: 'გადმოწერა',
+  listShare: 'გაზიარება',
+  listShareTitle: 'მოვალეთა რეესტრი — განცხადება',
+  listDownloadNoUrlToast: 'გადმოწერის ბმული ჯერ არ არის ხელმისაწვდომი.',
 } as const;

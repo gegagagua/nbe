@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -6,6 +7,7 @@ import {
   HomeDashboardLayoutConst,
   HomeDashboardPalette,
 } from '@/constants/home-dashboard';
+import { LoginInteraction } from '@/constants/login';
 import { LocaleToggle } from '@/components/i18n/locale-toggle';
 import { signOut } from '@/lib/sign-out';
 import type { HomeHeaderProps } from '@/types/home-dashboard';
@@ -19,10 +21,15 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
 
   return (
     <View style={homeHeaderStyles.bar}>
-      <View
-        style={homeHeaderStyles.logoWrap}
-        accessibilityRole="image"
-        accessibilityLabel={t('home.headerLogoA11yLabel')}>
+      <Pressable
+        style={({ pressed }) => [
+          homeHeaderStyles.logoWrap,
+          pressed ? { opacity: LoginInteraction.pressedOpacity } : null,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={t('home.headerLogoA11yLabel')}
+        accessibilityHint={t('home.headerLogoGoHomeA11yHint')}
+        onPress={() => router.navigate('/dashboard')}>
         <Text style={homeHeaderStyles.logoGeo} numberOfLines={2}>
           {t('home.headerLogoGeo')}
         </Text>
@@ -30,7 +37,7 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
         <Text style={homeHeaderStyles.logoEn} numberOfLines={2}>
           {t('home.headerLogoEn')}
         </Text>
-      </View>
+      </Pressable>
       <View style={homeHeaderStyles.actions}>
         <LocaleToggle />
         <Pressable

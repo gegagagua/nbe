@@ -35,4 +35,11 @@ export const enDebtors = {
   listRowStatus: 'Status: {{status}} | Reg. date: {{regDate}}',
   listRowCase: 'Case no.: {{caseNo}} | Case date: {{caseDate}}',
   listRowTr: 'Transaction: {{trType}} | #{{id}}',
+  extractRequestButton: 'Request extract',
+  extractRequestSoonToast:
+    'The extract request flow will be connected according to the service.',
+  listDownload: 'Download',
+  listShare: 'Share',
+  listShareTitle: 'Debtors register — application',
+  listDownloadNoUrlToast: 'Download link is not available yet.',
 } as const;

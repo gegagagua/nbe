@@ -3,6 +3,7 @@ export const kaHome = {
   headerLogoEn: 'NATIONAL BUREAU OF ENFORCEMENT',
   headerLogoA11yLabel:
     'აღსრულების ეროვნული ბიურო. National Bureau of Enforcement',
+  headerLogoGoHomeA11yHint: 'გადადის მთავარ (დეშბორდის) ტაბზე',
   userFallback: 'მომხმარებელი',
   profileSignOutA11yHint: 'გასვლა',
   navCases: 'სააღსრულებო წარმოება',

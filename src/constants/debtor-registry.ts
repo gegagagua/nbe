@@ -26,6 +26,7 @@ export const DebtorRegistryLayout = {
   inputHeight: 36,
   modalRadius: 12,
   filterPanelIconSize: FontSize.xxl,
+  extractCtaMinHeight: 52,
 } as const;
 
 export const DebtorRegistryTypography = {
@@ -39,4 +40,9 @@ export const DebtorRegistryTypography = {
 export const DebtorRegistryLinks = {
   statementBlobUrl:
     'blob:https://nbe-eps-webapp.staging.cloud.gov.ge/f0d547b0-f045-438c-a817-4122487d8b60',
+} as const;
+
+export const DebtorRegistryDocumentSamples = {
+  dummyPdfUrl:
+    'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
 } as const;
