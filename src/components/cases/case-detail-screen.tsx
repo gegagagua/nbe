@@ -1,54 +1,50 @@
+import { useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
-import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { ToastLayout } from '@/constants/toast';
+import { getCaseDetailLayoutMock } from '@/constants/case-detail-layout-mock';
+import type { CaseDetailMainTab } from '@/types/case-detail-ui';
 
-import { caseDetailScreenStyles as s } from './case-detail-screen.styles';
+import { AppSafeArea } from '@/components/ui/app-safe-area';
+
+import { caseDetailScreenStyles as layout } from './case-detail-screen.styles';
+import { CaseDetailApplicationTab } from './case-detail-application-tab';
+import { CaseDetailCloseRow } from './case-detail-close-row';
+import { CaseDetailContactBody } from './case-detail-contact-body';
+import { CaseDetailHeaderSummary } from './case-detail-header-summary';
+import { CaseDetailInfoTab } from './case-detail-info-tab';
+import { CaseDetailMainTabs } from './case-detail-main-tabs';
 
 export function CaseDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const caseId = Array.isArray(id) ? id[0] : id ?? '';
-
-  const onPay = () => {
-    Toast.show({
-      type: 'info',
-      text1: t('cases.detailPaySoonToast'),
-      visibilityTime: ToastLayout.visibilityMs,
-      position: 'top',
-    });
-  };
+  const data = useMemo(() => getCaseDetailLayoutMock(caseId), [caseId]);
+  const [tab, setTab] = useState<CaseDetailMainTab>('application');
 
   return (
-    <AppSafeArea style={s.page}>
-      <ScrollView contentContainerStyle={s.scroll}>
-        <View style={s.headerRow}>
+    <AppSafeArea style={layout.page}>
+      <ScrollView contentContainerStyle={layout.scroll}>
+        <View style={layout.headerRow}>
           <Pressable
-            style={s.backBtn}
+            style={layout.backBtn}
             onPress={() => router.back()}
             accessibilityRole="button"
             accessibilityLabel={t('cases.detailBack')}>
-            <Text style={s.backText}>{t('cases.detailBack')}</Text>
+            <Text style={layout.backText}>{t('cases.detailBack')}</Text>
           </Pressable>
-          <Text style={s.title} numberOfLines={2}>
-            {t('cases.detailTitle')} #{caseId}
+          <Text style={layout.title} numberOfLines={1}>
+            {t('cases.detailTitle')}
           </Text>
         </View>
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>{t('cases.detailMyGovSection')}</Text>
-          <Text style={s.sectionBody}>{t('cases.detailMyGovPlaceholder')}</Text>
-        </View>
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>{t('cases.detailDebtSection')}</Text>
-          <Text style={s.sectionBody}>{t('cases.detailDebtPlaceholder')}</Text>
-          <Pressable style={s.payButton} onPress={onPay} accessibilityRole="button">
-            <Text style={s.payButtonText}>{t('cases.detailPayButton')}</Text>
-          </Pressable>
-        </View>
+        <CaseDetailHeaderSummary data={data} />
+        <CaseDetailMainTabs value={tab} onChange={setTab} />
+        {tab === 'application' ? <CaseDetailApplicationTab data={data} /> : null}
+        {tab === 'caseInfo' ? <CaseDetailInfoTab data={data} /> : null}
+        {tab === 'contact' ? <CaseDetailContactBody contact={data.contact} /> : null}
+        <CaseDetailCloseRow onClose={() => router.back()} />
       </ScrollView>
     </AppSafeArea>
   );
