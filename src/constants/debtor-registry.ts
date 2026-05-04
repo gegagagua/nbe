@@ -27,6 +27,8 @@ export const DebtorRegistryLayout = {
   modalRadius: 12,
   filterPanelIconSize: FontSize.xxl,
   extractCtaMinHeight: 52,
+  paymentMethodIconWrap: 40,
+  paymentMethodRadioRing: 22,
 } as const;
 
 export const DebtorRegistryTypography = {
@@ -43,6 +45,5 @@ export const DebtorRegistryLinks = {
 } as const;
 
 export const DebtorRegistryDocumentSamples = {
-  dummyPdfUrl:
-    'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+  dummyPdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
 } as const;

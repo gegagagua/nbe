@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +16,8 @@ type Props = {
   items: DebtorRegistryApplication[];
   loading: boolean;
   empty: boolean;
+  listEmptyText?: string;
+  searchForm?: ReactNode;
   pageInfo: DebtorRegistryPage | undefined;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
@@ -26,6 +28,8 @@ export function DebtorRegistryScreenInner({
   items,
   loading,
   empty,
+  listEmptyText,
+  searchForm,
   pageInfo,
   page,
   setPage,
@@ -43,8 +47,14 @@ export function DebtorRegistryScreenInner({
             <View style={s.titleRow}>
               <Text style={s.titleText}>{t('debtors.pageTitle')}</Text>
             </View>
+            {searchForm}
             <View style={s.listWrap}>
-              <DebtorRegistryApplicationList items={items} loading={loading} empty={empty} />
+              <DebtorRegistryApplicationList
+                items={items}
+                loading={loading}
+                empty={empty}
+                emptyText={listEmptyText}
+              />
             </View>
             {pageInfo && pageInfo.totalPages > 1 ? (
               <View style={s.pagination}>

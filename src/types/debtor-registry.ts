@@ -1,10 +1,6 @@
 export type DebtorSearchFilters = {
-  idnumber?: string;
-  firstName?: string;
-  lastName?: string;
-  organization?: string;
-  docDateFrom?: string;
-  docDateTo?: string;
+  applicantPersonalNumber?: string;
+  requestedSubjectIdentifier?: string;
 };
 
 export type DebtorSearchRequest = {
@@ -82,4 +78,5 @@ export type DebtorRegistryListProps = {
   items: DebtorRegistryApplication[];
   loading: boolean;
   empty: boolean;
+  emptyText?: string;
 };

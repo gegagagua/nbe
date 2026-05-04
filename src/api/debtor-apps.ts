@@ -9,15 +9,14 @@ import type {
 const DEFAULT_PAGE_SIZE = 5;
 
 function buildSearchData(filters: DebtorSearchFilters) {
+  const applicantIdnumber = filters.applicantPersonalNumber?.trim();
+  const requestedPersonIdnumber = filters.requestedSubjectIdentifier?.trim();
+  if (!applicantIdnumber || !requestedPersonIdnumber) {
+    return {};
+  }
   return {
-    ...(filters.idnumber?.trim() ? { idnumber: filters.idnumber.trim() } : {}),
-    ...(filters.firstName?.trim() ? { firstName: filters.firstName.trim() } : {}),
-    ...(filters.lastName?.trim() ? { lastName: filters.lastName.trim() } : {}),
-    ...(filters.organization?.trim()
-      ? { organization: filters.organization.trim() }
-      : {}),
-    ...(filters.docDateFrom?.trim() ? { docDateFrom: filters.docDateFrom.trim() } : {}),
-    ...(filters.docDateTo?.trim() ? { docDateTo: filters.docDateTo.trim() } : {}),
+    applicantIdnumber,
+    requestedPersonIdnumber,
   };
 }
 

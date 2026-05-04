@@ -8,6 +8,7 @@ import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { DebtorExtractMockSubject, debtorExtractMockApplicationNumber } from '@/constants/debtor-extract-mock';
 import { useDebtorExtractApplicant } from '@/hooks/use-debtor-extract-applicant';
 import type { DebtorExtractFlowPhase, DebtorExtractPaymentMethod } from '@/types/debtor-extract';
+import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-payment-options';
 
 import { DebtorExtractPhaseForm } from './debtor-extract-phase-form';
 import { DebtorExtractPhasePayment } from './debtor-extract-phase-payment';
@@ -21,7 +22,7 @@ export function DebtorExtractRequestScreen() {
   const [phase, setPhase] = useState<DebtorExtractFlowPhase>('form');
   const [subjectId, setSubjectId] = useState<string>(DebtorExtractMockSubject.personalId);
   const [subjectName, setSubjectName] = useState<string>(DebtorExtractMockSubject.fullName);
-  const [method, setMethod] = useState<DebtorExtractPaymentMethod>('card');
+  const [method, setMethod] = useState<DebtorExtractPaymentMethod>(defaultDebtorExtractPaymentMethod);
   const [applicationNumber, setApplicationNumber] = useState<string | null>(null);
 
   const handleBack = () => {

@@ -1,14 +1,19 @@
 import type { TFunction } from 'i18next';
 import { Linking, Pressable, Share, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
+import { DebtorRegistryDocumentSamples } from '@/constants/debtor-registry';
 import { LoginInteraction } from '@/constants/login';
-import { ToastLayout } from '@/constants/toast';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
 import { debtorRegistryApplicationRowActionsStyles as s } from './debtor-registry-application-row-actions.styles';
+
+function resolveDocumentUrl(app: DebtorRegistryApplication): string {
+  const fromApi = app.downloadUrl?.trim();
+  if (fromApi) return fromApi;
+  return DebtorRegistryDocumentSamples.dummyPdfUrl;
+}
 
 function shareSummary(app: DebtorRegistryApplication, t: TFunction) {
   const appNo = app.regnumber?.trim() && app.regnumber.trim().length > 0 ? app.regnumber.trim() : `#${app.id}`;
@@ -22,7 +27,7 @@ function shareSummary(app: DebtorRegistryApplication, t: TFunction) {
   const regDate = formatEnforcementDateTime(app.regDate ?? app.statusDate);
   const statusName = app.status?.name ?? '—';
   const trName = app.trType?.name ?? '—';
-  const url = app.downloadUrl?.trim() ?? '';
+  const url = resolveDocumentUrl(app);
   return [
     appNo,
     t('debtors.listRowStatus', { status: statusName, regDate }),
@@ -41,22 +46,14 @@ type Props = { app: DebtorRegistryApplication };
 export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
   const onDownload = () => {
-    const url = app.downloadUrl?.trim();
-    if (!url) {
-      Toast.show({
-        type: 'info',
-        text1: t('debtors.listDownloadNoUrlToast'),
-        visibilityTime: ToastLayout.visibilityMs,
-        position: 'top',
-      });
-      return;
-    }
-    void Linking.openURL(url);
+    void Linking.openURL(resolveDocumentUrl(app));
   };
   const onShare = () => {
+    const url = resolveDocumentUrl(app);
     void Share.share({
       title: t('debtors.listShareTitle'),
       message: shareSummary(app, t),
+      url,
     });
   };
   return (

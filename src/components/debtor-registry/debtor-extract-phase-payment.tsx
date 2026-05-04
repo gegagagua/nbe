@@ -1,19 +1,16 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
-import { DebtorRegistryLayout, DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
+import { getDebtorExtractPaymentOptions } from '@/utils/debtor-extract-payment-options';
 
+import { PaymentMethodBrandIcon } from './payment-method-brand-icon';
 import { debtorExtractPaymentStyles as ps } from './debtor-extract-payment.styles';
 import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
-
-const METHODS: { id: DebtorExtractPaymentMethod; labelKey: 'debtors.extractMethodCard' | 'debtors.extractMethodBank' | 'debtors.extractMethodApple'; icon: 'credit-card-outline' | 'bank-outline' | 'apple' }[] = [
-  { id: 'card', labelKey: 'debtors.extractMethodCard', icon: 'credit-card-outline' },
-  { id: 'bank', labelKey: 'debtors.extractMethodBank', icon: 'bank-outline' },
-  { id: 'apple', labelKey: 'debtors.extractMethodApple', icon: 'apple' },
-];
 
 type Props = {
   selected: DebtorExtractPaymentMethod;
@@ -23,6 +20,7 @@ type Props = {
 
 export function DebtorExtractPhasePayment({ selected, onSelect, onPay }: Props) {
   const { t } = useTranslation();
+  const methods = useMemo(() => getDebtorExtractPaymentOptions(), []);
   return (
     <>
       <View style={ps.feeCard}>
@@ -30,8 +28,8 @@ export function DebtorExtractPhasePayment({ selected, onSelect, onPay }: Props) 
         <Text style={ps.feeAmount}>{t('debtors.extractFeeAmount')}</Text>
       </View>
       <Text style={ps.methodsTitle}>{t('debtors.extractMethodsTitle')}</Text>
-      <View style={s.fieldGap}>
-        {METHODS.map((m) => {
+      <View style={[s.fieldGap, ps.methodsList]}>
+        {methods.map((m) => {
           const isOn = selected === m.id;
           return (
             <Pressable
@@ -39,17 +37,25 @@ export function DebtorExtractPhasePayment({ selected, onSelect, onPay }: Props) 
               accessibilityRole="radio"
               accessibilityState={{ selected: isOn }}
               onPress={() => onSelect(m.id)}
-              style={[ps.methodPress, isOn && ps.methodPressSelected]}
+              style={[
+                ps.methodPress,
+                isOn && ps.methodPressSelected,
+                m.id === 'bankOfGeorgia' && ps.methodAccentBog,
+                m.id === 'applePay' && ps.methodAccentApplePay,
+              ]}
             >
-              <MaterialCommunityIcons
-                name={m.icon}
-                size={DebtorRegistryLayout.filterPanelIconSize}
-                color={DebtorRegistryPalette.textPrimary}
+              <PaymentMethodBrandIcon
+                methodId={m.id}
+                fallbackIcon={m.icon as keyof typeof MaterialCommunityIcons.glyphMap}
               />
-              <Text style={ps.methodLabel}>{t(m.labelKey)}</Text>
+              <Text style={ps.methodLabel} numberOfLines={2}>
+                {t(m.labelKey)}
+              </Text>
               {isOn ? (
-                <MaterialCommunityIcons name="check-circle" size={22} color={DebtorRegistryPalette.buttonBg} />
-              ) : null}
+                <MaterialCommunityIcons name="check-circle" size={24} color={DebtorRegistryPalette.buttonBg} />
+              ) : (
+                <View style={ps.methodRadioOuter} />
+              )}
             </Pressable>
           );
         })}

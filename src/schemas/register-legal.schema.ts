@@ -10,6 +10,9 @@ export function createRegisterLegalSchema(t: TFunction) {
       companyName: trimmedNonEmpty(t('validation.requiredCompanyName')),
       identificationCode: trimmedNonEmpty(t('validation.requiredIdentificationCode')),
       representativeName: trimmedNonEmpty(t('validation.requiredRepresentative')),
+      representativePersonalId: trimmedNonEmpty(
+        t('validation.requiredRepresentativePersonalId'),
+      ),
       email: z
         .string()
         .trim()

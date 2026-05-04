@@ -10,13 +10,14 @@ export function DebtorRegistryApplicationList({
   items,
   loading,
   empty,
+  emptyText,
 }: DebtorRegistryListProps) {
   const { t } = useTranslation();
   if (loading) {
     return <Text style={s.state}>{t('debtors.loadingMessage')}</Text>;
   }
   if (empty) {
-    return <Text style={s.state}>{t('debtors.emptyMessage')}</Text>;
+    return <Text style={s.state}>{emptyText ?? t('debtors.emptyMessage')}</Text>;
   }
   return (
     <View style={s.list}>

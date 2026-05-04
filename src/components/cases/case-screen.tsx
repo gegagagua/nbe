@@ -13,6 +13,7 @@ import {
   CASE_SCREEN_HEADER_MOCK,
   USE_CASE_LIST_LAYOUT_MOCK,
   getCaseListLayoutMockSlice,
+  getCaseScreenHeaderMockDisplayName,
 } from '@/constants/case-list-layout-mock';
 import { useCaseApps } from '@/hooks/use-case-apps';
 import type { CaseSearchFilters } from '@/types/case-management';
@@ -21,8 +22,8 @@ import { isCaseFiltersEmpty } from '@/utils/is-case-filters-empty';
 import { caseScreenStyles as s } from './case-screen.styles';
 
 export function CaseScreen() {
-  const { t } = useTranslation();
-  const displayName = CASE_SCREEN_HEADER_MOCK.displayName;
+  const { t, i18n } = useTranslation();
+  const displayName = getCaseScreenHeaderMockDisplayName(i18n.language);
   const count = CASE_SCREEN_HEADER_MOCK.unreadCount;
   const isLoading = CASE_SCREEN_HEADER_MOCK.unreadLoading;
   const [draftFilters, setDraftFilters] = useState<CaseSearchFilters>({});
@@ -31,7 +32,9 @@ export function CaseScreen() {
   const query = useCaseApps(appliedFilters, pageNumber, {
     enabled: !USE_CASE_LIST_LAYOUT_MOCK,
   });
-  const mockSlice = USE_CASE_LIST_LAYOUT_MOCK ? getCaseListLayoutMockSlice(pageNumber) : null;
+  const mockSlice = USE_CASE_LIST_LAYOUT_MOCK
+    ? getCaseListLayoutMockSlice(pageNumber, i18n.language)
+    : null;
   const items = mockSlice?.data ?? query.data?.data ?? [];
   const page = mockSlice?.page ?? query.data?.page;
   const totalPages = page?.totalPages ?? 1;

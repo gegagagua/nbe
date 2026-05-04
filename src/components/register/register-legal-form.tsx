@@ -38,6 +38,13 @@ export function RegisterLegalForm() {
       />
       <RegisterFormField
         control={control}
+        name="representativePersonalId"
+        placeholder={t('login.registerLegalRepresentativePersonalId')}
+        autoCapitalize="none"
+        keyboardType="number-pad"
+      />
+      <RegisterFormField
+        control={control}
         name="email"
         placeholder={t('login.registerLegalEmail')}
         keyboardType="email-address"

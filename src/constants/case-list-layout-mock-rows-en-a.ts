@@ -1,0 +1,115 @@
+import type { CaseApplication } from "@/types/case-management";
+
+export const CASE_LIST_LAYOUT_MOCK_ROWS_EN_A: CaseApplication[] = [
+  {
+    id: 2263618,
+    inputDate: "2026-03-20T20:19:00",
+    regnumber: "A02263618",
+    regDate: "2026-03-20",
+    finalRegistrationAt: "2026-03-20T20:19:00",
+    statusDate: "2026-03-20T20:19:00",
+    status: { id: 1, name: "Preliminary Application", colorCode: "#2b436c" },
+    trType: {
+      id: 1,
+      prefix: "04/1",
+      name: "Eviction / Eviction by Application for Real Estate Purchase",
+    },
+    listSequenceLabel: "04/1",
+    enforcementBureauName: "Tbilisi Enforcement Bureau",
+    footerStatusLine: "Preliminary Application 20.03.2026 20:19",
+    executorLine: "Enf.: default (Irakli Mgebrishvili)",
+    debtCategoryName: "Penalty",
+    debtAmountDisplay: "320.00 ₾",
+    creditors: [
+      {
+        id: 101,
+        firstName: "Avto",
+        lastName: "Natsvlishvili",
+        organization: null,
+        idnumber: "12345678974",
+      },
+    ],
+    debtors: [
+      {
+        id: 102,
+        firstName: "fdfd",
+        lastName: "fdfd",
+        organization: null,
+        idnumber: "fdfd",
+      },
+    ],
+  },
+  {
+    id: 2263619,
+    inputDate: "2026-03-19T15:40:00",
+    regnumber: "A00055214",
+    regDate: "2026-03-19",
+    finalRegistrationAt: "2026-03-19T15:40:22",
+    statusDate: "2026-03-21T11:00:00",
+    status: { id: 2, name: "Accepted for Review", colorCode: "#6b7a90" },
+    trType: {
+      id: 2,
+      prefix: "12/3",
+      name: "Recovery of Funds Under a Loan Agreement",
+    },
+    listSequenceLabel: "12/3",
+    enforcementBureauName: "Batumi Enforcement Bureau",
+    footerStatusLine: "Accepted for Review 21.03.2026 11:00",
+    executorLine: "Enf.: N. Kvaratskhelia",
+    debtAmountDisplay: "1 100.00 ₾",
+    creditors: [
+      {
+        id: 201,
+        firstName: "Levan",
+        lastName: "Koridze",
+        organization: null,
+        idnumber: "01020304050",
+      },
+    ],
+    debtors: [
+      {
+        id: 202,
+        firstName: null,
+        lastName: null,
+        organization: 'JSC "Example LLC"',
+        idnumber: "405221155",
+      },
+    ],
+  },
+  {
+    id: 2263620,
+    inputDate: "2026-02-10T09:00:00",
+    regnumber: "A00998877",
+    regDate: "2026-02-10",
+    finalRegistrationAt: "2026-02-10T09:05:11",
+    statusDate: "2026-02-12T18:30:00",
+    status: { id: 3, name: "Pending", colorCode: "#c41e3a" },
+    trType: {
+      id: 3,
+      prefix: "07/2",
+      name: "Realization of Real Estate",
+    },
+    listSequenceLabel: "07/2",
+    enforcementBureauName: "Kutaisi Enforcement Bureau",
+    footerStatusLine: "Pending 12.02.2026 18:30",
+    executorLine: "Enf.: —",
+    creditors: [
+      {
+        id: 301,
+        firstName: "Maia",
+        lastName: "Javakhishvili",
+        organization: null,
+        idnumber: "60001112233",
+      },
+    ],
+    debtors: [
+      {
+        id: 302,
+        firstName: "Giorgi",
+        lastName: "Beridze",
+        organization: null,
+        idnumber: "01003098765",
+      },
+    ],
+  },
+];

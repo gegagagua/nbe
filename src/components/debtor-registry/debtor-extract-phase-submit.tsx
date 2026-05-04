@@ -4,22 +4,27 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { ToastLayout } from '@/constants/toast';
-import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
+import type {
+  DebtorExtractPaymentMethod,
+  DebtorExtractPaymentOptionLabelKey,
+} from '@/types/debtor-extract';
 
 import { debtorExtractPaymentStyles as ps } from './debtor-extract-payment.styles';
 import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
+
+const PAYMENT_METHOD_LABEL: Record<DebtorExtractPaymentMethod, DebtorExtractPaymentOptionLabelKey> =
+  {
+    applePay: 'debtors.extractMethodApplePay',
+    googlePay: 'debtors.extractMethodGooglePay',
+    bankTransfer: 'debtors.extractMethodBankTransfer',
+    bankOfGeorgia: 'debtors.extractMethodBankOfGeorgia',
+  };
 
 type Props = {
   applicationNumber: string;
   paymentMethod: DebtorExtractPaymentMethod;
   onSent: () => void;
 };
-
-function methodLabelKey(m: DebtorExtractPaymentMethod): 'debtors.extractMethodCard' | 'debtors.extractMethodBank' | 'debtors.extractMethodApple' {
-  if (m === 'bank') return 'debtors.extractMethodBank';
-  if (m === 'apple') return 'debtors.extractMethodApple';
-  return 'debtors.extractMethodCard';
-}
 
 export function DebtorExtractPhaseSubmit({ applicationNumber, paymentMethod, onSent }: Props) {
   const { t } = useTranslation();
@@ -45,7 +50,7 @@ export function DebtorExtractPhaseSubmit({ applicationNumber, paymentMethod, onS
         </View>
         <View style={ps.summaryRow}>
           <Text style={ps.summaryLabel}>{t('debtors.extractMethodsTitle')}</Text>
-          <Text style={ps.summaryValue}>{t(methodLabelKey(paymentMethod))}</Text>
+          <Text style={ps.summaryValue}>{t(PAYMENT_METHOD_LABEL[paymentMethod])}</Text>
         </View>
       </View>
       <Text style={s.hintText}>{t('debtors.extractSubmitHint')}</Text>

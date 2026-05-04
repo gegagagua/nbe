@@ -11,6 +11,7 @@ const defaultValues: RegisterLegalValues = {
   companyName: '',
   identificationCode: '',
   representativeName: '',
+  representativePersonalId: '',
   email: '',
   phone: '',
   password: '',
