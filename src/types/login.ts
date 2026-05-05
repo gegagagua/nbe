@@ -16,6 +16,7 @@ export type LoginFormProps = {
   submitDisabled: boolean;
   onRegisterPress: () => void;
   onGuestPress: () => void;
+  onIdentomatDemoPress: () => void;
 };
 
 export type LoginFormState = {

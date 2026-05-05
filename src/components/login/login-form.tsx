@@ -16,6 +16,7 @@ export function LoginForm({
   submitDisabled,
   onRegisterPress,
   onGuestPress,
+  onIdentomatDemoPress,
 }: LoginFormProps) {
   const { t } = useTranslation();
 
@@ -81,6 +82,14 @@ export function LoginForm({
         </Pressable>
         <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
           <Text style={loginFormStyles.guestLinkText}>{t('login.guestLink')}</Text>
+        </Pressable>
+        <Pressable
+          style={loginFormStyles.identomatDemoButton}
+          onPress={onIdentomatDemoPress}
+          accessibilityRole="button">
+          <Text style={loginFormStyles.identomatDemoButtonLabel}>
+            {t('login.identomatDemoButton')}
+          </Text>
         </Pressable>
       </View>
     </View>

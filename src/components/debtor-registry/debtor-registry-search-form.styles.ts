@@ -8,6 +8,26 @@ import {
 import { Space } from '@/constants/theme';
 
 export const debtorRegistrySearchFormStyles = StyleSheet.create({
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: DebtorRegistryTypography.body,
+    fontWeight: '700',
+    color: DebtorRegistryPalette.textPrimary,
+  },
+  toggleButton: {
+    width: DebtorRegistryLayout.filterPanelToggleSize,
+    height: DebtorRegistryLayout.filterPanelToggleSize,
+    borderRadius: DebtorRegistryLayout.filterPanelToggleSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: DebtorRegistryPalette.inputBorder,
+    backgroundColor: DebtorRegistryPalette.inputBg,
+  },
   wrap: {
     gap: Space.small,
   },

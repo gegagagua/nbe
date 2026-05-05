@@ -21,6 +21,10 @@ function LoginScreenContent() {
     router.push('/register');
   }
 
+  function handleIdentomatDemoPress() {
+    router.push('/identomat-demo');
+  }
+
   return (
     <LoginScreenLayout>
       <LoginForm
@@ -30,6 +34,7 @@ function LoginScreenContent() {
         submitDisabled={login.submitDisabled}
         onRegisterPress={handleRegisterPress}
         onGuestPress={handleGuestPress}
+        onIdentomatDemoPress={handleIdentomatDemoPress}
       />
     </LoginScreenLayout>
   );

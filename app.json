@@ -2,7 +2,7 @@
   "expo": {
     "name": "NBE",
     "slug": "NBE-n-R4DF",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "nbe-n-r4df",
@@ -58,7 +58,7 @@
       "url": "https://u.expo.dev/f1b83546-5348-402e-af53-7a4375976c72"
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "sdkVersion"
     }
   }
 }

@@ -56,4 +56,19 @@ export const loginFormStyles = StyleSheet.create({
     fontSize: Typography.small,
     textDecorationLine: "underline",
   },
+  identomatDemoButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Space.medium,
+    paddingVertical: Layout.buttonPaddingVertical,
+    borderRadius: Radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: LoginPalette.primary,
+    backgroundColor: LoginPalette.cardBackground,
+  },
+  identomatDemoButtonLabel: {
+    color: LoginPalette.primary,
+    fontSize: Typography.medium,
+    fontWeight: "600",
+  },
 });
