@@ -32,7 +32,7 @@ const baseApp = (over: Partial<DebtorRegistryApplication> & Pick<DebtorRegistryA
 const rows: DebtorRegistryApplication[] = [
   baseApp({
     id: 91001,
-    regnumber: 'A26062718-004',
+    regnumber: 'DE26062718-004',
     caseNo: 'A26412496',
     caseDate: '2026-03-28T11:00:00',
     requestedPerson: {
@@ -54,7 +54,7 @@ const rows: DebtorRegistryApplication[] = [
   }),
   baseApp({
     id: 91002,
-    regnumber: 'A25235504-004',
+    regnumber: 'DE25235504-004',
     caseNo: 'A13034656',
     caseDate: '2026-02-15T08:30:00',
     status: { id: 2, name: 'მიმდინარე', active: true },
@@ -78,7 +78,7 @@ const rows: DebtorRegistryApplication[] = [
   }),
   baseApp({
     id: 91003,
-    regnumber: 'A24296128-004',
+    regnumber: 'DE24296128-004',
     caseNo: 'A16037552',
     caseDate: '2026-01-20T14:00:00',
     status: { id: 3, name: 'დასრულებული', active: false },

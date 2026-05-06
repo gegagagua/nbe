@@ -4,13 +4,12 @@ export const enDebtors = {
   filtersTitle: 'Filters',
   filtersExpand: 'Show filters',
   filtersCollapse: 'Hide filters',
-  searchApplicantPnLabel: "Applicant's PIN",
+  searchApplicantPnLabel: "Applicant's personal ID number",
   searchApplicantPnPlaceholder: 'e.g. 01001070990',
-  searchSubjectIdLabel:
-    "Requested person's PIN",
-  searchSubjectIdPlaceholder: 'e.g. 01001070990',
+  searchSubjectIdLabel: 'Person for whom the extract is requested',
+  searchSubjectIdPlaceholder: 'Personal ID number / identification code',
   searchHint:
-    "Enter the applicant's PIN and the requested person's PIN, then tap Search.",
+    "Enter the applicant's personal ID number and the requested person's personal ID number or identification code, then tap Search.",
   idNumberLabel: 'Personal ID Number / Identification Number',
   firstNameLabel: 'First name',
   lastNameLabel: 'Last name',
@@ -43,7 +42,7 @@ export const enDebtors = {
   listRowCase: 'Case #: {{caseNo}} | Case date: {{caseDate}}',
   listRowTr: 'Transaction: {{trType}} | #{{id}}',
   listRequestedSubject:
-    'Person extract is requested for: {{name}} (PIN/ID code: {{identifier}})',
+    'Person for whom the extract is requested: {{name}} (personal ID number / identification code: {{identifier}})',
   extractRequestButton: 'Extract Request',
   extractFlowTitle: 'Extract Request',
   extractBackA11y: 'Go back',

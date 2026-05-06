@@ -13,7 +13,11 @@ import { identomatDemoScreenStyles } from './identomat-demo-screen.styles';
 
 type IdentomatDemoScreenProps = { onBack: () => void };
 
-export function IdentomatDemoScreen({ onBack }: IdentomatDemoScreenProps) {
+type IdentomatDemoScreenRouteProps = IdentomatDemoScreenProps & {
+  sourceUrl?: string;
+};
+
+export function IdentomatDemoScreen({ onBack, sourceUrl }: IdentomatDemoScreenRouteProps) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +42,7 @@ export function IdentomatDemoScreen({ onBack }: IdentomatDemoScreenProps) {
         </View>
         <View style={identomatDemoScreenStyles.webviewWrap}>
           <WebView
-            source={{ uri: IDENTOMAT_DEMO_URL }}
+            source={{ uri: sourceUrl ?? IDENTOMAT_DEMO_URL }}
             style={identomatDemoScreenStyles.webview}
             onLoadStart={() => setLoading(true)}
             onLoadEnd={() => setLoading(false)}

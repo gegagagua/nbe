@@ -22,7 +22,7 @@ function LoginScreenContent() {
   }
 
   function handleIdentomatDemoPress() {
-    router.push('/identomat-demo');
+    router.push('/identomat-demo?mode=guest');
   }
 
   return (
