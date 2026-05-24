@@ -1,3 +1,5 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +47,12 @@ export function DebtorRegistryScreenInner({
             contentContainerStyle={s.contentWrap}
             keyboardShouldPersistTaps="handled">
             <View style={s.titleRow}>
+              <Pressable
+                onPress={() => router.back()}
+                accessibilityRole="button"
+                style={s.backButton}>
+                <MaterialCommunityIcons name="arrow-left" size={22} color="#2b436c" />
+              </Pressable>
               <Text style={s.titleText}>{t('debtors.pageTitle')}</Text>
             </View>
             {searchForm}

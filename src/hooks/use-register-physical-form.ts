@@ -7,17 +7,16 @@ import { createRegisterPhysicalSchema } from '@/schemas/register-physical.schema
 import type { RegisterPhysicalValues } from '@/types/register-form-values';
 
 const defaultValues: RegisterPhysicalValues = {
-  username: '',
-  firstName: '',
-  lastName: '',
   personalId: '',
-  email: '',
+  actualAddress: '',
   phone: '',
   password: '',
   confirmPassword: '',
+  legalAddress: '',
+  email: '',
 };
 
-export function useRegisterPhysicalForm() {
+export function useRegisterPhysicalForm(onValidSubmit: (values: RegisterPhysicalValues) => void) {
   const { t, i18n } = useTranslation();
   const schema = useMemo(() => createRegisterPhysicalSchema(t), [t, i18n.language]);
 
@@ -27,7 +26,9 @@ export function useRegisterPhysicalForm() {
     reValidateMode: 'onChange',
     defaultValues,
   });
-  const onSubmit = handleSubmit(() => undefined);
+
+  const onSubmit = handleSubmit((values) => onValidSubmit(values));
+
   return {
     control,
     onSubmit,

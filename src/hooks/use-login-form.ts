@@ -33,6 +33,8 @@ export function useLoginForm(): LoginFormState {
     onSuccess: async (data) => {
       await setSessionToken(data.token);
       await setSessionUserProfile({
+        id: data.user.id,
+        username: data.user.username ?? '',
         firstName: data.user.firstName ?? '',
         lastName: data.user.lastName ?? '',
       });

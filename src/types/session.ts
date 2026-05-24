@@ -16,6 +16,8 @@ export type SessionUser = {
 };
 
 export type SessionUserProfileBrief = {
+  id: number;
+  username: string;
   firstName: string;
   lastName: string;
 };

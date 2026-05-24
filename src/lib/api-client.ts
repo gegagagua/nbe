@@ -8,10 +8,12 @@ import { clearSessionUserProfile } from '@/lib/session-user-profile-storage';
 import { showErrorToast } from '@/lib/show-error-toast';
 import { signOut } from '@/lib/sign-out';
 
-function isCreateSessionRequest(config: InternalAxiosRequestConfig) {
-  const method = config.method?.toLowerCase();
-  const path = config.url ?? '';
-  return method === 'post' && path === ApiConfig.sessionsPath;
+function isAuthRequest(config: InternalAxiosRequestConfig) {
+  const url = config.url ?? '';
+  return (
+    url.includes('/sessions/logout') ||
+    url === ApiConfig.sessionsPath
+  );
 }
 
 export const apiClient = axios.create({
@@ -35,10 +37,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
     const cfg = error.config;
-    const isLogin = cfg ? isCreateSessionRequest(cfg) : false;
-    if (isLogin) {
-      await clearSessionToken();
-      await clearSessionUserProfile();
+    if (cfg && isAuthRequest(cfg)) {
       return Promise.reject(error);
     }
     showErrorToast(i18n.t('toast.sessionExpired'), error);

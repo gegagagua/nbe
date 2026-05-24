@@ -1,15 +1,20 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
 
+import { LocaleToggle } from '@/components/i18n/locale-toggle';
+import { UnreadCountBadge } from '@/components/ui/unread-count-badge';
+import {
+  CASE_SCREEN_HEADER_MOCK,
+  USE_CASE_LIST_LAYOUT_MOCK,
+} from '@/constants/case-list-layout-mock';
 import {
   HomeDashboardLayoutConst,
   HomeDashboardPalette,
 } from '@/constants/home-dashboard';
 import { LoginInteraction } from '@/constants/login';
-import { LocaleToggle } from '@/components/i18n/locale-toggle';
-import { signOut } from '@/lib/sign-out';
+import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
 import type { HomeHeaderProps } from '@/types/home-dashboard';
 
 import { homeHeaderStyles } from './home-header.styles';
@@ -17,7 +22,9 @@ import { homeHeaderStyles } from './home-header.styles';
 export function HomeHeader({ displayName }: HomeHeaderProps) {
   const { t } = useTranslation();
   const profileA11yLabel = displayName.trim() || t('home.userFallback');
-  const profileA11y = `${profileA11yLabel}. ${t('home.profileSignOutA11yHint')}`;
+  const api = useUnreadNotificationsCount({ enabled: !USE_CASE_LIST_LAYOUT_MOCK });
+  const count = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadCount : api.count;
+  const isLoading = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadLoading : api.isLoading;
 
   return (
     <View style={homeHeaderStyles.bar}>
@@ -40,17 +47,24 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
       </Pressable>
       <View style={homeHeaderStyles.actions}>
         <LocaleToggle />
-        <Pressable
-          style={homeHeaderStyles.actionPress}
-          accessibilityRole="button"
-          accessibilityLabel={profileA11y}
-          onPress={() => void signOut()}>
-          <MaterialCommunityIcons
-            name="account-circle-outline"
-            size={HomeDashboardLayoutConst.headerProfileIconSize}
-            color={HomeDashboardPalette.headerText}
-          />
-        </Pressable>
+        <View style={homeHeaderStyles.profileWrap}>
+          <Pressable
+            style={homeHeaderStyles.actionPress}
+            accessibilityRole="button"
+            accessibilityLabel={profileA11yLabel}
+            onPress={() => router.push('/profile')}>
+            <MaterialCommunityIcons
+              name="account-circle-outline"
+              size={HomeDashboardLayoutConst.headerProfileIconSize}
+              color={HomeDashboardPalette.headerText}
+            />
+          </Pressable>
+          {count > 0 && (
+            <View style={homeHeaderStyles.badgeWrap}>
+              <UnreadCountBadge count={count} loading={isLoading} small />
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );

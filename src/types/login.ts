@@ -17,6 +17,7 @@ export type LoginFormProps = {
   onRegisterPress: () => void;
   onGuestPress: () => void;
   onIdentomatDemoPress: () => void;
+  onForgotPasswordPress: () => void;
 };
 
 export type LoginFormState = {

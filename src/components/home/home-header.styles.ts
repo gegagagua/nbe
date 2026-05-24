@@ -25,9 +25,9 @@ export const homeHeaderStyles = StyleSheet.create({
   },
   logoGeo: {
     color: HomeDashboardPalette.headerText,
-    fontSize: Typography.extraSmall,
+    fontSize: Typography.extraSmall * 0.85,
     fontWeight: "600",
-    lineHeight: 18,
+    lineHeight: 15,
   },
   logoDivider: {
     height: 1,
@@ -37,11 +37,11 @@ export const homeHeaderStyles = StyleSheet.create({
   },
   logoEn: {
     color: HomeDashboardPalette.headerText,
-    fontSize: Typography.extraSmall,
+    fontSize: Typography.extraSmall * 0.85,
     fontWeight: "700",
     letterSpacing: LetterSpacing.headerLogoEn,
     textTransform: "uppercase",
-    lineHeight: LineHeight.tight,
+    lineHeight: 14,
   },
   actions: {
     flexDirection: "row",
@@ -52,5 +52,13 @@ export const homeHeaderStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: Space.small,
+  },
+  profileWrap: {
+    position: "relative",
+  },
+  badgeWrap: {
+    position: "absolute",
+    top: 0,
+    right: 0,
   },
 });

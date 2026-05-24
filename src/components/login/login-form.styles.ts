@@ -6,18 +6,18 @@ import { Radius, Space, Typography } from "@/constants/theme";
 
 export const loginFormStyles = StyleSheet.create({
   stack: {
-    width: '100%',
+    width: "100%",
     maxWidth: Layout.cardMaxWidth,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   brandDivider: {
     height: 1,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     backgroundColor: LoginPalette.logoRed,
     marginBottom: Space.medium,
   },
   card: {
-    width: '100%',
+    width: "100%",
     backgroundColor: LoginPalette.cardBackground,
     borderRadius: Radius.medium,
     padding: Space.large,
@@ -38,13 +38,22 @@ export const loginFormStyles = StyleSheet.create({
     color: LoginPalette.errorText,
     fontSize: Typography.small,
   },
+  forgotPasswordLink: {
+    alignItems: "center",
+    paddingTop: Space.small,
+  },
+  forgotPasswordLinkText: {
+    color: LoginPalette.primary,
+    fontSize: Typography.small,
+    textDecorationLine: "underline",
+  },
   registerLink: {
     alignItems: "center",
-    paddingTop: Space.extraSmall,
+    paddingTop: Space.medium,
   },
   registerLinkText: {
     color: LoginPalette.placeholderMuted,
-    fontSize: Typography.small,
+    fontSize: Typography.medium,
     marginTop: Space.extraSmall,
   },
   guestLink: {

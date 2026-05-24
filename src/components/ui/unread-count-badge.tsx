@@ -9,11 +9,11 @@ function formatBadgeCount(value: number) {
   return String(value);
 }
 
-export function UnreadCountBadge({ count, loading }: { count: number; loading?: boolean }) {
+export function UnreadCountBadge({ count, loading, small }: { count: number; loading?: boolean; small?: boolean }) {
   const badgeText = loading ? '...' : formatBadgeCount(count);
   return (
-    <View style={s.wrap} accessibilityRole="text">
-      <Text style={s.label}>{badgeText}</Text>
+    <View style={small ? s.wrapSmall : s.wrap} accessibilityRole="text">
+      <Text style={small ? s.labelSmall : s.label}>{badgeText}</Text>
     </View>
   );
 }

@@ -1,5 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { CaseFilters } from '@/components/cases/case-filters';
@@ -8,9 +10,7 @@ import { CasePagination } from '@/components/cases/case-pagination';
 import { HomeHeader } from '@/components/home/home-header';
 import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { UnreadCountBadge } from '@/components/ui/unread-count-badge';
 import {
-  CASE_SCREEN_HEADER_MOCK,
   USE_CASE_LIST_LAYOUT_MOCK,
   getCaseListLayoutMockSlice,
   getCaseScreenHeaderMockDisplayName,
@@ -24,8 +24,6 @@ import { caseScreenStyles as s } from './case-screen.styles';
 export function CaseScreen() {
   const { t, i18n } = useTranslation();
   const displayName = getCaseScreenHeaderMockDisplayName(i18n.language);
-  const count = CASE_SCREEN_HEADER_MOCK.unreadCount;
-  const isLoading = CASE_SCREEN_HEADER_MOCK.unreadLoading;
   const [draftFilters, setDraftFilters] = useState<CaseSearchFilters>({});
   const [appliedFilters, setAppliedFilters] = useState<CaseSearchFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
@@ -58,11 +56,13 @@ export function CaseScreen() {
       <AppSafeArea style={s.body}>
         <HomeHeader displayName={displayName} />
         <ScrollView style={s.scroll} contentContainerStyle={s.content} showsVerticalScrollIndicator>
-          <View>
-            <View style={s.notifWrap}>
-              <Text style={s.notifText}>{t('cases.notifications')}</Text>
-              <UnreadCountBadge count={count} loading={isLoading} />
-            </View>
+          <View style={s.titleRow}>
+            <Pressable
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              style={s.backButton}>
+              <MaterialCommunityIcons name="arrow-left" size={22} color="#2b436c" />
+            </Pressable>
             <Text style={s.title}>{t('cases.pageTitle')}</Text>
           </View>
           <CaseFilters

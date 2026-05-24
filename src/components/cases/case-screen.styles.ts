@@ -28,7 +28,10 @@ export const caseScreenStyles = StyleSheet.create({
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: Space.small,
+  },
+  backButton: {
+    padding: Space.extraSmall,
   },
   title: {
     fontSize: DebtorRegistryTypography.title,

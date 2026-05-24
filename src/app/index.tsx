@@ -25,6 +25,10 @@ function LoginScreenContent() {
     router.push('/identomat-demo?mode=guest');
   }
 
+  function handleForgotPasswordPress() {
+    router.push('/forgot-password');
+  }
+
   return (
     <LoginScreenLayout>
       <LoginForm
@@ -35,6 +39,7 @@ function LoginScreenContent() {
         onRegisterPress={handleRegisterPress}
         onGuestPress={handleGuestPress}
         onIdentomatDemoPress={handleIdentomatDemoPress}
+        onForgotPasswordPress={handleForgotPasswordPress}
       />
     </LoginScreenLayout>
   );

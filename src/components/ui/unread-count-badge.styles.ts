@@ -19,4 +19,19 @@ export const unreadCountBadgeStyles = StyleSheet.create({
     fontWeight: '800',
     lineHeight: HomeDashboardLayoutConst.notificationBadgeLineHeight,
   },
+  wrapSmall: {
+    minWidth: HomeDashboardLayoutConst.notificationBadgeSmallMinWidth,
+    height: HomeDashboardLayoutConst.notificationBadgeSmallHeight,
+    borderRadius: HomeDashboardLayoutConst.notificationBadgeSmallRadius,
+    paddingHorizontal: HomeDashboardLayoutConst.notificationBadgeSmallPadH,
+    backgroundColor: HomeDashboardPalette.notifBadgeBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  labelSmall: {
+    color: HomeDashboardPalette.notifBadgeText,
+    fontSize: FontSize.xss,
+    fontWeight: '800',
+    lineHeight: HomeDashboardLayoutConst.notificationBadgeSmallLineHeight,
+  },
 });

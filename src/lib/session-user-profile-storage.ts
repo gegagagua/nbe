@@ -9,7 +9,13 @@ function isProfile(value: unknown): value is SessionUserProfileBrief {
     return false;
   }
   const o = value as Record<string, unknown>;
-  return typeof o.firstName === 'string' && typeof o.lastName === 'string';
+  if (typeof o.firstName !== 'string' || typeof o.lastName !== 'string') {
+    return false;
+  }
+  // Migrate older stored profiles that pre-date username/id fields
+  if (typeof o.username !== 'string') o.username = '';
+  if (typeof o.id !== 'number') o.id = 0;
+  return true;
 }
 
 export async function getSessionUserProfile(): Promise<SessionUserProfileBrief | null> {

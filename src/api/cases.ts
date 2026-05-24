@@ -1,69 +1,65 @@
-import { ApiConfig } from '@/constants/api';
+import { ApiPaths, EpsApiBase } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
-import type {
-  CaseSearchFilters,
-  CaseSearchRequest,
-  SearchCasesResponse,
-} from '@/types/case-management';
 
-const CASE_PAGE_SIZE = 5;
+export type CaseSearchSort = {
+  property: string;
+  direction: 'ASC' | 'DESC';
+};
 
-function buildSearchData(filters: CaseSearchFilters) {
-  return {
-    archived: false,
-    ...(filters.orgTypeId?.trim() ? { orgTypeId: filters.orgTypeId.trim() } : {}),
-    ...(filters.organization?.trim() ? { organization: filters.organization.trim() } : {}),
-    ...(filters.appRegNo?.trim() ? { appRegNo: filters.appRegNo.trim() } : {}),
-    ...(filters.trTypeId?.trim() ? { trTypeId: filters.trTypeId.trim() } : {}),
-    ...(filters.transferStatusId?.trim()
-      ? { transferStatusId: filters.transferStatusId.trim() }
-      : {}),
-    ...(filters.sourceType ? { sourceType: filters.sourceType } : {}),
-    ...(filters.regDateFrom?.trim() ? { regDateFrom: filters.regDateFrom.trim() } : {}),
-    ...(filters.regDateTo?.trim() ? { regDateTo: filters.regDateTo.trim() } : {}),
-    ...(filters.statusDateFrom?.trim()
-      ? { statusDateFrom: filters.statusDateFrom.trim() }
-      : {}),
-    ...(filters.statusDateTo?.trim() ? { statusDateTo: filters.statusDateTo.trim() } : {}),
-    ...(filters.participantTypeId?.trim()
-      ? { participantTypeId: filters.participantTypeId.trim() }
-      : {}),
-    ...(filters.idnumber?.trim() || filters.legalIdentificationCode?.trim()
-      ? {
-          idnumber:
-            filters.idnumber?.trim() || filters.legalIdentificationCode?.trim() || '',
-        }
-      : {}),
-    ...(filters.firstName?.trim() ? { firstName: filters.firstName.trim() } : {}),
-    ...(filters.lastName?.trim() ? { lastName: filters.lastName.trim() } : {}),
-    ...(filters.address?.trim() ? { address: filters.address.trim() } : {}),
-    ...(filters.organizationName?.trim()
-      ? { organizationName: filters.organizationName.trim() }
-      : {}),
-    ...(filters.paymentIdentifier?.trim()
-      ? { paymentIdentifier: filters.paymentIdentifier.trim() }
-      : {}),
-    ...(filters.cadastralCode?.trim() ? { cadastralCode: filters.cadastralCode.trim() } : {}),
-    ...(filters.vehicleNumber?.trim() ? { vehicleNumber: filters.vehicleNumber.trim() } : {}),
-    ...(filters.postNumber?.trim() ? { postNumber: filters.postNumber.trim() } : {}),
-    ...(filters.automaticProcess !== undefined
-      ? { automaticProcess: filters.automaticProcess }
-      : {}),
-    ...(filters.updateByDate !== undefined ? { updateByDate: filters.updateByDate } : {}),
-    ...(filters.conditional !== undefined ? { conditional: filters.conditional } : {}),
-    ...(filters.immediateEnf !== undefined ? { immediateEnf: filters.immediateEnf } : {}),
+export type CaseSearchFilters = {
+  regnumber?: string;
+  docNo?: string;
+  firstName?: string;
+  lastName?: string;
+  organization?: string;
+  idnumber?: string[];
+  payCode?: string;
+};
+
+export type CaseSearchRequest = {
+  data: {
+    regnumber?: string;
+    docNo?: string;
+    person?: {
+      firstName?: string;
+      lastName?: string;
+      organization?: string;
+      idnumber?: string[];
+      payCode?: string;
+    };
   };
-}
+  page: { number: number; size: number };
+  sort?: CaseSearchSort[];
+};
+
+const CASE_PAGE_SIZE = 10;
 
 export async function searchCases(
-  filters: CaseSearchFilters,
+  filters: CaseSearchFilters = {},
   pageNumber = 0,
-): Promise<SearchCasesResponse> {
+  sort?: CaseSearchSort[],
+) {
+  const person: CaseSearchRequest['data']['person'] = {};
+  if (filters.firstName) person.firstName = filters.firstName.trim();
+  if (filters.lastName) person.lastName = filters.lastName.trim();
+  if (filters.organization) person.organization = filters.organization.trim();
+  if (filters.idnumber?.length) person.idnumber = filters.idnumber;
+  if (filters.payCode) person.payCode = filters.payCode.trim();
+
+  const data: CaseSearchRequest['data'] = {};
+  if (filters.regnumber) data.regnumber = filters.regnumber.trim();
+  if (filters.docNo) data.docNo = filters.docNo.trim();
+  if (Object.keys(person).length) data.person = person;
+
   const payload: CaseSearchRequest = {
-    data: buildSearchData(filters),
+    data,
     page: { number: pageNumber, size: CASE_PAGE_SIZE },
+    ...(sort?.length ? { sort } : {}),
   };
 
-  const response = await apiClient.post<SearchCasesResponse>(ApiConfig.epsAppsSearchPath, payload);
+  const response = await apiClient.post(
+    `${EpsApiBase}${ApiPaths.appsSearch}`,
+    payload,
+  );
   return response.data;
 }

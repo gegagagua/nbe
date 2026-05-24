@@ -32,8 +32,11 @@ export const debtorRegistryScreenStyles = StyleSheet.create({
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: Space.small,
     paddingHorizontal: Space.extraSmall,
+  },
+  backButton: {
+    padding: Space.extraSmall,
   },
   titleText: {
     fontSize: DebtorRegistryTypography.title,

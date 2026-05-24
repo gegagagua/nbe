@@ -1,4 +1,4 @@
-import { ApiConfig } from '@/constants/api';
+import { ApiConfig, UmApiBase } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 import type {
   CreateSessionApiEnvelope,
@@ -11,4 +11,8 @@ export async function createSession(body: CreateSessionRequest): Promise<CreateS
     data: body,
   });
   return res.data.data;
+}
+
+export async function logoutSession(): Promise<void> {
+  await apiClient.post(`${UmApiBase}/portal/v1/sessions/logout`);
 }

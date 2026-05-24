@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ export function LoginForm({
   onRegisterPress,
   onGuestPress,
   onIdentomatDemoPress,
+  onForgotPasswordPress,
 }: LoginFormProps) {
   const { t } = useTranslation();
 
@@ -73,6 +74,14 @@ export function LoginForm({
           disabled={submitDisabled}
         />
         <Pressable
+          style={loginFormStyles.forgotPasswordLink}
+          onPress={onForgotPasswordPress}
+          accessibilityRole="button">
+          <Text style={loginFormStyles.forgotPasswordLinkText}>
+            {t('forgotPassword.pageTitle')}
+          </Text>
+        </Pressable>
+        <Pressable
           style={loginFormStyles.registerLink}
           onPress={onRegisterPress}
           accessibilityRole="link">
@@ -82,14 +91,6 @@ export function LoginForm({
         </Pressable>
         <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
           <Text style={loginFormStyles.guestLinkText}>{t('login.guestLink')}</Text>
-        </Pressable>
-        <Pressable
-          style={loginFormStyles.identomatDemoButton}
-          onPress={onIdentomatDemoPress}
-          accessibilityRole="button">
-          <Text style={loginFormStyles.identomatDemoButtonLabel}>
-            {t('login.identomatDemoButton')}
-          </Text>
         </Pressable>
       </View>
     </View>
