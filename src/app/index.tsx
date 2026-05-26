@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
-import { ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator } from 'react-native';
 
 import { LoginForm } from '@/components/login/login-form';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
