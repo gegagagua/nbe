@@ -9,6 +9,14 @@ export type LoginScreenLayoutProps = {
   contentAlign?: 'center' | 'top';
 };
 
+export type LoginFaceIdProps = {
+  show: boolean;
+  label: string;
+  iconName: 'face-recognition' | 'fingerprint';
+  onPress: () => void;
+  disabled?: boolean;
+};
+
 export type LoginFormProps = {
   control: Control<LoginFormValues>;
   errors: FieldErrors<LoginFormValues>;
@@ -18,6 +26,7 @@ export type LoginFormProps = {
   onGuestPress: () => void;
   onIdentomatDemoPress: () => void;
   onForgotPasswordPress: () => void;
+  faceId?: LoginFaceIdProps;
 };
 
 export type LoginFormState = {
@@ -25,4 +34,5 @@ export type LoginFormState = {
   errors: FieldErrors<LoginFormValues>;
   onSubmit: () => void;
   submitDisabled: boolean;
+  submitWithCredentials: (values: LoginFormValues) => Promise<{ ok: boolean }>;
 };

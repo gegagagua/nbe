@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { resetPassword, sendOtp, verifyOtp } from '@/api/password-reset';
+import { clearFaceIdAll } from '@/lib/face-id-storage';
 import { isSimilarPasswordUsed, recordPasswordChange } from '@/lib/password-history-storage';
 import { showErrorToast } from '@/lib/show-error-toast';
 
@@ -42,6 +43,8 @@ export function useForgotPassword() {
     mutationFn: (newPassword: string) => resetPassword(phone, verifiedCode, newPassword),
     onSuccess: async (_data, newPassword) => {
       await recordPasswordChange(newPassword);
+      // password changed → previously stored Face ID credentials are no longer valid
+      await clearFaceIdAll();
       setStatusMessage({ type: 'success', text: t('forgotPassword.successMessage') });
       setTimeout(() => {
         router.replace('/');

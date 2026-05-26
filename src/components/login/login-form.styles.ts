@@ -80,4 +80,24 @@ export const loginFormStyles = StyleSheet.create({
     fontSize: Typography.medium,
     fontWeight: "600",
   },
+  faceIdButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Space.small,
+    marginTop: Space.small,
+    paddingVertical: Layout.buttonPaddingVertical,
+    borderRadius: Radius.small,
+    borderWidth: 1,
+    borderColor: LoginPalette.primary,
+    backgroundColor: LoginPalette.cardBackground,
+  },
+  faceIdButtonText: {
+    color: LoginPalette.primary,
+    fontSize: Typography.medium,
+    fontWeight: "600",
+  },
+  faceIdButtonDisabled: {
+    opacity: 0.5,
+  },
 });

@@ -84,3 +84,5 @@ export const ApiConfig = {
 
 export const SessionStorageKey = "nbe_session_token" as const;
 export const SessionUserProfileStorageKey = "nbe_session_user_profile" as const;
+export const FaceIdEnabledStorageKey = "nbe_face_id_enabled" as const;
+export const FaceIdCredentialsStorageKey = "nbe_face_id_credentials" as const;

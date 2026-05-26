@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -45,7 +45,7 @@ export function useLoginForm(): LoginFormState {
     },
   });
 
-  const { mutate, isPending } = loginMutation;
+  const { mutate, mutateAsync, isPending } = loginMutation;
 
   const onSubmit = useMemo(
     () =>
@@ -57,10 +57,23 @@ export function useLoginForm(): LoginFormState {
 
   const submitDisabled = isPending || !formState.isValid;
 
+  const submitWithCredentials = useCallback(
+    async (values: LoginFormValues): Promise<{ ok: boolean }> => {
+      try {
+        await mutateAsync(values);
+        return { ok: true };
+      } catch {
+        return { ok: false };
+      }
+    },
+    [mutateAsync],
+  );
+
   return {
     control,
     errors: formState.errors,
     onSubmit,
     submitDisabled,
+    submitWithCredentials,
   };
 }

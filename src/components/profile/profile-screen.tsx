@@ -1,68 +1,22 @@
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { LoginPalette } from '@/constants/login';
-import { isSimilarPasswordUsed, recordPasswordChange } from '@/lib/password-history-storage';
-import { setSessionUserProfile } from '@/lib/session-user-profile-storage';
 import { signOut } from '@/lib/sign-out';
+import { useProfileActions } from '@/hooks/use-profile-actions';
 import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
 
 import { ProfileChangePasswordSection } from './profile-change-password-section';
+import { ProfileFaceIdSection } from './profile-face-id-section';
 import { ProfileInfoSection } from './profile-info-section';
 import { profileScreenStyles as s } from './profile-screen.styles';
-
-type StatusMessage = { type: 'success' | 'error'; text: string };
 
 export function ProfileScreen() {
   const { t } = useTranslation();
   const { profile, isLoading } = useSessionUserProfile();
-  const [infoStatus, setInfoStatus] = useState<StatusMessage | null>(null);
-  const [pwStatus, setPwStatus] = useState<StatusMessage | null>(null);
-  const [isSavingInfo, setIsSavingInfo] = useState(false);
-  const [isChangingPw, setIsChangingPw] = useState(false);
-
-  const handleSaveInfo = useCallback(
-    async (values: { firstName: string; lastName: string }) => {
-      if (!profile) return;
-      setIsSavingInfo(true);
-      setInfoStatus(null);
-      try {
-        const updated = { ...profile, ...values };
-        await setSessionUserProfile(updated);
-        setInfoStatus({ type: 'success', text: t('profile.saveSuccess') });
-      } catch {
-        setInfoStatus({ type: 'error', text: t('profile.saveError') });
-      } finally {
-        setIsSavingInfo(false);
-      }
-    },
-    [profile, t],
-  );
-
-  const handleChangePassword = useCallback(
-    async (_currentPassword: string, newPassword: string) => {
-      setIsChangingPw(true);
-      setPwStatus(null);
-      try {
-        const alreadyUsed = await isSimilarPasswordUsed(newPassword);
-        if (alreadyUsed) {
-          setPwStatus({ type: 'error', text: t('validation.similarPasswordUsed') });
-          return;
-        }
-        // TODO: call change-password API when endpoint is available
-        await recordPasswordChange(newPassword);
-        setPwStatus({ type: 'success', text: t('profile.changePasswordSuccess') });
-      } catch {
-        setPwStatus({ type: 'error', text: t('profile.changePasswordError') });
-      } finally {
-        setIsChangingPw(false);
-      }
-    },
-    [t],
-  );
+  const actions = useProfileActions(profile);
 
   function handleSignOut() {
     void signOut();
@@ -108,20 +62,23 @@ export function ProfileScreen() {
           contentContainerStyle={s.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-
           <ProfileInfoSection
             profile={profile}
-            onSave={handleSaveInfo}
-            isSaving={isSavingInfo}
-            statusMessage={infoStatus}
+            onSave={actions.handleSaveInfo}
+            isSaving={actions.isSavingInfo}
+            statusMessage={actions.infoStatus}
           />
 
           <View style={s.divider} />
 
+          <ProfileFaceIdSection username={profile.username} />
+
+          <View style={s.divider} />
+
           <ProfileChangePasswordSection
-            onSubmit={handleChangePassword}
-            isSubmitting={isChangingPw}
-            statusMessage={pwStatus}
+            onSubmit={actions.handleChangePassword}
+            isSubmitting={actions.isChangingPw}
+            statusMessage={actions.pwStatus}
           />
 
           <Pressable

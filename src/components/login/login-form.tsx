@@ -1,9 +1,11 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { LoginPalette } from '@/constants/login';
 import type { LoginFormProps } from '@/types/login';
 
 import { LoginBrandHeader } from './login-brand-header';
@@ -18,6 +20,7 @@ export function LoginForm({
   onGuestPress,
   onIdentomatDemoPress,
   onForgotPasswordPress,
+  faceId,
 }: LoginFormProps) {
   const { t } = useTranslation();
 
@@ -73,6 +76,24 @@ export function LoginForm({
           onPress={() => void onSubmit()}
           disabled={submitDisabled}
         />
+        {faceId?.show ? (
+          <Pressable
+            style={[
+              loginFormStyles.faceIdButton,
+              faceId.disabled && loginFormStyles.faceIdButtonDisabled,
+            ]}
+            onPress={faceId.onPress}
+            disabled={faceId.disabled}
+            accessibilityRole="button"
+            accessibilityLabel={faceId.label}>
+            <MaterialCommunityIcons
+              name={faceId.iconName}
+              size={20}
+              color={LoginPalette.primary}
+            />
+            <Text style={loginFormStyles.faceIdButtonText}>{faceId.label}</Text>
+          </Pressable>
+        ) : null}
         <Pressable
           style={loginFormStyles.forgotPasswordLink}
           onPress={onForgotPasswordPress}

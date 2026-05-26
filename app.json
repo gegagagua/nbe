@@ -41,7 +41,13 @@
         }
       ],
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "ნება დართეთ აპს Face ID-ის გამოყენება სწრაფი ავტორიზაციისთვის."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
