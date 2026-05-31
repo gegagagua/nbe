@@ -11,6 +11,7 @@ export const LoginPalette = {
   logoBlue: '#2b436c',
   placeholderMuted: '#6b7a90',
   errorText: '#b42318',
+  successText: '#1a7f37',
 } as const;
 
 export const LoginElevation = {

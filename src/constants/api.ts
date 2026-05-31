@@ -1,6 +1,9 @@
 // ── User Management ──────────────────────────────────────────────────────────
 export const UmApiBase = "https://nbe-eps-um-api.staging.cloud.gov.ge";
 
+// Public (unauthenticated) UM endpoints live on the testing host.
+export const UmPubApiBase = "http://nbe-eps-um-api.testing.cloud.gov.ge";
+
 // ── EPS-API (cases) ───────────────────────────────────────────────────────────
 export const EpsApiBase = "https://nbe-eps-api.staging.cloud.gov.ge";
 
@@ -31,6 +34,13 @@ export const ApiPaths = {
   otpSend: "/portal/v1/otp/send",
   otpVerify: "/portal/v1/otp/verify",
   passwordReset: "/portal/v1/password/reset",
+
+  // Public (unauthenticated)
+  usersCreate: "/portal-pub/v1/users",
+
+  // External (X-User-ID gateway header)
+  userPasswordUpdate: "/external/v1/users/password",
+  userById: (id: number | string) => `/external/v1/users/${id}`,
 
   // EPS-API — cases
   appsSearch: "/portal/v1/apps/search",

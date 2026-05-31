@@ -7,13 +7,13 @@ import { createRegisterPhysicalSchema } from '@/schemas/register-physical.schema
 import type { RegisterPhysicalValues } from '@/types/register-form-values';
 
 const defaultValues: RegisterPhysicalValues = {
-  personalId: '',
-  actualAddress: '',
-  phone: '',
-  password: '',
-  confirmPassword: '',
+  personalId: '01008057849',
+  actualAddress: 'Mindeli',
+  phone: '597887736',
+  password: 'NiNuca199@',
+  confirmPassword: 'NiNuca199@',
   legalAddress: '',
-  email: '',
+  email: 'gegagagua@gmail.com',
 };
 
 export function useRegisterPhysicalForm(onValidSubmit: (values: RegisterPhysicalValues) => void) {

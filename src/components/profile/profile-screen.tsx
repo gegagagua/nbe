@@ -15,8 +15,8 @@ import { profileScreenStyles as s } from './profile-screen.styles';
 
 export function ProfileScreen() {
   const { t } = useTranslation();
-  const { profile, isLoading } = useSessionUserProfile();
-  const actions = useProfileActions(profile);
+  const { profile, isLoading, updateProfile } = useSessionUserProfile();
+  const actions = useProfileActions({ profile, onProfileUpdated: updateProfile });
 
   function handleSignOut() {
     void signOut();

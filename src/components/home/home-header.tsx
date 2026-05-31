@@ -15,6 +15,7 @@ import {
 } from '@/constants/home-dashboard';
 import { LoginInteraction } from '@/constants/login';
 import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
+import { isGuestMode } from '@/lib/guest-mode';
 import type { HomeHeaderProps } from '@/types/home-dashboard';
 
 import { homeHeaderStyles } from './home-header.styles';
@@ -25,6 +26,13 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
   const api = useUnreadNotificationsCount({ enabled: !USE_CASE_LIST_LAYOUT_MOCK });
   const count = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadCount : api.count;
   const isLoading = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadLoading : api.isLoading;
+  const handleProfilePress = () => {
+    if (isGuestMode()) {
+      router.push('/');
+      return;
+    }
+    router.push('/profile');
+  };
 
   return (
     <View style={homeHeaderStyles.bar}>
@@ -52,7 +60,7 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
             style={homeHeaderStyles.actionPress}
             accessibilityRole="button"
             accessibilityLabel={profileA11yLabel}
-            onPress={() => router.push('/profile')}>
+            onPress={handleProfilePress}>
             <MaterialCommunityIcons
               name="account-circle-outline"
               size={HomeDashboardLayoutConst.headerProfileIconSize}

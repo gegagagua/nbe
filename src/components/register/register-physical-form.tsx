@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { LoginPalette } from '@/constants/login';

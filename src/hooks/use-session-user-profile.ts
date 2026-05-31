@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import i18n from '@/i18n/i18n';
 import { getSessionUserProfile } from '@/lib/session-user-profile-storage';
 import type { SessionUserProfileBrief } from '@/types/session';
+
+function deriveDisplayName(p: SessionUserProfileBrief | null): string {
+  const name = p ? `${p.firstName} ${p.lastName}`.trim() : '';
+  return name || i18n.t('home.userFallback');
+}
 
 export function useSessionUserProfile() {
   const [displayName, setDisplayName] = useState<string>(() =>
@@ -17,10 +22,7 @@ export function useSessionUserProfile() {
       if (!active) return;
       setProfile(p);
       setIsLoading(false);
-      if (p) {
-        const name = `${p.firstName} ${p.lastName}`.trim();
-        if (name) setDisplayName(name);
-      }
+      setDisplayName(deriveDisplayName(p));
     });
     return () => { active = false; };
   }, []);
@@ -29,13 +31,17 @@ export function useSessionUserProfile() {
     const onLang = () => {
       void getSessionUserProfile().then((p) => {
         setProfile(p);
-        const name = p ? `${p.firstName} ${p.lastName}`.trim() : '';
-        setDisplayName(name || i18n.t('home.userFallback'));
+        setDisplayName(deriveDisplayName(p));
       });
     };
     i18n.on('languageChanged', onLang);
     return () => { i18n.off('languageChanged', onLang); };
   }, []);
 
-  return { displayName, profile, isLoading };
+  const updateProfile = useCallback((next: SessionUserProfileBrief) => {
+    setProfile(next);
+    setDisplayName(deriveDisplayName(next));
+  }, []);
+
+  return { displayName, profile, isLoading, updateProfile };
 }
