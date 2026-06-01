@@ -1,43 +1,56 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-import { z } from 'zod';
 
 import { Input } from '@/components/ui/input';
+import {
+  createProfileInfoEditSchema,
+  type ProfileInfoEditValues,
+} from '@/schemas/profile-info-edit.schema';
 import type { SessionUserProfileBrief } from '@/types/session';
 
 import { profileScreenStyles as s } from './profile-screen.styles';
 
-type EditValues = { firstName: string; lastName: string };
-
 type Props = {
   profile: SessionUserProfileBrief;
-  onSave: (values: EditValues) => Promise<void>;
+  idnumber?: string | null;
+  address: string;
+  canEdit?: boolean;
+  onSave: (values: ProfileInfoEditValues) => Promise<void>;
   isSaving: boolean;
   statusMessage: { type: 'success' | 'error'; text: string } | null;
 };
 
-function createEditSchema(t: ReturnType<typeof useTranslation>['t']) {
-  return z.object({
-    firstName: z.string().trim().min(1, t('validation.requiredFirstName')),
-    lastName: z.string().trim().min(1, t('validation.requiredLastName')),
-  });
+function toFormValues(profile: SessionUserProfileBrief, address: string): ProfileInfoEditValues {
+  return { firstName: profile.firstName, lastName: profile.lastName, address };
 }
 
-export function ProfileInfoSection({ profile, onSave, isSaving, statusMessage }: Props) {
+export function ProfileInfoSection({
+  profile,
+  idnumber,
+  address,
+  canEdit = true,
+  onSave,
+  isSaving,
+  statusMessage,
+}: Props) {
   const { t, i18n } = useTranslation();
   const [editing, setEditing] = useState(false);
-  const schema = useMemo(() => createEditSchema(t), [t, i18n.language]);
+  const schema = useMemo(() => createProfileInfoEditSchema(t), [t, i18n.language]);
 
-  const { control, handleSubmit, formState, reset } = useForm<EditValues>({
+  const { control, handleSubmit, formState, reset } = useForm<ProfileInfoEditValues>({
     resolver: zodResolver(schema),
-    defaultValues: { firstName: profile.firstName, lastName: profile.lastName },
+    defaultValues: toFormValues(profile, address),
   });
 
+  useEffect(() => {
+    reset(toFormValues(profile, address));
+  }, [profile.firstName, profile.lastName, address, reset]);
+
   function handleCancel() {
-    reset({ firstName: profile.firstName, lastName: profile.lastName });
+    reset(toFormValues(profile, address));
     setEditing(false);
   }
 
@@ -70,9 +83,6 @@ export function ProfileInfoSection({ profile, onSave, isSaving, statusMessage }:
           ) : (
             <Text style={s.valueText}>{profile.firstName}</Text>
           )}
-          {editing && formState.errors.firstName?.message ? (
-            <Text style={s.fieldError}>{formState.errors.firstName.message}</Text>
-          ) : null}
         </View>
 
         <View style={s.fieldRow}>
@@ -94,14 +104,45 @@ export function ProfileInfoSection({ profile, onSave, isSaving, statusMessage }:
           ) : (
             <Text style={s.valueText}>{profile.lastName}</Text>
           )}
-          {editing && formState.errors.lastName?.message ? (
-            <Text style={s.fieldError}>{formState.errors.lastName.message}</Text>
-          ) : null}
         </View>
+
+        {idnumber ? (
+          <View style={s.fieldRow}>
+            <Text style={s.label}>{t('profile.labelPersonalId')}</Text>
+            <Text style={[s.valueText, s.valueDisabled]}>{idnumber}</Text>
+          </View>
+        ) : null}
+
+        {canEdit ? (
+          <View style={s.fieldRow}>
+            <Text style={s.label}>{t('profile.labelAddress')}</Text>
+            {editing ? (
+              <Controller
+                control={control}
+                name="address"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder={t('profile.labelAddress')}
+                    errorMessage={formState.errors.address?.message}
+                  />
+                )}
+              />
+            ) : (
+              <Text style={s.valueText}>{address || '—'}</Text>
+            )}
+          </View>
+        ) : null}
       </View>
 
       {statusMessage ? (
-        <Text style={[s.statusMessage, statusMessage.type === 'success' ? s.statusSuccess : s.statusError]}>
+        <Text
+          style={[
+            s.statusMessage,
+            statusMessage.type === 'success' ? s.statusSuccess : s.statusError,
+          ]}>
           {statusMessage.text}
         </Text>
       ) : null}
@@ -124,7 +165,11 @@ export function ProfileInfoSection({ profile, onSave, isSaving, statusMessage }:
           </Pressable>
         </View>
       ) : (
-        <Pressable style={s.buttonOutline} onPress={() => setEditing(true)} accessibilityRole="button">
+        <Pressable
+          style={[s.buttonOutline, !canEdit && s.buttonDisabled]}
+          onPress={() => setEditing(true)}
+          disabled={!canEdit}
+          accessibilityRole="button">
           <Text style={s.buttonOutlineText}>{t('profile.editButton')}</Text>
         </Pressable>
       )}

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { LoginElevation, LoginPalette } from '@/constants/login';
 import { Radius, Space, Typography } from '@/constants/theme';
 
-export const otpStepStyles = StyleSheet.create({
+export const forgotPasswordIdentityStepStyles = StyleSheet.create({
   card: {
     backgroundColor: LoginPalette.cardBackground,
     borderRadius: Radius.medium,
@@ -26,20 +26,6 @@ export const otpStepStyles = StyleSheet.create({
     color: LoginPalette.bodyText,
     textAlign: 'center',
   },
-  timerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Space.extraSmall,
-  },
-  timerText: {
-    fontSize: Typography.medium,
-    color: LoginPalette.primary,
-    fontWeight: '600',
-  },
-  timerExpired: {
-    color: LoginPalette.errorText,
-  },
   fieldRow: {
     gap: Space.extraSmall,
   },
@@ -47,21 +33,15 @@ export const otpStepStyles = StyleSheet.create({
     color: LoginPalette.errorText,
     fontSize: Typography.small,
   },
-  expiredMessage: {
+  statusMessage: {
     fontSize: Typography.small,
-    color: LoginPalette.errorText,
     textAlign: 'center',
+    fontWeight: '600',
   },
-  resendButton: {
-    alignItems: 'center',
-    paddingTop: Space.extraSmall,
+  statusSuccess: {
+    color: '#1a7f37',
   },
-  resendButtonText: {
-    color: LoginPalette.primary,
-    fontSize: Typography.small,
-    textDecorationLine: 'underline',
-  },
-  resendButtonDisabled: {
-    opacity: 0.4,
+  statusError: {
+    color: LoginPalette.errorText,
   },
 });

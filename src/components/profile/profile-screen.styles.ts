@@ -75,6 +75,9 @@ export const profileScreenStyles = StyleSheet.create({
     backgroundColor: '#f5f7fa',
     borderRadius: Radius.extraSmall,
   },
+  valueDisabled: {
+    color: LoginPalette.placeholderMuted,
+  },
   fieldError: {
     fontSize: Typography.small,
     color: LoginPalette.errorText,

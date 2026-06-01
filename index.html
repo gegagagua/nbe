@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        fetch('https://nbe-eps-um-api.staging.cloud.gov.ge/external/v1/users/12', {
+            method: 'GET',
+            headers: {
+                'accept': '*/*',
+                'X-User-ID': '12',
+            },
+        })
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data?.message ?? `Error ${res.status}`);
+                }
+                console.log('User data:', data);
+            })
+            .catch((err) => {
+                console.error('Error:', err.message);
+            });
+
+        fetch('http://nbe-eps-um-api.testing.cloud.gov.ge/portal-pub/v1/users/verification/phone', {
+            method: 'POST',
+            headers: {
+                'accept': '*/*',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                data: {
+                    userId: 21232,
+                    code: '804741',
+                },
+            }),
+        })
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data?.message ?? `Error ${res.status}`);
+                }
+                console.log('Response:', data);
+            })
+            .catch((err) => {
+                console.error('Error:', err.message);
+            });
+    </script>
+</body>
+</html>

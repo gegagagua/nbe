@@ -5,7 +5,7 @@ import { trimmedNonEmpty } from '@/schemas/fields';
 
 const PUNCTUATION_RE = /[~!@#$%^&*()_+`\-={}[\]|\\:";'<>,.?/]/;
 const PERSONAL_ID_RE = /^\d{11}$/;
-const PHONE_RE = /^\d{9}$/;
+const PHONE_RE = /^(\d{9}|995\d{9})$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function createRegisterPhysicalSchema(t: TFunction) {

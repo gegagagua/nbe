@@ -4,9 +4,11 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-nati
 
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { LoginPalette } from '@/constants/login';
-import { signOut } from '@/lib/sign-out';
 import { useProfileActions } from '@/hooks/use-profile-actions';
 import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
+import { useUserDetail } from '@/hooks/use-user-detail';
+import { resolveUserAddress } from '@/lib/resolve-user-address';
+import { signOut } from '@/lib/sign-out';
 
 import { ProfileChangePasswordSection } from './profile-change-password-section';
 import { ProfileFaceIdSection } from './profile-face-id-section';
@@ -16,7 +18,13 @@ import { profileScreenStyles as s } from './profile-screen.styles';
 export function ProfileScreen() {
   const { t } = useTranslation();
   const { profile, isLoading, updateProfile } = useSessionUserProfile();
-  const actions = useProfileActions({ profile, onProfileUpdated: updateProfile });
+  const { detail, refetch } = useUserDetail(profile?.id);
+  const actions = useProfileActions({
+    profile,
+    detail,
+    onProfileUpdated: updateProfile,
+    onDetailRefetch: refetch,
+  });
 
   function handleSignOut() {
     void signOut();
@@ -64,6 +72,9 @@ export function ProfileScreen() {
           showsVerticalScrollIndicator={false}>
           <ProfileInfoSection
             profile={profile}
+            idnumber={detail?.idnumber?.trim() || undefined}
+            address={resolveUserAddress(detail) ?? ''}
+            canEdit={detail !== null}
             onSave={actions.handleSaveInfo}
             isSaving={actions.isSavingInfo}
             statusMessage={actions.infoStatus}

@@ -43,20 +43,6 @@ export function RegisterPhysicalForm({ onValidSubmit }: Props) {
         required
         keyboardType="phone-pad"
       />
-      <RegisterFormField
-        control={control}
-        name="password"
-        placeholder={t('login.registerPhysicalPassword')}
-        required
-        secureTextEntry
-      />
-      <RegisterFormField
-        control={control}
-        name="confirmPassword"
-        placeholder={t('login.registerPasswordConfirm')}
-        required
-        secureTextEntry
-      />
 
       {/* Optional fields */}
       <RegisterFormField
@@ -70,6 +56,21 @@ export function RegisterPhysicalForm({ onValidSubmit }: Props) {
         name="email"
         placeholder={t('login.registerPhysicalEmail')}
         keyboardType="email-address"
+      />
+
+      <RegisterFormField
+        control={control}
+        name="password"
+        placeholder={t('login.registerPhysicalPassword')}
+        required
+        secureTextEntry
+      />
+      <RegisterFormField
+        control={control}
+        name="confirmPassword"
+        placeholder={t('login.registerPasswordConfirm')}
+        required
+        secureTextEntry
       />
 
       <View style={registerFormActionsStyles.submit}>

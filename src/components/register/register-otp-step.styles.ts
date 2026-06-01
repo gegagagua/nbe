@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { LoginElevation, LoginPalette } from '@/constants/login';
 import { Radius, Space, Typography } from '@/constants/theme';
 
-export const phoneStepStyles = StyleSheet.create({
+export const registerOtpStepStyles = StyleSheet.create({
   card: {
     backgroundColor: LoginPalette.cardBackground,
     borderRadius: Radius.medium,
@@ -21,11 +21,40 @@ export const phoneStepStyles = StyleSheet.create({
     color: LoginPalette.titleText,
     textAlign: 'center',
   },
+  description: {
+    fontSize: Typography.medium,
+    color: LoginPalette.bodyText,
+    textAlign: 'center',
+  },
+  timerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Space.extraSmall,
+  },
+  timerText: {
+    fontSize: Typography.medium,
+    color: LoginPalette.primary,
+    fontWeight: '600',
+  },
+  timerExpired: {
+    color: LoginPalette.errorText,
+  },
   fieldRow: {
     gap: Space.extraSmall,
   },
-  fieldError: {
-    color: LoginPalette.errorText,
+  expiredMessage: {
     fontSize: Typography.small,
+    color: LoginPalette.errorText,
+    textAlign: 'center',
+  },
+  backButton: {
+    alignItems: 'center',
+    paddingTop: Space.extraSmall,
+  },
+  backButtonText: {
+    color: LoginPalette.primary,
+    fontSize: Typography.small,
+    textDecorationLine: 'underline',
   },
 });

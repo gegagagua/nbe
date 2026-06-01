@@ -1,10 +1,8 @@
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NewPasswordStep } from '@/components/forgot-password/new-password-step';
-import { OtpStep } from '@/components/forgot-password/otp-step';
-import { PhoneStep } from '@/components/forgot-password/phone-step';
+import { ForgotPasswordIdentityStep } from '@/components/forgot-password/forgot-password-identity-step';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { LoginPalette } from '@/constants/login';
 import { Space, Typography } from '@/constants/theme';
@@ -12,17 +10,7 @@ import { useForgotPassword } from '@/hooks/use-forgot-password';
 
 export default function ForgotPasswordRoute() {
   const { t } = useTranslation();
-  const {
-    step,
-    statusMessage,
-    handlePhoneSubmit,
-    handleOtpVerify,
-    handleResendOtp,
-    handleNewPasswordSubmit,
-    isSendingOtp,
-    isVerifyingOtp,
-    isResettingPassword,
-  } = useForgotPassword();
+  const { statusMessage, handleSubmit, isSubmitting } = useForgotPassword();
 
   return (
     <LoginScreenLayout title={t('forgotPassword.pageTitle')} contentAlign="top">
@@ -39,24 +27,11 @@ export default function ForgotPasswordRoute() {
         </Pressable>
 
         <View style={styles.content}>
-          {step === 'phone' && (
-            <PhoneStep onSubmit={handlePhoneSubmit} isSubmitting={isSendingOtp} />
-          )}
-          {step === 'otp' && (
-            <OtpStep
-              onVerify={handleOtpVerify}
-              onResend={handleResendOtp}
-              isVerifying={isVerifyingOtp}
-              isResending={isSendingOtp}
-            />
-          )}
-          {step === 'newPassword' && (
-            <NewPasswordStep
-              onSubmit={(pw) => void handleNewPasswordSubmit(pw)}
-              isSubmitting={isResettingPassword}
-              statusMessage={statusMessage}
-            />
-          )}
+          <ForgotPasswordIdentityStep
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            statusMessage={statusMessage}
+          />
         </View>
       </ScrollView>
     </LoginScreenLayout>
@@ -79,7 +54,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    paddingHorizontal: Space.medium,
     paddingTop: Space.medium,
   },
 });

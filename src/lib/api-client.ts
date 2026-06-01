@@ -21,6 +21,9 @@ function isAuthRequest(config: InternalAxiosRequestConfig) {
 function isPublicEndpoint(url: string): boolean {
   return (
     url.endsWith(ApiPaths.usersCreate) ||
+    url.endsWith(ApiPaths.usersVerifyPhone) ||
+    url.endsWith(ApiPaths.usersVerificationCheck) ||
+    url.endsWith(ApiPaths.usersResetPassword) ||
     url === ApiPaths.otpSend ||
     url === ApiPaths.otpVerify ||
     url === ApiPaths.passwordReset ||
