@@ -33,6 +33,8 @@ export type CheckVerificationRequest = {
   verificationId: number;
 };
 
+import type { UserAuthority } from '@/types/user-authority';
+
 export type UserAgencyBrief = {
   id: number;
   address?: string;
@@ -51,6 +53,7 @@ export type UserDetail = {
   prntUserId?: number | null;
   contacts?: UserContact[];
   userGroups?: UserGroupFromApi[];
+  authorities?: UserAuthority[];
 };
 
 export type GetUserResponse = {
@@ -94,6 +97,8 @@ export type UpdateUserRequest = {
   idnumber?: string;
   realAddress?: string;
   legalAddress?: string;
+  phone?: string;
+  email?: string;
   prntUserId?: number;
   contacts?: UserContact[];
   userGroups?: UserGroup[];

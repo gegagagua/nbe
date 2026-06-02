@@ -7,7 +7,8 @@ import { LoginPalette } from '@/constants/login';
 import { useProfileActions } from '@/hooks/use-profile-actions';
 import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
 import { useUserDetail } from '@/hooks/use-user-detail';
-import { resolveUserAddress } from '@/lib/resolve-user-address';
+import { useVerifyCurrentPassword } from '@/hooks/use-verify-current-password';
+import { resolveUserEmail, resolveUserPhone } from '@/lib/resolve-user-contacts';
 import { signOut } from '@/lib/sign-out';
 
 import { ProfileChangePasswordSection } from './profile-change-password-section';
@@ -17,12 +18,13 @@ import { profileScreenStyles as s } from './profile-screen.styles';
 
 export function ProfileScreen() {
   const { t } = useTranslation();
-  const { profile, isLoading, updateProfile } = useSessionUserProfile();
+  const { profile, isLoading } = useSessionUserProfile();
+
   const { detail, refetch } = useUserDetail(profile?.id);
+  const verifyPassword = useVerifyCurrentPassword(profile?.username);
   const actions = useProfileActions({
     profile,
     detail,
-    onProfileUpdated: updateProfile,
     onDetailRefetch: refetch,
   });
 
@@ -73,7 +75,10 @@ export function ProfileScreen() {
           <ProfileInfoSection
             profile={profile}
             idnumber={detail?.idnumber?.trim() || undefined}
-            address={resolveUserAddress(detail) ?? ''}
+            phone={resolveUserPhone(detail?.contacts)}
+            email={resolveUserEmail(detail?.contacts)}
+            realAddress={detail?.realAddress?.trim() ?? ''}
+            legalAddress={detail?.legalAddress?.trim() ?? ''}
             canEdit={detail !== null}
             onSave={actions.handleSaveInfo}
             isSaving={actions.isSavingInfo}
@@ -82,7 +87,11 @@ export function ProfileScreen() {
 
           <View style={s.divider} />
 
-          <ProfileFaceIdSection username={profile.username} />
+          <ProfileFaceIdSection
+            username={profile.username}
+            authorities={detail?.authorities ?? []}
+            verifyPassword={verifyPassword}
+          />
 
           <View style={s.divider} />
 

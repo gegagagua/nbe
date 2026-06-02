@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native';
@@ -17,6 +17,12 @@ function LoginScreenContent() {
   const login = useLoginForm();
   const faceId = useFaceId();
   const [isFaceIdLoading, setIsFaceIdLoading] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      void faceId.refresh();
+    }, [faceId.refresh]),
+  );
 
   function handleGuestPress() {
     setGuestMode(true);

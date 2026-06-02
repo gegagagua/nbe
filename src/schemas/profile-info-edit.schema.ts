@@ -1,18 +1,35 @@
 import type { TFunction } from 'i18next';
 import { z } from 'zod';
 
-import { trimmedNonEmpty } from '@/schemas/fields';
+const PHONE_RE = /^(\d{9}|995\d{9})$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type ProfileInfoEditValues = {
-  firstName: string;
-  lastName: string;
-  address: string;
+  realAddress: string;
+  legalAddress: string;
+  phone: string;
+  email: string;
 };
+
+function optionalPhone(t: TFunction) {
+  return z
+    .string()
+    .trim()
+    .refine((v) => !v || PHONE_RE.test(v), { message: t('validation.invalidPhone') });
+}
+
+function optionalEmail(t: TFunction) {
+  return z
+    .string()
+    .trim()
+    .refine((v) => !v || EMAIL_RE.test(v), { message: t('validation.invalidEmail') });
+}
 
 export function createProfileInfoEditSchema(t: TFunction) {
   return z.object({
-    firstName: trimmedNonEmpty(t('validation.requiredFirstName')),
-    lastName: trimmedNonEmpty(t('validation.requiredLastName')),
-    address: trimmedNonEmpty(t('validation.requiredActualAddress')),
+    realAddress: z.string().trim(),
+    legalAddress: z.string().trim(),
+    phone: optionalPhone(t),
+    email: optionalEmail(t),
   });
 }

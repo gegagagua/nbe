@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ModalBackdrop } from '@/components/ui/modal-backdrop';
 import { LoginPalette } from '@/constants/login';
 import { Radius, Space, Typography } from '@/constants/theme';
 import { getPasswordHistory, type PasswordHistoryEntry } from '@/lib/password-history-storage';
@@ -44,7 +45,7 @@ export function PasswordHistoryModal({ visible, onClose }: PasswordHistoryModalP
       animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent>
-      <View style={styles.overlay}>
+      <ModalBackdrop onClose={onClose} style={styles.overlay}>
         <View style={styles.sheet}>
           <Text style={styles.title}>{t('passwordHistory.modalTitle')}</Text>
 
@@ -77,7 +78,7 @@ export function PasswordHistoryModal({ visible, onClose }: PasswordHistoryModalP
             <Text style={styles.closeButtonText}>{t('passwordHistory.closeButton')}</Text>
           </Pressable>
         </View>
-      </View>
+      </ModalBackdrop>
     </Modal>
   );
 }

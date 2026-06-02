@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createSession } from '@/api/sessions';
 import { mapLoginError } from '@/lib/map-login-error';
+import { syncFaceIdCredentialsIfEnabled } from '@/lib/sync-face-id-credentials';
 import { setSessionToken } from '@/lib/session-token-storage';
 import { setSessionUserProfile } from '@/lib/session-user-profile-storage';
 import { showErrorToast } from '@/lib/show-error-toast';
@@ -30,13 +31,17 @@ export function useLoginForm(): LoginFormState {
         username: payload.username,
         password: payload.password,
       }),
-    onSuccess: async (data) => {
+    onSuccess: async (data, variables) => {
       await setSessionToken(data.token);
       await setSessionUserProfile({
         id: data.user.id,
         username: data.user.username ?? '',
         firstName: data.user.firstName ?? '',
         lastName: data.user.lastName ?? '',
+      });
+      await syncFaceIdCredentialsIfEnabled({
+        username: variables.username,
+        password: variables.password,
       });
       router.replace('/dashboard');
     },

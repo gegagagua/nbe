@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
 
+import { PasswordHistoryModal } from '@/components/home/password-history-modal';
 import { LoginPalette } from '@/constants/login';
 import { useProfileFaceIdToggle } from '@/hooks/use-profile-face-id-toggle';
+import type { UserAuthority } from '@/types/user-authority';
 
+import { ProfileAuthoritiesModal } from './profile-authorities-modal';
 import { ProfileFaceIdEnableModal } from './profile-face-id-enable-modal';
 import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
 import { profileScreenStyles as ps } from './profile-screen.styles';
@@ -12,29 +16,32 @@ type StatusMessage = { type: 'success' | 'error'; text: string };
 
 type Props = {
   username: string;
+  authorities?: UserAuthority[];
   verifyPassword?: (password: string) => Promise<boolean>;
   onStatus?: (msg: StatusMessage | null) => void;
 };
 
-export function ProfileFaceIdSection(props: Props) {
+export function ProfileFaceIdSection({ username, authorities = [], ...rest }: Props) {
   const { t } = useTranslation();
-  const ctrl = useProfileFaceIdToggle(props);
+  const ctrl = useProfileFaceIdToggle({ username, ...rest });
   const { faceId } = ctrl;
+  const [historyVisible, setHistoryVisible] = useState(false);
+  const [activitiesVisible, setActivitiesVisible] = useState(false);
 
   const rowLabel =
     faceId.kind === 'faceId'
       ? t('faceId.rowLabelFaceId')
       : faceId.kind === 'fingerprint'
-      ? t('faceId.rowLabelFingerprint')
-      : t('faceId.rowLabelBiometric');
+        ? t('faceId.rowLabelFingerprint')
+        : t('faceId.rowLabelBiometric');
 
   const description = !faceId.availability.hasHardware
     ? t('faceId.unavailableHardware')
     : !faceId.availability.isEnrolled
-    ? t('faceId.unavailableNotEnrolled')
-    : faceId.isEnabled
-    ? t('faceId.descriptionEnabled')
-    : t('faceId.descriptionDisabled');
+      ? t('faceId.unavailableNotEnrolled')
+      : faceId.isEnabled
+        ? t('faceId.descriptionEnabled')
+        : t('faceId.descriptionDisabled');
 
   return (
     <View style={ps.card}>
@@ -59,6 +66,21 @@ export function ProfileFaceIdSection(props: Props) {
         )}
       </View>
 
+      <View style={s.actionRow}>
+        <Pressable
+          style={s.actionButton}
+          onPress={() => setHistoryVisible(true)}
+          accessibilityRole="button">
+          <Text style={s.actionButtonText}>{t('passwordHistory.buttonLabel')}</Text>
+        </Pressable>
+        <Pressable
+          style={s.actionButton}
+          onPress={() => setActivitiesVisible(true)}
+          accessibilityRole="button">
+          <Text style={s.actionButtonText}>{t('profile.activitiesButton')}</Text>
+        </Pressable>
+      </View>
+
       {ctrl.statusMessage ? (
         <Text
           style={[
@@ -75,6 +97,12 @@ export function ProfileFaceIdSection(props: Props) {
         errorMessage={ctrl.modalError}
         onConfirm={(pw) => void ctrl.handleConfirmEnable(pw)}
         onClose={ctrl.closeModal}
+      />
+      <PasswordHistoryModal visible={historyVisible} onClose={() => setHistoryVisible(false)} />
+      <ProfileAuthoritiesModal
+        visible={activitiesVisible}
+        authorities={authorities}
+        onClose={() => setActivitiesVisible(false)}
       />
     </View>
   );

@@ -45,6 +45,9 @@ export const ApiPaths = {
   userPasswordUpdate: "/external/v1/users/password",
   userById: (id: number | string) => `/external/v1/users/${id}`,
 
+  // EPS-API — public guest
+  guestFineDebtCheck: "/portal-pub/v1/administrative-fines/debt/check",
+
   // EPS-API — cases
   appsSearch: "/portal/v1/apps/search",
   appById: (id: number | string) => `/portal/v1/apps/${id}`,

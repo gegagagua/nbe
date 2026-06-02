@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 
-import { ApiConfig, ApiPaths } from '@/constants/api';
+import { ApiConfig, ApiPaths, EpsApiBase } from '@/constants/api';
 import i18n from '@/i18n/i18n';
 import { logApiError, logApiRequest, logApiResponse } from '@/lib/api-log';
 import { clearSessionToken, getSessionToken } from '@/lib/session-token-storage';
@@ -24,6 +24,8 @@ function isPublicEndpoint(url: string): boolean {
     url.endsWith(ApiPaths.usersVerifyPhone) ||
     url.endsWith(ApiPaths.usersVerificationCheck) ||
     url.endsWith(ApiPaths.usersResetPassword) ||
+    url.includes(`${EpsApiBase}${ApiPaths.guestFineDebtCheck}`) ||
+    url.endsWith(ApiPaths.guestFineDebtCheck) ||
     url === ApiPaths.otpSend ||
     url === ApiPaths.otpVerify ||
     url === ApiPaths.passwordReset ||

@@ -69,4 +69,16 @@ export const kaCases = {
   detailPayButton: "გადახდა",
   detailPaySoonToast: "გადახდის მოდული მიერთდება სერვისის მიხედვით.",
   dateIsoPlaceholder: "YYYY-MM-DD",
+  guestFine: {
+    categoryHint:
+      "ვიზიტორს შეუძლია მხოლოდ ადმინისტრაციული ჯარიმის (08/1 კატეგორია) გადამოწმება და გადახდა.",
+    documentNumberLabel: "ჯარიმის ქვითრის/ოქმის ნომერი",
+    documentNumberPlaceholder: "ქვითრის ან ოქმის ნომერი",
+    checkButton: "დავალიანების შემოწმება",
+    debtAmountLabel: "დავალიანების ოდენობა",
+    notFound: "დავალიანება არ ფიქსირდება",
+    checkError: "დავალიანების შემოწმება ვერ მოხერხდა. სცადეთ თავიდან.",
+    requiredIdNumber: "შეიყვანეთ პირადი ნომერი ან საიდენტიფიკაციო კოდი.",
+    requiredDocumentNumber: "შეიყვანეთ ქვითრის ან ოქმის ნომერი.",
+  },
 } as const;

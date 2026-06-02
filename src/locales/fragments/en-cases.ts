@@ -69,4 +69,16 @@ export const enCases = {
   detailPayButton: 'Pay',
   detailPaySoonToast: 'The payment module will be connected according to the service.',
   dateIsoPlaceholder: 'YYYY-MM-DD',
+  guestFine: {
+    categoryHint:
+      'Visitors may only check and pay administrative fines (category 08/1).',
+    documentNumberLabel: 'Fine receipt / protocol number',
+    documentNumberPlaceholder: 'Receipt or protocol number',
+    checkButton: 'Check debt',
+    debtAmountLabel: 'Debt amount',
+    notFound: 'No debt on record',
+    checkError: 'Could not check the debt. Please try again.',
+    requiredIdNumber: 'Enter personal ID or identification code.',
+    requiredDocumentNumber: 'Enter the receipt or protocol number.',
+  },
 } as const;

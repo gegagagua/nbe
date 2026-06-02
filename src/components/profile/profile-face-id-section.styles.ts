@@ -5,6 +5,24 @@ import { LoginPalette } from '@/constants/login';
 import { Radius, Space, Typography } from '@/constants/theme';
 
 export const profileFaceIdSectionStyles = StyleSheet.create({
+  actionRow: {
+    flexDirection: 'row',
+    gap: Space.small,
+  },
+  actionButton: {
+    flex: 1,
+    borderRadius: Radius.small,
+    paddingVertical: Space.extraSmall,
+    paddingHorizontal: Space.small,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: LoginPalette.primary,
+  },
+  actionButtonText: {
+    color: LoginPalette.primary,
+    fontSize: Typography.small,
+    fontWeight: '600',
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

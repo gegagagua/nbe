@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { getUser } from '@/api/users';
-import type { UserDetail } from '@/types/users';
+import { getUser } from "@/api/users";
+import type { UserDetail } from "@/types/users";
 
 export function useUserDetail(userId: number | undefined) {
   const [detail, setDetail] = useState<UserDetail | null>(null);
@@ -12,9 +12,10 @@ export function useUserDetail(userId: number | undefined) {
     setIsLoading(true);
     try {
       const data = await getUser(userId);
+      console.log("data", data.authorities);
       setDetail(data);
     } catch (err: unknown) {
-      console.error('[useUserDetail]', err);
+      console.error("[useUserDetail]", err);
     } finally {
       setIsLoading(false);
     }

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useFaceId } from '@/hooks/use-face-id';
+import { verifyUserPassword } from '@/lib/verify-user-password';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
@@ -48,12 +49,12 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
       setIsSubmitting(true);
       setModalError(null);
       try {
-        if (verifyPassword) {
-          const ok = await verifyPassword(password);
-          if (!ok) {
-            setModalError(t('faceId.errorInvalidCredentials'));
-            return;
-          }
+        const passwordOk = verifyPassword
+          ? await verifyPassword(password)
+          : await verifyUserPassword(username, password);
+        if (!passwordOk) {
+          setModalError(t('faceId.errorInvalidCredentials'));
+          return;
         }
         const res = await faceId.enable({
           username,
