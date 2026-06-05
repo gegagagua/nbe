@@ -9,9 +9,9 @@ import type {
 export async function createSession(
   body: CreateSessionRequest,
 ): Promise<CreateSessionResponse> {
-  console.log("body", body);
+  console.log("body", BASE_URL, ApiPaths.sessions);
   const res = await apiClient.post<CreateSessionApiEnvelope>(
-    `${BASE_URL}${ApiPaths.sessions.slice(1)}`,
+    `${BASE_URL}${ApiPaths.sessions}`,
     {
       data: body,
     },

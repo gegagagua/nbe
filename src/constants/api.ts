@@ -1,4 +1,4 @@
-export const BASE_URL = "https://nbe-eps-gateway-api.testing.cloud.gov.ge/";
+export const BASE_URL = "https://nbe-eps-gateway-api.testing.cloud.gov.ge";
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
