@@ -5,8 +5,9 @@ import { getSessionUserProfile } from "@/lib/session-user-profile-storage";
 import type { SessionUserProfileBrief } from "@/types/session";
 
 function deriveDisplayName(p: SessionUserProfileBrief | null): string {
-  const name = p ? `${p.firstName} ${p.lastName}`.trim() : "";
-  return name || i18n.t("home.userFallback");
+  if (!p) return i18n.t("home.userFallback");
+  const name = `${p.firstName} ${p.lastName}`.trim();
+  return name || p.username.trim() || i18n.t("home.userFallback");
 }
 
 export function useSessionUserProfile() {

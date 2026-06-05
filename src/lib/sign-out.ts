@@ -1,13 +1,17 @@
-import { router } from 'expo-router';
+import { router } from "expo-router";
 
-import { logoutSession } from '@/api/sessions';
-import { clearSessionToken } from '@/lib/session-token-storage';
-import { clearSessionUserProfile } from '@/lib/session-user-profile-storage';
+import { setGuestMode } from "@/lib/guest-mode";
+import { clearAppQueryCache } from "@/lib/query-client";
+import { clearSessionToken } from "@/lib/session-token-storage";
+import { clearSessionUserProfile } from "@/lib/session-user-profile-storage";
 
 export async function signOut(): Promise<void> {
+  console.log("signOut");
   // fire-and-forget — don't wait for the server response
-  void logoutSession().catch(() => undefined);
+  // void logoutSession().catch(() => undefined);
 
+  clearAppQueryCache();
+  setGuestMode(false);
   await Promise.all([clearSessionToken(), clearSessionUserProfile()]);
-  router.replace('/');
+  router.replace("/");
 }

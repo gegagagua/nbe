@@ -12,7 +12,6 @@ export function useUserDetail(userId: number | undefined) {
     setIsLoading(true);
     try {
       const data = await getUser(userId);
-      console.log("data", data.authorities);
       setDetail(data);
     } catch (err: unknown) {
       console.error("[useUserDetail]", err);

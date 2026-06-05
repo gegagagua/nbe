@@ -1,38 +1,46 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { Pressable, Text, View } from "react-native";
 
-import { LocaleToggle } from '@/components/i18n/locale-toggle';
-import { UnreadCountBadge } from '@/components/ui/unread-count-badge';
+import { LocaleToggle } from "@/components/i18n/locale-toggle";
+import { UnreadCountBadge } from "@/components/ui/unread-count-badge";
 import {
-  CASE_SCREEN_HEADER_MOCK,
-  USE_CASE_LIST_LAYOUT_MOCK,
-} from '@/constants/case-list-layout-mock';
+    CASE_SCREEN_HEADER_MOCK,
+    USE_CASE_LIST_LAYOUT_MOCK,
+} from "@/constants/case-list-layout-mock";
 import {
-  HomeDashboardLayoutConst,
-  HomeDashboardPalette,
-} from '@/constants/home-dashboard';
-import { LoginInteraction } from '@/constants/login';
-import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
-import { isGuestMode } from '@/lib/guest-mode';
-import type { HomeHeaderProps } from '@/types/home-dashboard';
+    HomeDashboardLayoutConst,
+    HomeDashboardPalette,
+} from "@/constants/home-dashboard";
+import { LoginInteraction } from "@/constants/login";
+import { useUnreadNotificationsCount } from "@/hooks/use-unread-notifications-count";
+import { isGuestMode } from "@/lib/guest-mode";
+import type { HomeHeaderProps } from "@/types/home-dashboard";
 
-import { homeHeaderStyles } from './home-header.styles';
+import { signOut } from "@/lib/sign-out";
+import { homeHeaderStyles } from "./home-header.styles";
 
 export function HomeHeader({ displayName }: HomeHeaderProps) {
   const { t } = useTranslation();
   const isGuest = isGuestMode();
-  const profileA11yLabel = displayName.trim() || t('home.userFallback');
-  const api = useUnreadNotificationsCount({ enabled: !USE_CASE_LIST_LAYOUT_MOCK });
-  const count = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadCount : api.count;
-  const isLoading = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadLoading : api.isLoading;
+  const profileA11yLabel = displayName.trim() || t("home.userFallback");
+  const api = useUnreadNotificationsCount({
+    enabled: !USE_CASE_LIST_LAYOUT_MOCK,
+  });
+  const count = USE_CASE_LIST_LAYOUT_MOCK
+    ? CASE_SCREEN_HEADER_MOCK.unreadCount
+    : api.count;
+  const isLoading = USE_CASE_LIST_LAYOUT_MOCK
+    ? CASE_SCREEN_HEADER_MOCK.unreadLoading
+    : api.isLoading;
   const handleProfilePress = () => {
     if (isGuest) {
-      router.push('/');
+      router.push("/");
       return;
     }
-    router.push('/profile');
+    signOut();
+    router.push("/profile");
   };
 
   return (
@@ -43,15 +51,16 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
           pressed ? { opacity: LoginInteraction.pressedOpacity } : null,
         ]}
         accessibilityRole="button"
-        accessibilityLabel={t('home.headerLogoA11yLabel')}
-        accessibilityHint={t('home.headerLogoGoHomeA11yHint')}
-        onPress={() => router.navigate('/dashboard')}>
+        accessibilityLabel={t("home.headerLogoA11yLabel")}
+        accessibilityHint={t("home.headerLogoGoHomeA11yHint")}
+        onPress={() => router.navigate("/dashboard")}
+      >
         <Text style={homeHeaderStyles.logoGeo} numberOfLines={2}>
-          {t('home.headerLogoGeo')}
+          {t("home.headerLogoGeo")}
         </Text>
         <View style={homeHeaderStyles.logoDivider} />
         <Text style={homeHeaderStyles.logoEn} numberOfLines={2}>
-          {t('home.headerLogoEn')}
+          {t("home.headerLogoEn")}
         </Text>
       </Pressable>
       <View style={homeHeaderStyles.actions}>
@@ -61,7 +70,8 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
             style={homeHeaderStyles.actionPress}
             accessibilityRole="button"
             accessibilityLabel={profileA11yLabel}
-            onPress={handleProfilePress}>
+            onPress={handleProfilePress}
+          >
             <MaterialCommunityIcons
               name="account-circle-outline"
               size={HomeDashboardLayoutConst.headerProfileIconSize}

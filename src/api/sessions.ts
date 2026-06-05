@@ -9,7 +9,6 @@ import type {
 export async function createSession(
   body: CreateSessionRequest,
 ): Promise<CreateSessionResponse> {
-  console.log("body", BASE_URL, ApiPaths.sessions);
   const res = await apiClient.post<CreateSessionApiEnvelope>(
     `${BASE_URL}${ApiPaths.sessions}`,
     {
@@ -20,5 +19,5 @@ export async function createSession(
 }
 
 export async function logoutSession(): Promise<void> {
-  await apiClient.post(`${BASE_URL}/portal/v1/sessions/logout`);
+  await apiClient.post(`${BASE_URL}/um-portal/v1/sessions/logout`);
 }

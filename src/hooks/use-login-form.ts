@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { createSession } from "@/api/sessions";
+import { setGuestMode } from "@/lib/guest-mode";
 import { mapLoginError } from "@/lib/map-login-error";
 import { setSessionToken } from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
@@ -32,14 +33,15 @@ export function useLoginForm(): LoginFormState {
         password: payload.password,
       }),
     onSuccess: async (data, variables) => {
-      console.log("data", data);
+      console.log("data", data?.token);
       await setSessionToken(data.token);
       await setSessionUserProfile({
         id: data.user.id,
-        username: data.user.username ?? "",
+        username: data.user.username ?? data.user.idnumber ?? "",
         firstName: data.user.firstName ?? "",
         lastName: data.user.lastName ?? "",
       });
+      setGuestMode(false);
       await syncFaceIdCredentialsIfEnabled({
         username: variables.username,
         password: variables.password,

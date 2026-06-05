@@ -10,8 +10,9 @@ export type CreateSessionPayload = {
 export type SessionUser = {
   id: number;
   username: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
+  idnumber?: string;
   active: boolean;
 };
 

@@ -1,7 +1,9 @@
 import { QueryClient } from '@tanstack/react-query';
 
+let appQueryClient: QueryClient | null = null;
+
 export function createAppQueryClient() {
-  return new QueryClient({
+  appQueryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60_000,
@@ -12,4 +14,9 @@ export function createAppQueryClient() {
       },
     },
   });
+  return appQueryClient;
+}
+
+export function clearAppQueryCache(): void {
+  appQueryClient?.clear();
 }
