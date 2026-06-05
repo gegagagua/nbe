@@ -5,7 +5,7 @@ export const kaDebtors = {
   filtersExpand: "ფილტრების ჩვენება",
   filtersCollapse: "ფილტრების აკეცვა",
   searchApplicantPnLabel: "განმცხადებლის პირადი ნომერი",
-  searchApplicantPnPlaceholder: "მაგ. 01001070990",
+  searchApplicantPnPlaceholder: "პირადი ნომერი",
   searchSubjectIdLabel: "პირი რომელზეც მოთხოვნილია ამონაწერი",
   searchSubjectIdPlaceholder: "პირადი ნომერი/საიდენტიფიკაციო კოდი",
   searchHint:

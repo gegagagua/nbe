@@ -1,14 +1,14 @@
 export const kaAuth = {
   login: {
     pageTitle: "ავტორიზაცია",
-    usernamePlaceholder: "მომხმარებლის სახელი",
+    usernamePlaceholder: "პირადი ნომერი",
     passwordPlaceholder: "პაროლი",
     submit: "შესვლა",
     brandGeo: "აღსრულების ეროვნული ბიურო",
     brandEn: "NATIONAL BUREAU OF ENFORCEMENT",
     footerLeft:
       "© სსიპ „ციფრული მმართველობის სააგენტო“, 2026, ყველა უფლება დაცულია.",
-    loginUnauthorized: "მომხმარებლის სახელი ან პაროლი არასწორია.",
+    loginUnauthorized: "პირადი ნომერი ან პაროლი არასწორია.",
     loginNetworkError: "ქსელში შეცდომა. სცადეთ თავიდან.",
     loginGenericError: "შესვლა ვერ მოხერხდა. სცადეთ თავიდან.",
     guestLink: "ავტორიზაციის გარეშე გაგრძელება",
@@ -70,7 +70,7 @@ export const kaAuth = {
   },
   validation: {
     required: "შეავსეთ ველი.",
-    requiredUsername: "მიუთითეთ მომხმარებლის სახელი.",
+    requiredUsername: "მიუთითეთ პირადი ნომერი",
     requiredPassword: "მიუთითეთ პაროლი.",
     requiredFirstName: "მიუთითეთ სახელი.",
     requiredLastName: "მიუთითეთ გვარი.",

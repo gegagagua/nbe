@@ -1,22 +1,22 @@
-import { ApiPaths, UmPubApiBase } from "@/constants/api";
+import { ApiPaths, BASE_URL } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
 import type {
-  CheckVerificationRequest,
-  CreatePortalUserRequest,
-  CreatePortalUserResponse,
-  GetUserResponse,
-  UpdateUserPasswordRequest,
-  UpdateUserRequest,
-  UserDetail,
-  VerifyPhoneOtpRequest,
-  VerifyPhoneOtpResponse,
+    CheckVerificationRequest,
+    CreatePortalUserRequest,
+    CreatePortalUserResponse,
+    GetUserResponse,
+    UpdateUserPasswordRequest,
+    UpdateUserRequest,
+    UserDetail,
+    VerifyPhoneOtpRequest,
+    VerifyPhoneOtpResponse,
 } from "@/types/users";
 
 export async function createPortalUser(
   payload: CreatePortalUserRequest,
 ): Promise<number> {
   const response = await apiClient.post<CreatePortalUserResponse>(
-    `${UmPubApiBase}${ApiPaths.usersCreate}`,
+    `${BASE_URL}${ApiPaths.usersCreate}`,
     { data: payload },
   );
   return response.data.data.userId;
@@ -43,9 +43,12 @@ export async function checkVerification(verificationId: number): Promise<void> {
 }
 
 export async function getUser(userId: number): Promise<UserDetail> {
-  const response = await apiClient.get<GetUserResponse>(ApiPaths.userById(userId), {
-    headers: { "X-User-ID": String(userId) },
-  });
+  const response = await apiClient.get<GetUserResponse>(
+    ApiPaths.userById(userId),
+    {
+      headers: { "X-User-ID": String(userId) },
+    },
+  );
   return response.data.data;
 }
 

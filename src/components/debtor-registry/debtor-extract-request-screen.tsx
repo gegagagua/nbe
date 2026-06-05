@@ -7,6 +7,7 @@ import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { DebtorExtractMockSubject, debtorExtractMockApplicationNumber } from '@/constants/debtor-extract-mock';
 import { useDebtorExtractApplicant } from '@/hooks/use-debtor-extract-applicant';
+import { isGuestMode } from '@/lib/guest-mode';
 import type { DebtorExtractFlowPhase, DebtorExtractPaymentMethod } from '@/types/debtor-extract';
 import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-payment-options';
 
@@ -19,6 +20,9 @@ import { DebtorExtractSubheader } from './debtor-extract-subheader';
 export function DebtorExtractRequestScreen() {
   const { t } = useTranslation();
   const applicant = useDebtorExtractApplicant();
+  const isGuest = isGuestMode();
+  const [guestApplicantPersonalId, setGuestApplicantPersonalId] = useState('');
+  const [guestApplicantFullName, setGuestApplicantFullName] = useState('');
   const [phase, setPhase] = useState<DebtorExtractFlowPhase>('form');
   const [subjectId, setSubjectId] = useState<string>(DebtorExtractMockSubject.personalId);
   const [subjectName, setSubjectName] = useState<string>(DebtorExtractMockSubject.fullName);
@@ -53,8 +57,10 @@ export function DebtorExtractRequestScreen() {
         <ScrollView style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
           {phase === 'form' ? (
             <DebtorExtractPhaseForm
-              applicantPersonalId={applicant.personalId}
-              applicantFullName={applicant.fullName}
+              applicantPersonalId={isGuest ? guestApplicantPersonalId : applicant.personalId}
+              applicantFullName={isGuest ? guestApplicantFullName : applicant.fullName}
+              onApplicantPersonalId={isGuest ? setGuestApplicantPersonalId : undefined}
+              onApplicantFullName={isGuest ? setGuestApplicantFullName : undefined}
               subjectPersonalId={subjectId}
               onSubjectPersonalId={setSubjectId}
               subjectFullName={subjectName}

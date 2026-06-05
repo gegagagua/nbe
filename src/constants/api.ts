@@ -1,45 +1,18 @@
-// ── User Management ──────────────────────────────────────────────────────────
-export const UmApiBase = "https://nbe-eps-um-api.staging.cloud.gov.ge";
-
-// Public (unauthenticated) UM endpoints live on the testing host.
-export const UmPubApiBase = "https://nbe-eps-um-api.testing.cloud.gov.ge";
-
-// ── EPS-API (cases) ───────────────────────────────────────────────────────────
-export const EpsApiBase = "https://nbe-eps-api.staging.cloud.gov.ge";
-
-// ── EPS-MONEY-API ─────────────────────────────────────────────────────────────
-export const EpsMoneyApiBase = "https://nbe-eps-money-api.staging.cloud.gov.ge";
-
-// ── EPS-INSTALLMENT-API ───────────────────────────────────────────────────────
-export const EpsInstallmentApiBase =
-  "https://nbe-eps-installment-api.staging.cloud.gov.ge";
-
-// ── EPS-EAUCTION-API ──────────────────────────────────────────────────────────
-export const EpsEauctionApiBase =
-  "https://nbe-eps-eauction-api.staging.cloud.gov.ge";
-
-// ── EPS-MIA-API ───────────────────────────────────────────────────────────────
-export const EpsMiaApiBase = "https://nbe-eps-mia-api.staging.cloud.gov.ge";
-
-// ── EPS-SSA-API ───────────────────────────────────────────────────────────────
-export const EpsSsaApiBase = "https://nbe-eps-ssa-api.staging.cloud.gov.ge";
-
-// ── EPS-NAPR-API ──────────────────────────────────────────────────────────────
-export const EpsNaprApiBase = "https://nbe-eps-napr-api.staging.cloud.gov.ge";
+export const BASE_URL = "https://nbe-eps-gateway-api.testing.cloud.gov.ge/";
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
   // Auth
-  sessions: "/portal/v1/sessions",
-  otpSend: "/portal/v1/otp/send",
-  otpVerify: "/portal/v1/otp/verify",
-  passwordReset: "/portal/v1/password/reset",
+  sessions: "/um-portal/v1/sessions",
+  otpSend: "/um-portal/v1/otp/send",
+  otpVerify: "/um-portal/v1/otp/verify",
+  passwordReset: "/um-portal/v1/password/reset",
 
   // Public (unauthenticated)
-  usersCreate: "/portal-pub/v1/users",
-  usersVerifyPhone: "/portal-pub/v1/users/verification/phone",
-  usersVerificationCheck: "/portal-pub/v1/users/verification/check",
-  usersResetPassword: "/portal-pub/v1/users/reset-password",
+  usersCreate: "/um-portal-pub/v1/users",
+  usersVerifyPhone: "/um-portal-pub/v1/users/verification/phone",
+  usersVerificationCheck: "/um-portal-pub/v1/users/verification/check",
+  usersResetPassword: "/um-portal-pub/v1/users/reset-password",
 
   // External (X-User-ID gateway header)
   userPasswordUpdate: "/external/v1/users/password",
@@ -49,22 +22,25 @@ export const ApiPaths = {
   guestFineDebtCheck: "/portal-pub/v1/administrative-fines/debt/check",
 
   // EPS-API — cases
-  appsSearch: "/portal/v1/apps/search",
-  appById: (id: number | string) => `/portal/v1/apps/${id}`,
-  appStatuses: (appId: number | string) => `/portal/v1/app/${appId}/statuses`,
-  appStatusFiles: "/portal/v1/app/statuses/get-files",
-  appPersons: (appId: number | string) => `/portal/v1/persons/app/${appId}`,
-  appDemands: (appId: number | string) => `/portal/v1/demands/app/${appId}`,
+  appsSearch: "/eps-portal/v1/apps/search",
+  appById: (id: number | string) => `/eps-portal/v1/apps/${id}`,
+  appStatuses: (appId: number | string) =>
+    `/eps-portal/v1/app/${appId}/statuses`,
+  appStatusFiles: "/eps-portal/v1/app/statuses/get-files",
+  appPersons: (appId: number | string) => `/eps-portal/v1/persons/app/${appId}`,
+  appDemands: (appId: number | string) => `/eps-portal/v1/demands/app/${appId}`,
 
   // EPS-MONEY-API
   debtorMoney: (appId: number | string) =>
-    `/portal/v1/reg-money/debtor/app/${appId}`,
+    `/money-portal/v1/reg-money/debtor/app/${appId}`,
   creditorMoney: (appId: number | string) =>
-    `/portal/v1/reg-money/creditor/app/${appId}`,
+    `/money-portal/v1/reg-money/creditor/app/${appId}`,
 
   // EPS-INSTALLMENT-API
-  installmentById: (id: number | string) => `/portal/v1/installments/${id}`,
-  installmentPayments: "/portal/v1/installments/payment/by-installment-id",
+  installmentById: (id: number | string) =>
+    `/installment-portal/v1/installments/${id}`,
+  installmentPayments:
+    "/installment-portal/v1/installments/payment/by-installment-id",
 
   // EPS-EAUCTION-API
   lotsByAppId: "/portal/v1/lots/by-app-id",
@@ -90,7 +66,7 @@ export const NotificationsApiPaths = {
 
 // ── Legacy keys kept for backward compatibility ───────────────────────────────
 export const ApiConfig = {
-  baseUrl: UmApiBase,
+  baseUrl: BASE_URL,
   sessionsPath: ApiPaths.sessions,
   otpSendPath: ApiPaths.otpSend,
   otpVerifyPath: ApiPaths.otpVerify,

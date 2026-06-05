@@ -22,12 +22,13 @@ import { homeHeaderStyles } from './home-header.styles';
 
 export function HomeHeader({ displayName }: HomeHeaderProps) {
   const { t } = useTranslation();
+  const isGuest = isGuestMode();
   const profileA11yLabel = displayName.trim() || t('home.userFallback');
   const api = useUnreadNotificationsCount({ enabled: !USE_CASE_LIST_LAYOUT_MOCK });
   const count = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadCount : api.count;
   const isLoading = USE_CASE_LIST_LAYOUT_MOCK ? CASE_SCREEN_HEADER_MOCK.unreadLoading : api.isLoading;
   const handleProfilePress = () => {
-    if (isGuestMode()) {
+    if (isGuest) {
       router.push('/');
       return;
     }
@@ -67,7 +68,7 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
               color={HomeDashboardPalette.headerText}
             />
           </Pressable>
-          {count > 0 && (
+          {!isGuest && count > 0 && (
             <View style={homeHeaderStyles.badgeWrap}>
               <UnreadCountBadge count={count} loading={isLoading} small />
             </View>

@@ -15,6 +15,7 @@ export const homeNavItems: HomeNavItem[] = [
     icon: 'file-document-outline',
     accent: 'red',
     disabled: true,
+    hiddenForGuest: true,
   },
   {
     id: 'assessment',

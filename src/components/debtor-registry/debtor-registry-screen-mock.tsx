@@ -1,18 +1,18 @@
-import type { SetStateAction } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import type { SetStateAction } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { DEBTOR_REGISTRY_LAYOUT_MOCK_RESPONSE } from '@/constants/debtor-registry-layout-mock';
-import type { DebtorSearchFilters } from '@/types/debtor-registry';
+import { DEBTOR_REGISTRY_LAYOUT_MOCK_RESPONSE } from "@/constants/debtor-registry-layout-mock";
+import type { DebtorSearchFilters } from "@/types/debtor-registry";
 
-import { DebtorRegistrySearchForm } from './debtor-registry-search-form';
-import { DebtorRegistryScreenInner } from './debtor-registry-screen-inner';
+import { DebtorRegistryScreenInner } from "./debtor-registry-screen-inner";
+import { DebtorRegistrySearchForm } from "./debtor-registry-search-form";
 
 type Props = { displayName: string };
 
 export function DebtorRegistryScreenMock({ displayName }: Props) {
   const data = DEBTOR_REGISTRY_LAYOUT_MOCK_RESPONSE;
-  const [draftApplicant, setDraftApplicant] = useState('');
-  const [draftSubject, setDraftSubject] = useState('');
+  const [draftApplicant, setDraftApplicant] = useState("");
+  const [draftSubject, setDraftSubject] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<DebtorSearchFilters>({});
   const noopSetPage = useCallback((_v: SetStateAction<number>) => {}, []);
   const canQuery =
@@ -41,8 +41,8 @@ export function DebtorRegistryScreenMock({ displayName }: Props) {
   }, [draftApplicant, draftSubject]);
 
   const handleClear = useCallback(() => {
-    setDraftApplicant('');
-    setDraftSubject('');
+    setDraftApplicant("");
+    setDraftSubject("");
     setAppliedFilters({});
   }, []);
 

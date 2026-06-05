@@ -19,6 +19,7 @@ export type HomeNavItem = {
   icon: string;
   accent: HomeNavAccent;
   disabled?: boolean;
+  hiddenForGuest?: boolean;
 };
 
 export type HomeHeaderProps = {

@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { View } from "react-native";
 
 import { homeNavItems } from "@/constants/home-nav-items";
+import { isGuestMode } from "@/lib/guest-mode";
 import type { HomeNavItem } from "@/types/home-dashboard";
 
 import { HomeNavCard } from "./home-nav-card";
@@ -14,6 +15,11 @@ const homeRouteByNavItemId: Record<string, "/cases" | "/debtors" | undefined> =
   };
 
 export function HomeNavGrid() {
+  const isGuest = isGuestMode();
+  const visibleItems = homeNavItems.filter(
+    (item) => !(isGuest && item.hiddenForGuest),
+  );
+
   const onCardPress = (item: HomeNavItem) => {
     if (item.disabled) {
       return;
@@ -26,11 +32,11 @@ export function HomeNavGrid() {
 
   return (
     <View style={homeNavGridStyles.row}>
-      {homeNavItems.map((item, index) => (
+      {visibleItems.map((item, index) => (
         <HomeNavCard
           key={item.id}
           item={item}
-          fullWidth={index === homeNavItems.length - 1}
+          fullWidth={!isGuest && index === visibleItems.length - 1}
           onPress={() => onCardPress(item)}
         />
       ))}
