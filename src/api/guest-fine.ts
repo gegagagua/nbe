@@ -32,7 +32,7 @@ export async function checkGuestFineDebt(input: {
       "[payment-info] response:",
       JSON.stringify(response.data, null, 2),
     );
-    return mapGuestFineCheckResult(response.data?.data);
+    return mapGuestFineCheckResult(response.data);
   } catch (err: unknown) {
     if (isAxiosError(err)) {
       console.log(

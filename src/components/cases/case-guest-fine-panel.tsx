@@ -2,18 +2,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Linking, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useGuestFineCheck } from '@/hooks/use-guest-fine-check';
-import { showErrorToast } from '@/lib/show-error-toast';
 import {
   createGuestFineCheckSchema,
   type GuestFineCheckFormValues,
 } from '@/schemas/guest-fine-check.schema';
 import type { GuestPersonType } from '@/types/guest-fine';
 
+import { CaseGuestFineResult } from './case-guest-fine-result';
 import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
 import { CaseGuestPersonTabs } from './case-guest-person-tabs';
 
@@ -46,14 +46,6 @@ export function CaseGuestFinePanel() {
       : t('cases.legalIdentificationCodeLabel');
 
   const onSubmit = handleSubmit((values) => handleCheck(values));
-
-  function handlePay() {
-    if (result?.paymentUrl) {
-      void Linking.openURL(result.paymentUrl);
-      return;
-    }
-    showErrorToast(t('cases.detailPaySoonToast'));
-  }
 
   return (
     <View style={s.card}>
@@ -100,21 +92,7 @@ export function CaseGuestFinePanel() {
         onPress={() => onSubmit()}
         disabled={isChecking || !formState.isValid}
       />
-      {result && !isChecking ? (
-        <View style={s.resultCard}>
-          {result.found && result.amount ? (
-            <>
-              <Text style={s.resultLabel}>{t('cases.guestFine.debtAmountLabel')}</Text>
-              <Text style={s.resultAmount}>
-                {result.amount} {result.currency ?? 'GEL'}
-              </Text>
-              <Button label={t('cases.detailPayButton')} onPress={handlePay} />
-            </>
-          ) : (
-            <Text style={s.notFound}>{t('cases.guestFine.notFound')}</Text>
-          )}
-        </View>
-      ) : null}
+      {result && !isChecking ? <CaseGuestFineResult result={result} /> : null}
     </View>
   );
 }

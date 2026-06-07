@@ -75,6 +75,7 @@ export const enCases = {
     documentNumberLabel: 'Fine receipt / protocol number',
     documentNumberPlaceholder: 'Receipt or protocol number',
     checkButton: 'Check debt',
+    personNameLabel: 'Name',
     debtAmountLabel: 'Debt amount',
     notFound: 'No debt on record',
     checkError: 'Could not check the debt. Please try again.',
