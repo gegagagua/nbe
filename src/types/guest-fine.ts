@@ -1,10 +1,8 @@
 export type GuestPersonType = 'physical' | 'legal';
 
-export type GuestFineCheckRequest = {
-  personType: GuestPersonType;
-  idNumber: string;
-  documentNumber: string;
-  categoryCode: string;
+export type PaymentInfoRequest = {
+  idnumber: string;
+  docNo: string;
 };
 
 export type GuestFineCheckResult = {

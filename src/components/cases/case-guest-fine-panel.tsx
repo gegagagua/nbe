@@ -7,15 +7,15 @@ import { Linking, Text, View } from 'react-native';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useGuestFineCheck } from '@/hooks/use-guest-fine-check';
+import { showErrorToast } from '@/lib/show-error-toast';
 import {
   createGuestFineCheckSchema,
   type GuestFineCheckFormValues,
 } from '@/schemas/guest-fine-check.schema';
-import { showErrorToast } from '@/lib/show-error-toast';
 import type { GuestPersonType } from '@/types/guest-fine';
 
-import { CaseGuestPersonTabs } from './case-guest-person-tabs';
 import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
+import { CaseGuestPersonTabs } from './case-guest-person-tabs';
 
 export function CaseGuestFinePanel() {
   const { t, i18n } = useTranslation();
@@ -97,7 +97,7 @@ export function CaseGuestFinePanel() {
       </View>
       <Button
         label={t('cases.guestFine.checkButton')}
-        onPress={() => void onSubmit()}
+        onPress={() => onSubmit()}
         disabled={isChecking || !formState.isValid}
       />
       {result && !isChecking ? (

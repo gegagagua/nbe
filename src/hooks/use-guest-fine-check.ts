@@ -1,27 +1,28 @@
-import { useMutation } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useMutation } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { checkGuestFineDebt } from '@/api/guest-fine';
-import { showErrorToast } from '@/lib/show-error-toast';
-import type { GuestFineCheckFormValues } from '@/schemas/guest-fine-check.schema';
-import type { GuestFineCheckResult } from '@/types/guest-fine';
+import { checkGuestFineDebt } from "@/api/guest-fine";
+import { showErrorToast } from "@/lib/show-error-toast";
+import type { GuestFineCheckFormValues } from "@/schemas/guest-fine-check.schema";
+import type { GuestFineCheckResult } from "@/types/guest-fine";
 
 export function useGuestFineCheck() {
   const { t } = useTranslation();
   const [result, setResult] = useState<GuestFineCheckResult | null>(null);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (values: GuestFineCheckFormValues) =>
-      checkGuestFineDebt({
-        personType: values.personType,
+    mutationFn: (values: GuestFineCheckFormValues) => {
+      console.log("values:", values);
+      return checkGuestFineDebt({
         idNumber: values.idNumber.trim(),
         documentNumber: values.documentNumber.trim(),
-      }),
+      });
+    },
     onSuccess: (data) => setResult(data),
     onError: () => {
       setResult(null);
-      showErrorToast(t('cases.guestFine.checkError'));
+      showErrorToast(t("cases.guestFine.checkError"));
     },
   });
 

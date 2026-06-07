@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment info test</title>
+</head>
+<body>
+    <script>
+        const BASE_URL = 'https://eps-gateway-testing.nbe.gov.ge/';
+        const paymentInfo = '/payment-portal-pub/v1/payments/info';
+        const url = BASE_URL + paymentInfo;
+
+        const requestBody = {
+            data: {
+                idnumber: '32001004914',
+                docNo: '26001117',
+            },
+        };
+
+        console.log('URL:', url);
+        console.log('request:', JSON.stringify(requestBody, null, 2));
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then(async (res) => {
+                const data = await res.json().catch(() => res.text());
+                console.log('status:', res.status);
+                console.log('response:', data);
+            })
+            .catch((err) => {
+                console.error('Error:', err.message);
+            });
+    </script>
+</body>
+</html>

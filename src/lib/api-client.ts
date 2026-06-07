@@ -25,8 +25,7 @@ function isPublicEndpoint(url: string): boolean {
     url.endsWith(ApiPaths.usersVerifyPhone) ||
     url.endsWith(ApiPaths.usersVerificationCheck) ||
     url.endsWith(ApiPaths.usersResetPassword) ||
-    url.includes(`${BASE_URL}${ApiPaths.guestFineDebtCheck}`) ||
-    url.endsWith(ApiPaths.guestFineDebtCheck) ||
+    url.endsWith(ApiPaths.paymentInfo) ||
     url === ApiPaths.otpSend ||
     url === ApiPaths.otpVerify ||
     url === ApiPaths.passwordReset ||

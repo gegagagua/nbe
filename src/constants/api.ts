@@ -1,4 +1,4 @@
-export const BASE_URL = "https://nbe-eps-gateway-api.testing.cloud.gov.ge";
+export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
@@ -18,8 +18,8 @@ export const ApiPaths = {
   userPasswordUpdate: "/external/v1/users/password",
   userById: (id: number | string) => `/external/v1/users/${id}`,
 
-  // EPS-API — public guest
-  guestFineDebtCheck: "/portal-pub/v1/administrative-fines/debt/check",
+  // EPS-MONEY-API — public guest payment search
+  paymentInfo: "/payment-portal-pub/v1/payments/info",
 
   // EPS-API — cases
   appsSearch: "/eps-portal/v1/apps/search",
