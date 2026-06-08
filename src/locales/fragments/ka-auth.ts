@@ -13,7 +13,7 @@ export const kaAuth = {
     loginGenericError: "შესვლა ვერ მოხერხდა. სცადეთ თავიდან.",
     guestLink: "ავტორიზაციის გარეშე გაგრძელება",
     identomatDemoButton: "Identomat — სახის ამოცნობის დემო",
-    identomatDemoPageTitle: "Identomat დემო",
+    identomatDemoPageTitle: "Identomat შემოწმება",
     identomatDemoBackA11yLabel: "უკან",
     registrationLink: "რეგისტრაცია",
     registrationPageTitle: "რეგისტრაცია",

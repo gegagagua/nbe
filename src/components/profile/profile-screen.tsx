@@ -20,7 +20,7 @@ export function ProfileScreen() {
   const { t } = useTranslation();
   const { profile, isLoading } = useSessionUserProfile();
 
-  const { detail, refetch } = useUserDetail(profile?.id);
+  const { detail, refetch } = useUserDetail();
   const verifyPassword = useVerifyCurrentPassword(profile?.username);
   const actions = useProfileActions({
     profile,
@@ -73,7 +73,8 @@ export function ProfileScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
           <ProfileInfoSection
-            profile={profile}
+            firstName={detail?.firstName ?? null}
+            lastName={detail?.lastName ?? null}
             idnumber={detail?.idnumber?.trim() || undefined}
             phone={resolveUserPhone(detail?.contacts)}
             email={resolveUserEmail(detail?.contacts)}

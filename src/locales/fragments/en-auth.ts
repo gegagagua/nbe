@@ -12,7 +12,7 @@ export const enAuth = {
     loginGenericError: "Sign-in failed. Please try again.",
     guestLink: "Continue without signing in",
     identomatDemoButton: "Identomat face verification demo",
-    identomatDemoPageTitle: "Identomat demo",
+    identomatDemoPageTitle: "Identomat check",
     identomatDemoBackA11yLabel: "Back",
     registrationLink: "Register",
     registrationPageTitle: "Registration",
@@ -28,15 +28,19 @@ export const enAuth = {
     registerPhysicalPhone: "Phone",
     registerPhysicalPassword: "Password",
     registerPasswordConfirm: "Confirm Password",
-    registerPasswordRequirements: "Password must contain at least 8 characters: uppercase, lowercase, digits, and punctuation",
+    registerPasswordRequirements:
+      "Password must contain at least 8 characters: uppercase, lowercase, digits, and punctuation",
     registerSuccessTitle: "Registration Successful",
-    registerSuccessMessage: "You have successfully registered. You can now sign in.",
+    registerSuccessMessage:
+      "You have successfully registered. You can now sign in.",
     registerSuccessButton: "Sign in",
     registerIdentomatTitle: "Identity Verification",
-    registerIdentomatDescription: "Please complete face verification and upload your ID document.",
+    registerIdentomatDescription:
+      "Please complete face verification and upload your ID document.",
     registerIdentomatButton: "Start verification",
     registerIdentomatSuccess: "Match confirmed",
-    registerIdentomatFail: "Match could not be confirmed. Registration cannot be completed.",
+    registerIdentomatFail:
+      "Match could not be confirmed. Registration cannot be completed.",
     registerIdentomatRetry: "Try again",
     registerCreateError: "Registration failed. Please try again.",
     registerDuplicateError: "A user with these details already exists.",
@@ -51,9 +55,11 @@ export const enAuth = {
     registerSubmit: "Register",
     registerBackA11yLabel: "Back",
     registerOtpTitle: "Phone Verification",
-    registerOtpDescription: "Enter the 6-digit code sent to your mobile number.",
+    registerOtpDescription:
+      "Enter the 6-digit code sent to your mobile number.",
     registerOtpPlaceholder: "xxxxxx",
-    registerOtpExpiredMessage: "Code has expired. Please go back and try again.",
+    registerOtpExpiredMessage:
+      "Code has expired. Please go back and try again.",
     registerOtpVerifyButton: "Verify",
     registerOtpBackButton: "Back to registration",
     registerOtpGenericError: "Verification failed. Please try again.",
@@ -76,7 +82,8 @@ export const enAuth = {
     requiredCompanyName: "Enter the legal name.",
     requiredIdentificationCode: "Enter the identification number.",
     requiredRepresentative: "Enter the representative (first and last name).",
-    requiredRepresentativePersonalId: "Enter the representative's personal ID number.",
+    requiredRepresentativePersonalId:
+      "Enter the representative's personal ID number.",
     invalidEmail: "Enter a valid email address.",
     requiredConfirmPassword: "Confirm your password.",
     passwordMismatch: "Passwords do not match.",
@@ -85,16 +92,19 @@ export const enAuth = {
     passwordNoLowercase: "Password must contain a lowercase letter.",
     passwordNoDigit: "Password must contain a digit.",
     passwordNoPunctuation: "Password must contain a special character.",
-    passwordDoesNotMeetRequirements: "Your password does not meet the requirements.",
+    passwordDoesNotMeetRequirements:
+      "Your password does not meet the requirements.",
     requiredOtp: "Enter the SMS code.",
     otpMismatch: "Code does not match.",
     otpExpired: "SMS code has expired.",
-    similarPasswordUsed: "You have already used a similar password. Please choose a different one.",
+    similarPasswordUsed:
+      "You have already used a similar password. Please choose a different one.",
   },
   forgotPassword: {
     pageTitle: "Password Recovery",
     backA11yLabel: "Back",
-    identityDescription: "Enter your personal ID number to reset your password.",
+    identityDescription:
+      "Enter your personal ID number to reset your password.",
     identityPlaceholder: "Personal ID number",
     submitButton: "Send",
     phoneLabel: "Mobile number",
@@ -108,11 +118,13 @@ export const enAuth = {
     verifyOtpButton: "Verify",
     resendOtpButton: "Resend code",
     newPasswordTitle: "New Password",
-    passwordRequirements: "Password must contain at least 8 characters: uppercase and lowercase Latin letters, digits, and punctuation (~!@#$%^&*()_+`-={}[]|:\";'<>,.?/)",
+    passwordRequirements:
+      "Password must contain at least 8 characters: uppercase and lowercase Latin letters, digits, and punctuation (~!@#$%^&*()_+`-={}[]|:\";'<>,.?/)",
     newPasswordPlaceholder: "New password",
     confirmPasswordPlaceholder: "Confirm password",
     resetPasswordButton: "Reset Password",
-    successMessage: "Password reset request sent. Check your email or SMS for further instructions.",
+    successMessage:
+      "Password reset request sent. Check your email or SMS for further instructions.",
     errorMessage: "Your password does not meet the requirements",
     networkError: "Network error. Please try again.",
     genericError: "An error occurred. Please try again.",
@@ -173,15 +185,20 @@ export const enAuth = {
     rowLabelFaceId: "Sign in with Face ID",
     rowLabelFingerprint: "Sign in with fingerprint",
     rowLabelBiometric: "Sign in with biometrics",
-    descriptionEnabled: "Enabled — you'll be offered biometric sign-in on the login screen.",
-    descriptionDisabled: "Enable to sign in quickly with Face ID or your fingerprint instead of typing your password.",
-    unavailableHardware: "This device does not support biometric authentication.",
-    unavailableNotEnrolled: "Biometrics aren't set up yet. Please configure Face ID / fingerprint in your device settings first.",
+    descriptionEnabled:
+      "Enabled — you'll be offered biometric sign-in on the login screen.",
+    descriptionDisabled:
+      "Enable to sign in quickly with Face ID or your fingerprint instead of typing your password.",
+    unavailableHardware:
+      "This device does not support biometric authentication.",
+    unavailableNotEnrolled:
+      "Biometrics aren't set up yet. Please configure Face ID / fingerprint in your device settings first.",
     enablePromptMessage: "Confirm enabling Face ID",
     disablePromptMessage: "Confirm disabling Face ID",
     loginPromptMessage: "Sign in with Face ID",
     enablePasswordTitle: "Confirm your password",
-    enablePasswordDescription: "Enter your password so Face ID sign-in can be stored securely.",
+    enablePasswordDescription:
+      "Enter your password so Face ID sign-in can be stored securely.",
     enablePasswordPlaceholder: "Current password",
     enableConfirmButton: "Confirm",
     cancelButton: "Cancel",
@@ -191,7 +208,8 @@ export const enAuth = {
     errorCancelled: "Biometric authentication was cancelled.",
     errorFailed: "Biometric authentication failed. Please try again.",
     errorInvalidCredentials: "Incorrect password.",
-    errorStoredCredentialsInvalid: "Stored credentials are no longer valid. Please sign in with your password.",
+    errorStoredCredentialsInvalid:
+      "Stored credentials are no longer valid. Please sign in with your password.",
     loginButton: "Sign in with Face ID",
     loginButtonFingerprint: "Sign in with fingerprint",
   },

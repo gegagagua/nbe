@@ -11,13 +11,13 @@ import { LoginPalette } from '@/constants/login';
 
 import { identomatDemoScreenStyles } from './identomat-demo-screen.styles';
 
-type IdentomatDemoScreenProps = { onBack: () => void };
-
-type IdentomatDemoScreenRouteProps = IdentomatDemoScreenProps & {
+type IdentomatDemoScreenProps = {
+  onBack: () => void;
+  isCheckingVerification?: boolean;
   sourceUrl?: string;
 };
 
-export function IdentomatDemoScreen({ onBack, sourceUrl }: IdentomatDemoScreenRouteProps) {
+export function IdentomatDemoScreen({ onBack, sourceUrl, isCheckingVerification }: IdentomatDemoScreenProps) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +28,7 @@ export function IdentomatDemoScreen({ onBack, sourceUrl }: IdentomatDemoScreenRo
           <Pressable
             style={identomatDemoScreenStyles.hit}
             onPress={onBack}
+            disabled={isCheckingVerification}
             accessibilityRole="button"
             accessibilityLabel={t('login.identomatDemoBackA11yLabel')}>
             <MaterialCommunityIcons
@@ -49,7 +50,7 @@ export function IdentomatDemoScreen({ onBack, sourceUrl }: IdentomatDemoScreenRo
             javaScriptEnabled
             domStorageEnabled
           />
-          {loading ? (
+          {(loading || isCheckingVerification) ? (
             <View style={identomatDemoScreenStyles.loadingOverlay}>
               <ActivityIndicator size="large" color={LoginPalette.primary} />
             </View>

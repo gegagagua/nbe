@@ -4,19 +4,20 @@ export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
 export const ApiPaths = {
   // Auth
   sessions: "/um-portal/v1/sessions",
+  logout: "/um-portal/v1/sessions/logout",
   otpSend: "/um-portal/v1/otp/send",
   otpVerify: "/um-portal/v1/otp/verify",
   passwordReset: "/um-portal/v1/password/reset",
 
   // Public (unauthenticated)
-  usersCreate: "/um-portal-pub/v1/users",
-  usersVerifyPhone: "/um-portal-pub/v1/users/verification/phone",
-  usersVerificationCheck: "/um-portal-pub/v1/users/verification/check",
-  usersResetPassword: "/um-portal-pub/v1/users/reset-password",
+  usersCreate: "/um-portal/v1/users",
+  usersVerifyPhone: "/um-portal/v1/users/verification/phone",
+  usersVerificationCheck: "/um-portal/v1/users/verification/check",
+  usersResetPassword: "/um-portal/v1/users/reset-password",
 
-  // External (X-User-ID gateway header)
-  userPasswordUpdate: "/external/v1/users/password",
-  userById: (id: number | string) => `/external/v1/users/${id}`,
+  // Authenticated user profile
+  usersMe: "/um-portal/v1/users/me",
+  passwordGhange: "/um-portal/v1/users/password",
 
   // EPS-MONEY-API — public guest payment search
   paymentInfo: "/payment-portal-pub/v1/payments/info",
@@ -61,7 +62,7 @@ export const ApiPaths = {
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 export const NotificationsApiPaths = {
-  countUnread: "/portal/v1/notifications/count-unread",
+  countUnread: "/um-portal/v1/notifications/count-unread",
 } as const;
 
 // ── Legacy keys kept for backward compatibility ───────────────────────────────

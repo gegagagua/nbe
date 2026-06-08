@@ -9,15 +9,14 @@ import {
   createProfileInfoEditSchema,
   type ProfileInfoEditValues,
 } from '@/schemas/profile-info-edit.schema';
-import type { SessionUserProfileBrief } from '@/types/session';
-
 import { ProfileInfoActions } from './profile-info-actions';
 import { ProfileInfoEditableFields } from './profile-info-editable-fields';
 import { ProfileReadOnlyField } from './profile-read-only-field';
 import { profileScreenStyles as s } from './profile-screen.styles';
 
 type Props = {
-  profile: SessionUserProfileBrief;
+  firstName: string | null;
+  lastName: string | null;
   idnumber?: string | null;
   phone?: string | null;
   email?: string | null;
@@ -44,7 +43,8 @@ function toFormValues(
 }
 
 export function ProfileInfoSection({
-  profile,
+  firstName,
+  lastName,
   idnumber,
   phone,
   email,
@@ -83,8 +83,8 @@ export function ProfileInfoSection({
       <Text style={s.sectionTitle}>{t('profile.sectionInfo')}</Text>
 
       <View style={s.fieldGroup}>
-        <ProfileReadOnlyField label={t('profile.labelFirstName')} value={profile.firstName} />
-        <ProfileReadOnlyField label={t('profile.labelLastName')} value={profile.lastName} />
+        <ProfileReadOnlyField label={t('profile.labelFirstName')} value={firstName ?? ''} />
+        <ProfileReadOnlyField label={t('profile.labelLastName')} value={lastName ?? ''} />
         {idnumber ? (
           <ProfileReadOnlyField label={t('profile.labelPersonalId')} value={idnumber} />
         ) : null}

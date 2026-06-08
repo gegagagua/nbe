@@ -13,9 +13,8 @@ import { signOut } from "@/lib/sign-out";
 function isAuthRequest(config: InternalAxiosRequestConfig) {
   const url = config.url ?? "";
   return (
-    url.includes("/sessions/logout") ||
-    url.endsWith(ApiPaths.sessions) ||
-    url === ApiPaths.userPasswordUpdate
+    url.endsWith(ApiPaths.logout) ||
+    url.endsWith(ApiPaths.sessions)
   );
 }
 

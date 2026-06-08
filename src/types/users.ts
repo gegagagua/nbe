@@ -43,17 +43,23 @@ export type UserAgencyBrief = {
 export type UserDetail = {
   id: number;
   username: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   idnumber: string | null;
   realAddress: string | null;
   legalAddress: string | null;
   active: boolean;
-  agency?: UserAgencyBrief;
-  prntUserId?: number | null;
-  contacts?: UserContact[];
-  userGroups?: UserGroupFromApi[];
-  authorities?: UserAuthority[];
+  enabled2Fa: boolean;
+  agency: UserAgencyBrief | null;
+  prntUserId: number | null;
+  prntUser: unknown | null;
+  pwdChngDate: string | null;
+  pwdNextChngDate: string | null;
+  contacts: UserContact[];
+  userGroups: UserGroupFromApi[];
+  roles: string[];
+  permissions: string[];
+  authorities: UserAuthority[];
 };
 
 export type GetUserResponse = {

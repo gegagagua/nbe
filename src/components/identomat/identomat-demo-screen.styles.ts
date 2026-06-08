@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import { LoginPalette } from '@/constants/login';
-import { Radius, Space, Typography } from '@/constants/theme';
+import { LoginPalette } from "@/constants/login";
+import { Radius, Space, Typography } from "@/constants/theme";
 
 export const identomatDemoScreenStyles = StyleSheet.create({
   page: {
@@ -12,28 +12,28 @@ export const identomatDemoScreenStyles = StyleSheet.create({
     flex: 1,
   },
   navRow: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginBottom: Space.small,
-    paddingHorizontal: Space.large,
+    paddingHorizontal: Space.medium,
   },
   hit: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
     gap: Space.extraSmall,
     paddingRight: Space.medium,
   },
   backLabel: {
     color: LoginPalette.primary,
     fontSize: Typography.medium,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   webviewWrap: {
     flex: 1,
     marginHorizontal: Space.large,
     marginBottom: Space.large,
     borderRadius: Radius.small,
-    overflow: 'hidden',
+    overflow: "hidden",
     backgroundColor: LoginPalette.cardBackground,
   },
   webview: {
@@ -42,8 +42,8 @@ export const identomatDemoScreenStyles = StyleSheet.create({
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: LoginPalette.cardBackground,
   },
 });

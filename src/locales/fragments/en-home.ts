@@ -4,6 +4,7 @@ export const enHome = {
   headerLogoA11yLabel: "National Bureau of Enforcement. აღს. ეროვნული ბიურო",
   headerLogoGoHomeA11yHint: "Opens the home (dashboard) tab",
   userFallback: "User",
+  notificationsA11yLabel: "Notifications",
   profileSignOutA11yHint: "Sign out",
   navCases: "Enforcement Proceedings",
   navSimplified: "Summary Proceedings",

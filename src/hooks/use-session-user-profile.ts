@@ -20,6 +20,7 @@ export function useSessionUserProfile() {
   useEffect(() => {
     let active = true;
     getSessionUserProfile().then((p) => {
+      console.log("p", p);
       if (!active) return;
       setProfile(p);
       setIsLoading(false);
@@ -32,7 +33,8 @@ export function useSessionUserProfile() {
 
   useEffect(() => {
     const onLang = () => {
-      void getSessionUserProfile().then((p) => {
+      getSessionUserProfile().then((p) => {
+        console.log("p", p);
         setProfile(p);
         setDisplayName(deriveDisplayName(p));
       });

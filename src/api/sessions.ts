@@ -19,5 +19,5 @@ export async function createSession(
 }
 
 export async function logoutSession(): Promise<void> {
-  await apiClient.post(`${BASE_URL}/um-portal/v1/sessions/logout`);
+  await apiClient.post(`${BASE_URL}${ApiPaths.logout}`);
 }

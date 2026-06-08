@@ -17,8 +17,8 @@ export function buildUpdateUserPayload(
   return {
     ...(agencyId !== undefined ? { agencyId } : {}),
     username: detail.username,
-    firstName: detail.firstName,
-    lastName: detail.lastName,
+    firstName: detail.firstName ?? '',
+    lastName: detail.lastName ?? '',
     ...(realAddress ? { realAddress } : {}),
     ...(legalAddress ? { legalAddress } : {}),
     ...(phone ? { phone: normalizeGeorgianPhone(phone) } : {}),

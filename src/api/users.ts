@@ -1,15 +1,14 @@
 import { ApiPaths, BASE_URL } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
 import type {
-    CheckVerificationRequest,
-    CreatePortalUserRequest,
-    CreatePortalUserResponse,
-    GetUserResponse,
-    UpdateUserPasswordRequest,
-    UpdateUserRequest,
-    UserDetail,
-    VerifyPhoneOtpRequest,
-    VerifyPhoneOtpResponse,
+  CheckVerificationRequest,
+  CreatePortalUserRequest,
+  CreatePortalUserResponse,
+  GetUserResponse,
+  UpdateUserPasswordRequest,
+  UserDetail,
+  VerifyPhoneOtpRequest,
+  VerifyPhoneOtpResponse,
 } from "@/types/users";
 
 export async function createPortalUser(
@@ -28,7 +27,7 @@ export async function verifyPhoneOtp(
 ): Promise<{ verificationUrl: string; verificationId: number }> {
   const payload: VerifyPhoneOtpRequest = { userId, code };
   const response = await apiClient.post<VerifyPhoneOtpResponse>(
-    `${UmPubApiBase}${ApiPaths.usersVerifyPhone}`,
+    `${BASE_URL}${ApiPaths.usersVerifyPhone}`,
     { data: payload },
   );
   const { verificationUrl, verificationId } = response.data.data;
@@ -37,39 +36,18 @@ export async function verifyPhoneOtp(
 
 export async function checkVerification(verificationId: number): Promise<void> {
   const payload: CheckVerificationRequest = { verificationId };
-  await apiClient.post(`${UmPubApiBase}${ApiPaths.usersVerificationCheck}`, {
+  await apiClient.post(`${BASE_URL}${ApiPaths.usersVerificationCheck}`, {
     data: payload,
   });
 }
 
-export async function getUser(userId: number): Promise<UserDetail> {
-  const response = await apiClient.get<GetUserResponse>(
-    ApiPaths.userById(userId),
-    {
-      headers: { "X-User-ID": String(userId) },
-    },
-  );
-  return response.data.data;
-}
-
-export async function updateUserPassword(
-  userId: number,
+export async function changePassword(
   payload: UpdateUserPasswordRequest,
 ): Promise<void> {
-  await apiClient.put(
-    ApiPaths.userPasswordUpdate,
-    { data: payload },
-    { headers: { "X-User-ID": String(userId) } },
-  );
+  await apiClient.put(ApiPaths.passwordGhange, { data: payload });
 }
 
-export async function updateUser(
-  userId: number,
-  payload: UpdateUserRequest,
-): Promise<void> {
-  await apiClient.put(
-    ApiPaths.userById(userId),
-    { data: payload },
-    { headers: { "X-User-ID": String(userId) } },
-  );
+export async function getUserMe(): Promise<UserDetail> {
+  const response = await apiClient.get<GetUserResponse>(ApiPaths.usersMe);
+  return response.data.data;
 }

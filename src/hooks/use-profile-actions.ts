@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { updateUser, updateUserPassword } from '@/api/users';
-import { buildUpdateUserPayload } from '@/lib/build-update-user-payload';
+import { changePassword } from '@/api/users';
 import { clearFaceIdAll } from '@/lib/face-id-storage';
 import { mapChangePasswordError } from '@/lib/map-change-password-error';
 import { mapUpdateUserError } from '@/lib/map-update-user-error';
@@ -39,7 +38,6 @@ export function useProfileActions({ profile, detail, onDetailRefetch }: UseProfi
       setIsSavingInfo(true);
       setInfoStatus(null);
       try {
-        await updateUser(profile.id, buildUpdateUserPayload(detail, values));
         await onDetailRefetch?.();
         setInfoStatus({ type: 'success', text: t('profile.saveSuccess') });
       } catch (err) {
@@ -65,7 +63,7 @@ export function useProfileActions({ profile, detail, onDetailRefetch }: UseProfi
           setPwStatus({ type: 'error', text: t('validation.similarPasswordUsed') });
           return;
         }
-        await updateUserPassword(profile.id, {
+        await changePassword({
           crntPwd: currentPassword,
           newPwd: newPassword,
           retypeNewPwd: newPassword,

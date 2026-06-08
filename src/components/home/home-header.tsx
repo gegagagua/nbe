@@ -6,12 +6,8 @@ import { Pressable, Text, View } from "react-native";
 import { LocaleToggle } from "@/components/i18n/locale-toggle";
 import { UnreadCountBadge } from "@/components/ui/unread-count-badge";
 import {
-    CASE_SCREEN_HEADER_MOCK,
-    USE_CASE_LIST_LAYOUT_MOCK,
-} from "@/constants/case-list-layout-mock";
-import {
-    HomeDashboardLayoutConst,
-    HomeDashboardPalette,
+  HomeDashboardLayoutConst,
+  HomeDashboardPalette,
 } from "@/constants/home-dashboard";
 import { LoginInteraction } from "@/constants/login";
 import { useUnreadNotificationsCount } from "@/hooks/use-unread-notifications-count";
@@ -25,21 +21,13 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
   const { t } = useTranslation();
   const isGuest = isGuestMode();
   const profileA11yLabel = displayName.trim() || t("home.userFallback");
-  const api = useUnreadNotificationsCount({
-    enabled: !USE_CASE_LIST_LAYOUT_MOCK,
-  });
-  const count = USE_CASE_LIST_LAYOUT_MOCK
-    ? CASE_SCREEN_HEADER_MOCK.unreadCount
-    : api.count;
-  const isLoading = USE_CASE_LIST_LAYOUT_MOCK
-    ? CASE_SCREEN_HEADER_MOCK.unreadLoading
-    : api.isLoading;
+  const { count, isLoading } = useUnreadNotificationsCount();
   const handleProfilePress = () => {
     if (isGuest) {
+      signOut();
       router.push("/");
       return;
     }
-    signOut();
     router.push("/profile");
   };
 
@@ -65,25 +53,38 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
       </Pressable>
       <View style={homeHeaderStyles.actions}>
         <LocaleToggle />
-        <View style={homeHeaderStyles.profileWrap}>
-          <Pressable
-            style={homeHeaderStyles.actionPress}
-            accessibilityRole="button"
-            accessibilityLabel={profileA11yLabel}
-            onPress={handleProfilePress}
-          >
-            <MaterialCommunityIcons
-              name="account-circle-outline"
-              size={HomeDashboardLayoutConst.headerProfileIconSize}
-              color={HomeDashboardPalette.headerText}
-            />
-          </Pressable>
-          {!isGuest && count > 0 && (
-            <View style={homeHeaderStyles.badgeWrap}>
-              <UnreadCountBadge count={count} loading={isLoading} small />
-            </View>
-          )}
-        </View>
+        {!isGuest && (
+          <View style={homeHeaderStyles.profileWrap}>
+            <Pressable
+              style={homeHeaderStyles.actionPress}
+              accessibilityRole="button"
+              accessibilityLabel={t("home.notificationsA11yLabel")}
+            >
+              <MaterialCommunityIcons
+                name={count > 0 ? "bell-badge-outline" : "bell-outline"}
+                size={HomeDashboardLayoutConst.headerProfileIconSize}
+                color={HomeDashboardPalette.headerText}
+              />
+            </Pressable>
+            {count > 0 && (
+              <View style={homeHeaderStyles.badgeWrap}>
+                <UnreadCountBadge count={count} loading={isLoading} small />
+              </View>
+            )}
+          </View>
+        )}
+        <Pressable
+          style={homeHeaderStyles.actionPress}
+          accessibilityRole="button"
+          accessibilityLabel={profileA11yLabel}
+          onPress={handleProfilePress}
+        >
+          <MaterialCommunityIcons
+            name="account-circle-outline"
+            size={HomeDashboardLayoutConst.headerProfileIconSize}
+            color={HomeDashboardPalette.headerText}
+          />
+        </Pressable>
       </View>
     </View>
   );
