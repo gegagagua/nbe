@@ -25,8 +25,8 @@ export type SessionUserProfileBrief = {
 
 export type CreateSessionResponse = {
   token: string;
-  tokenType: string;
-  user: SessionUser;
+  tokenType: 'SESSION' | 'PWD_CHNG';
+  user: SessionUser | null;
 };
 
 export type CreateSessionApiEnvelope = {

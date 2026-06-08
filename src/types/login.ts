@@ -29,10 +29,17 @@ export type LoginFormProps = {
   faceId?: LoginFaceIdProps;
 };
 
+export type ForcedPwdChangeState = {
+  visible: boolean;
+  isSubmitting: boolean;
+  onSubmit: (newPwd: string) => Promise<void>;
+};
+
 export type LoginFormState = {
   control: Control<LoginFormValues>;
   errors: FieldErrors<LoginFormValues>;
   onSubmit: () => void;
   submitDisabled: boolean;
   submitWithCredentials: (values: LoginFormValues) => Promise<{ ok: boolean }>;
+  forcedPwdChange: ForcedPwdChangeState;
 };

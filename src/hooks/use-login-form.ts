@@ -1,14 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { createSession } from "@/api/sessions";
+import { changePassword } from "@/api/users";
+import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
 import { mapLoginError } from "@/lib/map-login-error";
-import { setSessionToken } from "@/lib/session-token-storage";
+import { clearSessionToken, setSessionToken } from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
 import { syncFaceIdCredentialsIfEnabled } from "@/lib/sync-face-id-credentials";
@@ -19,12 +21,42 @@ import type { LoginFormValues } from "@/types/login-form-values";
 export function useLoginForm(): LoginFormState {
   const { t, i18n } = useTranslation();
   const schema = useMemo(() => createLoginFormSchema(t), [t, i18n.language]);
+  const [pendingPwdChange, setPendingPwdChange] = useState<{
+    username: string;
+    otpPwd: string;
+  } | null>(null);
+  const [isForcingPwdChange, setIsForcingPwdChange] = useState(false);
 
   const { control, handleSubmit, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: { username: "", password: "" },
   });
+
+  const finishLogin = useCallback(
+    async (
+      token: string,
+      user: import("@/types/session").SessionUser | null,
+      credentials: LoginFormValues,
+    ) => {
+      await setSessionToken(token);
+      if (user) {
+        await setSessionUserProfile({
+          id: user.id,
+          username: user.username ?? user.idnumber ?? "",
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+        });
+      }
+      setGuestMode(false);
+      await syncFaceIdCredentialsIfEnabled({
+        username: credentials.username,
+        password: credentials.password,
+      });
+      router.replace("/dashboard");
+    },
+    [],
+  );
 
   const loginMutation = useMutation({
     mutationFn: async (payload: LoginFormValues) =>
@@ -33,25 +65,46 @@ export function useLoginForm(): LoginFormState {
         password: payload.password,
       }),
     onSuccess: async (data, variables) => {
-      console.log("data", data?.token);
-      await setSessionToken(data.token);
-      await setSessionUserProfile({
-        id: data.user.id,
-        username: data.user.username ?? data.user.idnumber ?? "",
-        firstName: data.user.firstName ?? "",
-        lastName: data.user.lastName ?? "",
-      });
-      setGuestMode(false);
-      await syncFaceIdCredentialsIfEnabled({
-        username: variables.username,
-        password: variables.password,
-      });
-      router.replace("/dashboard");
+      if (data.tokenType === 'PWD_CHNG') {
+        await setSessionToken(data.token);
+        setPendingPwdChange({ username: variables.username, otpPwd: variables.password });
+        return;
+      }
+      await finishLogin(data.token, data.user, variables);
     },
     onError: (err) => {
       showErrorToast(mapLoginError(err), err);
     },
   });
+
+  const handleForcedPasswordChange = useCallback(
+    async (newPwd: string) => {
+      if (!pendingPwdChange) return;
+      setIsForcingPwdChange(true);
+      try {
+        await changePassword({
+          crntPwd: pendingPwdChange.otpPwd,
+          newPwd,
+          retypeNewPwd: newPwd,
+        });
+        await clearSessionToken();
+        const session = await createSession({
+          username: pendingPwdChange.username,
+          password: newPwd,
+        });
+        setPendingPwdChange(null);
+        await finishLogin(session.token, session.user, {
+          username: pendingPwdChange.username,
+          password: newPwd,
+        });
+      } catch (err) {
+        showErrorToast(mapChangePasswordError(err), err);
+      } finally {
+        setIsForcingPwdChange(false);
+      }
+    },
+    [pendingPwdChange, finishLogin],
+  );
 
   const { mutate, mutateAsync, isPending } = loginMutation;
 
@@ -83,5 +136,10 @@ export function useLoginForm(): LoginFormState {
     onSubmit,
     submitDisabled,
     submitWithCredentials,
+    forcedPwdChange: {
+      visible: pendingPwdChange !== null,
+      isSubmitting: isForcingPwdChange,
+      onSubmit: handleForcedPasswordChange,
+    },
   };
 }
