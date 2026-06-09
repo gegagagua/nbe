@@ -8,8 +8,9 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoginPalette } from '@/constants/login';
-import { Radius, Space, Typography } from '@/constants/theme';
 import type { ForcedPwdChangeState } from '@/types/login';
+
+import { forcedPasswordChangeModalStyles as s } from './forced-password-change-modal.styles';
 
 const PUNCTUATION_RE = /[~!@#$%^&*()_+`\-={}[\]|\\:";'<>,.?/]/;
 
@@ -49,16 +50,13 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
 
   return (
     <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'center', paddingHorizontal: Space.large }}>
-        <View style={{ backgroundColor: '#fff', borderRadius: Radius.medium, padding: Space.large, gap: Space.medium }}>
-          <Text style={{ fontSize: Typography.large, fontWeight: '700', color: LoginPalette.bodyText }}>
-            {t('login.forcedPwdChangeTitle')}
-          </Text>
-          <Text style={{ fontSize: Typography.small, color: LoginPalette.placeholderMuted, lineHeight: 20 }}>
-            {t('login.forcedPwdChangeSubtitle')}
-          </Text>
+      <View style={s.backdrop}>
+        <View style={s.card}>
+          <Text style={s.title}>{t('login.forcedPwdChangeTitle')}</Text>
+          <Text style={s.subtitle}>{t('login.forcedPwdChangeSubtitle')}</Text>
+          <Text style={s.requirementsHint}>{t('login.registerPasswordRequirements')}</Text>
 
-          <View style={{ gap: Space.small }}>
+          <View style={s.fields}>
             <Controller
               control={control}
               name="newPassword"
@@ -74,9 +72,7 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
               )}
             />
             {formState.errors.newPassword?.message ? (
-              <Text style={{ fontSize: Typography.extraSmall, color: LoginPalette.errorText }}>
-                {formState.errors.newPassword.message}
-              </Text>
+              <Text style={s.errorText}>{formState.errors.newPassword.message}</Text>
             ) : null}
 
             <Controller
@@ -94,14 +90,12 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
               )}
             />
             {formState.errors.confirmPassword?.message ? (
-              <Text style={{ fontSize: Typography.extraSmall, color: LoginPalette.errorText }}>
-                {formState.errors.confirmPassword.message}
-              </Text>
+              <Text style={s.errorText}>{formState.errors.confirmPassword.message}</Text>
             ) : null}
           </View>
 
           {isSubmitting ? (
-            <Pressable disabled style={{ alignItems: 'center', paddingVertical: Space.medium }}>
+            <Pressable disabled style={s.loadingWrap}>
               <ActivityIndicator color={LoginPalette.primary} />
             </Pressable>
           ) : (

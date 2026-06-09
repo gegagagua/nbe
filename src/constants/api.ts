@@ -12,10 +12,10 @@ export const ApiPaths = {
   passwordReset: "/um-portal/v1/password/reset",
 
   // Public (unauthenticated)
-  usersCreate: "/um-portal/v1/users",
-  usersVerifyPhone: "/um-portal/v1/users/verification/phone",
-  usersVerificationCheck: "/um-portal/v1/users/verification/check",
-  usersResetPassword: "/um-portal/v1/users/reset-password",
+  usersCreate: "/um-portal-pub/v1/users",
+  usersVerifyPhone: "/um-portal-pub/v1/users/verification/phone",
+  usersVerificationCheck: "/um-portal-pub/v1/users/verification/check",
+  usersResetPassword: "/um-portal-pub/v1/users/reset-password",
 
   // Authenticated user profile
   usersMe: "/um-portal/v1/users/me",

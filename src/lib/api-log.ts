@@ -94,5 +94,5 @@ export function logApiError(error: unknown, context?: string): void {
   const status = error.response?.status ?? 0;
   const { method, url } = describe(error.config);
   const body = JSON.stringify(stringifyBody(error.response?.data), null, 2);
-  console.error(`${label} ${status} ${method} ${url}\n${body}`);
+  console.error(status, method, url, body);
 }
