@@ -1,65 +1,31 @@
-import { ApiPaths, EpsApiBase } from '@/constants/api';
+import { ApiPaths, BASE_URL } from '@/constants/api';
+import { buildCaseSearchPayload } from '@/lib/build-case-search-payload';
+import { epsUserHeaders } from '@/lib/eps-user-headers';
+import { mapSearchCasesResponse } from '@/lib/map-search-cases-response';
 import { apiClient } from '@/lib/api-client';
-
-export type CaseSearchSort = {
-  property: string;
-  direction: 'ASC' | 'DESC';
-};
-
-export type CaseSearchFilters = {
-  regnumber?: string;
-  docNo?: string;
-  firstName?: string;
-  lastName?: string;
-  organization?: string;
-  idnumber?: string[];
-  payCode?: string;
-};
-
-export type CaseSearchRequest = {
-  data: {
-    regnumber?: string;
-    docNo?: string;
-    person?: {
-      firstName?: string;
-      lastName?: string;
-      organization?: string;
-      idnumber?: string[];
-      payCode?: string;
-    };
-  };
-  page: { number: number; size: number };
-  sort?: CaseSearchSort[];
-};
-
-const CASE_PAGE_SIZE = 10;
+import type { CaseSearchFilters, SearchCasesResponse } from '@/types/case-management';
 
 export async function searchCases(
+  userId: number,
   filters: CaseSearchFilters = {},
   pageNumber = 0,
-  sort?: CaseSearchSort[],
-) {
-  const person: CaseSearchRequest['data']['person'] = {};
-  if (filters.firstName) person.firstName = filters.firstName.trim();
-  if (filters.lastName) person.lastName = filters.lastName.trim();
-  if (filters.organization) person.organization = filters.organization.trim();
-  if (filters.idnumber?.length) person.idnumber = filters.idnumber;
-  if (filters.payCode) person.payCode = filters.payCode.trim();
+): Promise<SearchCasesResponse> {
+  const payload = buildCaseSearchPayload(filters, pageNumber);
+  const url = `${BASE_URL}${ApiPaths.appsSearch}`;
 
-  const data: CaseSearchRequest['data'] = {};
-  if (filters.regnumber) data.regnumber = filters.regnumber.trim();
-  if (filters.docNo) data.docNo = filters.docNo.trim();
-  if (Object.keys(person).length) data.person = person;
+  if (__DEV__) {
+    console.log('[apps-search] URL:', url);
+    console.log('[apps-search] X-User-ID:', userId);
+    console.log('[apps-search] request:', JSON.stringify(payload, null, 2));
+  }
 
-  const payload: CaseSearchRequest = {
-    data,
-    page: { number: pageNumber, size: CASE_PAGE_SIZE },
-    ...(sort?.length ? { sort } : {}),
-  };
+  const response = await apiClient.post(ApiPaths.appsSearch, payload, {
+    headers: epsUserHeaders(userId),
+  });
 
-  const response = await apiClient.post(
-    `${EpsApiBase}${ApiPaths.appsSearch}`,
-    payload,
-  );
-  return response.data;
+  if (__DEV__) {
+    console.log('[apps-search] response:', JSON.stringify(response.data, null, 2));
+  }
+
+  return mapSearchCasesResponse(response.data);
 }

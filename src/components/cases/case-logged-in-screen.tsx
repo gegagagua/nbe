@@ -1,8 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { CaseFilters } from '@/components/cases/case-filters';
 import { CaseList } from '@/components/cases/case-list';
@@ -10,35 +10,27 @@ import { CasePagination } from '@/components/cases/case-pagination';
 import { HomeHeader } from '@/components/home/home-header';
 import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
-import {
-  USE_CASE_LIST_LAYOUT_MOCK,
-  getCaseListLayoutMockSlice,
-  getCaseScreenHeaderMockDisplayName,
-} from '@/constants/case-list-layout-mock';
 import { useCaseApps } from '@/hooks/use-case-apps';
+import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
 import type { CaseSearchFilters } from '@/types/case-management';
 import { isCaseFiltersEmpty } from '@/utils/is-case-filters-empty';
 
 import { caseScreenStyles as s } from './case-screen.styles';
 
 export function CaseLoggedInScreen() {
-  const { t, i18n } = useTranslation();
-  const displayName = getCaseScreenHeaderMockDisplayName(i18n.language);
+  const { t } = useTranslation();
+  const { displayName } = useSessionUserProfile();
   const [draftFilters, setDraftFilters] = useState<CaseSearchFilters>({});
   const [appliedFilters, setAppliedFilters] = useState<CaseSearchFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
-  const query = useCaseApps(appliedFilters, pageNumber, {
-    enabled: !USE_CASE_LIST_LAYOUT_MOCK,
-  });
-  const mockSlice = USE_CASE_LIST_LAYOUT_MOCK
-    ? getCaseListLayoutMockSlice(pageNumber, i18n.language)
-    : null;
-  const items = mockSlice?.data ?? query.data?.data ?? [];
-  const page = mockSlice?.page ?? query.data?.page;
+  const query = useCaseApps(appliedFilters, pageNumber);
+  
+  const items = query.data?.data ?? [];
+  console.log('items', items[0]);
+  const page = query.data?.page;
   const totalPages = page?.totalPages ?? 1;
   const totalRecords = page?.totalRecords ?? 0;
-  const queryIsLoading = USE_CASE_LIST_LAYOUT_MOCK ? false : query.isLoading;
-  const emptyList = !queryIsLoading && items.length === 0;
+  const emptyList = !query.isLoading && items.length === 0;
   const emptyNoProceedings = emptyList && isCaseFiltersEmpty(appliedFilters);
 
   const onSearch = () => {
@@ -74,11 +66,11 @@ export function CaseLoggedInScreen() {
           <View style={s.listWrap}>
             <CaseList
               items={items}
-              loading={queryIsLoading}
+              loading={query.isLoading}
               empty={emptyList}
               emptyNoProceedings={emptyNoProceedings}
             />
-            {!queryIsLoading && items.length > 0 && (
+            {!query.isLoading && items.length > 0 && (
               <CasePagination
                 pageNumber={pageNumber}
                 totalPages={totalPages}

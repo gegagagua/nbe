@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { LoginPalette } from '@/constants/login';
 import type { CaseApplication, CaseParty } from '@/types/case-management';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 import { formatOfficialCaseNumberDisplay } from '@/utils/format-official-case-number';
@@ -22,10 +23,11 @@ function debtSummary(item: CaseApplication): string | null {
 export function CaseListItem({ item }: { item: CaseApplication }) {
   const { t } = useTranslation();
   const officialNo = formatOfficialCaseNumberDisplay(item.regnumber, item.id);
+  const regDate = item.regDate ? formatEnforcementDateTime(item.regDate) : null;
   const headlineDate = formatEnforcementDateTime(
     item.finalRegistrationAt ?? item.inputDate,
   );
-  const accent = item.cardAccentColor;
+  const accentColor = item.status.colorCode || LoginPalette.primary;
   const debt = debtSummary(item);
   const a11y = `${officialNo}. ${t('cases.openCaseA11yHint')}`;
 
@@ -35,7 +37,7 @@ export function CaseListItem({ item }: { item: CaseApplication }) {
       onPress={() => router.push(`/cases/${String(item.id)}`)}
       accessibilityRole="button"
       accessibilityLabel={a11y}>
-      <View style={[s.card, accent ? [s.cardAccent, { borderLeftColor: accent }] : undefined]}>
+      <View style={[s.card, s.cardAccent, { borderLeftColor: accentColor }]}>
         <View style={s.topBlock}>
           {item.listSequenceLabel ? (
             <Text style={s.sequence}>{item.listSequenceLabel}</Text>
@@ -45,7 +47,14 @@ export function CaseListItem({ item }: { item: CaseApplication }) {
           <Text style={s.caseNumber}>
             {t('cases.listCaseNumberLabel')}: {officialNo}
           </Text>
-          <Text style={s.caseDate}>{headlineDate}</Text>
+          {regDate ? (
+            <Text style={s.caseDate}>
+              {t('cases.listRegDateLabel')}: {regDate}
+            </Text>
+          ) : null}
+          <Text style={s.caseDate}>
+            {t('cases.listRegistrationLine')}: {headlineDate}
+          </Text>
           <Text style={s.caseTitle}>{item.trType.name}</Text>
           {item.enforcementBureauName ? (
             <Text style={s.bureau}>{item.enforcementBureauName}</Text>

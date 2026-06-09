@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native';
 
 import { ForcedPasswordChangeModal } from '@/components/login/forced-password-change-modal';
+import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginForm } from '@/components/login/login-form';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { LoginPalette } from '@/constants/login';
@@ -80,6 +81,7 @@ function LoginScreenContent() {
   return (
     <LoginScreenLayout>
       <ForcedPasswordChangeModal {...login.forcedPwdChange} />
+      <LoginOtpModal {...login.otpLogin} />
       <LoginForm
         control={login.control}
         errors={login.errors}

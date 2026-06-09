@@ -20,7 +20,8 @@ export type CaseSearchFilters = {
   paymentIdentifier?: string;
   cadastralCode?: string;
   vehicleNumber?: string;
-  postNumber?: string;
+  /** ქვითრის ნომერი → API `docNo` */
+  docNo?: string;
   automaticProcess?: boolean;
   updateByDate?: boolean;
   conditional?: boolean;

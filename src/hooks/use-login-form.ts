@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { createSession } from "@/api/sessions";
+import { createSession, verifyLoginOtp } from "@/api/sessions";
 import { changePassword } from "@/api/users";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
@@ -26,6 +26,8 @@ export function useLoginForm(): LoginFormState {
     otpPwd: string;
   } | null>(null);
   const [isForcingPwdChange, setIsForcingPwdChange] = useState(false);
+  const [pendingOtp, setPendingOtp] = useState<{ token: string; credentials: LoginFormValues } | null>(null);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
 
   const { control, handleSubmit, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(schema),
@@ -65,6 +67,10 @@ export function useLoginForm(): LoginFormState {
         password: payload.password,
       }),
     onSuccess: async (data, variables) => {
+      if (data.tokenType === 'OTP') {
+        setPendingOtp({ token: data.token, credentials: variables });
+        return;
+      }
       if (data.tokenType === 'PWD_CHNG') {
         await setSessionToken(data.token);
         setPendingPwdChange({ username: variables.username, otpPwd: variables.password });
@@ -106,6 +112,23 @@ export function useLoginForm(): LoginFormState {
     [pendingPwdChange, finishLogin],
   );
 
+  const handleOtpVerify = useCallback(
+    async (code: string) => {
+      if (!pendingOtp) return;
+      setIsVerifyingOtp(true);
+      try {
+        const session = await verifyLoginOtp(pendingOtp.token, code);
+        setPendingOtp(null);
+        await finishLogin(session.token, session.user, pendingOtp.credentials);
+      } catch (err) {
+        showErrorToast(mapLoginError(err), err);
+      } finally {
+        setIsVerifyingOtp(false);
+      }
+    },
+    [pendingOtp, finishLogin],
+  );
+
   const { mutate, mutateAsync, isPending } = loginMutation;
 
   const onSubmit = useMemo(
@@ -140,6 +163,12 @@ export function useLoginForm(): LoginFormState {
       visible: pendingPwdChange !== null,
       isSubmitting: isForcingPwdChange,
       onSubmit: handleForcedPasswordChange,
+    },
+    otpLogin: {
+      visible: pendingOtp !== null,
+      isSubmitting: isVerifyingOtp,
+      onSubmit: handleOtpVerify,
+      onCancel: () => setPendingOtp(null),
     },
   };
 }

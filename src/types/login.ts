@@ -35,6 +35,13 @@ export type ForcedPwdChangeState = {
   onSubmit: (newPwd: string) => Promise<void>;
 };
 
+export type OtpLoginState = {
+  visible: boolean;
+  isSubmitting: boolean;
+  onSubmit: (code: string) => Promise<void>;
+  onCancel: () => void;
+};
+
 export type LoginFormState = {
   control: Control<LoginFormValues>;
   errors: FieldErrors<LoginFormValues>;
@@ -42,4 +49,5 @@ export type LoginFormState = {
   submitDisabled: boolean;
   submitWithCredentials: (values: LoginFormValues) => Promise<{ ok: boolean }>;
   forcedPwdChange: ForcedPwdChangeState;
+  otpLogin: OtpLoginState;
 };

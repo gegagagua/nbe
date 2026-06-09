@@ -15,14 +15,14 @@ export function CaseParticipantSearch({ values, onChange }: Pick<CaseFiltersProp
     <View style={s.participantBlock}>
       <Text style={s.sectionTitle}>{t('cases.participantSearchTitle')}</Text>
       <CaseFilterField
-        placeholder={t('cases.participantFilterAppRegPlaceholder')}
+        placeholder={t('cases.participantFilterRegnumberPlaceholder')}
         value={values.appRegNo ?? ''}
         onChangeText={(v) => setValue('appRegNo', v)}
       />
       <CaseFilterField
-        placeholder={t('cases.participantFilterEnforcementSheetPlaceholder')}
-        value={values.postNumber ?? ''}
-        onChangeText={(v) => setValue('postNumber', v)}
+        placeholder={t('cases.participantFilterDocNoPlaceholder')}
+        value={values.docNo ?? ''}
+        onChangeText={(v) => setValue('docNo', v)}
       />
       <CaseFilterField
         placeholder={t('cases.participantFilterPaymentIdPlaceholder')}

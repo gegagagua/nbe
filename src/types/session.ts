@@ -25,7 +25,7 @@ export type SessionUserProfileBrief = {
 
 export type CreateSessionResponse = {
   token: string;
-  tokenType: 'SESSION' | 'PWD_CHNG';
+  tokenType: 'SESSION' | 'PWD_CHNG' | 'OTP';
   user: SessionUser | null;
 };
 

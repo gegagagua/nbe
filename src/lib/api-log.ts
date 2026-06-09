@@ -77,12 +77,12 @@ export function logApiRequest(config: InternalAxiosRequestConfig): void {
 
 export function logApiResponse(response: AxiosResponse): void {
   if (!__DEV__) return;
-  console.log("response", response);
-  console.log("response", response.data);
+  // console.log("response", response);
+  // console.log("response", response.data);
   const { method, url } = describe(response.config);
-  console.log(`[API ← ${response.status}] ${method} ${url}`, {
-    body: stringifyBody(response.data),
-  });
+  // console.log(`[API ← ${response.status}] ${method} ${url}`, {
+  //   body: stringifyBody(response.data),
+  // });
 }
 
 export function logApiError(error: unknown, context?: string): void {

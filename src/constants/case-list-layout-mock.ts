@@ -12,7 +12,7 @@ import { CASE_LIST_LAYOUT_MOCK_ROWS_EN_B } from "./case-list-layout-mock-rows-en
  * UI მაკეტის პრევიუ: სიის/წაუკიტებლების API არ მოდის; `cases` / `cases/[id]` სესიის რედირექტს არ აკეთებს.
  * ბექის ჩასართავად და ავტორიზაციის დაბრუნებად: `false`.
  */
-export const USE_CASE_LIST_LAYOUT_MOCK = true;
+export const USE_CASE_LIST_LAYOUT_MOCK = false;
 
 /** ჰედერი / წაუკიტებლები — `case-screen`-ში ჰუკების ნაცვლად (დროებითი მოკი). */
 export const CASE_SCREEN_HEADER_MOCK = {

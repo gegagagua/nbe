@@ -18,6 +18,18 @@ export async function createSession(
   return res.data.data;
 }
 
+export async function verifyLoginOtp(
+  otpToken: string,
+  code: string,
+): Promise<CreateSessionResponse> {
+  const res = await apiClient.post<CreateSessionApiEnvelope>(
+    `${BASE_URL}${ApiPaths.otpVerify}`,
+    { data: { code } },
+    { headers: { Authorization: `Bearer ${otpToken}` } },
+  );
+  return res.data.data;
+}
+
 export async function logoutSession(): Promise<void> {
   await apiClient.post(`${BASE_URL}${ApiPaths.logout}`);
 }
