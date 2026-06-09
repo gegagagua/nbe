@@ -73,7 +73,7 @@ export function LoginForm({
         </View>
         <Button
           label={t('login.submit')}
-          onPress={() => void onSubmit()}
+          onPress={() => { onSubmit(); }}
           disabled={submitDisabled}
         />
         {faceId?.show ? (

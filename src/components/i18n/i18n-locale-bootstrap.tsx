@@ -7,9 +7,9 @@ export function I18nLocaleBootstrap() {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    void readStoredLocale().then((stored) => {
+    readStoredLocale().then((stored) => {
       if (!stored) return;
-      if (i18n.language !== stored) void i18n.changeLanguage(stored);
+      if (i18n.language !== stored) i18n.changeLanguage(stored);
     });
   }, [i18n]);
 

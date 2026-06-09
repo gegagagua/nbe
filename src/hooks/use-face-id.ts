@@ -69,7 +69,7 @@ export function useFaceId(): UseFaceIdState {
   }, []);
 
   useEffect(() => {
-    void refresh();
+    refresh();
   }, [refresh]);
 
   const enable = useCallback<UseFaceIdState['enable']>(

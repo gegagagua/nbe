@@ -11,7 +11,7 @@ export function useDebtorExtractApplicant() {
 
   useEffect(() => {
     let active = true;
-    void getSessionUserProfile().then((profile) => {
+    getSessionUserProfile().then((profile) => {
       if (!active || !profile) {
         return;
       }

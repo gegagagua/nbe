@@ -90,7 +90,7 @@ export function RegisterOtpStep({ onVerify, onBack, isVerifying }: RegisterOtpSt
 
         <Button
           label={t('login.registerOtpVerifyButton')}
-          onPress={() => void onSubmit()}
+          onPress={() => { onSubmit(); }}
           disabled={isVerifying || !formState.isValid || isExpired}
         />
 

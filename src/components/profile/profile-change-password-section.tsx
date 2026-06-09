@@ -139,7 +139,7 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
 
       <Pressable
         style={[s.buttonPrimary, (isSubmitting || !formState.isValid) && s.buttonDisabled]}
-        onPress={() => void submitHandler()}
+        onPress={() => { submitHandler(); }}
         disabled={isSubmitting || !formState.isValid}
         accessibilityRole="button">
         <Text style={s.buttonPrimaryText}>{t('profile.changePasswordButton')}</Text>

@@ -1,9 +1,9 @@
 import { ApiPaths, BASE_URL } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
 import type {
-    CreateSessionApiEnvelope,
-    CreateSessionRequest,
-    CreateSessionResponse,
+  CreateSessionApiEnvelope,
+  CreateSessionRequest,
+  CreateSessionResponse,
 } from "@/types/session";
 
 export async function createSession(
@@ -22,14 +22,14 @@ export async function verifyLoginOtp(
   otpToken: string,
   code: string,
 ): Promise<CreateSessionResponse> {
-  const res = await apiClient.post<CreateSessionApiEnvelope>(
-    `${BASE_URL}${ApiPaths.otpVerify}`,
-    { data: { code } },
+  const res = await apiClient.patch<CreateSessionApiEnvelope>(
+    `${BASE_URL}${ApiPaths.sessionOtpVerify(code)}`,
+    null,
     { headers: { Authorization: `Bearer ${otpToken}` } },
   );
   return res.data.data;
 }
 
 export async function logoutSession(): Promise<void> {
-  await apiClient.post(`${BASE_URL}${ApiPaths.logout}`);
+  // await apiClient.post(`${BASE_URL}${ApiPaths.logout}`);
 }

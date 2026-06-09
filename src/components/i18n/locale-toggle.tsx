@@ -11,8 +11,8 @@ export function LocaleToggle() {
   const active: AppLocale = i18n.language.startsWith('en') ? 'en' : 'ka';
 
   function setLocale(lng: AppLocale) {
-    void i18n.changeLanguage(lng);
-    void persistLocale(lng);
+    i18n.changeLanguage(lng);
+    persistLocale(lng);
   }
 
   return (

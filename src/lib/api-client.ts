@@ -10,11 +10,17 @@ import {
 import { showErrorToast } from "@/lib/show-error-toast";
 import { signOut } from "@/lib/sign-out";
 
+function isSessionOtpVerify(url: string): boolean {
+  return url.includes("/portal/v1/sessions/otp/");
+}
+
 function isAuthRequest(config: InternalAxiosRequestConfig) {
   const url = config.url ?? "";
   return (
     url.endsWith(ApiPaths.logout) ||
-    url.endsWith(ApiPaths.sessions)
+    url.endsWith(ApiPaths.sessions) ||
+    url.endsWith(ApiPaths.otpVerify) ||
+    isSessionOtpVerify(url)
   );
 }
 
@@ -25,10 +31,11 @@ function isPublicEndpoint(url: string): boolean {
     url.endsWith(ApiPaths.usersVerificationCheck) ||
     url.endsWith(ApiPaths.usersResetPassword) ||
     url.endsWith(ApiPaths.paymentInfo) ||
-    url === ApiPaths.otpSend ||
-    url === ApiPaths.otpVerify ||
-    url === ApiPaths.passwordReset ||
-    url.endsWith(ApiPaths.sessions)
+    url.endsWith(ApiPaths.otpSend) ||
+    url.endsWith(ApiPaths.otpVerify) ||
+    url.endsWith(ApiPaths.passwordReset) ||
+    url.endsWith(ApiPaths.sessions) ||
+    isSessionOtpVerify(url)
   );
 }
 

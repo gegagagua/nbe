@@ -50,7 +50,7 @@ export function CaseDetailProceedingsList({
                       <View key={`${row.codeLine}-${di}-${doc.href}`} style={tb.tableRow}>
                         <View style={tb.tableCell}>
                           <Pressable
-                            onPress={() => void Linking.openURL(doc.href)}
+                            onPress={() => Linking.openURL(doc.href)}
                             accessibilityRole="link"
                             accessibilityLabel={t('cases.detail.docOpenA11y')}>
                             <Text style={s.linkText}>{doc.title}</Text>

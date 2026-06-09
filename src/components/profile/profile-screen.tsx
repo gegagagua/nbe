@@ -30,7 +30,7 @@ export function ProfileScreen() {
   });
 
   function handleSignOut() {
-    void signOut();
+    signOut();
   }
 
   if (isLoading) {

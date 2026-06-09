@@ -71,7 +71,7 @@ export function ForgotPasswordIdentityStep({ onSubmit, isSubmitting, statusMessa
 
       <Button
         label={t('forgotPassword.submitButton')}
-        onPress={() => void submitHandler()}
+        onPress={() => { submitHandler(); }}
         disabled={isSubmitting || !formState.isValid || statusMessage?.type === 'success'}
       />
     </View>

@@ -11,7 +11,7 @@ import { homeContactScreenStyles as s } from './home-contact-screen.styles';
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 function openUrl(href: string) {
-  void Linking.openURL(href);
+  Linking.openURL(href);
 }
 
 function ContactCard({ iconName, title, children }: { iconName: IconName; title: string; children: ReactNode }) {

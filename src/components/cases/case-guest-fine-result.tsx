@@ -16,7 +16,7 @@ export function CaseGuestFineResult({ result }: Props) {
 
   function handlePay() {
     if (result.paymentUrl) {
-      void Linking.openURL(result.paymentUrl);
+      Linking.openURL(result.paymentUrl);
       return;
     }
     showErrorToast(t('cases.detailPaySoonToast'));

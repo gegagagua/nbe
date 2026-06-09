@@ -20,7 +20,7 @@ export function useUserDetail() {
   }, []);
 
   useEffect(() => {
-    void fetchDetail();
+    fetchDetail();
   }, [fetchDetail]);
 
   return { detail, isLoading, refetch: fetchDetail };

@@ -7,6 +7,8 @@ export const ApiPaths = {
   logout: "/um-portal/v1/sessions/logout",
   otpSend: "/um-portal/v1/otp/send",
   otpVerify: "/um-portal/v1/otp/verify",
+  sessionOtpVerify: (otp: string | number) =>
+    `/um-portal/v1/sessions/otp/${otp}`,
   passwordReset: "/um-portal/v1/password/reset",
 
   // Public (unauthenticated)

@@ -76,7 +76,7 @@ export function RegisterPhysicalForm({ onValidSubmit }: Props) {
       <View style={registerFormActionsStyles.submit}>
         <Button
           label={t('login.registerSubmit')}
-          onPress={() => void onSubmit()}
+          onPress={() => { onSubmit(); }}
           disabled={submitDisabled}
         />
       </View>

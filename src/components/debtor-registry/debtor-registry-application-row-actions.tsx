@@ -46,11 +46,11 @@ type Props = { app: DebtorRegistryApplication };
 export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
   const onDownload = () => {
-    void Linking.openURL(resolveDocumentUrl(app));
+    Linking.openURL(resolveDocumentUrl(app));
   };
   const onShare = () => {
     const url = resolveDocumentUrl(app);
-    void Share.share({
+    Share.share({
       title: t('debtors.listShareTitle'),
       message: shareSummary(app, t),
       url,

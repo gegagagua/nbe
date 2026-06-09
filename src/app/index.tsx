@@ -22,7 +22,7 @@ function LoginScreenContent() {
 
   useFocusEffect(
     useCallback(() => {
-      void faceId.refresh();
+      faceId.refresh();
     }, [faceId.refresh]),
   );
 
@@ -98,7 +98,7 @@ function LoginScreenContent() {
               ? t('faceId.loginButtonFingerprint')
               : t('faceId.loginButton'),
           iconName: faceId.kind === 'fingerprint' ? 'fingerprint' : 'face-recognition',
-          onPress: () => void handleFaceIdPress(),
+          onPress: () => { handleFaceIdPress(); },
           disabled: isFaceIdLoading,
         }}
       />

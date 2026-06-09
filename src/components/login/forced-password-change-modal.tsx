@@ -107,7 +107,7 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
           ) : (
             <Button
               label={t('login.forcedPwdChangeButton')}
-              onPress={() => void submitHandler()}
+              onPress={() => { submitHandler(); }}
               disabled={!formState.isValid}
             />
           )}

@@ -109,7 +109,7 @@ export function LoginOtpModal({ visible, isSubmitting, onSubmit, onCancel }: Otp
           ) : (
             <Button
               label={t('login.otpLoginVerifyButton')}
-              onPress={() => void submitHandler()}
+              onPress={() => { submitHandler(); }}
               disabled={!formState.isValid || isExpired}
             />
           )}

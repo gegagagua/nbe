@@ -53,7 +53,7 @@ export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
         <RegisterSegmentedTabs value={tab} onChange={setTab} />
         {tab === 'physical' ? (
           <RegisterPhysicalForm
-            onValidSubmit={(values) => void flow.handleFormSubmit(values)}
+            onValidSubmit={(values) => { flow.handleFormSubmit(values); }}
           />
         ) : (
           <RegisterLegalForm />

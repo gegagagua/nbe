@@ -13,7 +13,7 @@ function deviceLocale(): AppLocale {
 
 const i18n = i18next.createInstance();
 
-void i18n.use(initReactI18next).init({
+i18n.use(initReactI18next).init({
   compatibilityJSON: 'v4',
   resources: {
     ka: { translation: ka },

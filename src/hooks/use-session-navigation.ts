@@ -9,7 +9,7 @@ export function useLoginIndexSessionRedirect() {
 
   useEffect(() => {
     let cancelled = false;
-    void (async () => {
+    (async () => {
       const token = await getSessionToken();
       if (cancelled) {
         return;
@@ -37,7 +37,7 @@ export function useHomeRouteSessionGuard(options?: { skip?: boolean }) {
       return;
     }
     let cancelled = false;
-    void (async () => {
+    (async () => {
       const token = await getSessionToken();
       if (cancelled) {
         return;

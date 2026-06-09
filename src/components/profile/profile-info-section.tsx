@@ -109,7 +109,7 @@ export function ProfileInfoSection({
         statusMessage={statusMessage}
         onEdit={() => setEditing(true)}
         onCancel={handleCancel}
-        onSave={() => void onSubmit()}
+        onSave={() => { onSubmit(); }}
       />
     </View>
   );

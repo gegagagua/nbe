@@ -25,7 +25,7 @@ export function CaseDetailAuctionBody({ data }: { data: CaseDetailLayoutMock }) 
           <Text style={tb.tableCell}>{lot.status}</Text>
           <View style={tb.tableCell}>
             <Pressable
-              onPress={() => void Linking.openURL(lot.url)}
+              onPress={() => Linking.openURL(lot.url)}
               accessibilityRole="link"
               accessibilityLabel={t('cases.detail.auctionOpenEauction')}>
               <Text style={s.linkText}>{t('cases.detail.auctionOpenEauction')}</Text>

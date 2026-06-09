@@ -42,7 +42,6 @@
       ],
       "expo-secure-store",
       "expo-localization",
-      "react-native-keyboard-controller",
       [
         "expo-local-authentication",
         {

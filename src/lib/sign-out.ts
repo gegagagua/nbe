@@ -9,7 +9,7 @@ import { clearSessionToken } from "@/lib/session-token-storage";
 import { clearSessionUserProfile } from "@/lib/session-user-profile-storage";
 
 export async function signOut(): Promise<void> {
-  void logoutSession().catch(() => undefined);
+  logoutSession().catch(() => undefined);
 
   clearAppQueryCache();
   setGuestMode(false);
