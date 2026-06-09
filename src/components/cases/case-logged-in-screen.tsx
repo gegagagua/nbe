@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -11,7 +11,9 @@ import { HomeHeader } from '@/components/home/home-header';
 import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { useCaseApps } from '@/hooks/use-case-apps';
+import { useCaseListDebts } from '@/hooks/use-case-list-debts';
 import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
+import { mergeCaseListDebts } from '@/lib/merge-case-list-debts';
 import type { CaseSearchFilters } from '@/types/case-management';
 import { isCaseFiltersEmpty } from '@/utils/is-case-filters-empty';
 
@@ -24,9 +26,13 @@ export function CaseLoggedInScreen() {
   const [appliedFilters, setAppliedFilters] = useState<CaseSearchFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
   const query = useCaseApps(appliedFilters, pageNumber);
-  
-  const items = query.data?.data ?? [];
-  console.log('items', items[0]);
+  const baseItems = query.data?.data ?? [];
+  const appIds = useMemo(
+    () => (query.data?.data ?? []).map((item) => item.id),
+    [query.data?.data],
+  );
+  const debtsByAppId = useCaseListDebts(appIds);
+  const items = mergeCaseListDebts(baseItems, debtsByAppId);
   const page = query.data?.page;
   const totalPages = page?.totalPages ?? 1;
   const totalRecords = page?.totalRecords ?? 0;

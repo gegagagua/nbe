@@ -6,6 +6,7 @@ import {
 import { Stack } from "expo-router";
 import { I18nextProvider } from "react-i18next";
 import { Dimensions, useColorScheme, View } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import "@/lib/api-client";
 
@@ -23,18 +24,20 @@ export default function RootLayout() {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <View style={{ flex: 1, paddingVertical: screenWidth > maxTabletWidth ? 80 : 0, 
-      backgroundColor: "white", maxWidth: maxWidth, 
-        marginLeft: screenWidth > maxTabletWidth ? (screenWidth - maxWidth) / 2 : 0 }}>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <QueryProvider>
-            <I18nLocaleBootstrap />
-            <AnimatedSplashOverlay />
-            <Stack screenOptions={{ headerShown: false }} />
-            <AppToast />
-          </QueryProvider>
-        </ThemeProvider>
-      </View>
+      <KeyboardProvider>
+        <View style={{ flex: 1, paddingVertical: screenWidth > maxTabletWidth ? 80 : 0,
+        backgroundColor: "white", maxWidth: maxWidth,
+          marginLeft: screenWidth > maxTabletWidth ? (screenWidth - maxWidth) / 2 : 0 }}>
+          <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <QueryProvider>
+              <I18nLocaleBootstrap />
+              <AnimatedSplashOverlay />
+              <Stack screenOptions={{ headerShown: false }} />
+              <AppToast />
+            </QueryProvider>
+          </ThemeProvider>
+        </View>
+      </KeyboardProvider>
     </I18nextProvider>
   );
 }

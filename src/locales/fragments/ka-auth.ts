@@ -30,7 +30,7 @@ export const kaAuth = {
     registerPhysicalPassword: "პაროლი",
     registerPasswordConfirm: "გაიმეორეთ პაროლი",
     registerPasswordRequirements:
-      "პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლოს: დიდი ასოები, პატარა ასოები, ციფრები და პუნქტუაციის ნიშნები",
+      "პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლოს: სხვადასხვა ზომის ლათინურ ასოებს და ციფრებს, პუნქტუაციის ნიშნებს (~!@#$%^&*()_+`-={}[]|:\";' <>,.?/)",
     registerSuccessTitle: "რეგისტრაცია წარმატებულია",
     registerSuccessMessage:
       "თქვენ წარმატებით დარეგისტრირდით. შეგიძლიათ შეხვიდეთ სისტემაში.",
@@ -87,7 +87,7 @@ export const kaAuth = {
     invalidPersonalId: "პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან.",
     requiredPhone: "მიუთითეთ ტელეფონი.",
     invalidPhone: "ტელეფონის ნომერი უნდა შედგებოდეს 9 ციფრისგან.",
-    requiredActualAddress: "მიუთითეთ ფიზიკური მისამართი.",
+    requiredActualAddress: "მიუთითეთ ფაქტობრივი მისამართი.",
     requiredLegalAddress: "მიუთითეთ იურიდიული მისამართი.",
     requiredCompanyName: "მიუთითეთ დასახელება.",
     requiredIdentificationCode: "მიუთითეთ საიდენტიფიკაციო კოდი.",
@@ -155,7 +155,7 @@ export const kaAuth = {
     labelPersonalId: "პირადი ნომერი",
     labelFirstName: "სახელი",
     labelLastName: "გვარი",
-    labelRealAddress: "ფიზიკური მისამართი",
+    labelRealAddress: "ფაქტობრივი მისამართი",
     labelLegalAddress: "იურიდიული მისამართი",
     labelPhone: "ტელეფონი",
     labelEmail: "ელ-ფოსტა",

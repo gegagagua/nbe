@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { ForgotPasswordIdentityStep } from '@/components/forgot-password/forgot-password-identity-step';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
@@ -14,10 +15,11 @@ export default function ForgotPasswordRoute() {
 
   return (
     <LoginScreenLayout title={t('forgotPassword.pageTitle')} contentAlign="top">
-      <ScrollView
+      <KeyboardAwareScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        bottomOffset={16}>
         <Pressable
           style={styles.backButton}
           onPress={() => router.back()}
@@ -33,7 +35,7 @@ export default function ForgotPasswordRoute() {
             statusMessage={statusMessage}
           />
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </LoginScreenLayout>
   );
 }

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { LoginPalette } from '@/constants/login';
@@ -67,11 +68,12 @@ export function ProfileScreen() {
           <Text style={s.pageTitle}>{t('profile.pageTitle')}</Text>
         </View>
 
-        <ScrollView
+        <KeyboardAwareScrollView
           style={s.scroll}
           contentContainerStyle={s.scrollContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          bottomOffset={16}>
           <ProfileInfoSection
             firstName={detail?.firstName ?? null}
             lastName={detail?.lastName ?? null}
@@ -108,7 +110,7 @@ export function ProfileScreen() {
             accessibilityRole="button">
             <Text style={s.signOutButtonText}>{t('profile.signOutButton')}</Text>
           </Pressable>
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </AppSafeArea>
     </View>
   );

@@ -1,5 +1,6 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { LocaleToggle } from '@/components/i18n/locale-toggle';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
@@ -22,15 +23,17 @@ export function LoginScreenLayout({
 
   return (
     <View style={loginScreenLayoutStyles.page}>
-      <AppSafeArea style={loginScreenLayoutStyles.body}>
-        <View style={loginScreenLayoutStyles.titleWrap}>
-          <Text style={loginScreenLayoutStyles.title}>{resolvedTitle}</Text>
-          <View style={loginScreenLayoutStyles.langSlot}>
-            <LocaleToggle />
+      <KeyboardAvoidingView behavior="padding" style={loginScreenLayoutStyles.body}>
+        <AppSafeArea style={loginScreenLayoutStyles.body}>
+          <View style={loginScreenLayoutStyles.titleWrap}>
+            <Text style={loginScreenLayoutStyles.title}>{resolvedTitle}</Text>
+            <View style={loginScreenLayoutStyles.langSlot}>
+              <LocaleToggle />
+            </View>
           </View>
-        </View>
-        <View style={mainStyle}>{children}</View>
-      </AppSafeArea>
+          <View style={mainStyle}>{children}</View>
+        </AppSafeArea>
+      </KeyboardAvoidingView>
       <LoginFooter />
     </View>
   );

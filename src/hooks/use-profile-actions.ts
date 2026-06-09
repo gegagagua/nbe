@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { changePassword } from '@/api/users';
+import { changePassword, updateUserMe } from '@/api/users';
 import { clearFaceIdAll } from '@/lib/face-id-storage';
 import { mapChangePasswordError } from '@/lib/map-change-password-error';
 import { mapUpdateUserError } from '@/lib/map-update-user-error';
+import { normalizeGeorgianPhone } from '@/lib/phone';
 import { isSimilarPasswordUsed, recordPasswordChange } from '@/lib/password-history-storage';
 import type { ProfileInfoEditValues } from '@/schemas/profile-info-edit.schema';
 import type { SessionUserProfileBrief } from '@/types/session';
@@ -38,6 +39,24 @@ export function useProfileActions({ profile, detail, onDetailRefetch }: UseProfi
       setIsSavingInfo(true);
       setInfoStatus(null);
       try {
+        const existingContacts = detail.contacts ?? [];
+        const contacts = existingContacts.filter(
+          (c) => !/mobile|phone|sms|cell|email|mail/i.test(c.type ?? ''),
+        );
+        if (values.phone) {
+          contacts.push({ type: 'MOBILE', contact: normalizeGeorgianPhone(values.phone) });
+        }
+        if (values.email) {
+          contacts.push({ type: 'EMAIL', contact: values.email.trim() });
+        }
+        await updateUserMe({
+          firstName: detail.firstName ?? '',
+          lastName: detail.lastName ?? '',
+          idnumber: detail.idnumber ?? undefined,
+          realAddress: values.realAddress || undefined,
+          legalAddress: values.legalAddress || undefined,
+          contacts,
+        });
         await onDetailRefetch?.();
         setInfoStatus({ type: 'success', text: t('profile.saveSuccess') });
       } catch (err) {

@@ -29,7 +29,7 @@ export const enAuth = {
     registerPhysicalPassword: "Password",
     registerPasswordConfirm: "Confirm Password",
     registerPasswordRequirements:
-      "Password must contain at least 8 characters: uppercase, lowercase, digits, and punctuation",
+      "Password must contain at least 8 characters: uppercase and lowercase Latin letters, digits, and punctuation (~!@#$%^&*()_+`-={}[]|:\";'<>,.?/)",
     registerSuccessTitle: "Registration Successful",
     registerSuccessMessage:
       "You have successfully registered. You can now sign in.",
@@ -86,7 +86,7 @@ export const enAuth = {
     invalidPersonalId: "Personal ID must be 11 digits.",
     requiredPhone: "Enter your phone number.",
     invalidPhone: "Phone number must be 9 digits.",
-    requiredActualAddress: "Enter your physical address.",
+    requiredActualAddress: "Enter your actual address.",
     requiredLegalAddress: "Enter your legal address.",
     requiredCompanyName: "Enter the legal name.",
     requiredIdentificationCode: "Enter the identification number.",
@@ -156,7 +156,7 @@ export const enAuth = {
     labelPersonalId: "Personal ID number",
     labelFirstName: "First name",
     labelLastName: "Last name",
-    labelRealAddress: "Physical address",
+    labelRealAddress: "Actual address",
     labelLegalAddress: "Legal address",
     labelPhone: "Phone",
     labelEmail: "Email",

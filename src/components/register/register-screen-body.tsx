@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { IdentomatDemoScreen } from '@/components/identomat/identomat-demo-screen';
 import { useRegisterFlow } from '@/hooks/use-register-flow';
@@ -42,10 +43,11 @@ export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
   }
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={s.scroll}
       contentContainerStyle={s.scrollContent}
-      keyboardShouldPersistTaps="handled">
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={16}>
       <RegisterNavRow onBack={onBack} />
       <View style={s.card}>
         <RegisterSegmentedTabs value={tab} onChange={setTab} />
@@ -57,6 +59,6 @@ export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
           <RegisterLegalForm />
         )}
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

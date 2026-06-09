@@ -6,6 +6,7 @@ import type {
   CreatePortalUserResponse,
   GetUserResponse,
   UpdateUserPasswordRequest,
+  UpdateUserRequest,
   UserDetail,
   VerifyPhoneOtpRequest,
   VerifyPhoneOtpResponse,
@@ -50,4 +51,8 @@ export async function changePassword(
 export async function getUserMe(): Promise<UserDetail> {
   const response = await apiClient.get<GetUserResponse>(ApiPaths.usersMe);
   return response.data.data;
+}
+
+export async function updateUserMe(payload: UpdateUserRequest): Promise<void> {
+  await apiClient.put(ApiPaths.usersMeUpdate, { data: payload });
 }
