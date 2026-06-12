@@ -69,7 +69,7 @@ export function ProfileFaceIdSection({
         ) : (
           <Switch
             value={faceId.isEnabled}
-            onValueChange={(v) => void ctrl.handleToggle(v)}
+            onValueChange={(v) => { ctrl.handleToggle(v); }}
             disabled={!faceId.availability.isAvailable && !faceId.isEnabled}
             trackColor={{ true: LoginPalette.primary, false: '#cfd8ea' }}
             thumbColor="#ffffff"
@@ -113,7 +113,7 @@ export function ProfileFaceIdSection({
         visible={ctrl.modalVisible}
         isSubmitting={ctrl.isSubmitting}
         errorMessage={ctrl.modalError}
-        onConfirm={(pw) => void ctrl.handleConfirmEnable(pw)}
+        onConfirm={(pw) => { ctrl.handleConfirmEnable(pw); }}
         onClose={ctrl.closeModal}
       />
       <PasswordHistoryModal

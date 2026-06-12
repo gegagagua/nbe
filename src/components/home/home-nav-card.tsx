@@ -44,7 +44,12 @@ export function HomeNavCard({
           disabled && homeNavCardStyles.cardDisabled,
         ]}>
         <View style={homeNavCardStyles.tabAnchor} pointerEvents="none">
-          <View style={[homeNavCardStyles.tab, { backgroundColor: tabColor }]}>
+          <View
+            style={[
+              homeNavCardStyles.tab,
+              { backgroundColor: tabColor },
+              disabled && homeNavCardStyles.tabDisabled,
+            ]}>
             <MaterialCommunityIcons
               name={
                 item.icon as ComponentProps<
@@ -57,7 +62,12 @@ export function HomeNavCard({
           </View>
         </View>
         <View style={homeNavCardStyles.cardBody}>
-          <Text style={homeNavCardStyles.title} numberOfLines={2}>
+          <Text
+            style={[
+              homeNavCardStyles.title,
+              disabled && homeNavCardStyles.titleDisabled,
+            ]}
+            numberOfLines={2}>
             {title}
           </Text>
         </View>

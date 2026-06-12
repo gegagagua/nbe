@@ -10,6 +10,10 @@ import { changePassword, getUserMe } from "@/api/users";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
 import { mapLoginError } from "@/lib/map-login-error";
+import {
+  isSimilarPasswordUsed,
+  recordPasswordChange,
+} from "@/lib/password-history-storage";
 import { getSessionToken, setSessionToken } from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
@@ -45,7 +49,9 @@ export function useLoginForm(): LoginFormState {
       if (user) {
         await setSessionUserProfile({
           id: user.id,
-          username: user.username ?? user.idnumber ?? "",
+          // Store the exact identifier the user logged in with so Face ID
+          // (which re-runs createSession with this username) stays valid.
+          username: credentials.username.trim() || user.username || user.idnumber || "",
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
         });
@@ -88,11 +94,16 @@ export function useLoginForm(): LoginFormState {
       if (!pendingPwdChange) return;
       setIsForcingPwdChange(true);
       try {
+        if (await isSimilarPasswordUsed(newPwd)) {
+          showErrorToast(t("validation.similarPasswordUsed"));
+          return;
+        }
         await changePassword({
           crntPwd: pendingPwdChange.otpPwd,
           newPwd,
           retypeNewPwd: newPwd,
         });
+        await recordPasswordChange(newPwd);
         const me = await getUserMe();
         const sessionUser: import("@/types/session").SessionUser = {
           id: me.id,
@@ -115,7 +126,7 @@ export function useLoginForm(): LoginFormState {
         setIsForcingPwdChange(false);
       }
     },
-    [pendingPwdChange, finishLogin],
+    [pendingPwdChange, finishLogin, t],
   );
 
   const handleOtpVerify = useCallback(

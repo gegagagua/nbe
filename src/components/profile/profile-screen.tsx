@@ -8,6 +8,7 @@ import { LoginPalette } from '@/constants/login';
 import { useProfileActions } from '@/hooks/use-profile-actions';
 import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
 import { useUserDetail } from '@/hooks/use-user-detail';
+import { useVerifyCurrentPassword } from '@/hooks/use-verify-current-password';
 import { resolveUserEmail, resolveUserPhone } from '@/lib/resolve-user-contacts';
 import { signOut } from '@/lib/sign-out';
 
@@ -26,6 +27,7 @@ export function ProfileScreen() {
     detail,
     onDetailRefetch: refetch,
   });
+  const verifyPassword = useVerifyCurrentPassword(profile?.username);
 
   function handleSignOut() {
     signOut();
@@ -93,6 +95,7 @@ export function ProfileScreen() {
             authorities={detail?.authorities ?? []}
             loginHistory={detail?.loginHistory ?? []}
             passwordHistory={detail?.passwordHistory ?? []}
+            verifyPassword={verifyPassword}
           />
 
           <View style={s.divider} />

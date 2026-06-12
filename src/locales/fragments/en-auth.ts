@@ -8,6 +8,8 @@ export const enAuth = {
     brandEn: "აღსრულების ეროვნული ბიურო",
     footerLeft: "© LEPL Digital Governance Agency, 2026. All rights reserved.",
     loginUnauthorized: "Incorrect username or password.",
+    loginLockout:
+      "The password was entered incorrectly several times. Your account is temporarily locked. Please try again later.",
     loginNetworkError: "Network error. Please try again.",
     loginGenericError: "Sign-in failed. Please try again.",
     guestLink: "Continue without signing in",
@@ -133,8 +135,10 @@ export const enAuth = {
     confirmPasswordPlaceholder: "Confirm password",
     resetPasswordButton: "Reset Password",
     successMessage:
-      "Password reset request sent. Check your email or SMS for further instructions.",
+      "Password reset request sent. Check your SMS for further instructions.",
     errorMessage: "Your password does not meet the requirements",
+    notFoundError:
+      "No data found. Please verify your personal ID number.",
     networkError: "Network error. Please try again.",
     genericError: "An error occurred. Please try again.",
   },

@@ -48,6 +48,19 @@ export const homeNavCardStyles = StyleSheet.create({
   },
   cardDisabled: {
     opacity: HomeDashboardLayoutConst.navCardDisabledOpacity,
+    backgroundColor: HomeDashboardPalette.cardDisabledBg,
+    borderColor: HomeDashboardPalette.cardDisabledBorder,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  tabDisabled: {
+    backgroundColor: HomeDashboardPalette.cardDisabledTab,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  titleDisabled: {
+    color: HomeDashboardPalette.cardDisabledTitle,
+    fontWeight: "600",
   },
   tabAnchor: {
     position: "absolute",

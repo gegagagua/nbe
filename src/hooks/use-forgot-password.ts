@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { requestPasswordReset } from '@/api/password-reset';
+import { mapForgotPasswordError } from '@/lib/map-forgot-password-error';
 import { showErrorToast } from '@/lib/show-error-toast';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
@@ -18,9 +19,10 @@ export function useForgotPassword() {
       setStatusMessage({ type: 'success', text: t('forgotPassword.successMessage') });
       router.replace('/');
     },
-    onError: () => {
-      setStatusMessage({ type: 'error', text: t('forgotPassword.genericError') });
-      showErrorToast(t('forgotPassword.genericError'));
+    onError: (err) => {
+      const message = mapForgotPasswordError(err);
+      setStatusMessage({ type: 'error', text: message });
+      showErrorToast(message, err);
     },
   });
 

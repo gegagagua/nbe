@@ -7,6 +7,11 @@ export const HomeDashboardPalette = {
   pageBg: "#eef2f7",
   cardBg: "#ffffff",
   cardBorder: "#e6ebf2",
+  /** Disabled nav cards: washed-out surface so they read as inactive. */
+  cardDisabledBg: "#f4f6fa",
+  cardDisabledBorder: "#eceff4",
+  cardDisabledTab: "#c2cad8",
+  cardDisabledTitle: "#9aa4b6",
   /** Icon badges: shades of brand blue for a cohesive dashboard. */
   tabRed: "#1f3554",
   tabSlate: LoginPalette.primary,
@@ -56,7 +61,7 @@ export const HomeDashboardLayoutConst = {
   cardShadowOffsetY: 8,
   cardElevation: 5,
   cardPressedOpacity: 0.94,
-  navCardDisabledOpacity: 0.52,
+  navCardDisabledOpacity: 0.6,
   fabSize: 44,
   fabRadius: 8,
   fabBottomOffset: Spacing.six + Spacing.five + Spacing.three,

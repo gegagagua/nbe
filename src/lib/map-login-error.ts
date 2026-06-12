@@ -8,13 +8,18 @@ export function mapLoginError(error: unknown): string {
     if (error.code === 'ERR_NETWORK') {
       return i18n.t('login.loginNetworkError');
     }
-    if (error.response?.status === 401) {
-      return i18n.t('login.loginUnauthorized');
-    }
-    const data = error.response?.data;
-    const fromBody = extractApiErrorMessage(data);
+    // Prefer the backend-provided message (e.g. USER_LOCKED → "თქვენი ანგარიში დაიბლოკა 10 წუთით!").
+    const fromBody = extractApiErrorMessage(error.response?.data);
     if (fromBody) {
       return fromBody;
+    }
+    const status = error.response?.status;
+    // Fallbacks when the backend doesn't include a message.
+    if (status === 423 || status === 429) {
+      return i18n.t('login.loginLockout');
+    }
+    if (status === 401) {
+      return i18n.t('login.loginUnauthorized');
     }
   }
   return i18n.t('login.loginGenericError');

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
@@ -24,6 +24,12 @@ export function ProfileFaceIdEnableModal({
 }: Props) {
   const { t } = useTranslation();
   const [password, setPassword] = useState('');
+
+  // Drop the typed password whenever the modal is dismissed so it never
+  // lingers in state for the next open.
+  useEffect(() => {
+    if (!visible) setPassword('');
+  }, [visible]);
 
   function handleClose() {
     setPassword('');
