@@ -1,7 +1,6 @@
 import { router } from "expo-router";
 
 import { logoutSession } from "@/api/sessions";
-import { clearFaceIdAll } from "@/lib/face-id-storage";
 import { setGuestMode } from "@/lib/guest-mode";
 import { clearPasswordHistory } from "@/lib/password-history-storage";
 import { clearAppQueryCache } from "@/lib/query-client";
@@ -16,7 +15,6 @@ export async function signOut(): Promise<void> {
   await Promise.all([
     clearSessionToken(),
     clearSessionUserProfile(),
-    clearFaceIdAll(),
     clearPasswordHistory(),
   ]);
   router.replace("/");

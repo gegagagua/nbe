@@ -36,6 +36,7 @@ export function HomeNavGrid() {
         <HomeNavCard
           key={item.id}
           item={item}
+          index={index}
           fullWidth={!isGuest && index === visibleItems.length - 1}
           onPress={() => onCardPress(item)}
         />

@@ -1,22 +1,20 @@
-import { Pressable, Text } from 'react-native';
+import { Text } from 'react-native';
 
-import { LoginInteraction } from '@/constants/login';
+import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import type { ButtonProps } from '@/types/button';
 
 import { buttonStyles } from './button.styles';
 
 export function Button({ label, onPress, disabled }: ButtonProps) {
   return (
-    <Pressable
+    <AnimatedPressable
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [
-        buttonStyles.pressable,
-        disabled && buttonStyles.pressableDisabled,
-        pressed && !disabled && { opacity: LoginInteraction.pressedOpacity },
-      ]}>
+      pressedScale={0.96}
+      pressedOpacity={0.9}
+      style={[buttonStyles.pressable, disabled && buttonStyles.pressableDisabled]}>
       <Text style={buttonStyles.label}>{label}</Text>
-    </Pressable>
+    </AnimatedPressable>
   );
 }

@@ -22,8 +22,8 @@ export function CaseList({ items, loading, empty, emptyNoProceedings }: CaseList
 
   return (
     <View style={s.wrap}>
-      {items.map((item) => (
-        <CaseListItem key={item.id} item={item} />
+      {items.map((item, index) => (
+        <CaseListItem key={item.id} item={item} index={index} />
       ))}
     </View>
   );

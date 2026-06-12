@@ -40,6 +40,20 @@ export type UserAgencyBrief = {
   address?: string;
 };
 
+export type LoginHistoryEntry = {
+  date: string;
+  success: boolean;
+  ipAddress: string | null;
+  userAgent: string | null;
+};
+
+export type PasswordHistoryApiEntry = {
+  date: string;
+  success: boolean;
+  ipAddress: string | null;
+  userAgent: string | null;
+};
+
 export type UserDetail = {
   id: number;
   username: string;
@@ -60,6 +74,8 @@ export type UserDetail = {
   roles: string[];
   permissions: string[];
   authorities: UserAuthority[];
+  loginHistory: LoginHistoryEntry[];
+  passwordHistory: PasswordHistoryApiEntry[];
 };
 
 export type GetUserResponse = {

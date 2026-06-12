@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { createSession, verifyLoginOtp } from "@/api/sessions";
-import { changePassword } from "@/api/users";
+import { changePassword, getUserMe } from "@/api/users";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
 import { mapLoginError } from "@/lib/map-login-error";
-import { clearSessionToken, setSessionToken } from "@/lib/session-token-storage";
+import { getSessionToken, setSessionToken } from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
 import { syncFaceIdCredentialsIfEnabled } from "@/lib/sync-face-id-credentials";
@@ -93,14 +93,20 @@ export function useLoginForm(): LoginFormState {
           newPwd,
           retypeNewPwd: newPwd,
         });
-        await clearSessionToken();
-        const session = await createSession({
-          username: pendingPwdChange.username,
-          password: newPwd,
-        });
+        const me = await getUserMe();
+        const sessionUser: import("@/types/session").SessionUser = {
+          id: me.id,
+          username: me.username,
+          firstName: me.firstName,
+          lastName: me.lastName,
+          idnumber: me.idnumber ?? undefined,
+          active: me.active,
+        };
+        const { username } = pendingPwdChange;
         setPendingPwdChange(null);
-        await finishLogin(session.token, session.user, {
-          username: pendingPwdChange.username,
+        const existingToken = (await getSessionToken()) ?? '';
+        await finishLogin(existingToken, sessionUser, {
+          username,
           password: newPwd,
         });
       } catch (err) {

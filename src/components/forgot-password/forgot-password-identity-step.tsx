@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,7 +36,11 @@ export function ForgotPasswordIdentityStep({ onSubmit, isSubmitting, statusMessa
   );
 
   return (
-    <View style={s.card}>
+    <KeyboardAwareScrollView
+      contentContainerStyle={s.card}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      bottomOffset={16}>
       <Text style={s.title}>{t('forgotPassword.pageTitle')}</Text>
       <Text style={s.description}>{t('forgotPassword.identityDescription')}</Text>
 
@@ -74,6 +79,6 @@ export function ForgotPasswordIdentityStep({ onSubmit, isSubmitting, statusMessa
         onPress={() => { submitHandler(); }}
         disabled={isSubmitting || !formState.isValid || statusMessage?.type === 'success'}
       />
-    </View>
+    </KeyboardAwareScrollView>
   );
 }

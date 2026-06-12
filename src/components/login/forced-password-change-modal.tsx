@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -50,7 +51,11 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
 
   return (
     <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
-      <View style={s.backdrop}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={s.backdrop}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={16}>
         <View style={s.card}>
           <Text style={s.title}>{t('login.forcedPwdChangeTitle')}</Text>
           <Text style={s.subtitle}>{t('login.forcedPwdChangeSubtitle')}</Text>
@@ -106,7 +111,7 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
             />
           )}
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </Modal>
   );
 }

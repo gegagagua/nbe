@@ -1,7 +1,9 @@
 import { router } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import { LoginPalette } from '@/constants/login';
 import type { CaseApplication, CaseParty } from '@/types/case-management';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
@@ -20,7 +22,7 @@ function debtSummary(item: CaseApplication): string | null {
   return parts.length > 0 ? parts.join(' — ') : null;
 }
 
-export function CaseListItem({ item }: { item: CaseApplication }) {
+export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index?: number }) {
   const { t } = useTranslation();
   const officialNo = formatOfficialCaseNumberDisplay(item.regnumber, item.id);
   const regDate = item.regDate ? formatEnforcementDateTime(item.regDate) : null;
@@ -32,11 +34,12 @@ export function CaseListItem({ item }: { item: CaseApplication }) {
   const a11y = `${officialNo}. ${t('cases.openCaseA11yHint')}`;
 
   return (
-    <Pressable
-      style={s.press}
-      onPress={() => router.push(`/cases/${String(item.id)}`)}
-      accessibilityRole="button"
-      accessibilityLabel={a11y}>
+    <Animated.View entering={FadeInDown.duration(280).delay(Math.min(index, 8) * 40).springify().damping(18)}>
+      <AnimatedPressable
+        style={s.press}
+        onPress={() => router.push(`/cases/${String(item.id)}`)}
+        accessibilityRole="button"
+        accessibilityLabel={a11y}>
       <View style={[s.card, s.cardAccent, { borderLeftColor: accentColor }]}>
         <View style={s.topBlock}>
           {item.listSequenceLabel ? (
@@ -95,6 +98,7 @@ export function CaseListItem({ item }: { item: CaseApplication }) {
           </View>
         ) : null}
       </View>
-    </Pressable>
+      </AnimatedPressable>
+    </Animated.View>
   );
 }

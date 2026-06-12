@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,6 +16,7 @@ export function useForgotPassword() {
     mutationFn: (username: string) => requestPasswordReset(username),
     onSuccess: () => {
       setStatusMessage({ type: 'success', text: t('forgotPassword.successMessage') });
+      router.replace('/');
     },
     onError: () => {
       setStatusMessage({ type: 'error', text: t('forgotPassword.genericError') });

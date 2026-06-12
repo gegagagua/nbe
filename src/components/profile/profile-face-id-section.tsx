@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Switch, Text, View } from 'react-native';
 
 import { PasswordHistoryModal } from '@/components/home/password-history-modal';
+import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import { LoginPalette } from '@/constants/login';
 import { useProfileFaceIdToggle } from '@/hooks/use-profile-face-id-toggle';
 import type { UserAuthority } from '@/types/user-authority';
+import type { LoginHistoryEntry, PasswordHistoryApiEntry } from '@/types/users';
 
 import { ProfileAuthoritiesModal } from './profile-authorities-modal';
 import { ProfileFaceIdEnableModal } from './profile-face-id-enable-modal';
+import { ProfileLoginHistoryModal } from './profile-login-history-modal';
 import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
 import { profileScreenStyles as ps } from './profile-screen.styles';
 
@@ -17,16 +20,25 @@ type StatusMessage = { type: 'success' | 'error'; text: string };
 type Props = {
   username: string;
   authorities?: UserAuthority[];
+  loginHistory?: LoginHistoryEntry[];
+  passwordHistory?: PasswordHistoryApiEntry[];
   verifyPassword?: (password: string) => Promise<boolean>;
   onStatus?: (msg: StatusMessage | null) => void;
 };
 
-export function ProfileFaceIdSection({ username, authorities = [], ...rest }: Props) {
+export function ProfileFaceIdSection({
+  username,
+  authorities = [],
+  loginHistory = [],
+  passwordHistory,
+  ...rest
+}: Props) {
   const { t } = useTranslation();
   const ctrl = useProfileFaceIdToggle({ username, ...rest });
   const { faceId } = ctrl;
   const [historyVisible, setHistoryVisible] = useState(false);
   const [activitiesVisible, setActivitiesVisible] = useState(false);
+  const [loginHistoryVisible, setLoginHistoryVisible] = useState(false);
 
   const rowLabel =
     faceId.kind === 'faceId'
@@ -67,18 +79,24 @@ export function ProfileFaceIdSection({ username, authorities = [], ...rest }: Pr
       </View>
 
       <View style={s.actionRow}>
-        <Pressable
+        <AnimatedPressable
           style={s.actionButton}
           onPress={() => setHistoryVisible(true)}
           accessibilityRole="button">
           <Text style={s.actionButtonText}>{t('passwordHistory.buttonLabel')}</Text>
-        </Pressable>
-        <Pressable
+        </AnimatedPressable>
+        <AnimatedPressable
+          style={s.actionButton}
+          onPress={() => setLoginHistoryVisible(true)}
+          accessibilityRole="button">
+          <Text style={s.actionButtonText}>{t('loginHistory.buttonLabel')}</Text>
+        </AnimatedPressable>
+        <AnimatedPressable
           style={s.actionButton}
           onPress={() => setActivitiesVisible(true)}
           accessibilityRole="button">
           <Text style={s.actionButtonText}>{t('profile.activitiesButton')}</Text>
-        </Pressable>
+        </AnimatedPressable>
       </View>
 
       {ctrl.statusMessage ? (
@@ -98,7 +116,16 @@ export function ProfileFaceIdSection({ username, authorities = [], ...rest }: Pr
         onConfirm={(pw) => void ctrl.handleConfirmEnable(pw)}
         onClose={ctrl.closeModal}
       />
-      <PasswordHistoryModal visible={historyVisible} onClose={() => setHistoryVisible(false)} />
+      <PasswordHistoryModal
+        visible={historyVisible}
+        onClose={() => setHistoryVisible(false)}
+        apiEntries={passwordHistory}
+      />
+      <ProfileLoginHistoryModal
+        visible={loginHistoryVisible}
+        entries={loginHistory}
+        onClose={() => setLoginHistoryVisible(false)}
+      />
       <ProfileAuthoritiesModal
         visible={activitiesVisible}
         authorities={authorities}

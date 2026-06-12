@@ -32,7 +32,14 @@ export default function RootLayout() {
             <QueryProvider>
               <I18nLocaleBootstrap />
               <AnimatedSplashOverlay />
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'slide_from_right',
+                  animationDuration: 240,
+                  gestureEnabled: true,
+                }}
+              />
               <AppToast />
             </QueryProvider>
           </ThemeProvider>

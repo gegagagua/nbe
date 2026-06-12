@@ -6,10 +6,12 @@ import { ModalBackdrop } from '@/components/ui/modal-backdrop';
 import { LoginPalette } from '@/constants/login';
 import { Radius, Space, Typography } from '@/constants/theme';
 import { getPasswordHistory, type PasswordHistoryEntry } from '@/lib/password-history-storage';
+import type { PasswordHistoryApiEntry } from '@/types/users';
 
 type PasswordHistoryModalProps = {
   visible: boolean;
   onClose: () => void;
+  apiEntries?: PasswordHistoryApiEntry[];
 };
 
 function formatDate(iso: string): string {
@@ -28,15 +30,21 @@ function formatTime(iso: string): string {
   return `${hh}:${min}:${ss}`;
 }
 
-export function PasswordHistoryModal({ visible, onClose }: PasswordHistoryModalProps) {
+type Row = { changedAt: string; key: string };
+
+export function PasswordHistoryModal({ visible, onClose, apiEntries }: PasswordHistoryModalProps) {
   const { t } = useTranslation();
   const [history, setHistory] = useState<PasswordHistoryEntry[]>([]);
 
   useEffect(() => {
-    if (visible) {
+    if (visible && !apiEntries) {
       getPasswordHistory().then(setHistory).catch(() => setHistory([]));
     }
-  }, [visible]);
+  }, [visible, apiEntries]);
+
+  const rows: Row[] = apiEntries
+    ? apiEntries.map((e, i) => ({ changedAt: e.date, key: `${e.date}-${i}` }))
+    : history.map((e, i) => ({ changedAt: e.changedAt, key: e.hash + i }));
 
   return (
     <Modal
@@ -49,7 +57,7 @@ export function PasswordHistoryModal({ visible, onClose }: PasswordHistoryModalP
         <View style={styles.sheet}>
           <Text style={styles.title}>{t('passwordHistory.modalTitle')}</Text>
 
-          {history.length === 0 ? (
+          {rows.length === 0 ? (
             <Text style={styles.emptyText}>{t('passwordHistory.emptyMessage')}</Text>
           ) : (
             <ScrollView style={styles.tableScroll} showsVerticalScrollIndicator={false}>
@@ -64,11 +72,11 @@ export function PasswordHistoryModal({ visible, onClose }: PasswordHistoryModalP
                   {t('passwordHistory.tableHeaderTime')}
                 </Text>
               </View>
-              {history.map((entry, i) => (
-                <View key={entry.hash + i} style={[styles.tableRow, i % 2 === 0 && styles.tableRowAlt]}>
+              {rows.map((row, i) => (
+                <View key={row.key} style={[styles.tableRow, i % 2 === 0 && styles.tableRowAlt]}>
                   <Text style={[styles.cell, styles.colLabel]}>#{i + 1}</Text>
-                  <Text style={[styles.cell, styles.colDate]}>{formatDate(entry.changedAt)}</Text>
-                  <Text style={[styles.cell, styles.colTime]}>{formatTime(entry.changedAt)}</Text>
+                  <Text style={[styles.cell, styles.colDate]}>{formatDate(row.changedAt)}</Text>
+                  <Text style={[styles.cell, styles.colTime]}>{formatTime(row.changedAt)}</Text>
                 </View>
               ))}
             </ScrollView>
