@@ -39,11 +39,3 @@ export const DebtorRegistryTypography = {
   small: Typography.extraSmall,
 } as const;
 
-export const DebtorRegistryLinks = {
-  statementBlobUrl:
-    'blob:https://nbe-eps-webapp.staging.cloud.gov.ge/f0d547b0-f045-438c-a817-4122487d8b60',
-} as const;
-
-export const DebtorRegistryDocumentSamples = {
-  dummyPdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
-} as const;

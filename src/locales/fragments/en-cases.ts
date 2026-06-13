@@ -68,6 +68,7 @@ export const enCases = {
   detailDebtPlaceholder:
     'Debt details and the payment link will appear after data is received from the service.',
   detailPayButton: 'Pay',
+  detailPayAmountLabel: 'Payment amount',
   detailPaySoonToast: 'The payment module will be connected according to the service.',
   dateIsoPlaceholder: 'YYYY-MM-DD',
   guestFine: {

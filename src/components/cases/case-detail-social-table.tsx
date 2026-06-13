@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
-export function CaseDetailSocialTable({ rows }: { rows: CaseDetailLayoutMock['socialRows'] }) {
+export function CaseDetailSocialTable({ rows }: { rows: CaseDetailData['socialRows'] }) {
   const { t } = useTranslation();
   return (
     <View>

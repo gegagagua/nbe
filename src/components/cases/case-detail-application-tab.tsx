@@ -1,13 +1,13 @@
 import { View } from 'react-native';
 
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { CaseDetailClaimsSection } from './case-detail-claims-section';
 import { CaseDetailCreditorsSection } from './case-detail-creditors-section';
 import { CaseDetailDebtorsSection } from './case-detail-debtors-section';
 import { CaseDetailWritSection } from './case-detail-writ-section';
 
-export function CaseDetailApplicationTab({ data }: { data: CaseDetailLayoutMock }) {
+export function CaseDetailApplicationTab({ data }: { data: CaseDetailData }) {
   return (
     <View>
       <CaseDetailCreditorsSection creditors={data.creditors} />

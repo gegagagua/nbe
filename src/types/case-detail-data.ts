@@ -84,7 +84,7 @@ export type CaseDetailContactBlock = {
   website: string;
 };
 
-export type CaseDetailLayoutMock = {
+export type CaseDetailData = {
   officialCaseNo: string;
   bureauLines: string[];
   categoryRight: string;

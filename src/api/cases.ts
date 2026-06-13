@@ -18,5 +18,6 @@ export async function searchCases(
   const response = await apiClient.post(ApiPaths.appsSearch, payload, {
     headers: epsUserHeaders(userId),
   });
+  console.log("response:", response.data[0]);
   return mapSearchCasesResponse(response.data);
 }

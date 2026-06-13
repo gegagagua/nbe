@@ -6,11 +6,11 @@ import {
   DebtorRegistryLayout,
   DebtorRegistryPalette,
 } from '@/constants/debtor-registry';
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 
-export function CaseDetailHeaderSummary({ data }: { data: CaseDetailLayoutMock }) {
+export function CaseDetailHeaderSummary({ data }: { data: CaseDetailData }) {
   const { t } = useTranslation();
   return (
     <View style={s.headerBlock}>

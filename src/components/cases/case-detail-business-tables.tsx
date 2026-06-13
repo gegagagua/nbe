@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
@@ -10,8 +10,8 @@ export function CaseDetailBusinessTables({
   notify,
   shares,
 }: {
-  notify: CaseDetailLayoutMock['businessNotify'];
-  shares: CaseDetailLayoutMock['businessShares'];
+  notify: CaseDetailData['businessNotify'];
+  shares: CaseDetailData['businessShares'];
 }) {
   const { t } = useTranslation();
   return (

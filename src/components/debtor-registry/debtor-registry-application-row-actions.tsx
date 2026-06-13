@@ -2,7 +2,6 @@ import type { TFunction } from 'i18next';
 import { Linking, Pressable, Share, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { DebtorRegistryDocumentSamples } from '@/constants/debtor-registry';
 import { LoginInteraction } from '@/constants/login';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
@@ -10,9 +9,7 @@ import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 import { debtorRegistryApplicationRowActionsStyles as s } from './debtor-registry-application-row-actions.styles';
 
 function resolveDocumentUrl(app: DebtorRegistryApplication): string {
-  const fromApi = app.downloadUrl?.trim();
-  if (fromApi) return fromApi;
-  return DebtorRegistryDocumentSamples.dummyPdfUrl;
+  return app.downloadUrl?.trim() ?? '';
 }
 
 function shareSummary(app: DebtorRegistryApplication, t: TFunction) {
@@ -45,15 +42,16 @@ type Props = { app: DebtorRegistryApplication };
 
 export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
+  const documentUrl = resolveDocumentUrl(app);
   const onDownload = () => {
-    Linking.openURL(resolveDocumentUrl(app));
+    if (!documentUrl) return;
+    Linking.openURL(documentUrl);
   };
   const onShare = () => {
-    const url = resolveDocumentUrl(app);
     Share.share({
       title: t('debtors.listShareTitle'),
       message: shareSummary(app, t),
-      url,
+      ...(documentUrl ? { url: documentUrl } : {}),
     });
   };
   return (

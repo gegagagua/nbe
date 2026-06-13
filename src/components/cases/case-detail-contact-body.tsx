@@ -1,12 +1,12 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailContactStyles as c } from './case-detail-contact.styles';
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
 
-export function CaseDetailContactBody({ contact }: { contact: CaseDetailLayoutMock['contact'] }) {
+export function CaseDetailContactBody({ contact }: { contact: CaseDetailData['contact'] }) {
   const { t } = useTranslation();
   const rows: { label: string; value: string }[] = [
     { label: t('cases.detail.contactBureau'), value: contact.bureau },

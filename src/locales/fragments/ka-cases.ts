@@ -68,6 +68,7 @@ export const kaCases = {
   detailDebtPlaceholder:
     "დავალიანების დეტალები და გადახდის ბმული გამოჩნდება სერვისიდან მიღებული მონაცემების შემდეგ.",
   detailPayButton: "გადახდა",
+  detailPayAmountLabel: "გადასახდელი თანხა",
   detailPaySoonToast: "გადახდის მოდული მიერთდება სერვისის მიხედვით.",
   dateIsoPlaceholder: "YYYY-MM-DD",
   guestFine: {

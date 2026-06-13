@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { DebtorExtractMockApplicant } from '@/constants/debtor-extract-mock';
 import { getSessionUserProfile } from '@/lib/session-user-profile-storage';
 
 export function useDebtorExtractApplicant() {
-  const [fullName, setFullName] = useState(
-    `${DebtorExtractMockApplicant.firstName} ${DebtorExtractMockApplicant.lastName}`.trim(),
-  );
-  const personalId = DebtorExtractMockApplicant.personalId;
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -25,5 +21,5 @@ export function useDebtorExtractApplicant() {
     };
   }, []);
 
-  return { fullName, personalId };
+  return { fullName, personalId: '' };
 }

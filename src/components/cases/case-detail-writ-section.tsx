@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
@@ -9,7 +9,7 @@ import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 export function CaseDetailWritSection({
   writRows,
 }: {
-  writRows: CaseDetailLayoutMock['writRows'];
+  writRows: CaseDetailData['writRows'];
 }) {
   const { t } = useTranslation();
   return (

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { DebtorExtractMockSubject, debtorExtractMockApplicationNumber } from '@/constants/debtor-extract-mock';
 import { useDebtorExtractApplicant } from '@/hooks/use-debtor-extract-applicant';
 import { isGuestMode } from '@/lib/guest-mode';
 import type { DebtorExtractFlowPhase, DebtorExtractPaymentMethod } from '@/types/debtor-extract';
@@ -24,8 +23,8 @@ export function DebtorExtractRequestScreen() {
   const [guestApplicantPersonalId, setGuestApplicantPersonalId] = useState('');
   const [guestApplicantFullName, setGuestApplicantFullName] = useState('');
   const [phase, setPhase] = useState<DebtorExtractFlowPhase>('form');
-  const [subjectId, setSubjectId] = useState<string>(DebtorExtractMockSubject.personalId);
-  const [subjectName, setSubjectName] = useState<string>(DebtorExtractMockSubject.fullName);
+  const [subjectId, setSubjectId] = useState<string>('');
+  const [subjectName, setSubjectName] = useState<string>('');
   const [method, setMethod] = useState<DebtorExtractPaymentMethod>(defaultDebtorExtractPaymentMethod);
   const [applicationNumber, setApplicationNumber] = useState<string | null>(null);
 
@@ -42,7 +41,9 @@ export function DebtorExtractRequestScreen() {
   };
 
   const handlePay = () => {
-    setApplicationNumber(debtorExtractMockApplicationNumber());
+    const now = new Date();
+    const ref = `MR-${now.getFullYear()}-${String(now.getTime()).slice(-6)}`;
+    setApplicationNumber(ref);
     setPhase('submit');
   };
 

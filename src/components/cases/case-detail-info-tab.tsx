@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 import type { CaseDetailInfoSub } from '@/types/case-detail-ui';
 
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
@@ -23,7 +23,7 @@ const SUB_KEYS: CaseDetailInfoSub[] = [
   'installment',
 ];
 
-export function CaseDetailInfoTab({ data }: { data: CaseDetailLayoutMock }) {
+export function CaseDetailInfoTab({ data }: { data: CaseDetailData }) {
   const { t } = useTranslation();
   const [sub, setSub] = useState<CaseDetailInfoSub>('proceedings');
   const [sheet, setSheet] = useState(false);

@@ -69,7 +69,7 @@ export const enDebtors = {
   extractSubmitButton: '✅ Send request',
   extractSubmitHint:
     'The system records payment status and application number. Sending is available after payment is completed.',
-  extractSubmitToast: 'Request received (mock).',
+  extractSubmitToast: 'Request received.',
   listDownload: 'Download',
   listShare: 'Share',
   listShareTitle: 'Debtor Registry — application',

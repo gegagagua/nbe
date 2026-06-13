@@ -43,6 +43,8 @@ export function CaseLoggedInScreen() {
     setPageNumber(0);
   };
 
+  console.log("items:", items[0]);
+
   return (
     <View style={s.page}>
       <AppSafeArea style={s.body}>

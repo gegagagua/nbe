@@ -41,6 +41,6 @@ export const kaCasesDetailUiB = {
   installmentTitle: 'განწილვადება',
   emptyTable: '—',
   searchRegistryPlaceholder:
-    'მოძიებული ქონება საკადასტრო ნომრით და სხვა რეკვიზიტებით (მარქაფი, API).',
+    'მოძიებული ქონება საკადასტრო ნომრით და სხვა რეკვიზიტებით.',
 } as const;
 

@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
@@ -15,7 +15,7 @@ export function CaseDetailClaimsSection({
   claimRows,
 }: {
   claimsSummary: string;
-  claimRows: CaseDetailLayoutMock['claimRows'];
+  claimRows: CaseDetailData['claimRows'];
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(true);

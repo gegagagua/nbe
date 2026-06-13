@@ -41,6 +41,6 @@ export const enCasesDetailUiB = {
   installmentTitle: 'Installment',
   emptyTable: '—',
   searchRegistryPlaceholder:
-    'Found property by cadastral code and other fields (mock; from API).',
+    'Found property by cadastral code and other fields.',
 } as const;
 

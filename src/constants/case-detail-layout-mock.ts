@@ -1,8 +1,8 @@
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 const PAY = '2621711711';
 
-export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailLayoutMock = {
+export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailData = {
   officialCaseNo: 'A26412496',
   bureauLines: ['თბილისის სააღსრულებო ბიურო', 'სამცხე-ჯავახეთის სააღსრულებო ბიურო'],
   categoryRight: '09/1 სისხლის სამართლის ჯარიმა ან/და გირაოს პირობების დარღვევა',
@@ -113,6 +113,6 @@ export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailLayoutMock = {
   },
 };
 
-export function getCaseDetailLayoutMock(_id: string): CaseDetailLayoutMock {
+export function getCaseDetailLayoutMock(_id: string): CaseDetailData {
   return CASE_DETAIL_LAYOUT_MOCK;
 }

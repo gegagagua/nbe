@@ -22,6 +22,13 @@ function debtSummary(item: CaseApplication): string | null {
   return parts.length > 0 ? parts.join(' — ') : null;
 }
 
+/** Pull a numeric GEL amount out of a display string like "160.00 ₾". */
+function parsePayAmount(display?: string | null): number | null {
+  if (!display) return null;
+  const value = Number.parseFloat(display.replace(/[^\d.]/g, ''));
+  return Number.isFinite(value) ? value : null;
+}
+
 export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index?: number }) {
   const { t } = useTranslation();
   const officialNo = formatOfficialCaseNumberDisplay(item.regnumber, item.id);
@@ -31,13 +38,25 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
   );
   const accentColor = item.status.colorCode || LoginPalette.primary;
   const debt = debtSummary(item);
+  const payAmount = parsePayAmount(item.debtAmountDisplay);
+  const payPersonId = item.debtors[0]?.id;
   const a11y = `${officialNo}. ${t('cases.openCaseA11yHint')}`;
 
   return (
     <Animated.View entering={FadeInDown.duration(280).delay(Math.min(index, 8) * 40).springify().damping(18)}>
       <AnimatedPressable
         style={s.press}
-        onPress={() => router.push(`/cases/${String(item.id)}`)}
+        onPress={() =>
+          router.push({
+            pathname: '/cases/[id]',
+            params: {
+              id: String(item.id),
+              personId: payPersonId != null ? String(payPersonId) : '',
+              amount: payAmount != null ? String(payAmount) : '',
+              payDisplay: item.debtAmountDisplay ?? '',
+            },
+          })
+        }
         accessibilityRole="button"
         accessibilityLabel={a11y}>
       <View style={[s.card, s.cardAccent, { borderLeftColor: accentColor }]}>

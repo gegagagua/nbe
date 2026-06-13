@@ -4,7 +4,7 @@ import { Linking, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
-import type { CaseDetailLayoutMock } from '@/types/case-detail-mock';
+import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
@@ -13,7 +13,7 @@ import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 export function CaseDetailProceedingsList({
   proceedings,
 }: {
-  proceedings: CaseDetailLayoutMock['proceedings'];
+  proceedings: CaseDetailData['proceedings'];
 }) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<string | null>(null);

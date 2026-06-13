@@ -69,7 +69,7 @@ export const kaDebtors = {
   extractSubmitButton: "✅ მოთხოვნის გაგზავნა",
   extractSubmitHint:
     "სისტემა აფიქსირებს გადახდის სტატუსს და განაცხადის ნომერს. მოთხოვნის გაგზავნა ხელმისაწვდომია გადახდის დასრულების შემდეგ.",
-  extractSubmitToast: "მოთხოვნა მიღებულია (მარქაპი).",
+  extractSubmitToast: "მოთხოვნა მიღებულია.",
   listDownload: "გადმოწერა",
   listShare: "გაზიარება",
   listShareTitle: "მოვალეთა რეესტრი — განცხადება",
