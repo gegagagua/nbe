@@ -11,7 +11,15 @@ export function LoginBrandHeader() {
 
   return (
     <View style={loginBrandHeaderStyles.container}>
-      <Image source={Logo} style={{ width: 50, height: 50 }} />
+      <Image
+        source={Logo}
+        style={{ width: 50, height: 50 }}
+        contentFit="contain"
+        cachePolicy="memory-disk"
+        priority="high"
+        transition={0}
+        accessibilityLabel={t('login.brandGeo')}
+      />
       <View>
         <Text style={loginBrandHeaderStyles.brandEn} numberOfLines={3}>
           {t('login.brandGeo')}

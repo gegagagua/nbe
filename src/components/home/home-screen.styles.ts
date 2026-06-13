@@ -10,4 +10,9 @@ export const homeScreenStyles = StyleSheet.create({
   body: {
     flex: 1,
   },
+  navFallback: {
+    paddingVertical: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

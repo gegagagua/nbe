@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text } from 'react-native';
 
 import { LoginPalette } from '@/constants/login';
 

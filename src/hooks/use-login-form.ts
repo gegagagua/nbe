@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { createSession, verifyLoginOtp } from "@/api/sessions";
-import { changePassword, getUserMe } from "@/api/users";
+import { changePassword } from "@/api/users";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
 import { mapLoginError } from "@/lib/map-login-error";
@@ -14,9 +14,10 @@ import {
   isSimilarPasswordUsed,
   recordPasswordChange,
 } from "@/lib/password-history-storage";
-import { getSessionToken, setSessionToken } from "@/lib/session-token-storage";
+import { clearSessionToken, setSessionToken } from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
+import { showSuccessToast } from "@/lib/show-success-toast";
 import { syncFaceIdCredentialsIfEnabled } from "@/lib/sync-face-id-credentials";
 import { createLoginFormSchema } from "@/schemas/login-form.schema";
 import type { LoginFormState } from "@/types/login";
@@ -104,29 +105,19 @@ export function useLoginForm(): LoginFormState {
           retypeNewPwd: newPwd,
         });
         await recordPasswordChange(newPwd);
-        const me = await getUserMe();
-        const sessionUser: import("@/types/session").SessionUser = {
-          id: me.id,
-          username: me.username,
-          firstName: me.firstName,
-          lastName: me.lastName,
-          idnumber: me.idnumber ?? undefined,
-          active: me.active,
-        };
-        const { username } = pendingPwdChange;
+        // Changing the password invalidates the temporary-password session, so
+        // don't try to load the profile or auto-login. Drop the stale token,
+        // close the modal, and let the user sign in with their new password.
+        await clearSessionToken();
         setPendingPwdChange(null);
-        const existingToken = (await getSessionToken()) ?? '';
-        await finishLogin(existingToken, sessionUser, {
-          username,
-          password: newPwd,
-        });
+        showSuccessToast(t("login.forcedPwdChangeSuccess"));
       } catch (err) {
         showErrorToast(mapChangePasswordError(err), err);
       } finally {
         setIsForcingPwdChange(false);
       }
     },
-    [pendingPwdChange, finishLogin, t],
+    [pendingPwdChange, t],
   );
 
   const handleOtpVerify = useCallback(

@@ -69,6 +69,7 @@ export const enAuth = {
     forcedPwdChangeTitle: "Set a new password",
     forcedPwdChangeSubtitle: "Your temporary password has expired. Please set a new password to continue.",
     forcedPwdChangeButton: "Set password",
+    forcedPwdChangeSuccess: "Password set successfully. Please sign in with your new password.",
     otpLoginTitle: "One-Time Password",
     otpLoginDescription: "Enter the 6-digit code sent to your registered mobile number.",
     otpLoginPlaceholder: "xxxxxx",

@@ -13,7 +13,6 @@ export function useGuestFineCheck() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (values: GuestFineCheckFormValues) => {
-      console.log("values:", values);
       return checkGuestFineDebt({
         idNumber: values.idNumber.trim(),
         documentNumber: values.documentNumber.trim(),

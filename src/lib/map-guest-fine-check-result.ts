@@ -25,7 +25,17 @@ function normalizePaymentInfoItems(data: unknown): PaymentInfoItem[] {
 function mapPaymentInfoItem(item: PaymentInfoItem): GuestFineCheckResult {
   const amount = item.amount;
   const personName = item.person?.name?.trim();
-  const paymentUrl = null;
+  const appId = item.appId;
+  const personId = item.person?.personId;
+  const paymentContext =
+    appId != null && personId != null && amount != null
+      ? {
+          destType: item.destType ?? 'EPS',
+          appId,
+          personId,
+          amount,
+        }
+      : null;
 
   if (amount == null && !personName) {
     return { found: false };
@@ -36,7 +46,8 @@ function mapPaymentInfoItem(item: PaymentInfoItem): GuestFineCheckResult {
     personName: personName || undefined,
     amount: amount != null ? formatGelAmount(amount) : undefined,
     currency: 'GEL',
-    paymentUrl,
+    paymentUrl: null,
+    paymentContext,
   };
 }
 

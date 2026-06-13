@@ -1,16 +1,16 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
 import { getDebtorExtractPaymentOptions } from '@/utils/debtor-extract-payment-options';
 
-import { PaymentMethodBrandIcon } from './payment-method-brand-icon';
 import { debtorExtractPaymentStyles as ps } from './debtor-extract-payment.styles';
 import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
+import { PaymentMethodBrandIcon } from './payment-method-brand-icon';
 
 type Props = {
   selected: DebtorExtractPaymentMethod;

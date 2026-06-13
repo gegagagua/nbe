@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Linking, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
+import { useGuestFinePayment } from '@/hooks/use-guest-fine-payment';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { GuestFineCheckResult } from '@/types/guest-fine';
 
@@ -13,10 +15,15 @@ type Props = {
 
 export function CaseGuestFineResult({ result }: Props) {
   const { t } = useTranslation();
+  const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } = useGuestFinePayment();
 
   function handlePay() {
+    if (result.paymentContext) {
+      startPayment(result.paymentContext);
+      return;
+    }
     if (result.paymentUrl) {
-      Linking.openURL(result.paymentUrl);
+      openPaymentUrl(result.paymentUrl);
       return;
     }
     showErrorToast(t('cases.detailPaySoonToast'));
@@ -31,22 +38,33 @@ export function CaseGuestFineResult({ result }: Props) {
   }
 
   return (
-    <View style={s.resultCard}>
-      {result.personName ? (
-        <>
-          <Text style={s.resultLabel}>{t('cases.guestFine.personNameLabel')}</Text>
-          <Text style={s.resultValue}>{result.personName}</Text>
-        </>
-      ) : null}
-      {result.amount ? (
-        <>
-          <Text style={s.resultLabel}>{t('cases.guestFine.debtAmountLabel')}</Text>
-          <Text style={s.resultAmount}>
-            {result.amount} {result.currency ?? 'GEL'}
-          </Text>
-        </>
-      ) : null}
-      <Button label={t('cases.detailPayButton')} onPress={handlePay} />
-    </View>
+    <>
+      <View style={s.resultCard}>
+        {result.personName ? (
+          <>
+            <Text style={s.resultLabel}>{t('cases.guestFine.personNameLabel')}</Text>
+            <Text style={s.resultValue}>{result.personName}</Text>
+          </>
+        ) : null}
+        {result.amount ? (
+          <>
+            <Text style={s.resultLabel}>{t('cases.guestFine.debtAmountLabel')}</Text>
+            <Text style={s.resultAmount}>
+              {result.amount} {result.currency ?? 'GEL'}
+            </Text>
+          </>
+        ) : null}
+        <Button
+          label={t('cases.detailPayButton')}
+          onPress={handlePay}
+          disabled={isPaying}
+        />
+      </View>
+      <PaymentWebViewModal
+        visible={paymentUrl != null}
+        url={paymentUrl}
+        onClose={closePayment}
+      />
+    </>
   );
 }

@@ -70,6 +70,7 @@ export const kaAuth = {
     forcedPwdChangeTitle: "დააყენეთ ახალი პაროლი",
     forcedPwdChangeSubtitle: "თქვენი დროებითი პაროლის მოქმედება ამოიწურა. გასაგრძელებლად დააყენეთ ახალი პაროლი.",
     forcedPwdChangeButton: "პაროლის დაყენება",
+    forcedPwdChangeSuccess: "პაროლი წარმატებით დაყენდა. გთხოვთ, შეხვიდეთ ახალი პაროლით.",
     otpLoginTitle: "ერთჯერადი პაროლი",
     otpLoginDescription: "შეიყვანეთ თქვენს რეგისტრირებულ ნომერზე გაგზავნილი 6-ნიშნა კოდი.",
     otpLoginPlaceholder: "xxxxxx",

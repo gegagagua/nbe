@@ -7,6 +7,7 @@ import { ForcedPasswordChangeModal } from '@/components/login/forced-password-ch
 import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginForm } from '@/components/login/login-form';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
+import { SeoHead } from '@/components/seo-head';
 import { LoginPalette } from '@/constants/login';
 import { useFaceId } from '@/hooks/use-face-id';
 import { useLoginForm } from '@/hooks/use-login-form';
@@ -80,6 +81,10 @@ function LoginScreenContent() {
 
   return (
     <LoginScreenLayout>
+      <SeoHead
+        title={`${t('login.pageTitle')} | ${t('login.brandGeo')}`}
+        description={t('login.brandGeo')}
+      />
       <ForcedPasswordChangeModal {...login.forcedPwdChange} />
       <LoginOtpModal {...login.otpLogin} />
       <LoginForm

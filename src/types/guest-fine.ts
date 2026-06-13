@@ -24,4 +24,12 @@ export type GuestFineCheckResult = {
   amount?: string;
   currency?: string;
   paymentUrl?: string | null;
+  paymentContext?: GuestFinePaymentContext | null;
+};
+
+export type GuestFinePaymentContext = {
+  destType: string;
+  appId: number;
+  personId: number;
+  amount: number;
 };

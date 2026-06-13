@@ -19,7 +19,6 @@
                 if (!res.ok) {
                     throw new Error(data?.message ?? `Error ${res.status}`);
                 }
-                console.log('User data:', data);
             })
             .catch((err) => {
                 console.error('Error:', err.message);
@@ -43,7 +42,6 @@
                 if (!res.ok) {
                     throw new Error(data?.message ?? `Error ${res.status}`);
                 }
-                console.log('Response:', data);
             })
             .catch((err) => {
                 console.error('Error:', err.message);
