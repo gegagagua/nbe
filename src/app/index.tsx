@@ -1,5 +1,5 @@
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native';
 
@@ -7,6 +7,7 @@ import { ForcedPasswordChangeModal } from '@/components/login/forced-password-ch
 import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginForm } from '@/components/login/login-form';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
+import { PasswordResetNoticeModal } from '@/components/login/password-reset-notice-modal';
 import { SeoHead } from '@/components/seo-head';
 import { LoginPalette } from '@/constants/login';
 import { useFaceId } from '@/hooks/use-face-id';
@@ -20,6 +21,17 @@ function LoginScreenContent() {
   const login = useLoginForm();
   const faceId = useFaceId();
   const [isFaceIdLoading, setIsFaceIdLoading] = useState(false);
+
+  const { passwordReset } = useLocalSearchParams<{ passwordReset?: string }>();
+  const [showPasswordResetNotice, setShowPasswordResetNotice] = useState(false);
+
+  useEffect(() => {
+    if (passwordReset === 'requested') {
+      setShowPasswordResetNotice(true);
+      // Clear the query param so the notice doesn't reappear on re-focus.
+      router.setParams({ passwordReset: undefined });
+    }
+  }, [passwordReset]);
 
   useFocusEffect(
     useCallback(() => {
@@ -84,6 +96,10 @@ function LoginScreenContent() {
       <SeoHead
         title={`${t('login.pageTitle')} | ${t('login.brandGeo')}`}
         description={t('login.brandGeo')}
+      />
+      <PasswordResetNoticeModal
+        visible={showPasswordResetNotice}
+        onClose={() => setShowPasswordResetNotice(false)}
       />
       <ForcedPasswordChangeModal {...login.forcedPwdChange} />
       <LoginOtpModal {...login.otpLogin} />

@@ -1,7 +1,30 @@
 import { mapUserGroupsForUpdate } from '@/lib/map-user-groups-for-update';
 import { normalizeGeorgianPhone } from '@/lib/phone';
 import type { ProfileInfoEditValues } from '@/schemas/profile-info-edit.schema';
-import type { UpdateUserRequest, UserDetail } from '@/types/users';
+import type { UpdateUserRequest, UserContact, UserDetail } from '@/types/users';
+
+/**
+ * Rebuild the contacts array, replacing any existing phone/email entries with
+ * the freshly edited values. The backend reads contact details from this array,
+ * so the updated phone/email must be present here (not only as top-level fields)
+ * for the change to persist.
+ */
+function buildUpdatedContacts(
+  existing: UserContact[] | undefined,
+  phone: string,
+  email: string,
+): UserContact[] {
+  const contacts = (existing ?? []).filter(
+    (c) => !/mobile|phone|sms|cell|email|mail/i.test(c.type ?? ''),
+  );
+  if (phone) {
+    contacts.push({ type: 'MOBILE', contact: normalizeGeorgianPhone(phone) });
+  }
+  if (email) {
+    contacts.push({ type: 'EMAIL', contact: email });
+  }
+  return contacts;
+}
 
 export function buildUpdateUserPayload(
   detail: UserDetail,
@@ -25,7 +48,7 @@ export function buildUpdateUserPayload(
     ...(email ? { email } : {}),
     ...(detail.idnumber ? { idnumber: detail.idnumber } : {}),
     ...(detail.prntUserId != null ? { prntUserId: detail.prntUserId } : {}),
-    contacts: detail.contacts ?? [],
+    contacts: buildUpdatedContacts(detail.contacts, phone, email),
     ...(userGroups.length > 0 ? { userGroups } : {}),
   };
 }

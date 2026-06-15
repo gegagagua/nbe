@@ -10,7 +10,7 @@ export const enCases = {
   participantFilterRegnumberPlaceholder: 'Application number',
   participantFilterDocNoPlaceholder: 'Writ of execution number',
   participantFilterPaymentIdPlaceholder: 'Payment identifier',
-  participantFilterPersonalIdPlaceholder: 'Personal ID Number',
+  participantFilterPersonalIdPlaceholder: 'Personal No. / Identification Code',
   participantFilterLegalIdPlaceholder: 'Identification Number',
   orgTypeLabel: 'Organization Type',
   orgLabel: 'Organization',

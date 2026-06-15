@@ -53,6 +53,17 @@ export const caseGuestFinePanelStyles = StyleSheet.create({
     fontWeight: '700',
     color: LoginPalette.titleText,
   },
+  amountInput: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: LoginPalette.inputBorder,
+    borderRadius: Radius.small,
+    backgroundColor: LoginPalette.cardBackground,
+    paddingHorizontal: Space.medium,
+    fontSize: Typography.medium,
+    fontWeight: '700',
+    color: LoginPalette.titleText,
+  },
   notFound: {
     fontSize: Typography.medium,
     color: LoginPalette.bodyText,

@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { getCaseDetailLayoutMock } from "@/constants/case-detail-layout-mock";
 import type { CaseDetailMainTab } from "@/types/case-detail-ui";
@@ -122,7 +123,11 @@ export function CaseDetailScreen() {
 
   return (
     <AppSafeArea style={layout.page}>
-      <ScrollView contentContainerStyle={layout.scroll}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={layout.scroll}
+        keyboardShouldPersistTaps="handled"
+        bottomOffset={16}
+      >
         <View style={layout.headerRow}>
           <Pressable
             style={layout.backBtn}
@@ -173,7 +178,7 @@ export function CaseDetailScreen() {
           <Text style={layout.payButtonText}>{payButtonLabel}</Text>
         </Pressable>
         <CaseDetailCloseRow onClose={() => router.back()} />
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <PaymentWebViewModal
         visible={paymentUrl != null}
         url={paymentUrl}

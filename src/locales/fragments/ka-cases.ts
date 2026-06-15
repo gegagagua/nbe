@@ -10,7 +10,7 @@ export const kaCases = {
   participantFilterRegnumberPlaceholder: "განცხადების ნომერი",
   participantFilterDocNoPlaceholder: "სააღსრულებო ფურცლის ნომერი",
   participantFilterPaymentIdPlaceholder: "გადახდის იდენტიფიკატორი",
-  participantFilterPersonalIdPlaceholder: "პირადი ნომერი",
+  participantFilterPersonalIdPlaceholder: "პირადი ნომერი / საიდენტიფიკაციო კოდი",
   participantFilterLegalIdPlaceholder: "საიდენტიფიკაციო კოდი",
   orgTypeLabel: "ორგანიზაციის ტიპი",
   orgLabel: "ორგანიზაცია",

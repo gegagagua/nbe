@@ -17,7 +17,7 @@ export function useForgotPassword() {
     mutationFn: (username: string) => requestPasswordReset(username),
     onSuccess: () => {
       setStatusMessage({ type: 'success', text: t('forgotPassword.successMessage') });
-      router.replace('/');
+      router.replace('/?passwordReset=requested');
     },
     onError: (err) => {
       const message = mapForgotPasswordError(err);

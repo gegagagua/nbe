@@ -24,5 +24,11 @@ export const homeNavItems: HomeNavItem[] = [
     accent: 'slate',
     disabled: true,
   },
-  { id: 'debtors', titleKey: 'home.navDebtors', icon: 'account-search', accent: 'slate' },
+  {
+    id: 'debtors',
+    titleKey: 'home.navDebtors',
+    icon: 'account-search',
+    accent: 'slate',
+    hiddenForGuest: true,
+  },
 ];

@@ -45,11 +45,6 @@ export function CaseParticipantSearch({ values, onChange }: Pick<CaseFiltersProp
         onChangeText={(v) => setValue('lastName', v)}
       />
       <CaseFilterField
-        placeholder={t('cases.participantFilterLegalIdPlaceholder')}
-        value={values.legalIdentificationCode ?? ''}
-        onChangeText={(v) => setValue('legalIdentificationCode', v)}
-      />
-      <CaseFilterField
         placeholder={t('cases.organizationNameLabel')}
         value={values.organizationName ?? ''}
         onChangeText={(v) => setValue('organizationName', v)}

@@ -1,5 +1,6 @@
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
@@ -17,9 +18,40 @@ export function CaseGuestFineResult({ result }: Props) {
   const { t } = useTranslation();
   const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } = useGuestFinePayment();
 
+  // Maximum payable amount taken from the checked debt. The user may lower the
+  // charged amount down to a minimum of 1 (partial payment / amount correction).
+  const maxAmount = useMemo(() => {
+    const n = Number.parseFloat((result.amount ?? '').replace(/[^\d.]/g, ''));
+    return Number.isFinite(n) ? n : NaN;
+  }, [result.amount]);
+
+  const [amountInput, setAmountInput] = useState<string>(
+    Number.isFinite(maxAmount) ? String(maxAmount) : '',
+  );
+
+  const payValue = useMemo(() => {
+    const n = Number.parseFloat(amountInput.replace(/[^\d.]/g, ''));
+    if (!Number.isFinite(n)) return NaN;
+    let value = n < 1 ? 1 : n;
+    if (Number.isFinite(maxAmount) && value > maxAmount) value = maxAmount;
+    return value;
+  }, [amountInput, maxAmount]);
+
+  const handleAmountChange = (text: string) => setAmountInput(text.replace(/[^\d.]/g, ''));
+
+  const handleAmountBlur = () => {
+    if (Number.isFinite(payValue)) {
+      setAmountInput(String(payValue));
+    } else if (Number.isFinite(maxAmount)) {
+      setAmountInput(String(maxAmount));
+    }
+  };
+
   function handlePay() {
     if (result.paymentContext) {
-      startPayment(result.paymentContext);
+      // Charge the (possibly corrected) amount the user entered.
+      const amount = Number.isFinite(payValue) ? payValue : result.paymentContext.amount;
+      startPayment({ ...result.paymentContext, amount });
       return;
     }
     if (result.paymentUrl) {
@@ -37,6 +69,10 @@ export function CaseGuestFineResult({ result }: Props) {
     );
   }
 
+  // Amount correction is only possible when paying via a structured payment
+  // context (the BOG intent is built from the edited amount).
+  const canEditAmount = result.paymentContext != null && Number.isFinite(maxAmount);
+
   return (
     <>
       <View style={s.resultCard}>
@@ -49,9 +85,23 @@ export function CaseGuestFineResult({ result }: Props) {
         {result.amount ? (
           <>
             <Text style={s.resultLabel}>{t('cases.guestFine.debtAmountLabel')}</Text>
-            <Text style={s.resultAmount}>
-              {result.amount} {result.currency ?? 'GEL'}
-            </Text>
+            {canEditAmount ? (
+              <TextInput
+                style={s.amountInput}
+                value={amountInput}
+                onChangeText={handleAmountChange}
+                onBlur={handleAmountBlur}
+                keyboardType="numeric"
+                inputMode="numeric"
+                editable={!isPaying}
+                placeholder={String(maxAmount)}
+                accessibilityLabel={t('cases.detailPayAmountLabel')}
+              />
+            ) : (
+              <Text style={s.resultAmount}>
+                {result.amount} {result.currency ?? 'GEL'}
+              </Text>
+            )}
           </>
         ) : null}
         <Button
