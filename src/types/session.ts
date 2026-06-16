@@ -21,12 +21,24 @@ export type SessionUserProfileBrief = {
   username: string;
   firstName: string;
   lastName: string;
+  /** Previous session info delivered with the most recent login response. */
+  lastSession?: LastSessionInfo | null;
+  /** Last password change date delivered with the most recent login response. */
+  pwdChngDate?: string | null;
+};
+
+export type LastSessionInfo = {
+  id: number;
+  createdDate: string;
+  ipAddress: string | null;
 };
 
 export type CreateSessionResponse = {
   token: string;
   tokenType: 'SESSION' | 'PWD_CHNG' | 'OTP';
   user: SessionUser | null;
+  lastSession?: LastSessionInfo | null;
+  pwdChngDate?: string | null;
 };
 
 export type CreateSessionApiEnvelope = {

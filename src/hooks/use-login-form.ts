@@ -7,14 +7,17 @@ import { useTranslation } from "react-i18next";
 
 import { createSession, verifyLoginOtp } from "@/api/sessions";
 import { changePassword } from "@/api/users";
-import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { setGuestMode } from "@/lib/guest-mode";
+import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { mapLoginError } from "@/lib/map-login-error";
 import {
-  isSimilarPasswordUsed,
-  recordPasswordChange,
+    isSimilarPasswordUsed,
+    recordPasswordChange,
 } from "@/lib/password-history-storage";
-import { clearSessionToken, setSessionToken } from "@/lib/session-token-storage";
+import {
+    clearSessionToken,
+    setSessionToken,
+} from "@/lib/session-token-storage";
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
 import { showSuccessToast } from "@/lib/show-success-toast";
@@ -31,7 +34,10 @@ export function useLoginForm(): LoginFormState {
     otpPwd: string;
   } | null>(null);
   const [isForcingPwdChange, setIsForcingPwdChange] = useState(false);
-  const [pendingOtp, setPendingOtp] = useState<{ token: string; credentials: LoginFormValues } | null>(null);
+  const [pendingOtp, setPendingOtp] = useState<{
+    token: string;
+    credentials: LoginFormValues;
+  } | null>(null);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
 
   const { control, handleSubmit, formState } = useForm<LoginFormValues>({
@@ -42,19 +48,22 @@ export function useLoginForm(): LoginFormState {
 
   const finishLogin = useCallback(
     async (
-      token: string,
-      user: import("@/types/session").SessionUser | null,
+      session: import("@/types/session").CreateSessionResponse,
       credentials: LoginFormValues,
     ) => {
+      const { token, user, lastSession, pwdChngDate } = session;
       await setSessionToken(token);
       if (user) {
         await setSessionUserProfile({
           id: user.id,
           // Store the exact identifier the user logged in with so Face ID
           // (which re-runs createSession with this username) stays valid.
-          username: credentials.username.trim() || user.username || user.idnumber || "",
+          username:
+            credentials.username.trim() || user.username || user.idnumber || "",
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
+          lastSession: lastSession ?? null,
+          pwdChngDate: pwdChngDate ?? null,
         });
       }
       setGuestMode(false);
@@ -74,16 +83,20 @@ export function useLoginForm(): LoginFormState {
         password: payload.password,
       }),
     onSuccess: async (data, variables) => {
-      if (data.tokenType === 'OTP') {
+      if (data.tokenType === "OTP") {
         setPendingOtp({ token: data.token, credentials: variables });
         return;
       }
-      if (data.tokenType === 'PWD_CHNG') {
+      if (data.tokenType === "PWD_CHNG") {
         await setSessionToken(data.token);
-        setPendingPwdChange({ username: variables.username, otpPwd: variables.password });
+        setPendingPwdChange({
+          username: variables.username,
+          otpPwd: variables.password,
+        });
         return;
       }
-      await finishLogin(data.token, data.user, variables);
+      console.log("data:", data, variables);
+      await finishLogin(data, variables);
     },
     onError: (err) => {
       showErrorToast(mapLoginError(err), err);
@@ -127,7 +140,7 @@ export function useLoginForm(): LoginFormState {
       try {
         const session = await verifyLoginOtp(pendingOtp.token, code);
         setPendingOtp(null);
-        await finishLogin(session.token, session.user, pendingOtp.credentials);
+        await finishLogin(session, pendingOtp.credentials);
       } catch (err) {
         showErrorToast(mapLoginError(err), err);
       } finally {

@@ -15,6 +15,7 @@ function isProfile(value: unknown): value is SessionUserProfileBrief {
   // Migrate older stored profiles that pre-date username/id fields
   if (typeof o.username !== 'string') o.username = '';
   if (typeof o.id !== 'number') o.id = 0;
+  // lastSession / pwdChngDate are optional, kept as-is when present.
   return true;
 }
 

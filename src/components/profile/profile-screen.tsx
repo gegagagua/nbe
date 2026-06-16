@@ -1,21 +1,25 @@
-import { router } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
-import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { LoginPalette } from '@/constants/login';
-import { useProfileActions } from '@/hooks/use-profile-actions';
-import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
-import { useUserDetail } from '@/hooks/use-user-detail';
-import { useVerifyCurrentPassword } from '@/hooks/use-verify-current-password';
-import { resolveUserEmail, resolveUserPhone } from '@/lib/resolve-user-contacts';
-import { signOut } from '@/lib/sign-out';
+import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { LoginPalette } from "@/constants/login";
+import { useProfileActions } from "@/hooks/use-profile-actions";
+import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
+import { useUserDetail } from "@/hooks/use-user-detail";
+import { useVerifyCurrentPassword } from "@/hooks/use-verify-current-password";
+import {
+    resolveUserEmail,
+    resolveUserPhone,
+} from "@/lib/resolve-user-contacts";
+import { signOut } from "@/lib/sign-out";
+import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
-import { ProfileChangePasswordSection } from './profile-change-password-section';
-import { ProfileFaceIdSection } from './profile-face-id-section';
-import { ProfileInfoSection } from './profile-info-section';
-import { profileScreenStyles as s } from './profile-screen.styles';
+import { ProfileChangePasswordSection } from "./profile-change-password-section";
+import { ProfileFaceIdSection } from "./profile-face-id-section";
+import { ProfileInfoSection } from "./profile-info-section";
+import { profileScreenStyles as s } from "./profile-screen.styles";
 
 export function ProfileScreen() {
   const { t } = useTranslation();
@@ -29,13 +33,27 @@ export function ProfileScreen() {
   });
   const verifyPassword = useVerifyCurrentPassword(profile?.username);
 
+  // Surface lastSession + pwdChngDate that came back with the login response in
+  // the same modals the /users/me history feeds, so users see them even when
+  // the detail call hasn't returned (or hasn't yet been re-fetched).
+  const loginHistory = mergeLoginHistory(
+    detail?.loginHistory,
+    profile?.lastSession,
+  );
+  const passwordHistory = mergePasswordHistory(
+    detail?.passwordHistory,
+    profile?.pwdChngDate,
+  );
+
   function handleSignOut() {
     signOut();
   }
 
   if (isLoading) {
     return (
-      <View style={[s.page, { justifyContent: 'center', alignItems: 'center' }]}>
+      <View
+        style={[s.page, { justifyContent: "center", alignItems: "center" }]}
+      >
         <ActivityIndicator size="large" color={LoginPalette.primary} />
       </View>
     );
@@ -43,9 +61,15 @@ export function ProfileScreen() {
 
   if (!profile) {
     return (
-      <View style={[s.page, { justifyContent: 'center', alignItems: 'center' }]}>
+      <View
+        style={[s.page, { justifyContent: "center", alignItems: "center" }]}
+      >
         <View style={s.header}>
-          <Pressable style={s.backButton} onPress={() => router.back()} accessibilityRole="button">
+          <Pressable
+            style={s.backButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+          >
             <Text style={s.backButtonText}>←</Text>
           </Pressable>
         </View>
@@ -62,10 +86,11 @@ export function ProfileScreen() {
             style={s.backButton}
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('profile.backA11yLabel')}>
+            accessibilityLabel={t("profile.backA11yLabel")}
+          >
             <Text style={s.backButtonText}>←</Text>
           </Pressable>
-          <Text style={s.pageTitle}>{t('profile.pageTitle')}</Text>
+          <Text style={s.pageTitle}>{t("profile.pageTitle")}</Text>
         </View>
 
         <KeyboardAwareScrollView
@@ -73,15 +98,16 @@ export function ProfileScreen() {
           contentContainerStyle={s.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          bottomOffset={16}>
+          bottomOffset={16}
+        >
           <ProfileInfoSection
             firstName={detail?.firstName ?? null}
             lastName={detail?.lastName ?? null}
             idnumber={detail?.idnumber?.trim() || undefined}
             phone={resolveUserPhone(detail?.contacts)}
             email={resolveUserEmail(detail?.contacts)}
-            realAddress={detail?.realAddress?.trim() ?? ''}
-            legalAddress={detail?.legalAddress?.trim() ?? ''}
+            realAddress={detail?.realAddress?.trim() ?? ""}
+            legalAddress={detail?.legalAddress?.trim() ?? ""}
             canEdit={detail !== null}
             onSave={actions.handleSaveInfo}
             isSaving={actions.isSavingInfo}
@@ -93,8 +119,8 @@ export function ProfileScreen() {
           <ProfileFaceIdSection
             username={profile.username}
             authorities={detail?.authorities ?? []}
-            loginHistory={detail?.loginHistory ?? []}
-            passwordHistory={detail?.passwordHistory ?? []}
+            loginHistory={loginHistory}
+            passwordHistory={passwordHistory}
             verifyPassword={verifyPassword}
           />
 
@@ -109,11 +135,49 @@ export function ProfileScreen() {
           <Pressable
             style={s.signOutButton}
             onPress={handleSignOut}
-            accessibilityRole="button">
-            <Text style={s.signOutButtonText}>{t('profile.signOutButton')}</Text>
+            accessibilityRole="button"
+          >
+            <Text style={s.signOutButtonText}>
+              {t("profile.signOutButton")}
+            </Text>
           </Pressable>
         </KeyboardAwareScrollView>
       </AppSafeArea>
     </View>
   );
+}
+
+function mergeLoginHistory(
+  history: LoginHistoryEntry[] | undefined,
+  lastSession:
+    | { id: number; createdDate: string; ipAddress: string | null }
+    | null
+    | undefined,
+): LoginHistoryEntry[] {
+  const base = history ?? [];
+  if (!lastSession?.createdDate) return base;
+  const entry: LoginHistoryEntry = {
+    date: lastSession.createdDate,
+    success: true,
+    ipAddress: lastSession.ipAddress ?? null,
+    userAgent: null,
+  };
+  if (base.some((e) => e.date === entry.date)) return base;
+  return [entry, ...base];
+}
+
+function mergePasswordHistory(
+  history: PasswordHistoryApiEntry[] | undefined,
+  pwdChngDate: string | null | undefined,
+): PasswordHistoryApiEntry[] {
+  const base = history ?? [];
+  if (!pwdChngDate) return base;
+  const entry: PasswordHistoryApiEntry = {
+    date: pwdChngDate,
+    success: true,
+    ipAddress: null,
+    userAgent: null,
+  };
+  if (base.some((e) => e.date === entry.date)) return base;
+  return [entry, ...base];
 }

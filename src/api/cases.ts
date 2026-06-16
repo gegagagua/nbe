@@ -4,8 +4,8 @@ import { buildCaseSearchPayload } from "@/lib/build-case-search-payload";
 import { epsUserHeaders } from "@/lib/eps-user-headers";
 import { mapSearchCasesResponse } from "@/lib/map-search-cases-response";
 import type {
-  CaseSearchFilters,
-  SearchCasesResponse,
+    CaseSearchFilters,
+    SearchCasesResponse,
 } from "@/types/case-management";
 
 export async function searchCases(
@@ -18,6 +18,5 @@ export async function searchCases(
   const response = await apiClient.post(ApiPaths.appsSearch, payload, {
     headers: epsUserHeaders(userId),
   });
-  console.log("response:", response.data[0]);
   return mapSearchCasesResponse(response.data);
 }

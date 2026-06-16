@@ -19,6 +19,18 @@ function mapParties(raw: unknown): CaseParty[] {
   return raw.map(mapParty).filter((p): p is CaseParty => p !== null);
 }
 
+// remainDebt comes back in tetri (1/100 GEL), so 1759115 ⇒ 17 591.15 ₾.
+function formatRemainDebt(raw: unknown): string | null {
+  const tetri =
+    typeof raw === "number"
+      ? raw
+      : typeof raw === "string"
+        ? Number.parseFloat(raw)
+        : Number.NaN;
+  if (!Number.isFinite(tetri)) return null;
+  return formatGelAmount(tetri / 100);
+}
+
 export function mapCaseApplication(raw: unknown): CaseApplication | null {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
@@ -69,10 +81,7 @@ export function mapCaseApplication(raw: unknown): CaseApplication | null {
         : typeof r.debtCategory === "string"
           ? r.debtCategory
           : null,
-    debtAmountDisplay:
-      typeof r.remainDebt === "number" || typeof r.remainDebt === "string"
-        ? formatGelAmount(r.remainDebt)
-        : null,
+    debtAmountDisplay: formatRemainDebt(r.remainDebt),
     enforcementBureauName:
       typeof r.enforcementBureauName === "string"
         ? r.enforcementBureauName
