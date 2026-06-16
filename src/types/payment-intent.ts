@@ -10,4 +10,5 @@ export type BogPaymentIntentRequest = {
 
 export type BogPaymentIntentResult = {
   paymentUrl: string;
+  paymentIntentId: string | null;
 };

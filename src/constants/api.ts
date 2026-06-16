@@ -25,6 +25,8 @@ export const ApiPaths = {
   // EPS-MONEY-API — public guest payment search
   paymentInfo: "/payment-portal-pub/v1/payments/info",
   paymentBogIntent: "/payment-portal-pub/v1/payments/bog/intents",
+  paymentBogIntentSyncStatus: (id: number | string) =>
+    `/payment-portal-pub/v1/payments/bog/intents/${id}/sync-status`,
 
   // EPS-API — cases
   appsSearch: "/eps-portal/v1/apps/search",

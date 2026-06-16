@@ -16,7 +16,8 @@ type Props = {
 
 export function CaseGuestFineResult({ result }: Props) {
   const { t } = useTranslation();
-  const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } = useGuestFinePayment();
+  const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } =
+    useGuestFinePayment();
 
   // Maximum payable amount taken from the checked debt. The user may lower the
   // charged amount down to a minimum of 1 (partial payment / amount correction).

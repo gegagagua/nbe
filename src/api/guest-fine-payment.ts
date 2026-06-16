@@ -28,3 +28,9 @@ export async function createBogPaymentIntent(
 
   return mapped;
 }
+
+export async function syncBogPaymentIntentStatus(
+  paymentIntentId: string | number,
+): Promise<void> {
+  await apiClient.post(ApiPaths.paymentBogIntentSyncStatus(paymentIntentId));
+}
