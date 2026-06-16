@@ -8,8 +8,7 @@ const TITLE = "აღსრულების ეროვნული ბიუ
 
 /**
  * Static HTML shell wrapping every web route during `web.output: "static"`
- * export. Sets the SEO/meta baseline so individual routes only override
- * title/description via <SeoHead>.
+ * export. Sets the SEO/meta baseline for the (unused) web build.
  */
 export default function Root({ children }: PropsWithChildren) {
   return (

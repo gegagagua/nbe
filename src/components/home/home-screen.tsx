@@ -1,8 +1,6 @@
 import { lazy, Suspense } from "react";
-import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
 
-import { SeoHead } from "@/components/seo-head";
 import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { LoginPalette } from "@/constants/login";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
@@ -18,12 +16,10 @@ const HomeNavGrid = lazy(() =>
 );
 
 export function HomeScreen() {
-  const { t } = useTranslation();
   const { displayName } = useSessionUserProfile();
 
   return (
     <View style={homeScreenStyles.page}>
-      <SeoHead title={t("home.headerLogoGeo")} />
       <AppSafeArea style={homeScreenStyles.body}>
         <HomeHeader displayName={displayName} />
         <HomeDashboardLayout>
