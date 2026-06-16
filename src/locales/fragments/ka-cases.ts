@@ -10,7 +10,8 @@ export const kaCases = {
   participantFilterRegnumberPlaceholder: "განცხადების ნომერი",
   participantFilterDocNoPlaceholder: "სააღსრულებო ფურცლის ნომერი",
   participantFilterPaymentIdPlaceholder: "გადახდის იდენტიფიკატორი",
-  participantFilterPersonalIdPlaceholder: "პირადი ნომერი / საიდენტიფიკაციო კოდი",
+  participantFilterPersonalIdPlaceholder:
+    "პირადი ნომერი / საიდენტიფიკაციო კოდი",
   participantFilterLegalIdPlaceholder: "საიდენტიფიკაციო კოდი",
   orgTypeLabel: "ორგანიზაციის ტიპი",
   orgLabel: "ორგანიზაცია",
@@ -57,7 +58,7 @@ export const kaCases = {
   listRegDateLabel: "რეგ. თარიღი",
   listRegistrationLine: "საბოლოო რეგისტრაცია",
   listCreditorDebtorLine: "კრედიტორი / მოვალე",
-  listDebtLine: "დავალიანება (კატეგორია)",
+  listDebtLine: "დავალიანება",
   openCaseA11yHint: "სრული ინფორმაცია და გადახდა",
   detailTitle: "სააღსრულებო წარმოება",
   detailBack: "უკან",

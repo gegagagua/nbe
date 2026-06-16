@@ -1,7 +1,7 @@
 export const enAuth = {
   login: {
     pageTitle: "Sign in",
-    usernamePlaceholder: "Username",
+    usernamePlaceholder: "Personal ID number",
     passwordPlaceholder: "Password",
     submit: "Log in",
     brandGeo: "National Bureau of Enforcement",
@@ -67,18 +67,22 @@ export const enAuth = {
     registerOtpGenericError: "Verification failed. Please try again.",
     sessionBootLoadingA11yLabel: "Checking session",
     forcedPwdChangeTitle: "Set a new password",
-    forcedPwdChangeSubtitle: "Your temporary password has expired. Please set a new password to continue.",
+    forcedPwdChangeSubtitle:
+      "Your temporary password has expired. Please set a new password to continue.",
     forcedPwdChangeButton: "Password Recovery",
-    forcedPwdChangeSuccess: "Password recovered successfully. Please sign in with your new password.",
+    forcedPwdChangeSuccess:
+      "Password recovered successfully. Please sign in with your new password.",
     passwordResetNoticeTitle: "Password Recovery",
     passwordResetNoticeText:
       "To recover your password, please enter your personal number and one-time password.",
     passwordResetNoticeButton: "Continue",
     otpLoginTitle: "One-Time Password",
-    otpLoginDescription: "Enter the 6-digit code sent to your registered mobile number.",
+    otpLoginDescription:
+      "Enter the 6-digit code sent to your registered mobile number.",
     otpLoginPlaceholder: "xxxxxx",
     otpLoginVerifyButton: "Verify",
-    otpLoginExpiredMessage: "Code has expired. Please go back and sign in again.",
+    otpLoginExpiredMessage:
+      "Code has expired. Please go back and sign in again.",
     otpLoginBackButton: "Back to sign in",
     langKaA11y: "Georgian",
     langEnA11y: "English",
@@ -142,8 +146,7 @@ export const enAuth = {
     successMessage:
       "Password reset request sent. Check your SMS for further instructions.",
     errorMessage: "Your password does not meet the requirements",
-    notFoundError:
-      "No data found. Please verify your personal ID number.",
+    notFoundError: "No data found. Please verify your personal ID number.",
     networkError: "Network error. Please try again.",
     genericError: "An error occurred. Please try again.",
   },

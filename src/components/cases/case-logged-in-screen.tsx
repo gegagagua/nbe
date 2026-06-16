@@ -1,21 +1,21 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
-import { CaseFilters } from '@/components/cases/case-filters';
-import { CaseList } from '@/components/cases/case-list';
-import { CasePagination } from '@/components/cases/case-pagination';
-import { HomeHeader } from '@/components/home/home-header';
-import { LoginFooter } from '@/components/login/login-footer';
-import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { useCaseApps } from '@/hooks/use-case-apps';
-import { useSessionUserProfile } from '@/hooks/use-session-user-profile';
-import type { CaseSearchFilters } from '@/types/case-management';
-import { isCaseFiltersEmpty } from '@/utils/is-case-filters-empty';
+import { CaseFilters } from "@/components/cases/case-filters";
+import { CaseList } from "@/components/cases/case-list";
+import { CasePagination } from "@/components/cases/case-pagination";
+import { HomeHeader } from "@/components/home/home-header";
+import { LoginFooter } from "@/components/login/login-footer";
+import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { useCaseApps } from "@/hooks/use-case-apps";
+import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
+import type { CaseSearchFilters } from "@/types/case-management";
+import { isCaseFiltersEmpty } from "@/utils/is-case-filters-empty";
 
-import { caseScreenStyles as s } from './case-screen.styles';
+import { caseScreenStyles as s } from "./case-screen.styles";
 
 export function CaseLoggedInScreen() {
   const { t } = useTranslation();
@@ -43,21 +43,30 @@ export function CaseLoggedInScreen() {
     setPageNumber(0);
   };
 
-  console.log("items:", items[0]);
+  //  console .log("items:", items[0]);
 
   return (
     <View style={s.page}>
       <AppSafeArea style={s.body}>
         <HomeHeader displayName={displayName} />
-        <ScrollView style={s.scroll} contentContainerStyle={s.content} showsVerticalScrollIndicator>
+        <ScrollView
+          style={s.scroll}
+          contentContainerStyle={s.content}
+          showsVerticalScrollIndicator
+        >
           <View style={s.titleRow}>
             <Pressable
               onPress={() => router.back()}
               accessibilityRole="button"
-              style={s.backButton}>
-              <MaterialCommunityIcons name="arrow-left" size={22} color="#2b436c" />
+              style={s.backButton}
+            >
+              <MaterialCommunityIcons
+                name="arrow-left"
+                size={22}
+                color="#2b436c"
+              />
             </Pressable>
-            <Text style={s.title}>{t('cases.pageTitle')}</Text>
+            <Text style={s.title}>{t("cases.pageTitle")}</Text>
           </View>
           <CaseFilters
             values={draftFilters}
