@@ -92,7 +92,9 @@ export function CaseGuestFinePanel() {
         onPress={() => onSubmit()}
         disabled={isChecking || !formState.isValid}
       />
-      {result && !isChecking ? <CaseGuestFineResult result={result} /> : null}
+      {result && !isChecking ? (
+        <CaseGuestFineResult result={result} onPaymentSynced={clearResult} />
+      ) : null}
     </View>
   );
 }

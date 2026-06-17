@@ -118,7 +118,6 @@ export function ProfileScreen() {
 
           <ProfileFaceIdSection
             username={profile.username}
-            authorities={detail?.authorities ?? []}
             loginHistory={loginHistory}
             passwordHistory={passwordHistory}
             verifyPassword={verifyPassword}

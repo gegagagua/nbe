@@ -12,12 +12,15 @@ import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
 
 type Props = {
   result: GuestFineCheckResult;
+  // Called after the payment intent sync-status finishes so the guest case
+  // screen can be reloaded back to its initial check state.
+  onPaymentSynced?: () => void;
 };
 
-export function CaseGuestFineResult({ result }: Props) {
+export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
   const { t } = useTranslation();
   const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } =
-    useGuestFinePayment();
+    useGuestFinePayment({ onSynced: onPaymentSynced });
 
   // Maximum payable amount taken from the checked debt. The user may lower the
   // charged amount down to a minimum of 1 (partial payment / amount correction).
@@ -25,6 +28,13 @@ export function CaseGuestFineResult({ result }: Props) {
     const n = Number.parseFloat((result.amount ?? '').replace(/[^\d.]/g, ''));
     return Number.isFinite(n) ? n : NaN;
   }, [result.amount]);
+
+  // Currency unit kept alongside the editable numeric amount (e.g. "GEL"),
+  // derived from the displayed amount string just like the logged-in screen.
+  const currencySuffix = useMemo(() => {
+    const fromAmount = (result.amount ?? '').replace(/[\d.,\s]/g, '').trim();
+    return fromAmount || result.currency || 'GEL';
+  }, [result.amount, result.currency]);
 
   const [amountInput, setAmountInput] = useState<string>(
     Number.isFinite(maxAmount) ? String(maxAmount) : '',
@@ -74,6 +84,14 @@ export function CaseGuestFineResult({ result }: Props) {
   // context (the BOG intent is built from the edited amount).
   const canEditAmount = result.paymentContext != null && Number.isFinite(maxAmount);
 
+  // Reflect the editable amount in the pay button label, like the logged-in screen.
+  const payButtonLabel =
+    canEditAmount && Number.isFinite(payValue)
+      ? `${t('cases.detailPayButton')} · ${payValue}${
+          currencySuffix ? ` ${currencySuffix}` : ''
+        }`
+      : t('cases.detailPayButton');
+
   return (
     <>
       <View style={s.resultCard}>
@@ -100,13 +118,13 @@ export function CaseGuestFineResult({ result }: Props) {
               />
             ) : (
               <Text style={s.resultAmount}>
-                {result.amount} {result.currency ?? 'GEL'}
+                {result.amount} {currencySuffix}
               </Text>
             )}
           </>
         ) : null}
         <Button
-          label={t('cases.detailPayButton')}
+          label={payButtonLabel}
           onPress={handlePay}
           disabled={isPaying}
         />

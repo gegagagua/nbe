@@ -200,12 +200,6 @@ export const kaAuth = {
     saveNetworkError: "ქსელში შეცდომა. სცადეთ თავიდან.",
     saveMissingSession:
       "სესია არ მოიძებნა. გთხოვთ, ხელახლა შეხვიდეთ სისტემაში.",
-    activitiesButton: "აქტივები",
-    activitiesModalTitle: "აქტივები",
-    activitiesEmpty: "აქტივები არ მოიძებნა.",
-    authorityActive: "აქტიური",
-    authorityInactive: "არააქტიური",
-    authorityTypeLabel: "ტიპი",
   },
   faceId: {
     sectionTitle: "უსაფრთხოება",

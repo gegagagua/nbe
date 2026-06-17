@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -39,8 +40,17 @@ export function CaseDetailScreen() {
   const data = useMemo(() => getCaseDetailLayoutMock(caseId), [caseId]);
   const [tab, setTab] = useState<CaseDetailMainTab>("application");
 
+  const queryClient = useQueryClient();
+
+  // After the payment intent sync-status finishes, return to the case screen
+  // and reload the list so the paid debt reflects its new state.
+  const handlePaymentSynced = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["case-apps"] });
+    router.replace("/cases");
+  }, [queryClient, router]);
+
   const { paymentUrl, closePayment, startPayment, isPaying } =
-    useGuestFinePayment();
+    useGuestFinePayment({ onSynced: handlePaymentSynced });
 
   // The full amount shown on the detail screen, e.g. "3000 GEL".
   const payLabelAmount = payDisplay || data.claimRows[0]?.amount || "";

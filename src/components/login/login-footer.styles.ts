@@ -20,4 +20,10 @@ export const loginFooterStyles = StyleSheet.create({
     fontSize: Typography.small,
     lineHeight: LineHeight.normal,
   },
+  version: {
+    color: LoginPalette.onPrimary,
+    fontSize: Typography.small,
+    lineHeight: LineHeight.normal,
+    opacity: 0.7,
+  },
 });

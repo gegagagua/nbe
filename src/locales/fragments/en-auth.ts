@@ -203,12 +203,6 @@ export const enAuth = {
     saveError: "Failed to save",
     saveNetworkError: "Network error. Please try again.",
     saveMissingSession: "Session not found. Please sign in again.",
-    activitiesButton: "Activities",
-    activitiesModalTitle: "Activities",
-    activitiesEmpty: "No activities found.",
-    authorityActive: "Active",
-    authorityInactive: "Inactive",
-    authorityTypeLabel: "Type",
   },
   faceId: {
     sectionTitle: "Security",
