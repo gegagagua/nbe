@@ -14,6 +14,8 @@ export type SessionUser = {
   lastName: string | null;
   idnumber?: string;
   active: boolean;
+  /** Last password change date. */
+  pwdChngDate?: string | null;
 };
 
 export type SessionUserProfileBrief = {
@@ -38,7 +40,6 @@ export type CreateSessionResponse = {
   tokenType: 'SESSION' | 'PWD_CHNG' | 'OTP';
   user: SessionUser | null;
   lastSession?: LastSessionInfo | null;
-  pwdChngDate?: string | null;
 };
 
 export type CreateSessionApiEnvelope = {

@@ -33,4 +33,7 @@ export const kaCasesDetailUiA = {
   colDocument: "დოკუმენტი",
   colActor: "მოქმედი პირი",
   docOpenA11y: "დოკუმენტის გახსნა",
+  fileUploadedBy: "ატვირთა: {{name}}",
+  fileDownloadA11y: "ფაილის გადმოწერა",
+  fileDownloadError: "ფაილის გადმოწერა ვერ მოხერხდა",
 } as const;

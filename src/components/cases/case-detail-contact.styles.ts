@@ -28,6 +28,7 @@ export const caseDetailContactStyles = StyleSheet.create({
   },
   contactRow: {
     paddingVertical: Space.small,
+    paddingHorizontal: Space.medium,
     borderBottomWidth: 1,
     borderBottomColor: DebtorRegistryPalette.panelBorder,
   },

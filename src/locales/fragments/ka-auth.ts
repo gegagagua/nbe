@@ -17,6 +17,9 @@ export const kaAuth = {
     identomatDemoButton: "Identomat — სახის ამოცნობის დემო",
     identomatDemoPageTitle: "Identomat შემოწმება",
     identomatDemoBackA11yLabel: "უკან",
+    identomatNoHdCameraTitle: "Full HD კამერა ვერ მოიძებნა",
+    identomatNoHdCameraDescription:
+      "გასაგრძელებლად საჭიროა მოწყობილობა Full HD კამერით.",
     registrationLink: "რეგისტრაცია",
     registrationPageTitle: "რეგისტრაცია",
     registerTabPhysical: "ფიზიკური პირი",

@@ -2,14 +2,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { getCaseDetailLayoutMock } from "@/constants/case-detail-layout-mock";
+import { LoginPalette } from "@/constants/login";
 import type { CaseDetailMainTab } from "@/types/case-detail-ui";
 
 import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { PaymentWebViewModal } from "@/components/ui/payment-web-view-modal";
+import { useCaseDetail } from "@/hooks/use-case-detail";
 import { useGuestFinePayment } from "@/hooks/use-guest-fine-payment";
 import { showErrorToast } from "@/lib/show-error-toast";
 
@@ -37,8 +45,16 @@ export function CaseDetailScreen() {
     payDisplay?: string;
   }>();
   const caseId = Array.isArray(id) ? id[0] : (id ?? "");
-  const data = useMemo(() => getCaseDetailLayoutMock(caseId), [caseId]);
   const [tab, setTab] = useState<CaseDetailMainTab>("application");
+
+  // Real case data drives the header + application tab. The remaining tabs
+  // (case info, contact, …) still read from the layout mock until their own
+  // endpoints are wired, so the mock is merged in as a fallback.
+  const { data: appData, isLoading } = useCaseDetail(caseId);
+  const data = useMemo(
+    () => ({ ...getCaseDetailLayoutMock(caseId), ...(appData ?? {}) }),
+    [caseId, appData],
+  );
 
   const queryClient = useQueryClient();
 
@@ -130,6 +146,16 @@ export function CaseDetailScreen() {
     }
     showErrorToast(t("cases.detailPaySoonToast"));
   };
+
+  if (isLoading && !appData) {
+    return (
+      <AppSafeArea style={layout.page}>
+        <View style={[layout.scroll, { flex: 1, justifyContent: "center" }]}>
+          <ActivityIndicator size="large" color={LoginPalette.primary} />
+        </View>
+      </AppSafeArea>
+    );
+  }
 
   return (
     <AppSafeArea style={layout.page}>

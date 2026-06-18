@@ -14,10 +14,15 @@ export async function getInstallment(id: number | string, userId: number | strin
 }
 
 /** /portal/v1/installments/payment/by-installment-id — installment payments */
-export async function getInstallmentPayments(appId: number | string, installmentId: number | string) {
+export async function getInstallmentPayments(
+  appId: number | string,
+  installmentId: number | string,
+  userId: number | string,
+) {
   const response = await apiClient.post(
     `${EpsInstallmentApiBase}${ApiPaths.installmentPayments}`,
     { data: { appId, installmentId } },
+    { headers: headers(userId) },
   );
   return response.data;
 }

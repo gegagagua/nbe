@@ -1,5 +1,19 @@
 export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
 
+// ── Per-service EPS hosts ──────────────────────────────────────────────────────
+// The `/portal/v1/...` EPS micro-services are NOT served by the main gateway;
+// each one has its own host. Confirmed hosts: eauction, file, money. The rest
+// follow the same `nbe-eps-<service>-api.testing.cloud.gov.ge` naming and should
+// be confirmed before relying on them in production.
+export const EpsEauctionApiBase = "http://nbe-eps-eauction-api.testing.cloud.gov.ge";
+export const EpsFileApiBase = "http://nbe-eps-file-api.testing.cloud.gov.ge";
+export const EpsMoneyApiBase = "http://nbe-eps-money-api.testing.cloud.gov.ge";
+export const EpsMiaApiBase = "http://nbe-eps-mia-api.testing.cloud.gov.ge";
+export const EpsNaprApiBase = "http://nbe-eps-napr-api.testing.cloud.gov.ge";
+export const EpsSsaApiBase = "http://nbe-eps-ssa-api.testing.cloud.gov.ge";
+export const EpsInstallmentApiBase =
+  "http://nbe-eps-installment-api.testing.cloud.gov.ge";
+
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
   // Auth
@@ -36,6 +50,8 @@ export const ApiPaths = {
   appStatusFiles: "/eps-portal/v1/app/statuses/get-files",
   appPersons: (appId: number | string) => `/eps-portal/v1/persons/app/${appId}`,
   appDemands: (appId: number | string) => `/eps-portal/v1/demands/app/${appId}`,
+  // EPS-FILE-API (separate host) — stream/download a status file.
+  epsFilesStream: "/portal/v1/eps/files/stream",
 
   // EPS-MONEY-API
   debtorMoney: (appId: number | string) =>

@@ -33,4 +33,7 @@ export const enCasesDetailUiA = {
   colDocument: 'Document',
   colActor: 'Acting person',
   docOpenA11y: 'Open document',
+  fileUploadedBy: 'Uploaded by: {{name}}',
+  fileDownloadA11y: 'Download file',
+  fileDownloadError: 'Could not download the file',
 } as const;

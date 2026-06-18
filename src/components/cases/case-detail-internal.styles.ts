@@ -87,4 +87,13 @@ export const caseDetailInternalStyles = StyleSheet.create({
     color: DebtorRegistryPalette.buttonBg,
     textDecorationLine: 'underline',
   },
+  fileRow: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Space.small,
+  },
+  fileInfo: {
+    flex: 1,
+    gap: Space.extraSmall,
+  },
 });

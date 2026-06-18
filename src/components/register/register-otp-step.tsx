@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createOtpSchema, type OtpFormValues } from '@/schemas/password-reset.schema';
 
-import { registerScreenBodyStyles as s } from './register-screen-body.styles';
 import { registerOtpStepStyles as os } from './register-otp-step.styles';
+import { registerScreenBodyStyles as s } from './register-screen-body.styles';
 
 const OTP_TTL_SECONDS = 180;
 

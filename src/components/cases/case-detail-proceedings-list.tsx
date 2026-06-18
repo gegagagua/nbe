@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { CaseDetailData } from '@/types/case-detail-data';
 
+import { CaseDetailProceedingFiles } from './case-detail-proceeding-files';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
@@ -16,18 +17,18 @@ export function CaseDetailProceedingsList({
   proceedings: CaseDetailData['proceedings'];
 }) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<number | null>(null);
   return (
     <View>
-      {proceedings.map((row) => {
-        const isOpen = expanded === row.codeLine;
+      {proceedings.map((row, idx) => {
+        const isOpen = expanded === idx;
         return (
-          <View key={row.codeLine} style={p.panel}>
+          <View key={`${row.codeLine}-${idx}`} style={p.panel}>
             <Pressable
               style={p.panelHeadRow}
-              onPress={() => setExpanded(isOpen ? null : row.codeLine)}>
+              onPress={() => setExpanded(isOpen ? null : idx)}>
               <Text style={s.primaryText}>
-                {row.codeLine} :: {row.title}
+                {row.codeLine ? `${row.codeLine} :: ${row.title}` : row.title}
               </Text>
               <MaterialCommunityIcons
                 name={isOpen ? 'chevron-up' : 'chevron-down'}
@@ -38,7 +39,12 @@ export function CaseDetailProceedingsList({
             <View style={tb.padSm}>
               <Text style={s.mutedText}>{row.dateTime}</Text>
               {isOpen ? (
-                row.documents.length === 0 ? (
+                row.appStatusId != null ? (
+                  <CaseDetailProceedingFiles
+                    appId={row.appId}
+                    appStatusId={row.appStatusId}
+                  />
+                ) : row.documents.length === 0 ? (
                   <Text style={[s.mutedText, s.stackGapSm]}>{t('cases.detail.proceedingsNoDocs')}</Text>
                 ) : (
                   <View style={[tb.borderBox, s.claimsTableWrap]}>

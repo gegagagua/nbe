@@ -51,7 +51,7 @@ export function useLoginForm(): LoginFormState {
       session: import("@/types/session").CreateSessionResponse,
       credentials: LoginFormValues,
     ) => {
-      const { token, user, lastSession, pwdChngDate } = session;
+      const { token, user, lastSession } = session;
       await setSessionToken(token);
       if (user) {
         await setSessionUserProfile({
@@ -63,7 +63,8 @@ export function useLoginForm(): LoginFormState {
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
           lastSession: lastSession ?? null,
-          pwdChngDate: pwdChngDate ?? null,
+          // pwdChngDate arrives nested on `user`.
+          pwdChngDate: user.pwdChngDate ?? null,
         });
       }
       setGuestMode(false);
@@ -95,7 +96,6 @@ export function useLoginForm(): LoginFormState {
         });
         return;
       }
-      console.log("data:", data, variables);
       await finishLogin(data, variables);
     },
     onError: (err) => {

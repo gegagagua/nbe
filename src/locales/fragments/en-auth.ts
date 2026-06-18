@@ -16,6 +16,9 @@ export const enAuth = {
     identomatDemoButton: "Identomat face verification demo",
     identomatDemoPageTitle: "Identomat check",
     identomatDemoBackA11yLabel: "Back",
+    identomatNoHdCameraTitle: "Full HD camera not detected",
+    identomatNoHdCameraDescription:
+      "To continue, a device with a Full HD camera is required.",
     registrationLink: "Register",
     registrationPageTitle: "Registration",
     registerTabPhysical: "Individual",

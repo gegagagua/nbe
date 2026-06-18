@@ -94,14 +94,8 @@ export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailData = {
     title: 'მოვალე',
     bodyLines: ['გადახდილი / გადასახდელი / მიმდინარე დავალიანება — API-დან.'],
   },
-  auctionLots: [
-    {
-      lotNo: 'LOT-001',
-      description: 'ლოტის აღწერა (მარქაფი)',
-      status: 'აქტიური',
-      url: 'https://eauction.ge',
-    },
-  ],
+  // Auction lots are loaded live (useAuctionLots); kept empty in the mock.
+  auctionLots: [],
   installmentNote: 'განწილვადება — სერვისიდან (მარქაფი).',
   contact: {
     bureau: 'თბილისის სააღსრულებო ბიურო',

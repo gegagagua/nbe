@@ -8,8 +8,8 @@ import type { RegisterScreenBodyProps } from '@/types/register';
 import { RegisterNavRow } from './register-nav-row';
 import { RegisterOtpStep } from './register-otp-step';
 import { RegisterPhysicalForm } from './register-physical-form';
-import { RegisterSuccessStep } from './register-success-step';
 import { registerScreenBodyStyles as s } from './register-screen-body.styles';
+import { RegisterSuccessStep } from './register-success-step';
 
 export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
   const flow = useRegisterFlow();
@@ -23,6 +23,7 @@ export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
       <IdentomatDemoScreen
         sourceUrl={flow.verificationUrl}
         onBack={flow.handleIdentomatDone}
+        onSuccess={flow.handleIdentomatDone}
         isCheckingVerification={flow.isCheckingVerification}
       />
     );

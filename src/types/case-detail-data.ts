@@ -23,6 +23,19 @@ export type CaseDetailProceedingStatus = {
   title: string;
   dateTime: string;
   documents: CaseDetailProceedingDoc[];
+  /** Identifiers used to fetch downloadable files for this status. */
+  appStatusId?: number;
+  appId?: number;
+};
+
+/** A downloadable file attached to a proceeding status. */
+export type CaseDetailProceedingFile = {
+  fileId: number;
+  title: string;
+  fileName: string;
+  mimeType: string;
+  uploadedBy: string;
+  createdDate: string;
 };
 
 export type CaseDetailSearchPropertyRow = {
@@ -66,14 +79,42 @@ export type CaseDetailBusinessShareRow = {
   status: string;
 };
 
+export type CaseDetailAuctionStage = {
+  type: string;
+  startDate: string;
+  endDate: string;
+  eaucUrl: string;
+};
+
 export type CaseDetailAuctionLot = {
   lotNo: string;
-  description: string;
-  status: string;
+  category: string;
+  name: string;
+  price: string;
+  winDate: string;
   url: string;
+  stages: CaseDetailAuctionStage[];
 };
 
 export type CaseDetailFundsPartyBlock = { title: string; bodyLines: string[] };
+
+export type CaseDetailInstallmentPayment = {
+  paymentDate: string;
+  amountToPay: string;
+  amountPayed: string;
+  remainedAmount: string;
+  status: string;
+  confirmedBy: string;
+  confirmDate: string;
+};
+
+export type CaseDetailInstallment = {
+  installmentId: number;
+  headerLine: string;
+  partyLine: string;
+  status: string;
+  payments: CaseDetailInstallmentPayment[];
+};
 
 export type CaseDetailContactBlock = {
   bureau: string;

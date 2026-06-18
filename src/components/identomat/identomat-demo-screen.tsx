@@ -1,8 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { WebView } from 'react-native-webview';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { IDENTOMAT_DEMO_URL } from '@/constants/identomat';
@@ -13,13 +13,177 @@ import { identomatDemoScreenStyles } from './identomat-demo-screen.styles';
 
 type IdentomatDemoScreenProps = {
   onBack: () => void;
+  onSuccess?: () => void;
   isCheckingVerification?: boolean;
   sourceUrl?: string;
 };
 
-export function IdentomatDemoScreen({ onBack, sourceUrl, isCheckingVerification }: IdentomatDemoScreenProps) {
+/**
+ * Identomat's widget reports its lifecycle by posting string messages
+ * (`identomat_finished`, `identomat_close`, …) to the window. We bridge those
+ * to the native side via ReactNativeWebView.postMessage so we can close the
+ * screen automatically when verification completes.
+ */
+const IDENTOMAT_MESSAGE_BRIDGE = `(function () {
+  function send(data) {
+    if (window.ReactNativeWebView && data != null) {
+      window.ReactNativeWebView.postMessage(
+        typeof data === 'string' ? data : JSON.stringify(data),
+      );
+    }
+  }
+  window.addEventListener('message', function (e) { send(e.data); });
+})();
+true;`;
+
+// Terminal lifecycle events: once the widget finishes or closes itself we run
+// the verification check on the native side.
+const IDENTOMAT_TERMINAL_EVENTS = ['identomat_finished', 'identomat_close'];
+
+/**
+ * The Identomat widget falls back to a QR / copy-link card when the device has
+ * no Full HD camera. That card renders top-left and without a heading, so we
+ * inject our own (localized) "Full HD camera not detected" title + description
+ * and center the card. The widget is an SPA, so we watch for the card to
+ * appear via a MutationObserver and re-apply idempotently.
+ */
+function buildNoHdCameraInjection(title: string, description: string): string {
+  return `(function () {
+  var TITLE = ${JSON.stringify(title)};
+  var DESC = ${JSON.stringify(description)};
+  var MARKER = 'following methods';
+  var STYLE_ID = 'nbe-hd-style';
+  var BLOCK_ID = 'nbe-hd-block';
+
+  function findHeading() {
+    var nodes = document.querySelectorAll('div, p, h1, h2, h3, span');
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el.children.length === 0 && el.textContent &&
+          el.textContent.toLowerCase().indexOf(MARKER) !== -1) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function getCard(headingEl) {
+    var el = headingEl;
+    while (el && el !== document.body) {
+      if (el.querySelector &&
+          (el.querySelector('canvas') || el.querySelector('img') || el.querySelector('svg'))) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return headingEl.parentElement;
+  }
+
+  // Remember the inline styles we overwrite so we can fully restore the page
+  // if the fallback card goes away (e.g. the camera check later succeeds).
+  var touched = [];
+
+  function ensureBaseStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.innerHTML = 'html,body{height:100%;margin:0;}';
+    document.head.appendChild(style);
+  }
+
+  function center(el) {
+    if (el.getAttribute('data-nbe-centered')) return;
+    touched.push({ el: el, css: el.getAttribute('style') || '' });
+    el.setAttribute('data-nbe-centered', '1');
+    el.style.display = 'flex';
+    el.style.flexDirection = 'column';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+    el.style.minHeight = '100%';
+    el.style.width = '100%';
+    el.style.boxSizing = 'border-box';
+  }
+
+  // Center the card by turning every ancestor up to <body> into a flex box that
+  // centers its content. This survives full-width wrapper divs that would
+  // otherwise pin the card to the top-left corner.
+  function centerCard(card) {
+    var el = card.parentElement;
+    while (el) {
+      center(el);
+      if (el === document.body) break;
+      el = el.parentElement;
+    }
+  }
+
+  function reset() {
+    var style = document.getElementById(STYLE_ID);
+    if (style) style.remove();
+    var block = document.getElementById(BLOCK_ID);
+    if (block) block.remove();
+    for (var i = 0; i < touched.length; i++) {
+      var t = touched[i];
+      t.el.removeAttribute('data-nbe-centered');
+      if (t.css) t.el.setAttribute('style', t.css);
+      else t.el.removeAttribute('style');
+    }
+    touched = [];
+  }
+
+  function apply() {
+    var heading = findHeading();
+    if (!heading) {
+      if (touched.length || document.getElementById(BLOCK_ID)) reset();
+      return;
+    }
+    var card = getCard(heading);
+    if (!card) return;
+    ensureBaseStyle();
+    centerCard(card);
+    if (!document.getElementById(BLOCK_ID)) {
+      var block = document.createElement('div');
+      block.id = BLOCK_ID;
+      block.style.textAlign = 'center';
+      block.style.marginBottom = '16px';
+      block.innerHTML =
+        '<div style="font-size:20px;font-weight:700;color:#1f2937;margin-bottom:8px;">' +
+        TITLE + '</div>' +
+        '<div style="font-size:15px;color:#5b6b8c;">' + DESC + '</div>';
+      card.insertBefore(block, card.firstChild);
+    }
+  }
+
+  apply();
+  try {
+    var observer = new MutationObserver(apply);
+    observer.observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+  setInterval(apply, 800);
+})();
+true;`;
+}
+
+export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVerification }: IdentomatDemoScreenProps) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+
+  const injectedJavaScript = useMemo(
+    () =>
+      buildNoHdCameraInjection(
+        t('login.identomatNoHdCameraTitle'),
+        t('login.identomatNoHdCameraDescription'),
+      ) + IDENTOMAT_MESSAGE_BRIDGE,
+    [t],
+  );
+
+  const handleMessage = useCallback(
+    (event: WebViewMessageEvent) => {
+      if (IDENTOMAT_TERMINAL_EVENTS.includes(event.nativeEvent.data)) {
+        onSuccess?.();
+      }
+    },
+    [onSuccess],
+  );
 
   return (
     <View style={identomatDemoScreenStyles.page}>
@@ -47,8 +211,10 @@ export function IdentomatDemoScreen({ onBack, sourceUrl, isCheckingVerification 
             style={identomatDemoScreenStyles.webview}
             onLoadStart={() => setLoading(true)}
             onLoadEnd={() => setLoading(false)}
+            onMessage={handleMessage}
             javaScriptEnabled
             domStorageEnabled
+            injectedJavaScript={injectedJavaScript}
           />
           {(loading || isCheckingVerification) ? (
             <View style={identomatDemoScreenStyles.loadingOverlay}>

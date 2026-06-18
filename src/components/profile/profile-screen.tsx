@@ -171,12 +171,9 @@ function mergePasswordHistory(
 ): PasswordHistoryApiEntry[] {
   const base = history ?? [];
   if (!pwdChngDate) return base;
-  const entry: PasswordHistoryApiEntry = {
-    date: pwdChngDate,
-    success: true,
-    ipAddress: null,
-    userAgent: null,
-  };
-  if (base.some((e) => e.date === entry.date)) return base;
-  return [entry, ...base];
+  if (base.some((e) => e.date === pwdChngDate)) return base;
+  return [
+    ...base,
+    { date: pwdChngDate, success: true, ipAddress: null, userAgent: null },
+  ];
 }
