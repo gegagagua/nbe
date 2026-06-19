@@ -5,6 +5,7 @@ import type {
   CaseDetailAuctionLot,
   CaseDetailData,
   CaseDetailDebtorRow,
+  CaseDetailFundsPartyInfo,
   CaseDetailInstallment,
   CaseDetailInstallmentPayment,
   CaseDetailProceedingFile,
@@ -19,6 +20,10 @@ import type {
   EpsInstallment,
   EpsInstallmentPaymentsEnvelope,
   EpsLotsEnvelope,
+  EpsMoneyDataItem,
+  EpsMoneyEnvelope,
+  EpsMoneyPerson,
+  EpsMoneyRow,
   EpsPerson,
   EpsPersonsEnvelope,
   EpsStatusesEnvelope,
@@ -236,6 +241,107 @@ export function mapInstallmentPayments(
     confirmedBy: e.confirmedBy?.name?.trim() ?? "",
     confirmDate: formatDateTime(e.confirmDate),
   }));
+}
+
+/** Round to 2 decimals, dropping float-subtraction noise (e.g. 0.1 - 0.3). */
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+/** "1500 GEL" / "1500" — append the currency when present. */
+function formatMoney(n: number | null, valuta: string): string {
+  if (n == null) return "";
+  const value = round2(n);
+  return valuta ? `${value} ${valuta}` : String(value);
+}
+
+/** Identity line for a money-tab party, e.g. "შპს ბესო (448391801) - 1520574250". */
+function moneyPersonLine(p: EpsMoneyPerson): string {
+  const name =
+    p.organization?.trim() ||
+    `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim();
+  const id = p.idnumber?.trim();
+  const pay = p.payCode?.trim();
+  const tail = [id ? `(${id})` : "", pay].filter(Boolean).join(" - ");
+  return [name, tail].filter(Boolean).join(" ");
+}
+
+/** `data` arrives as a single-element array; tolerate the bare-object form too. */
+function firstMoneyItem(env: EpsMoneyEnvelope): EpsMoneyDataItem | null {
+  const data = env.data;
+  if (!data) return null;
+  return Array.isArray(data) ? (data[0] ?? null) : data;
+}
+
+// Money rows live under endpoint-specific keys: debtor → `monies`,
+// creditor → `credDemand` (+ `credDebt`). Collect every known group, then fall
+// back to any array of objects carrying an `amount` field.
+const MONEY_ROW_KEYS = ["monies", "credDemand", "credDebt", "money"];
+
+function collectMoneyRows(item: EpsMoneyDataItem): EpsMoneyRow[] {
+  const rows: EpsMoneyRow[] = [];
+  for (const key of MONEY_ROW_KEYS) {
+    const value = item[key];
+    if (Array.isArray(value)) rows.push(...(value as EpsMoneyRow[]));
+  }
+  if (rows.length > 0) return rows;
+  for (const [key, value] of Object.entries(item)) {
+    if (key === "persons") continue;
+    if (
+      Array.isArray(value) &&
+      value.length > 0 &&
+      typeof value[0] === "object" &&
+      value[0] !== null &&
+      "amount" in (value[0] as object)
+    ) {
+      rows.push(...(value as EpsMoneyRow[]));
+    }
+  }
+  return rows;
+}
+
+/**
+ * Map one reg-money envelope into funds-party info. `partyType` selects which
+ * persons to show (1 = creditor, 2 = debtor); totals are summed from the rows
+ * so they always match the displayed lines.
+ */
+export function mapMoneyParty(
+  env: EpsMoneyEnvelope,
+  partyType: 1 | 2,
+): CaseDetailFundsPartyInfo | null {
+  const item = firstMoneyItem(env);
+  if (!item) return null;
+
+  const rows = collectMoneyRows(item);
+  const persons = (item.persons ?? []).filter(
+    (p) => p.appPersonType === partyType,
+  );
+  if (rows.length === 0 && persons.length === 0) return null;
+
+  const fallbackValuta = rows[0]?.valutaName?.trim() ?? "";
+  let sumDue = 0;
+  let sumPaid = 0;
+  const mappedRows = rows.map((r) => {
+    const valuta = r.valutaName?.trim() || fallbackValuta;
+    const due = r.amount ?? 0;
+    const paid = r.transfer ?? 0;
+    sumDue += due;
+    sumPaid += paid;
+    return {
+      name: r.name?.trim() ?? "",
+      due: formatMoney(r.amount, valuta),
+      paid: formatMoney(r.transfer, valuta),
+      debt: formatMoney(due - paid, valuta),
+    };
+  });
+
+  return {
+    partyLines: persons.map(moneyPersonLine).filter(Boolean),
+    totalDue: formatMoney(sumDue, fallbackValuta),
+    totalPaid: formatMoney(sumPaid, fallbackValuta),
+    totalDebt: formatMoney(sumDue - sumPaid, fallbackValuta),
+    rows: mappedRows,
+  };
 }
 
 /** Map the status-files response into downloadable file rows. */

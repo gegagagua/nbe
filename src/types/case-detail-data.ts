@@ -98,6 +98,32 @@ export type CaseDetailAuctionLot = {
 
 export type CaseDetailFundsPartyBlock = { title: string; bodyLines: string[] };
 
+/** One registered-money row in the funds table (per demand / currency). */
+export type CaseDetailFundsMoneyRow = {
+  name: string;
+  /** Total due (სულ გადასახდელი). */
+  due: string;
+  /** Total paid (სულ გადახდილი). */
+  paid: string;
+  /** Current debt = due − paid, computed client-side. */
+  debt: string;
+};
+
+/** Money info for one party (creditor or debtor) on the funds sub-tab. */
+export type CaseDetailFundsPartyInfo = {
+  partyLines: string[];
+  totalDue: string;
+  totalPaid: string;
+  totalDebt: string;
+  rows: CaseDetailFundsMoneyRow[];
+};
+
+/** Funds sub-tab data, fetched from the reg-money debtor/creditor endpoints. */
+export type CaseDetailFundsInfo = {
+  creditor: CaseDetailFundsPartyInfo | null;
+  debtor: CaseDetailFundsPartyInfo | null;
+};
+
 export type CaseDetailInstallmentPayment = {
   paymentDate: string;
   amountToPay: string;

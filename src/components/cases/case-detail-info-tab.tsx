@@ -48,7 +48,7 @@ export function CaseDetailInfoTab({ data }: { data: CaseDetailData }) {
       />
       {sub === 'proceedings' ? <CaseDetailProceedingsList proceedings={data.proceedings} /> : null}
       {sub === 'search' ? <CaseDetailSearchTab data={data} /> : null}
-      {sub === 'funds' ? <CaseDetailFundsBody data={data} /> : null}
+      {sub === 'funds' ? <CaseDetailFundsBody /> : null}
       {sub === 'auction' ? <CaseDetailAuctionBody /> : null}
       {sub === 'installment' ? <CaseDetailInstallmentBody /> : null}
     </View>

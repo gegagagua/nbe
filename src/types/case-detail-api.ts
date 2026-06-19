@@ -203,3 +203,60 @@ export type EpsInstallmentPaymentEntry = {
 export type EpsInstallmentPaymentsEnvelope = {
   data: EpsInstallmentPaymentEntry[];
 };
+
+// ── Funds / registered money (ინფორმაცია თანხებზე) ─────────────────────────────
+// GET /money-portal/v1/reg-money/debtor/app/{appId}
+// GET /money-portal/v1/reg-money/creditor/app/{appId}
+
+/** A creditor (appPersonType 1) / debtor (appPersonType 2) on the money tab. */
+export type EpsMoneyPerson = {
+  /** Numeric here (not the {id,name} object): 1 = creditor, 2 = debtor. */
+  appPersonType: number | null;
+  personType?: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  organization: string | null;
+  idnumber: string | null;
+  payCode: string | null;
+};
+
+/** One registered-money row (per demand / currency). */
+export type EpsMoneyRow = {
+  name: string | null;
+  /** Total due (სულ გადასახდელი). */
+  amount: number | null;
+  /** Total paid (სულ გადახდილი). */
+  transfer: number | null;
+  /** Paid directly. */
+  transferManual?: number | null;
+  valutaName: string | null;
+};
+
+/** Totals across a group of money rows. */
+export type EpsMoneySum = {
+  amount: number | null;
+  transfer: number | null;
+  transferManual: number | null;
+};
+
+/**
+ * One element of the reg-money `data` array. The two endpoints differ:
+ *   • debtor   → `monies` + `moneySum`
+ *   • creditor → `credDemand`/`credDebt` + `credDemandSum`/`credDebtSum`
+ * Both carry the same `persons` list (keyed by appPersonType).
+ */
+export type EpsMoneyDataItem = {
+  monies?: EpsMoneyRow[] | null;
+  moneySum?: EpsMoneySum | null;
+  credDemand?: EpsMoneyRow[] | null;
+  credDemandSum?: EpsMoneySum | null;
+  credDebt?: EpsMoneyRow[] | null;
+  credDebtSum?: EpsMoneySum | null;
+  persons?: EpsMoneyPerson[] | null;
+  [key: string]: unknown;
+};
+
+/** `data` is an array with a single element; object form tolerated defensively. */
+export type EpsMoneyEnvelope = {
+  data: EpsMoneyDataItem[] | EpsMoneyDataItem | null;
+};
