@@ -1,15 +1,21 @@
-import { ApiPaths, EpsInstallmentApiBase } from '@/constants/api';
-import { apiClient } from '@/lib/api-client';
+import { ApiPaths, BASE_URL } from "@/constants/api";
+import { apiClient } from "@/lib/api-client";
 
 function headers(userId: number | string) {
-  return { 'X-USER-ID': String(userId) };
+  return { "X-USER-ID": String(userId) };
 }
 
 /** /portal/v1/installments/{id} — installment schedule (განწილვადება tab) */
-export async function getInstallment(id: number | string, userId: number | string) {
-  const response = await apiClient.get(`${EpsInstallmentApiBase}${ApiPaths.installmentById(id)}`, {
-    headers: headers(userId),
-  });
+export async function getInstallment(
+  id: number | string,
+  userId: number | string,
+) {
+  const response = await apiClient.get(
+    `${BASE_URL}${ApiPaths.installmentById(id)}`,
+    {
+      headers: headers(userId),
+    },
+  );
   return response.data;
 }
 
@@ -20,7 +26,7 @@ export async function getInstallmentPayments(
   userId: number | string,
 ) {
   const response = await apiClient.post(
-    `${EpsInstallmentApiBase}${ApiPaths.installmentPayments}`,
+    `${BASE_URL}${ApiPaths.installmentPayments}`,
     { data: { appId, installmentId } },
     { headers: headers(userId) },
   );

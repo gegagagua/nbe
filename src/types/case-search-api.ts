@@ -2,7 +2,7 @@ export type EpsAppsSearchPerson = {
   firstName?: string;
   lastName?: string;
   organization?: string;
-  idnumber?: string[];
+  idnumber?: string;
   payCode?: string;
 };
 

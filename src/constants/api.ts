@@ -1,19 +1,5 @@
 export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
 
-// ── Per-service EPS hosts ──────────────────────────────────────────────────────
-// The `/portal/v1/...` EPS micro-services are NOT served by the main gateway;
-// each one has its own host. Confirmed hosts: eauction, file, money. The rest
-// follow the same `nbe-eps-<service>-api.testing.cloud.gov.ge` naming and should
-// be confirmed before relying on them in production.
-export const EpsEauctionApiBase = "http://nbe-eps-eauction-api.testing.cloud.gov.ge";
-export const EpsFileApiBase = "http://nbe-eps-file-api.testing.cloud.gov.ge";
-export const EpsMoneyApiBase = "http://nbe-eps-money-api.testing.cloud.gov.ge";
-export const EpsMiaApiBase = "http://nbe-eps-mia-api.testing.cloud.gov.ge";
-export const EpsNaprApiBase = "http://nbe-eps-napr-api.testing.cloud.gov.ge";
-export const EpsSsaApiBase = "http://nbe-eps-ssa-api.testing.cloud.gov.ge";
-export const EpsInstallmentApiBase =
-  "http://nbe-eps-installment-api.testing.cloud.gov.ge";
-
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
   // Auth
@@ -51,7 +37,7 @@ export const ApiPaths = {
   appPersons: (appId: number | string) => `/eps-portal/v1/persons/app/${appId}`,
   appDemands: (appId: number | string) => `/eps-portal/v1/demands/app/${appId}`,
   // EPS-FILE-API (separate host) — stream/download a status file.
-  epsFilesStream: "/portal/v1/eps/files/stream",
+  epsFilesStream: "/file-portal/v1/eps/files/stream",
 
   // EPS-MONEY-API
   debtorMoney: (appId: number | string) =>
@@ -61,25 +47,25 @@ export const ApiPaths = {
 
   // EPS-INSTALLMENT-API
   installmentById: (id: number | string) =>
-    `/installment-portal/v1/installments/${id}`,
+    `/installment-portal/v1/installments/app/${id}`,
   installmentPayments:
     "/installment-portal/v1/installments/payment/by-installment-id",
 
   // EPS-EAUCTION-API
-  lotsByAppId: "/portal/v1/lots/by-app-id",
+  lotsByAppId: "/eauction-portal/v1/lots/by-app-id",
 
   // EPS-MIA-API
-  miaInfoRests: "/portal/v1/info-rests/get-all",
-  miaProperties: "/portal/v1/properties/get-all",
+  miaInfoRests: "/mia-portal/v1/info-rests/get-all",
+  miaProperties: "/mia-portal/v1/properties/get-all",
 
   // EPS-SSA-API
-  ssaRequests: "/portal/v1/ssa-requests/by-app-id",
+  ssaRequests: "/ssa-portal/v1/ssa-requests/by-app-id",
 
   // EPS-NAPR-API
-  landregInfos: "/portal/v1/landreg/infos/by-app-id",
-  landregRealEstates: "/portal/v1/landreg/real-estates/by-app-id",
-  enregInfos: "/portal/v1/enreg/infos/by-app-id",
-  enregActiveShares: "/portal/v1/enreg/active-shares/by-app-id",
+  landregInfos: "/napr-portal/v1/landreg/infos/by-app-id",
+  landregRealEstates: "/napr-portal/v1/landreg/real-estates/by-app-id",
+  enregInfos: "/napr-portal/v1/enreg/infos/by-app-id",
+  enregActiveShares: "/napr-portal/v1/enreg/active-shares/by-app-id",
 } as const;
 
 // ── Notifications ─────────────────────────────────────────────────────────────

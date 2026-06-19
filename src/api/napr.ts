@@ -1,9 +1,9 @@
-import { ApiPaths, EpsNaprApiBase } from '@/constants/api';
-import { apiClient } from '@/lib/api-client';
+import { ApiPaths, BASE_URL } from "@/constants/api";
+import { apiClient } from "@/lib/api-client";
 
 /** /portal/v1/landreg/infos/by-app-id — land registry info (მოძიება tab) */
 export async function getLandregInfos(appId: number | string) {
-  const response = await apiClient.post(`${EpsNaprApiBase}${ApiPaths.landregInfos}`, {
+  const response = await apiClient.post(`${BASE_URL}${ApiPaths.landregInfos}`, {
     data: { appId },
   });
   return response.data;
@@ -15,16 +15,23 @@ export async function getLandregRealEstates(
   pageNumber = 0,
   pageSize = 10,
 ) {
-  const response = await apiClient.post(`${EpsNaprApiBase}${ApiPaths.landregRealEstates}`, {
-    data: { appId },
-    page: { number: pageNumber, size: pageSize },
-  });
+  const response = await apiClient.post(
+    `${BASE_URL}${ApiPaths.landregRealEstates}`,
+    {
+      data: { appId },
+      page: { number: pageNumber, size: pageSize },
+    },
+  );
   return response.data;
 }
 
 /** /portal/v1/enreg/infos/by-app-id — enterprise registry info (მოძიება tab) */
-export async function getEnregInfos(appId: number | string, pageNumber = 0, pageSize = 10) {
-  const response = await apiClient.post(`${EpsNaprApiBase}${ApiPaths.enregInfos}`, {
+export async function getEnregInfos(
+  appId: number | string,
+  pageNumber = 0,
+  pageSize = 10,
+) {
+  const response = await apiClient.post(`${BASE_URL}${ApiPaths.enregInfos}`, {
     data: { appId },
     page: { number: pageNumber, size: pageSize },
   });
@@ -37,9 +44,12 @@ export async function getEnregActiveShares(
   pageNumber = 0,
   pageSize = 10,
 ) {
-  const response = await apiClient.post(`${EpsNaprApiBase}${ApiPaths.enregActiveShares}`, {
-    data: { appId },
-    page: { number: pageNumber, size: pageSize },
-  });
+  const response = await apiClient.post(
+    `${BASE_URL}${ApiPaths.enregActiveShares}`,
+    {
+      data: { appId },
+      page: { number: pageNumber, size: pageSize },
+    },
+  );
   return response.data;
 }

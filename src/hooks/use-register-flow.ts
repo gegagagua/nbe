@@ -81,6 +81,15 @@ export function useRegisterFlow() {
       .finally(() => setIsCheckingVerification(false));
   }, [isCheckingVerification, verificationId]);
 
+  // Backing out of identomat returns to the OTP step without running the
+  // verification check, so success is only reached via handleIdentomatDone.
+  const handleIdentomatBack = useCallback(() => {
+    if (isCheckingVerification) return;
+    setStep("otp");
+    setVerificationUrl(null);
+    setVerificationId(null);
+  }, [isCheckingVerification]);
+
   return {
     step,
     isCreatingUser,
@@ -91,5 +100,6 @@ export function useRegisterFlow() {
     handleOtpVerify,
     handleOtpBack,
     handleIdentomatDone,
+    handleIdentomatBack,
   };
 }

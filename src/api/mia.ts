@@ -1,5 +1,5 @@
-import { ApiPaths, EpsMiaApiBase } from '@/constants/api';
-import { apiClient } from '@/lib/api-client';
+import { ApiPaths, BASE_URL } from "@/constants/api";
+import { apiClient } from "@/lib/api-client";
 
 export type AppPersonType = 1 | 2; // 1 = კრედიტორი, 2 = მოვალე
 
@@ -10,7 +10,7 @@ export async function getMiaInfoRests(
   pageNumber = 0,
   pageSize = 10,
 ) {
-  const response = await apiClient.post(`${EpsMiaApiBase}${ApiPaths.miaInfoRests}`, {
+  const response = await apiClient.post(`${BASE_URL}${ApiPaths.miaInfoRests}`, {
     data: { appId, appPersonTypeId },
     page: { number: pageNumber, size: pageSize },
   });
@@ -24,9 +24,12 @@ export async function getMiaProperties(
   pageNumber = 0,
   pageSize = 10,
 ) {
-  const response = await apiClient.post(`${EpsMiaApiBase}${ApiPaths.miaProperties}`, {
-    data: { appId, appPersonTypeId },
-    page: { number: pageNumber, size: pageSize },
-  });
+  const response = await apiClient.post(
+    `${BASE_URL}${ApiPaths.miaProperties}`,
+    {
+      data: { appId, appPersonTypeId },
+      page: { number: pageNumber, size: pageSize },
+    },
+  );
   return response.data;
 }

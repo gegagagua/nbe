@@ -90,9 +90,9 @@ export function CaseDetailScreen() {
     const n = Number.parseFloat(amountInput.replace(/[^\d.]/g, ""));
     if (!Number.isFinite(n)) return NaN;
     let value = n < 1 ? 1 : n;
-    if (Number.isFinite(maxPayAmount) && value > maxPayAmount) {
-      value = maxPayAmount;
-    }
+    // if (Number.isFinite(maxPayAmount) && value > maxPayAmount) {
+    //   value = maxPayAmount;
+    // }
     return value;
   }, [amountInput, maxPayAmount]);
 

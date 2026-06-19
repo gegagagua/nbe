@@ -214,6 +214,15 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
             onMessage={handleMessage}
             javaScriptEnabled
             domStorageEnabled
+            // Camera + mic access for Identomat's liveness / KYC capture.
+            // iOS: render the camera inline (not the native fullscreen player),
+            // allow getUserMedia without a tap, and auto-grant the WKWebView
+            // capture prompt once the OS permission is granted. Android grants
+            // are handled natively by react-native-webview once CAMERA is
+            // declared in the manifest (see app.json android.permissions).
+            allowsInlineMediaPlayback
+            mediaPlaybackRequiresUserAction={false}
+            mediaCapturePermissionGrantType="grant"
             injectedJavaScript={injectedJavaScript}
           />
           {(loading || isCheckingVerification) ? (

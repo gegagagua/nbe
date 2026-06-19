@@ -22,7 +22,7 @@ export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
     return (
       <IdentomatDemoScreen
         sourceUrl={flow.verificationUrl}
-        onBack={flow.handleIdentomatDone}
+        onBack={flow.handleIdentomatBack}
         onSuccess={flow.handleIdentomatDone}
         isCheckingVerification={flow.isCheckingVerification}
       />

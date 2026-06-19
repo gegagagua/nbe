@@ -11,7 +11,9 @@
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "ge.gov.nbe.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "ნება დართეთ აპს კამერის გამოყენება ვინაობის გადამოწმებისთვის.",
+        "NSMicrophoneUsageDescription": "ნება დართეთ აპს მიკროფონის გამოყენება ვინაობის გადამოწმებისთვის."
       }
     },
     "android": {
@@ -22,7 +24,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "ge.gov.nbe.app"
+      "package": "ge.gov.nbe.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "output": "static",
@@ -47,7 +54,8 @@
         {
           "faceIDPermission": "ნება დართეთ აპს Face ID-ის გამოყენება სწრაფი ავტორიზაციისთვის."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
