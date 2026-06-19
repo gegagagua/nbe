@@ -20,6 +20,7 @@ export const ApiPaths = {
   // Authenticated user profile
   usersMe: "/um-portal/v1/users/me",
   usersMeUpdate: "/um-portal/v1/users",
+  usersChangePhone: "/um-portal/v1/users/phone",
   passwordGhange: "/um-portal/v1/users/password",
 
   // EPS-MONEY-API — public guest payment search

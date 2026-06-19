@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Switch, Text, View } from 'react-native';
 
 import { PasswordHistoryModal } from '@/components/home/password-history-modal';
+import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import { LoginPalette } from '@/constants/login';
 import { useProfileFaceIdToggle } from '@/hooks/use-profile-face-id-toggle';
+import type { CreateSessionResponse } from '@/types/session';
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from '@/types/users';
 
 import { ProfileFaceIdEnableModal } from './profile-face-id-enable-modal';
@@ -19,7 +21,7 @@ type Props = {
   username: string;
   loginHistory?: LoginHistoryEntry[];
   passwordHistory?: PasswordHistoryApiEntry[];
-  verifyPassword?: (password: string) => Promise<boolean>;
+  verifyPassword?: (password: string) => Promise<CreateSessionResponse | null>;
   onStatus?: (msg: StatusMessage | null) => void;
 };
 
@@ -104,6 +106,12 @@ export function ProfileFaceIdSection({
         errorMessage={ctrl.modalError}
         onConfirm={(pw) => { ctrl.handleConfirmEnable(pw); }}
         onClose={ctrl.closeModal}
+      />
+      <LoginOtpModal
+        visible={ctrl.otp.visible}
+        isSubmitting={ctrl.otp.isSubmitting}
+        onSubmit={ctrl.otp.onSubmit}
+        onCancel={ctrl.otp.onCancel}
       />
       <PasswordHistoryModal
         visible={historyVisible}

@@ -3,26 +3,51 @@ import { normalizeGeorgianPhone } from '@/lib/phone';
 import type { ProfileInfoEditValues } from '@/schemas/profile-info-edit.schema';
 import type { UpdateUserRequest, UserContact, UserDetail } from '@/types/users';
 
+const isPhoneType = (type?: string) => /mobile|phone|sms|cell/i.test(type ?? '');
+const isEmailType = (type?: string) => /e[-_]?mail/i.test(type ?? '');
+
 /**
- * Rebuild the contacts array, replacing any existing phone/email entries with
- * the freshly edited values. The backend reads contact details from this array,
- * so the updated phone/email must be present here (not only as top-level fields)
- * for the change to persist.
+ * Rebuild the contacts array with the freshly edited phone/email values. The
+ * backend merges contacts by `id`, so an edited phone/email must reuse the
+ * existing entry's `id` (and `type`) — otherwise the old contact is left in
+ * place and the change never shows up. We therefore update matching entries in
+ * place, drop any duplicates, and only append a brand-new contact when none
+ * existed before.
  */
 function buildUpdatedContacts(
   existing: UserContact[] | undefined,
   phone: string,
   email: string,
 ): UserContact[] {
-  const contacts = (existing ?? []).filter(
-    (c) => !/mobile|phone|sms|cell|email|mail/i.test(c.type ?? ''),
-  );
-  if (phone) {
+  const contacts: UserContact[] = [];
+  let phoneApplied = false;
+  let emailApplied = false;
+
+  for (const entry of existing ?? []) {
+    if (isPhoneType(entry.type)) {
+      if (phone && !phoneApplied) {
+        contacts.push({ ...entry, contact: normalizeGeorgianPhone(phone) });
+        phoneApplied = true;
+      }
+      continue;
+    }
+    if (isEmailType(entry.type)) {
+      if (email && !emailApplied) {
+        contacts.push({ ...entry, contact: email });
+        emailApplied = true;
+      }
+      continue;
+    }
+    contacts.push(entry);
+  }
+
+  if (phone && !phoneApplied) {
     contacts.push({ type: 'MOBILE', contact: normalizeGeorgianPhone(phone) });
   }
-  if (email) {
+  if (email && !emailApplied) {
     contacts.push({ type: 'EMAIL', contact: email });
   }
+
   return contacts;
 }
 

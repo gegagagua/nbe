@@ -13,7 +13,22 @@ import type { OtpLoginState } from '@/types/login';
 
 const OTP_TTL_SECONDS = 180;
 
-export function LoginOtpModal({ visible, isSubmitting, onSubmit, onCancel }: OtpLoginState) {
+type Props = OtpLoginState & {
+  /** Override the login-specific copy when reused elsewhere (e.g. phone change). */
+  title?: string;
+  description?: string;
+  cancelLabel?: string;
+};
+
+export function LoginOtpModal({
+  visible,
+  isSubmitting,
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  cancelLabel,
+}: Props) {
   const { t, i18n } = useTranslation();
   const schema = useMemo(() => createOtpSchema(t), [t, i18n.language]);
   const [secondsLeft, setSecondsLeft] = useState(OTP_TTL_SECONDS);
@@ -58,10 +73,10 @@ export function LoginOtpModal({ visible, isSubmitting, onSubmit, onCancel }: Otp
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'center', paddingHorizontal: Space.large }}>
         <View style={{ backgroundColor: '#fff', borderRadius: Radius.medium, padding: Space.large, gap: Space.medium }}>
           <Text style={{ fontSize: Typography.large, fontWeight: '700', color: LoginPalette.bodyText }}>
-            {t('login.otpLoginTitle')}
+            {title ?? t('login.otpLoginTitle')}
           </Text>
           <Text style={{ fontSize: Typography.small, color: LoginPalette.placeholderMuted, lineHeight: 20 }}>
-            {t('login.otpLoginDescription')}
+            {description ?? t('login.otpLoginDescription')}
           </Text>
 
           <View style={{ alignItems: 'center' }}>
@@ -119,7 +134,7 @@ export function LoginOtpModal({ visible, isSubmitting, onSubmit, onCancel }: Otp
             onPress={onCancel}
             accessibilityRole="button">
             <Text style={{ fontSize: Typography.small, color: LoginPalette.primary }}>
-              {t('login.otpLoginBackButton')}
+              {cancelLabel ?? t('login.otpLoginBackButton')}
             </Text>
           </Pressable>
         </View>

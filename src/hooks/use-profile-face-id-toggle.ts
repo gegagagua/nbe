@@ -1,13 +1,18 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { verifyLoginOtp } from '@/api/sessions';
 import { useFaceId } from '@/hooks/use-face-id';
+import { showErrorToast } from '@/lib/show-error-toast';
+import type { CreateSessionResponse } from '@/types/session';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
+type VerifyPassword = (password: string) => Promise<CreateSessionResponse | null>;
+
 type Args = {
   username: string;
-  verifyPassword?: (password: string) => Promise<boolean>;
+  verifyPassword?: VerifyPassword;
   onStatus?: (msg: StatusMessage | null) => void;
 };
 
@@ -18,6 +23,10 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
+  // When the account requires a one-time code, the password step hands off to
+  // an OTP step; Face ID is only persisted once that code is verified.
+  const [pendingOtp, setPendingOtp] = useState<{ token: string; password: string } | null>(null);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
 
   function reportStatus(msg: StatusMessage | null) {
     setStatusMessage(msg);
@@ -43,43 +52,73 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
     [faceId, t],
   );
 
+  // Runs the biometric prompt and persists the credentials. Returns a
+  // translated error message on failure, or `null` on success.
+  const runEnable = useCallback(
+    async (password: string): Promise<string | null> => {
+      const res = await faceId.enable({
+        username,
+        password,
+        promptMessage: t('faceId.enablePromptMessage'),
+      });
+      if (res.ok) {
+        setModalVisible(false);
+        setPendingOtp(null);
+        reportStatus({ type: 'success', text: t('faceId.enableSuccess') });
+        return null;
+      }
+      if (res.reason === 'cancelled') return t('faceId.errorCancelled');
+      if (res.reason === 'not_enrolled') return t('faceId.unavailableNotEnrolled');
+      if (res.reason === 'unavailable') return t('faceId.unavailableHardware');
+      return t('faceId.errorFailed');
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [faceId, username, t],
+  );
+
   const handleConfirmEnable = useCallback(
     async (password: string) => {
       setIsSubmitting(true);
       setModalError(null);
       try {
         if (verifyPassword) {
-          const passwordOk = await verifyPassword(password);
-          if (!passwordOk) {
+          const session = await verifyPassword(password);
+          if (!session) {
             setModalError(t('faceId.errorInvalidCredentials'));
             return;
           }
+          // The account demands a one-time code: defer enabling Face ID until
+          // the OTP is verified. Swap the password modal for the OTP modal.
+          if (session.tokenType === 'OTP') {
+            setPendingOtp({ token: session.token, password });
+            setModalVisible(false);
+            return;
+          }
         }
-        const res = await faceId.enable({
-          username,
-          password,
-          promptMessage: t('faceId.enablePromptMessage'),
-        });
-        if (res.ok) {
-          setModalVisible(false);
-          reportStatus({ type: 'success', text: t('faceId.enableSuccess') });
-          return;
-        }
-        if (res.reason === 'cancelled') {
-          setModalError(t('faceId.errorCancelled'));
-        } else if (res.reason === 'not_enrolled') {
-          setModalError(t('faceId.unavailableNotEnrolled'));
-        } else if (res.reason === 'unavailable') {
-          setModalError(t('faceId.unavailableHardware'));
-        } else {
-          setModalError(t('faceId.errorFailed'));
-        }
+        const error = await runEnable(password);
+        if (error) setModalError(error);
       } finally {
         setIsSubmitting(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [faceId, username, verifyPassword, t],
+    [verifyPassword, runEnable, t],
+  );
+
+  const handleVerifyOtp = useCallback(
+    async (code: string) => {
+      if (!pendingOtp) return;
+      setIsVerifyingOtp(true);
+      try {
+        await verifyLoginOtp(pendingOtp.token, code);
+        const error = await runEnable(pendingOtp.password);
+        if (error) showErrorToast(error);
+      } catch (err) {
+        showErrorToast(t('faceId.errorOtpInvalid'), err);
+      } finally {
+        setIsVerifyingOtp(false);
+      }
+    },
+    [pendingOtp, runEnable, t],
   );
 
   return {
@@ -91,5 +130,11 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
     handleToggle,
     handleConfirmEnable,
     closeModal: () => setModalVisible(false),
+    otp: {
+      visible: pendingOtp !== null,
+      isSubmitting: isVerifyingOtp,
+      onSubmit: handleVerifyOtp,
+      onCancel: () => setPendingOtp(null),
+    },
   };
 }

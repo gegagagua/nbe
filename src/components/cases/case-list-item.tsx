@@ -22,10 +22,11 @@ function debtSummary(item: CaseApplication): string | null {
   return parts.length > 0 ? parts.join(' — ') : null;
 }
 
-/** Pull a numeric GEL amount out of a display string like "160.00 ₾". */
+/** Pull a numeric GEL amount out of a display string like "160.00 ₾".
+ * Keeps a leading minus so negative balances (e.g. "-9.00 ₾") stay negative. */
 function parsePayAmount(display?: string | null): number | null {
   if (!display) return null;
-  const value = Number.parseFloat(display.replace(/[^\d.]/g, ''));
+  const value = Number.parseFloat(display.replace(/[^\d.-]/g, ''));
   return Number.isFinite(value) ? value : null;
 }
 

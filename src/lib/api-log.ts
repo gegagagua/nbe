@@ -79,7 +79,7 @@ export function logApiResponse(response: AxiosResponse): void {
   if (!__DEV__) return;
   const { method, url } = describe(response.config);
   console.log(`[API ← ${response.status}] ${method} ${url}`, {
-    body: stringifyBody(response.data),
+    response: response.data,
   });
 }
 

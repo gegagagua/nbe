@@ -56,3 +56,27 @@ export async function getUserMe(): Promise<UserDetail> {
 export async function updateUserMe(payload: UpdateUserRequest): Promise<void> {
   await apiClient.put(ApiPaths.usersMeUpdate, { data: payload });
 }
+
+/**
+ * Dedicated phone-change endpoint. The generic /users PUT doesn't persist phone
+ * changes, so the number goes through the verification/phone endpoint instead.
+ */
+export async function updateUserPhone(phone: string): Promise<void> {
+  await apiClient.post(`${BASE_URL}${ApiPaths.usersChangePhone}`, {
+    data: { phone },
+  });
+}
+
+/**
+ * Confirm a pending phone change with the OTP sent to the new number. Unlike
+ * the registration `verifyPhoneOtp`, this responds with an empty body, so the
+ * response is ignored — a non-error status means the change was applied.
+ */
+export async function confirmUserPhone(
+  userId: number,
+  code: string,
+): Promise<void> {
+  await apiClient.post(`${BASE_URL}${ApiPaths.usersVerifyPhone}`, {
+    data: { userId, code },
+  });
+}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
+import { LoginOtpModal } from "@/components/login/login-otp-modal";
 import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { LoginPalette } from "@/constants/login";
 import { useProfileActions } from "@/hooks/use-profile-actions";
@@ -142,6 +143,15 @@ export function ProfileScreen() {
           </Pressable>
         </KeyboardAwareScrollView>
       </AppSafeArea>
+      <LoginOtpModal
+        visible={actions.phoneOtp.visible}
+        isSubmitting={actions.phoneOtp.isSubmitting}
+        onSubmit={actions.phoneOtp.onSubmit}
+        onCancel={actions.phoneOtp.onCancel}
+        title={t("profile.phoneOtpTitle")}
+        description={t("profile.phoneOtpDescription")}
+        cancelLabel={t("profile.phoneOtpCancel")}
+      />
     </View>
   );
 }

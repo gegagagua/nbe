@@ -206,6 +206,12 @@ export const enAuth = {
     saveError: "Failed to save",
     saveNetworkError: "Network error. Please try again.",
     saveMissingSession: "Session not found. Please sign in again.",
+    phoneOtpSent:
+      "A code was sent to the new number. Confirm it to change your phone.",
+    phoneOtpError: "The code is incorrect or has expired. Please try again.",
+    phoneOtpTitle: "Confirm your number",
+    phoneOtpDescription: "Enter the 6-digit code sent to the new number.",
+    phoneOtpCancel: "Cancel",
   },
   faceId: {
     sectionTitle: "Security",
@@ -235,6 +241,7 @@ export const enAuth = {
     errorCancelled: "Biometric authentication was cancelled.",
     errorFailed: "Biometric authentication failed. Please try again.",
     errorInvalidCredentials: "Incorrect password.",
+    errorOtpInvalid: "The code is incorrect or has expired. Please try again.",
     errorStoredCredentialsInvalid:
       "Stored credentials are no longer valid. Please sign in with your password.",
     loginButton: "Sign in with Face ID",

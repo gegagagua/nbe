@@ -203,6 +203,12 @@ export const kaAuth = {
     saveNetworkError: "ქსელში შეცდომა. სცადეთ თავიდან.",
     saveMissingSession:
       "სესია არ მოიძებნა. გთხოვთ, ხელახლა შეხვიდეთ სისტემაში.",
+    phoneOtpSent:
+      "ახალ ნომერზე გამოგზავნილია კოდი. დაადასტურეთ ნომრის შესაცვლელად.",
+    phoneOtpError: "კოდი არასწორია ან ვადა გაუვიდა. სცადეთ თავიდან.",
+    phoneOtpTitle: "ნომრის დადასტურება",
+    phoneOtpDescription: "შეიყვანეთ ახალ ნომერზე გამოგზავნილი 6-ნიშნა კოდი.",
+    phoneOtpCancel: "გაუქმება",
   },
   faceId: {
     sectionTitle: "უსაფრთხოება",
@@ -231,6 +237,7 @@ export const kaAuth = {
     errorCancelled: "ბიომეტრიული ავტორიზაცია გაუქმდა.",
     errorFailed: "ბიომეტრიული ავტორიზაცია ვერ მოხერხდა. სცადეთ თავიდან.",
     errorInvalidCredentials: "პაროლი არასწორია.",
+    errorOtpInvalid: "კოდი არასწორია ან ვადა გაუვიდა. სცადეთ თავიდან.",
     errorStoredCredentialsInvalid:
       "შენახული მონაცემები აღარ ვარგებს. გთხოვთ, შეხვიდეთ პაროლით.",
     loginButton: "შესვლა Face ID-ით",
