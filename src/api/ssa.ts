@@ -1,9 +1,9 @@
-import { ApiPaths, EpsSsaApiBase } from '@/constants/api';
+import { ApiPaths, BASE_URL } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 
-/** /portal/v1/ssa-requests/by-app-id — SSA requests (მოძიება tab) */
+/** /ssa-portal/v1/ssa-requests/by-app-id — SSA requests (სოც. სააგენტო / მოძიება tab) */
 export async function getSsaRequests(appId: number | string) {
-  const response = await apiClient.post(`${EpsSsaApiBase}${ApiPaths.ssaRequests}`, {
+  const response = await apiClient.post(`${BASE_URL}${ApiPaths.ssaRequests}`, {
     data: { appId },
   });
   return response.data;

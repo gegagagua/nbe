@@ -1,15 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 import {
   DebtorRegistryLayout,
   DebtorRegistryPalette,
   DebtorRegistryTypography,
-} from '@/constants/debtor-registry';
-import { Space } from '@/constants/theme';
+} from "@/constants/debtor-registry";
+import { Space } from "@/constants/theme";
 
 export const caseDetailTableStyles = StyleSheet.create({
   tableHead: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: DebtorRegistryPalette.panelBg,
     borderBottomWidth: 1,
     borderBottomColor: DebtorRegistryPalette.panelBorder,
@@ -18,18 +18,17 @@ export const caseDetailTableStyles = StyleSheet.create({
     flex: 1,
     padding: Space.small,
     fontSize: DebtorRegistryTypography.small,
-    fontWeight: '700',
     color: DebtorRegistryPalette.textPrimary,
   },
   tableHeadCellNarrow: {
     width: 72,
     padding: Space.small,
     fontSize: DebtorRegistryTypography.small,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: DebtorRegistryPalette.panelBorder,
   },
@@ -37,10 +36,11 @@ export const caseDetailTableStyles = StyleSheet.create({
     flex: 1,
     padding: Space.small,
     gap: Space.extraSmall,
+    fontSize: DebtorRegistryTypography.body,
   },
   subSectionTitle: {
     fontSize: DebtorRegistryTypography.label,
-    fontWeight: '600',
+    fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
     padding: Space.small,
     backgroundColor: DebtorRegistryPalette.panelBg,

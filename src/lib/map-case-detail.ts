@@ -8,8 +8,14 @@ import type {
   CaseDetailFundsPartyInfo,
   CaseDetailInstallment,
   CaseDetailInstallmentPayment,
+  CaseDetailBusinessNotifyRow,
+  CaseDetailBusinessShareRow,
   CaseDetailProceedingFile,
   CaseDetailProceedingStatus,
+  CaseDetailRegistryEstateRow,
+  CaseDetailRegistryInfoRow,
+  CaseDetailSearchPropertyRow,
+  CaseDetailSocialRow,
   CaseDetailWritRow,
 } from "@/types/case-detail-data";
 import type {
@@ -20,6 +26,12 @@ import type {
   EpsInstallment,
   EpsInstallmentPaymentsEnvelope,
   EpsLotsEnvelope,
+  EpsMiaPropertiesEnvelope,
+  EpsSsaRequestsEnvelope,
+  EpsLandregInfosEnvelope,
+  EpsLandregRealEstatesEnvelope,
+  EpsEnregInfosEnvelope,
+  EpsEnregActiveSharesEnvelope,
   EpsMoneyDataItem,
   EpsMoneyEnvelope,
   EpsMoneyPerson,
@@ -191,6 +203,97 @@ export function mapAuctionLots(env: EpsLotsEnvelope): CaseDetailAuctionLot[] {
       endDate: formatDateTime(a.endDate),
       eaucUrl: a.eaucUrl?.trim() ?? "",
     })),
+  }));
+}
+
+/** Map the properties/get-all response into MIA "found property" rows. */
+export function mapMiaProperties(
+  env: EpsMiaPropertiesEnvelope,
+): CaseDetailSearchPropertyRow[] {
+  return (env.data ?? []).map((p) => ({
+    nameObject:
+      [p.propertyType?.name?.trim(), p.model?.trim()]
+        .filter(Boolean)
+        .join(" — ") || (p.person?.name?.trim() ?? ""),
+    plateOrExtra: p.govNumber?.trim() ?? "",
+    orderRef: p.reqCode?.trim() ?? "",
+    orderAction: p.propertySt?.name?.trim() ?? "",
+    initiator: p.reqCreatedBy?.name?.trim() ?? "",
+    initiatorWhen: formatDateTime(p.reqCreatedDate),
+  }));
+}
+
+/** Map the ssa-requests/by-app-id response into SSA (სოც. სააგენტო) rows. */
+export function mapSsaRequests(
+  env: EpsSsaRequestsEnvelope,
+): CaseDetailSocialRow[] {
+  return (env.data ?? []).map((r) => {
+    const p = r.person;
+    const name = `${p?.firstName ?? ""} ${p?.lastName ?? ""}`.trim();
+    const id = p?.idnumber?.trim();
+    const addressPhone = [r.address?.trim(), r.phone?.trim()]
+      .filter(Boolean)
+      .join(", ");
+    return {
+      nameId: id ? `${name} ${id}`.trim() : name,
+      addressPhone,
+      sent: r.sent === true,
+      receivedAt: formatDateTime(r.lastCheckDate),
+      active: r.active === true,
+      vulnerable: r.underProverty === true,
+    };
+  });
+}
+
+/** Map landreg/infos (my.gov.ge requests) into NAPR registry request rows. */
+export function mapLandregInfos(
+  env: EpsLandregInfosEnvelope,
+): CaseDetailRegistryInfoRow[] {
+  return (env.data ?? []).map((r) => ({
+    person: r.person?.name?.trim() ?? "",
+    sent: r.sent === 1,
+    sentDate: formatDateTime(r.sendDate),
+    found: (r.answer ?? 0) !== 0,
+  }));
+}
+
+/** Map landreg/real-estates into NAPR registry real-estate rows. */
+export function mapLandregRealEstates(
+  env: EpsLandregRealEstatesEnvelope,
+): CaseDetailRegistryEstateRow[] {
+  return (env.data ?? []).map((r) => ({
+    cadCode: r.cadCode?.trim() ?? "",
+    address: r.address?.trim() ?? "",
+    owner: r.owner === true,
+    status: r.status?.name?.trim() ?? "",
+  }));
+}
+
+/** Map enreg/infos into business (სამეწარმეო რეესტრი) notification rows. */
+export function mapEnregInfos(
+  env: EpsEnregInfosEnvelope,
+): CaseDetailBusinessNotifyRow[] {
+  return (env.data ?? []).map((r) => ({
+    debtor: r.person?.name?.trim() ?? "",
+    initiator: r.createdBy?.name?.trim() ?? "",
+    createdAt: formatDateTime(r.sendDate),
+    sent: r.sent === 1,
+    response: r.answer != null ? String(r.answer) : "",
+    soleProp: r.soleTrader === true,
+  }));
+}
+
+/** Map enreg/active-shares into business (სამეწარმეო რეესტრი) share rows. */
+export function mapEnregActiveShares(
+  env: EpsEnregActiveSharesEnvelope,
+): CaseDetailBusinessShareRow[] {
+  return (env.data ?? []).map((r) => ({
+    owner: r.person?.name?.trim() ?? "",
+    title: r.name?.trim() ?? "",
+    orgNo: r.idnumber?.trim() ?? "",
+    regDate: formatDocDate(r.govRegDate),
+    share: r.activeShare != null ? `${r.activeShare}%` : "",
+    status: r.status?.name?.trim() ?? "",
   }));
 }
 

@@ -1,17 +1,23 @@
-import { Text, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import type { CaseDetailData } from '@/types/case-detail-data';
+import type { AppPersonType } from '@/api/mia';
+import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useMiaProperties } from '@/hooks/use-mia-properties';
 
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailMiaSearchBlock({
-  block,
+  appPersonTypeId,
 }: {
-  block: CaseDetailData['searchMiaCreditor'];
+  appPersonTypeId: AppPersonType;
 }) {
   const { t } = useTranslation();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const appId = Array.isArray(id) ? id[0] : (id ?? '');
+  const { data: rows, isLoading } = useMiaProperties(appId, appPersonTypeId);
   return (
     <View>
       <Text style={tb.subSectionTitle}>{t('cases.detail.subFoundProperty')}</Text>
@@ -21,10 +27,14 @@ export function CaseDetailMiaSearchBlock({
         <Text style={tb.tableHeadCell}>{t('cases.detail.searchColInitiator')}</Text>
         <Text style={tb.tableHeadCell}>{t('cases.detail.searchColProperty')}</Text>
       </View>
-      {block.foundProperty.length === 0 ? (
+      {isLoading ? (
+        <View style={tb.padSm}>
+          <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+        </View>
+      ) : !rows || rows.length === 0 ? (
         <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>
       ) : (
-        block.foundProperty.map((row) => (
+        rows.map((row) => (
           <View key={`${row.orderRef}-${row.nameObject}`} style={tb.tableRow}>
             <View style={[tb.tableCell, tb.flex2]}>
               <Text style={s.primaryText}>{row.nameObject}</Text>
@@ -43,7 +53,7 @@ export function CaseDetailMiaSearchBlock({
         ))
       )}
       <Text style={tb.subSectionTitle}>{t('cases.detail.subRestrictions')}</Text>
-      <Text style={[s.mutedText, tb.padSm]}>{block.restrictionsPlaceholder}</Text>
+      <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>
     </View>
   );
 }

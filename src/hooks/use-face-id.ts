@@ -78,8 +78,11 @@ export function useFaceId(): UseFaceIdState {
       if (!auth.success) {
         return { ok: false, reason: auth.reason };
       }
-      await setFaceIdCredentials({ username: username.trim(), password });
+      // Credentials are the source of truth (see loadFaceIdState), so write the
+      // enabled flag first and commit the credentials last — that way a partial
+      // write can never leave credentials stored without the flag.
       await setFaceIdEnabled(true);
+      await setFaceIdCredentials({ username: username.trim(), password });
       setIsEnabled(true);
       setHasCredentials(true);
       return { ok: true };

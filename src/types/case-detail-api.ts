@@ -161,6 +161,100 @@ export type EpsLot = {
 
 export type EpsLotsEnvelope = { data: EpsLot[] };
 
+// ── MIA properties (შსს ქონების სია) ───────────────────────────────────────────
+// POST /mia-portal/v1/properties/get-all — body { data: { appId, appPersonTypeId } }.
+export type EpsMiaRef = { id: number; name: string | null };
+
+export type EpsMiaProperty = {
+  id: number;
+  person: EpsMiaRef | null;
+  propertyType: EpsMiaRef | null;
+  propertySt: EpsMiaRef | null;
+  model: string | null;
+  govNumber: string | null;
+  address: string | null;
+  reqCode: string | null;
+  reqCreatedBy: EpsMiaRef | null;
+  reqCreatedDate: string | null;
+};
+
+export type EpsMiaPropertiesEnvelope = { data: EpsMiaProperty[] };
+
+// ── SSA requests (სოციალური მომსახურების სააგენტო) ──────────────────────────────
+// POST /ssa-portal/v1/ssa-requests/by-app-id — body { data: { appId } }.
+export type EpsSsaPerson = {
+  id: number;
+  idnumber: string | null;
+  firstName: string | null;
+  lastName: string | null;
+};
+
+export type EpsSsaRequest = {
+  id: number;
+  person: EpsSsaPerson | null;
+  address: string | null;
+  phone: string | null;
+  sent: boolean | null;
+  active: boolean | null;
+  lastCheckDate: string | null;
+  underProverty: boolean | null;
+};
+
+export type EpsSsaRequestsEnvelope = { data: EpsSsaRequest[] };
+
+// ── NAPR landreg (საჯარო რეესტრი) ──────────────────────────────────────────────
+// POST /napr-portal/v1/landreg/infos/by-app-id        — my.gov.ge requests sent.
+// POST /napr-portal/v1/landreg/real-estates/by-app-id — real estate found.
+export type EpsLandregPerson = { id: number; name: string | null };
+
+export type EpsLandregInfo = {
+  id: number;
+  person: EpsLandregPerson | null;
+  sent: number | null; // 1 = sent
+  sendDate: string | null;
+  answer: number | null; // 0 = not found, anything else = found
+};
+
+export type EpsLandregInfosEnvelope = { data: EpsLandregInfo[] };
+
+export type EpsLandregRealEstate = {
+  id: number;
+  person: EpsLandregPerson | null;
+  cadCode: string | null;
+  address: string | null;
+  owner: boolean | null;
+  status: { id: number; name: string | null; active?: boolean } | null;
+};
+
+export type EpsLandregRealEstatesEnvelope = { data: EpsLandregRealEstate[] };
+
+// ── NAPR enreg (სამეწარმეო რეესტრი) ─────────────────────────────────────────────
+// POST /napr-portal/v1/enreg/infos/by-app-id — business notifications.
+export type EpsEnregInfo = {
+  id: number;
+  createdBy: EpsLandregPerson | null;
+  person: EpsLandregPerson | null;
+  sent: number | null; // 1 = sent
+  sendDate: string | null;
+  answer: number | null;
+  soleTrader: boolean | null;
+};
+
+export type EpsEnregInfosEnvelope = { data: EpsEnregInfo[] };
+
+// POST /napr-portal/v1/enreg/active-shares/by-app-id — active shares owned.
+export type EpsEnregActiveShare = {
+  id: number;
+  person: EpsLandregPerson | null;
+  name: string | null;
+  idnumber: string | null;
+  govRegDate: string | null;
+  activeShare: number | null;
+  status: { id: number; name: string | null } | null;
+};
+
+export type EpsEnregActiveSharesEnvelope = { data: EpsEnregActiveShare[] };
+
 // ── Installment (განწილვადება) ─────────────────────────────────────────────────
 // GET /portal/v1/installments/{id} — pass the appId as {id}.
 export type EpsInstallmentDebtor = {

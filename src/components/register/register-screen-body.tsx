@@ -1,3 +1,5 @@
+import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -11,8 +13,19 @@ import { RegisterPhysicalForm } from './register-physical-form';
 import { registerScreenBodyStyles as s } from './register-screen-body.styles';
 import { RegisterSuccessStep } from './register-success-step';
 
+// How long the success confirmation stays up before redirecting to the auth page.
+const SUCCESS_REDIRECT_MS = 2000;
+
 export function RegisterScreenBody({ onBack }: RegisterScreenBodyProps) {
   const flow = useRegisterFlow();
+
+  // On finish, redirect to the auth (login) page. A freshly registered user has
+  // no session yet, so the auth page is the correct destination.
+  useEffect(() => {
+    if (flow.step !== 'success') return;
+    const timer = setTimeout(() => router.replace('/'), SUCCESS_REDIRECT_MS);
+    return () => clearTimeout(timer);
+  }, [flow.step]);
 
   if (flow.step === 'success') {
     return <RegisterSuccessStep />;

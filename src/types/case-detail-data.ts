@@ -38,6 +38,7 @@ export type CaseDetailProceedingFile = {
   createdDate: string;
 };
 
+// MIA property rows (შსს ქონების სია) are fetched live via useMiaProperties.
 export type CaseDetailSearchPropertyRow = {
   nameObject: string;
   plateOrExtra?: string;
@@ -47,27 +48,44 @@ export type CaseDetailSearchPropertyRow = {
   initiatorWhen: string;
 };
 
-export type CaseDetailSearchMiaBlock = {
-  foundProperty: CaseDetailSearchPropertyRow[];
-  restrictionsPlaceholder: string;
-};
-
+// SSA rows (სოც. სააგენტო) are fetched live via useSsaRequests.
 export type CaseDetailSocialRow = {
   nameId: string;
   addressPhone: string;
-  sent: string;
+  sent: boolean;
   receivedAt: string;
-  status: string;
-  vulnerable: string;
+  active: boolean;
+  vulnerable: boolean;
 };
 
+// Business notifications (სამეწარმეო რეესტრი) are fetched live via useEnregInfos.
 export type CaseDetailBusinessNotifyRow = {
   debtor: string;
   initiator: string;
-  createdAt: string;
-  sent: string;
-  response: string;
-  soleProp: string;
+  createdAt: string; // sendDate
+  sent: boolean;
+  response: string; // answer
+  soleProp: boolean;
+};
+
+// Registry rows (საჯარო რეესტრი) are fetched live via useRegistrySearch.
+export type CaseDetailRegistryInfoRow = {
+  person: string;
+  sent: boolean;
+  sentDate: string;
+  found: boolean; // answer !== 0
+};
+
+export type CaseDetailRegistryEstateRow = {
+  cadCode: string;
+  address: string;
+  owner: boolean;
+  status: string;
+};
+
+export type CaseDetailRegistrySearch = {
+  infos: CaseDetailRegistryInfoRow[];
+  estates: CaseDetailRegistryEstateRow[];
 };
 
 export type CaseDetailBusinessShareRow = {
@@ -77,6 +95,11 @@ export type CaseDetailBusinessShareRow = {
   regDate: string;
   share: string;
   status: string;
+};
+
+export type CaseDetailBusinessRegistry = {
+  notify: CaseDetailBusinessNotifyRow[];
+  shares: CaseDetailBusinessShareRow[];
 };
 
 export type CaseDetailAuctionStage = {
@@ -161,11 +184,6 @@ export type CaseDetailData = {
   claimsSummary: string;
   claimRows: CaseDetailClaimRow[];
   proceedings: CaseDetailProceedingStatus[];
-  searchMiaCreditor: CaseDetailSearchMiaBlock;
-  searchMiaDebtor: CaseDetailSearchMiaBlock;
-  socialRows: CaseDetailSocialRow[];
-  businessNotify: CaseDetailBusinessNotifyRow[];
-  businessShares: CaseDetailBusinessShareRow[];
   fundsSummaryLines: string[];
   fundsCreditor: CaseDetailFundsPartyBlock;
   fundsDebtor: CaseDetailFundsPartyBlock;

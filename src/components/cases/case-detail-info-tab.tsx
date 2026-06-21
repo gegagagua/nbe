@@ -47,7 +47,7 @@ export function CaseDetailInfoTab({ data }: { data: CaseDetailData }) {
         options={SUB_KEYS.map((key) => ({ key, label: labelMap[key] }))}
       />
       {sub === 'proceedings' ? <CaseDetailProceedingsList proceedings={data.proceedings} /> : null}
-      {sub === 'search' ? <CaseDetailSearchTab data={data} /> : null}
+      {sub === 'search' ? <CaseDetailSearchTab /> : null}
       {sub === 'funds' ? <CaseDetailFundsBody /> : null}
       {sub === 'auction' ? <CaseDetailAuctionBody /> : null}
       {sub === 'installment' ? <CaseDetailInstallmentBody /> : null}

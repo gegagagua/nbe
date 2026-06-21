@@ -107,10 +107,15 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
   const handleVerifyOtp = useCallback(
     async (code: string) => {
       if (!pendingOtp) return;
+      const { token, password } = pendingOtp;
       setIsVerifyingOtp(true);
       try {
-        await verifyLoginOtp(pendingOtp.token, code);
-        const error = await runEnable(pendingOtp.password);
+        await verifyLoginOtp(token, code);
+        // Close the OTP modal before triggering the biometric system prompt so
+        // the two don't compete (on iOS a visible JS modal can make the Face ID
+        // prompt fail/cancel). runEnable persists the credentials afterwards.
+        setPendingOtp(null);
+        const error = await runEnable(password);
         if (error) showErrorToast(error);
       } catch (err) {
         showErrorToast(t('faceId.errorOtpInvalid'), err);

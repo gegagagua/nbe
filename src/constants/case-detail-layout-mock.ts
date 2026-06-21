@@ -50,41 +50,6 @@ export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailData = {
       ],
     },
   ],
-  searchMiaCreditor: { foundProperty: [], restrictionsPlaceholder: '—' },
-  searchMiaDebtor: {
-    foundProperty: [
-      {
-        nameObject: 'სს საგზაო კომპანია თბილისი (203925959)',
-        plateOrExtra: 'NHN685',
-        orderRef: 'A16037552-MR/5516046',
-        orderAction: 'დაყადაღება',
-        initiator: 'გიორგი მურაჩიძე',
-        initiatorWhen: '08/01/2026 13:47',
-      },
-    ],
-    restrictionsPlaceholder: '—',
-  },
-  socialRows: [
-    {
-      nameId: 'თამარა წიკლაური 22001009777',
-      addressPhone: '—',
-      sent: '✓',
-      receivedAt: '29/04/2026 14:25',
-      status: 'აქტიური',
-      vulnerable: 'არა',
-    },
-  ],
-  businessNotify: [
-    {
-      debtor: 'ხვიჩა ზარიძე (05001012696)',
-      initiator: 'კოტე ღვალაძე',
-      createdAt: '17/04/2026 09:27',
-      sent: 'გაგზავნილია',
-      response: '0',
-      soleProp: 'არა',
-    },
-  ],
-  businessShares: [],
   fundsSummaryLines: ['ზოგადი ინფორმაცია გადახდილი/გადასახდელი თანხების შესახებ (მარქაფი).'],
   fundsCreditor: {
     title: 'კრედიტორი',

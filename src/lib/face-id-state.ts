@@ -1,6 +1,5 @@
 import { getBiometricAvailability } from '@/lib/biometric-auth';
 import {
-  clearFaceIdCredentials,
   getFaceIdCredentials,
   getFaceIdEnabled,
   setFaceIdEnabled,
@@ -11,23 +10,25 @@ export async function loadFaceIdState(): Promise<{
   availability: BiometricAvailability;
   isActive: boolean;
 }> {
-  const [availability, enabledFlag, creds] = await Promise.all([
+  const [availability, enabledFlag, credentials] = await Promise.all([
     getBiometricAvailability(),
     getFaceIdEnabled(),
     getFaceIdCredentials(),
   ]);
 
-  let enabled = enabledFlag;
-  let credentials = creds;
-
-  if (enabled && !credentials) {
+  // The stored credentials are the source of truth: they only exist because the
+  // user enabled Face ID (enable() writes them, disable()/clearFaceIdAll() wipe
+  // both keys together). If the two keys ever disagree — e.g. the `enabled`
+  // flag write didn't land while the credentials did — reconcile *toward* the
+  // credentials rather than deleting them, so a transient/partial write can't
+  // silently wipe a working Face ID setup.
+  if (credentials && !enabledFlag) {
+    await setFaceIdEnabled(true);
+  }
+  if (!credentials && enabledFlag) {
+    // No secret to authenticate with: drop the dangling flag.
     await setFaceIdEnabled(false);
-    enabled = false;
-  }
-  if (!enabled && credentials) {
-    await clearFaceIdCredentials();
-    credentials = null;
   }
 
-  return { availability, isActive: enabled && !!credentials };
+  return { availability, isActive: !!credentials };
 }
