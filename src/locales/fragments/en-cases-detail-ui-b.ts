@@ -25,6 +25,7 @@ export const enCasesDetailUiB = {
   regColCadCode: 'Cadastral code',
   regColAddress: 'Address',
   regColOwner: 'Owner',
+  regColOwnerAddress: 'Owner address',
   regFound: 'Found',
   regNotFound: 'Not found',
   businessNotifyTitle: 'Notifications',

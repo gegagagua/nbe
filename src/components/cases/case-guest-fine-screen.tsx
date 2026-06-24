@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { CaseGuestFinePanel } from '@/components/cases/case-guest-fine-panel';
 import { HomeHeader } from '@/components/home/home-header';
@@ -17,7 +18,12 @@ export function CaseGuestFineScreen() {
     <View style={s.page}>
       <AppSafeArea style={s.body}>
         <HomeHeader displayName="" />
-        <ScrollView style={s.scroll} contentContainerStyle={s.content} showsVerticalScrollIndicator>
+        <KeyboardAwareScrollView
+          style={s.scroll}
+          contentContainerStyle={s.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator
+          bottomOffset={16}>
           <View style={s.titleRow}>
             <Pressable
               onPress={() => router.back()}
@@ -28,7 +34,7 @@ export function CaseGuestFineScreen() {
             <Text style={s.title}>{t('cases.pageTitle')}</Text>
           </View>
           <CaseGuestFinePanel />
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </AppSafeArea>
       <LoginFooter />
     </View>

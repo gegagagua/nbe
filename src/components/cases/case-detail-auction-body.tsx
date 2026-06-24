@@ -8,6 +8,10 @@ import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { useAuctionLots } from "@/hooks/use-auction-lots";
 import type { CaseDetailAuctionLot } from "@/types/case-detail-data";
 
+import {
+  CaseDetailKvCard,
+  CaseDetailKvCardList,
+} from "./case-detail-kv-card";
 import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
 import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
 import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
@@ -46,48 +50,46 @@ function LotCard({ lot }: { lot: CaseDetailAuctionLot }) {
           ) : null}
 
           {lot.stages.length > 0 ? (
-            <View style={[tb.borderBox, s.claimsTableWrap]}>
+            <View>
               <Text style={[s.primaryText, tb.padSm]}>
                 {t("cases.detail.auctionStagesTitle")}
               </Text>
-              <View style={tb.tableHead}>
-                <Text style={[tb.tableHeadCell, tb.flex2]}>
-                  {t("cases.detail.auctionColType")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.auctionColStart")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.auctionColEnd")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.auctionOpenEauction")}
-                </Text>
-              </View>
-              {lot.stages.map((stage, i) => (
-                <View key={`${stage.type}-${i}`} style={tb.tableRow}>
-                  <Text style={[tb.tableCell, tb.flex2]}>{stage.type}</Text>
-                  <Text style={tb.tableCell}>{stage.startDate}</Text>
-                  <Text style={tb.tableCell}>{stage.endDate}</Text>
-                  <View style={tb.tableCell}>
-                    {stage.eaucUrl ? (
-                      <Pressable
-                        onPress={() => Linking.openURL(stage.eaucUrl)}
-                        accessibilityRole="link"
-                        accessibilityLabel={t("cases.detail.auctionOpenEauction")}
-                      >
-                        <Text style={s.linkText}>
-                          {t("cases.detail.auctionOpenEauction")}
-                        </Text>
-                      </Pressable>
-                    ) : (
-                      <Text style={s.mutedText}>
-                        {t("cases.detail.emptyTable")}
-                      </Text>
-                    )}
-                  </View>
-                </View>
-              ))}
+              <CaseDetailKvCardList>
+                {lot.stages.map((stage, i) => (
+                  <CaseDetailKvCard
+                    key={`${stage.type}-${i}`}
+                    rows={[
+                      { label: t("cases.detail.auctionColType"), value: stage.type },
+                      {
+                        label: t("cases.detail.auctionColStart"),
+                        value: stage.startDate,
+                      },
+                      {
+                        label: t("cases.detail.auctionColEnd"),
+                        value: stage.endDate,
+                      },
+                      {
+                        label: t("cases.detail.auctionOpenEauction"),
+                        value: stage.eaucUrl ? (
+                          <Pressable
+                            onPress={() => Linking.openURL(stage.eaucUrl)}
+                            accessibilityRole="link"
+                            accessibilityLabel={t(
+                              "cases.detail.auctionOpenEauction",
+                            )}
+                          >
+                            <Text style={s.linkText}>
+                              {t("cases.detail.auctionOpenEauction")}
+                            </Text>
+                          </Pressable>
+                        ) : (
+                          t("cases.detail.emptyTable")
+                        ),
+                      },
+                    ]}
+                  />
+                ))}
+              </CaseDetailKvCardList>
             </View>
           ) : null}
         </View>

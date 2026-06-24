@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
@@ -166,6 +166,31 @@ true;`;
 export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVerification }: IdentomatDemoScreenProps) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  // Tracks whether the very first page load has completed. Identomat redirects
+  // its session URL and then behaves as an SPA; on Android react-native-webview
+  // re-fires onLoadStart for every redirect / in-widget navigation, and the
+  // matching onLoadEnd is unreliable. Without this guard the opaque overlay
+  // gets re-shown by a later onLoadStart and never hidden again — the spinner
+  // hangs and the camera flow can't proceed (Android-only symptom).
+  const hasLoadedRef = useRef(false);
+
+  const handleLoadStart = useCallback(() => {
+    if (!hasLoadedRef.current) setLoading(true);
+  }, []);
+
+  const finishLoading = useCallback(() => {
+    hasLoadedRef.current = true;
+    setLoading(false);
+  }, []);
+
+  const handleLoadProgress = useCallback(
+    ({ nativeEvent }: { nativeEvent: { progress: number } }) => {
+      // onLoadEnd can fail to fire on Android; progress reaching 1 is the
+      // reliable signal that the initial document has finished loading.
+      if (nativeEvent.progress >= 1) finishLoading();
+    },
+    [finishLoading],
+  );
 
   const injectedJavaScript = useMemo(
     () =>
@@ -209,8 +234,9 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
           <WebView
             source={{ uri: sourceUrl ?? IDENTOMAT_DEMO_URL }}
             style={identomatDemoScreenStyles.webview}
-            onLoadStart={() => setLoading(true)}
-            onLoadEnd={() => setLoading(false)}
+            onLoadStart={handleLoadStart}
+            onLoadEnd={finishLoading}
+            onLoadProgress={handleLoadProgress}
             onMessage={handleMessage}
             javaScriptEnabled
             domStorageEnabled

@@ -1,5 +1,4 @@
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 
 import type { CaseDetailInfoSub } from '@/types/case-detail-ui';
 
@@ -17,14 +16,12 @@ type Props = {
 };
 
 export function CaseDetailSubtabSheet({ visible, options, onClose, onSelect }: Props) {
-  const { t } = useTranslation();
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={m.scrimFill}>
         <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} accessibilityRole="button" />
         <View style={m.sheetStack}>
           <View style={p.panel}>
-            <Text style={p.panelTitle}>{t('cases.detail.subtabPickerHint')}</Text>
             {options.map((o) => (
               <Pressable
                 key={o.key}

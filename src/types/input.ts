@@ -7,4 +7,6 @@ export type InputProps = {
   keyboardType?: 'default' | 'email-address' | 'phone-pad' | 'number-pad';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   errorMessage?: string;
+  /** Enables one-time-code autofill from SMS (iOS QuickType + Android sms-otp). */
+  otp?: boolean;
 };

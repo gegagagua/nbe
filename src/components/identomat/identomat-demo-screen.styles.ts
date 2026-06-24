@@ -14,14 +14,14 @@ export const identomatDemoScreenStyles = StyleSheet.create({
   navRow: {
     alignSelf: "stretch",
     marginBottom: Space.small,
-    paddingHorizontal: Space.medium,
+    paddingHorizontal: 0,
   },
   hit: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
     gap: Space.extraSmall,
-    paddingRight: Space.medium,
+    // paddingRight: Space.medium,
   },
   backLabel: {
     color: LoginPalette.primary,
@@ -30,11 +30,11 @@ export const identomatDemoScreenStyles = StyleSheet.create({
   },
   webviewWrap: {
     flex: 1,
-    marginHorizontal: Space.large,
+    marginHorizontal: 0,
     marginBottom: Space.large,
     borderRadius: Radius.small,
-    overflow: "hidden",
-    backgroundColor: LoginPalette.cardBackground,
+    // overflow: "hidden",
+    // backgroundColor: LoginPalette.cardBackground,
   },
   webview: {
     flex: 1,

@@ -79,7 +79,8 @@ export type CaseDetailRegistryInfoRow = {
 export type CaseDetailRegistryEstateRow = {
   cadCode: string;
   address: string;
-  owner: boolean;
+  /** Owner identity ("name surname, personal N / org code"); may be a legal entity. */
+  ownerName: string;
   status: string;
 };
 

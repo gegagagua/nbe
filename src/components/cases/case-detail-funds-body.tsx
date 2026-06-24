@@ -6,6 +6,10 @@ import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { useMoney } from "@/hooks/use-money";
 import type { CaseDetailFundsPartyInfo } from "@/types/case-detail-data";
 
+import {
+  CaseDetailKvCard,
+  CaseDetailKvCardList,
+} from "./case-detail-kv-card";
 import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
 import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
 import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
@@ -45,32 +49,22 @@ function FundsPartyCard({
         ) : null}
 
         {info.rows.length > 0 ? (
-          <View style={[tb.borderBox, s.claimsTableWrap]}>
-            <View style={tb.tableHead}>
-              <Text style={[tb.tableHeadCell, tb.flex2]}>
-                {t("cases.detail.fundsColName")}
-              </Text>
-              <Text style={tb.tableHeadCell}>
-                {t("cases.detail.fundsColDue")}
-              </Text>
-              <Text style={tb.tableHeadCell}>
-                {t("cases.detail.fundsColPaid")}
-              </Text>
-              <Text style={tb.tableHeadCell}>
-                {t("cases.detail.fundsColDebt")}
-              </Text>
-            </View>
+          <CaseDetailKvCardList>
             {info.rows.map((row, i) => (
-              <View key={`${row.name}-${i}`} style={tb.tableRow}>
-                <Text style={[tb.tableCell, tb.flex2]}>
-                  {row.name || t("cases.detail.emptyTable")}
-                </Text>
-                <Text style={tb.tableCell}>{row.due}</Text>
-                <Text style={tb.tableCell}>{row.paid}</Text>
-                <Text style={tb.tableCell}>{row.debt}</Text>
-              </View>
+              <CaseDetailKvCard
+                key={`${row.name}-${i}`}
+                rows={[
+                  {
+                    label: t("cases.detail.fundsColName"),
+                    value: row.name || t("cases.detail.emptyTable"),
+                  },
+                  { label: t("cases.detail.fundsColDue"), value: row.due },
+                  { label: t("cases.detail.fundsColPaid"), value: row.paid },
+                  { label: t("cases.detail.fundsColDebt"), value: row.debt },
+                ]}
+              />
             ))}
-          </View>
+          </CaseDetailKvCardList>
         ) : null}
       </View>
     </View>

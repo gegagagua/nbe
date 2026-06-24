@@ -8,6 +8,10 @@ import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { useInstallments } from "@/hooks/use-installments";
 import type { CaseDetailInstallment } from "@/types/case-detail-data";
 
+import {
+  CaseDetailKvCard,
+  CaseDetailKvCardList,
+} from "./case-detail-kv-card";
 import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
 import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
 import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
@@ -37,43 +41,46 @@ function InstallmentCard({ item }: { item: CaseDetailInstallment }) {
           </View>
 
           {item.payments.length > 0 ? (
-            <View style={[tb.borderBox, s.claimsTableWrap]}>
-              <View style={tb.tableHead}>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColPaymentDate")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColToPay")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColPaid")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColRemained")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColConfirm")}
-                </Text>
-                <Text style={tb.tableHeadCell}>
-                  {t("cases.detail.instColConfirmedBy")}
-                </Text>
-              </View>
+            <CaseDetailKvCardList>
               {item.payments.map((pay, i) => (
-                <View key={`${pay.paymentDate}-${i}`} style={tb.tableRow}>
-                  <Text style={tb.tableCell}>{pay.paymentDate}</Text>
-                  <Text style={tb.tableCell}>{pay.amountToPay}</Text>
-                  <Text style={tb.tableCell}>{pay.amountPayed}</Text>
-                  <Text style={tb.tableCell}>{pay.remainedAmount}</Text>
-                  <Text style={tb.tableCell}>{pay.status}</Text>
-                  <View style={tb.tableCell}>
-                    <Text style={s.primaryText}>{pay.confirmedBy}</Text>
-                    {pay.confirmDate ? (
-                      <Text style={s.mutedText}>{pay.confirmDate}</Text>
-                    ) : null}
-                  </View>
-                </View>
+                <CaseDetailKvCard
+                  key={`${pay.paymentDate}-${i}`}
+                  rows={[
+                    {
+                      label: t("cases.detail.instColPaymentDate"),
+                      value: pay.paymentDate,
+                    },
+                    {
+                      label: t("cases.detail.instColToPay"),
+                      value: pay.amountToPay,
+                    },
+                    {
+                      label: t("cases.detail.instColPaid"),
+                      value: pay.amountPayed,
+                    },
+                    {
+                      label: t("cases.detail.instColRemained"),
+                      value: pay.remainedAmount,
+                    },
+                    {
+                      label: t("cases.detail.instColConfirm"),
+                      value: pay.status,
+                    },
+                    {
+                      label: t("cases.detail.instColConfirmedBy"),
+                      value: (
+                        <>
+                          <Text style={s.primaryText}>{pay.confirmedBy}</Text>
+                          {pay.confirmDate ? (
+                            <Text style={s.mutedText}>{pay.confirmDate}</Text>
+                          ) : null}
+                        </>
+                      ),
+                    },
+                  ]}
+                />
               ))}
-            </View>
+            </CaseDetailKvCardList>
           ) : null}
         </View>
       ) : null}

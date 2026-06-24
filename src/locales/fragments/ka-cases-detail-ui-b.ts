@@ -25,6 +25,7 @@ export const kaCasesDetailUiB = {
   regColCadCode: 'საკადასტრო კოდი',
   regColAddress: 'მისამართი',
   regColOwner: 'მესაკუთრე',
+  regColOwnerAddress: 'მესაკუთრის მისამართი',
   regFound: 'მოიძებნა',
   regNotFound: 'ვერ მოიძებნა',
   businessNotifyTitle: 'შეტყობინებები',

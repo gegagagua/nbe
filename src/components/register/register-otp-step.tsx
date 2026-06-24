@@ -82,6 +82,7 @@ export function RegisterOtpStep({ onVerify, onBack, isVerifying }: RegisterOtpSt
                 onBlur={onBlur}
                 placeholder={t('login.registerOtpPlaceholder')}
                 keyboardType="number-pad"
+                otp
                 errorMessage={formState.errors.code?.message}
               />
             )}

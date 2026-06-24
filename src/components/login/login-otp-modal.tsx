@@ -106,6 +106,7 @@ export function LoginOtpModal({
                   onBlur={onBlur}
                   placeholder={t('login.otpLoginPlaceholder')}
                   keyboardType="number-pad"
+                  otp
                   errorMessage={formState.errors.code?.message}
                 />
               )}

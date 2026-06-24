@@ -13,8 +13,8 @@ export const loginScreenLayoutStyles = StyleSheet.create({
   },
   titleWrap: {
     position: "relative",
-    marginTop: Space.large,
-    marginBottom: Space.medium,
+    marginTop: Space.medium,
+    marginBottom: 0,
     paddingHorizontal: Space.large,
     minHeight: Typography.extraLarge + Space.small,
     justifyContent: "center",

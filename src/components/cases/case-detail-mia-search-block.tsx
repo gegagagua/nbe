@@ -6,6 +6,7 @@ import type { AppPersonType } from '@/api/mia';
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import { useMiaProperties } from '@/hooks/use-mia-properties';
 
+import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
@@ -21,12 +22,6 @@ export function CaseDetailMiaSearchBlock({
   return (
     <View>
       <Text style={tb.subSectionTitle}>{t('cases.detail.subFoundProperty')}</Text>
-      <View style={tb.tableHead}>
-        <Text style={[tb.tableHeadCell, tb.flex2]}>{t('cases.detail.searchColNameObject')}</Text>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.searchColOrder')}</Text>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.searchColInitiator')}</Text>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.searchColProperty')}</Text>
-      </View>
       {isLoading ? (
         <View style={tb.padSm}>
           <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
@@ -34,23 +29,44 @@ export function CaseDetailMiaSearchBlock({
       ) : !rows || rows.length === 0 ? (
         <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>
       ) : (
-        rows.map((row) => (
-          <View key={`${row.orderRef}-${row.nameObject}`} style={tb.tableRow}>
-            <View style={[tb.tableCell, tb.flex2]}>
-              <Text style={s.primaryText}>{row.nameObject}</Text>
-              {row.plateOrExtra ? <Text style={s.mutedText}>{row.plateOrExtra}</Text> : null}
-            </View>
-            <View style={tb.tableCell}>
-              <Text style={s.primaryText}>{row.orderRef}</Text>
-              <Text style={s.mutedText}>{row.orderAction}</Text>
-            </View>
-            <View style={tb.tableCell}>
-              <Text style={s.primaryText}>{row.initiator}</Text>
-              <Text style={s.mutedText}>{row.initiatorWhen}</Text>
-            </View>
-            <Text style={tb.tableCell}>{t('cases.detail.emptyTable')}</Text>
-          </View>
-        ))
+        <CaseDetailKvCardList>
+          {rows.map((row) => (
+            <CaseDetailKvCard
+              key={`${row.orderRef}-${row.nameObject}`}
+              rows={[
+                {
+                  label: t('cases.detail.searchColNameObject'),
+                  value: (
+                    <>
+                      <Text style={[s.primaryText, tb.kvValueText]}>{row.nameObject}</Text>
+                      {row.plateOrExtra ? (
+                        <Text style={[s.mutedText, tb.kvValueText]}>{row.plateOrExtra}</Text>
+                      ) : null}
+                    </>
+                  ),
+                },
+                {
+                  label: t('cases.detail.searchColOrder'),
+                  value: (
+                    <>
+                      <Text style={[s.primaryText, tb.kvValueText]}>{row.orderRef}</Text>
+                      <Text style={[s.mutedText, tb.kvValueText]}>{row.orderAction}</Text>
+                    </>
+                  ),
+                },
+                {
+                  label: t('cases.detail.searchColInitiator'),
+                  value: (
+                    <>
+                      <Text style={[s.primaryText, tb.kvValueText]}>{row.initiator}</Text>
+                      <Text style={[s.mutedText, tb.kvValueText]}>{row.initiatorWhen}</Text>
+                    </>
+                  ),
+                },
+              ]}
+            />
+          ))}
+        </CaseDetailKvCardList>
       )}
       <Text style={tb.subSectionTitle}>{t('cases.detail.subRestrictions')}</Text>
       <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>

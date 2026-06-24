@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ import { createSession, verifyLoginOtp } from "@/api/sessions";
 import { changePassword } from "@/api/users";
 import { setGuestMode } from "@/lib/guest-mode";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
+import { resetStackTo } from "@/lib/reset-navigation";
 import { mapLoginError } from "@/lib/map-login-error";
 import {
     isSimilarPasswordUsed,
@@ -72,7 +72,7 @@ export function useLoginForm(): LoginFormState {
         username: credentials.username,
         password: credentials.password,
       });
-      router.replace("/dashboard");
+      resetStackTo("/dashboard");
     },
     [],
   );

@@ -47,6 +47,32 @@ export const caseDetailTableStyles = StyleSheet.create({
   },
   flex2: { flex: 2 },
   padSm: { padding: Space.small },
+  kvCardList: {
+    marginTop: Space.small,
+    gap: Space.medium,
+  },
+  kvRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: Space.small,
+    paddingVertical: Space.small,
+    paddingHorizontal: Space.small,
+  },
+  kvLabel: {
+    flex: 1,
+    fontSize: DebtorRegistryTypography.small,
+    color: DebtorRegistryPalette.textSecondary,
+  },
+  kvValue: {
+    flex: 1,
+    alignItems: "flex-end",
+    gap: Space.extraSmall,
+  },
+  kvValueText: {
+    fontSize: DebtorRegistryTypography.body,
+    color: DebtorRegistryPalette.textPrimary,
+    textAlign: "right",
+  },
   borderBottom: {
     borderBottomWidth: 1,
     borderBottomColor: DebtorRegistryPalette.panelBorder,

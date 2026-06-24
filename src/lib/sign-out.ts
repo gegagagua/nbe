@@ -1,9 +1,8 @@
-import { router } from "expo-router";
-
 import { logoutSession } from "@/api/sessions";
 import { setGuestMode } from "@/lib/guest-mode";
 import { clearPasswordHistory } from "@/lib/password-history-storage";
 import { clearAppQueryCache } from "@/lib/query-client";
+import { resetStackTo } from "@/lib/reset-navigation";
 import { clearSessionToken } from "@/lib/session-token-storage";
 import { clearSessionUserProfile } from "@/lib/session-user-profile-storage";
 
@@ -17,5 +16,5 @@ export async function signOut(): Promise<void> {
     clearSessionUserProfile(),
     clearPasswordHistory(),
   ]);
-  router.replace("/");
+  resetStackTo("/");
 }

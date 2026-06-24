@@ -52,11 +52,13 @@ function triggerWebDownload(blob: Blob, fileName: string): void {
 }
 
 /**
- * Download a status file and present it to the user.
+ * Stream a status file and open it for the user to view.
  *
  * - Web: streams a Blob and triggers a browser download.
- * - Native: streams the bytes, writes them to the cache directory, and opens
- *   the saved file with the OS.
+ * - Android: writes the bytes to cache and opens them in a viewer app via an
+ *   ACTION_VIEW intent (a content:// URI granted read permission).
+ * - iOS: there is no public "open in default app" API, so the saved file is
+ *   presented through the OS preview / share sheet (QuickLook).
  */
 export async function downloadEpsFile(params: {
   appId: number | string;
@@ -87,13 +89,27 @@ export async function downloadEpsFile(params: {
   file.create({ overwrite: true });
   file.write(base64, { encoding: "base64" });
 
-  // A file:// URI can't be opened with Linking.openURL on iOS, so present the
-  // saved file through the OS share / preview sheet instead.
+  const shareType = shareTypeForName(safeName);
+
+  if (Platform.OS === "android") {
+    // ACTION_VIEW needs a content:// URI (file:// is blocked by FileProvider).
+    const { getContentUriAsync } = await import("expo-file-system/legacy");
+    const contentUri = await getContentUriAsync(file.uri);
+    const IntentLauncher = await import("expo-intent-launcher");
+    await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+      data: contentUri,
+      // FLAG_GRANT_READ_URI_PERMISSION so the viewer app can read the file.
+      flags: 1,
+      type: shareType?.mimeType,
+    });
+    return;
+  }
+
+  // iOS: present the saved file through the OS preview / share sheet.
   const Sharing = await import("expo-sharing");
   if (!(await Sharing.isAvailableAsync())) {
     throw new Error("Sharing is not available on this device");
   }
-  const shareType = shareTypeForName(safeName);
   await Sharing.shareAsync(file.uri, {
     mimeType: shareType?.mimeType,
     UTI: shareType?.uti,

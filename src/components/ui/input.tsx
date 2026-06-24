@@ -16,6 +16,7 @@ export function Input({
   keyboardType = 'default',
   autoCapitalize = 'none',
   errorMessage,
+  otp,
 }: InputProps) {
   const [hidden, setHidden] = useState(true);
 
@@ -31,6 +32,11 @@ export function Input({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoCorrect={false}
+        // One-time-code autofill. iOS reads the QuickType suggestion above the
+        // keyboard; Android needs autoComplete="sms-otp" + autofill enabled.
+        textContentType={otp ? 'oneTimeCode' : undefined}
+        autoComplete={otp ? 'sms-otp' : undefined}
+        importantForAutofill={otp ? 'yes' : undefined}
         style={[
           inputStyles.input,
           secureTextEntry ? inputStyles.inputWithEye : null,

@@ -1,5 +1,5 @@
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { LocaleToggle } from '@/components/i18n/locale-toggle';

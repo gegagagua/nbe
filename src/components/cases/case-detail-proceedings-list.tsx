@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { CaseDetailData } from '@/types/case-detail-data';
 
+import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { CaseDetailProceedingFiles } from './case-detail-proceeding-files';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
@@ -47,25 +48,27 @@ export function CaseDetailProceedingsList({
                 ) : row.documents.length === 0 ? (
                   <Text style={[s.mutedText, s.stackGapSm]}>{t('cases.detail.proceedingsNoDocs')}</Text>
                 ) : (
-                  <View style={[tb.borderBox, s.claimsTableWrap]}>
-                    <View style={tb.tableHead}>
-                      <Text style={tb.tableHeadCell}>{t('cases.detail.colDocument')}</Text>
-                      <Text style={tb.tableHeadCell}>{t('cases.detail.colActor')}</Text>
-                    </View>
+                  <CaseDetailKvCardList>
                     {row.documents.map((doc, di) => (
-                      <View key={`${row.codeLine}-${di}-${doc.href}`} style={tb.tableRow}>
-                        <View style={tb.tableCell}>
-                          <Pressable
-                            onPress={() => Linking.openURL(doc.href)}
-                            accessibilityRole="link"
-                            accessibilityLabel={t('cases.detail.docOpenA11y')}>
-                            <Text style={s.linkText}>{doc.title}</Text>
-                          </Pressable>
-                        </View>
-                        <Text style={tb.tableCell}>{doc.actor}</Text>
-                      </View>
+                      <CaseDetailKvCard
+                        key={`${row.codeLine}-${di}-${doc.href}`}
+                        rows={[
+                          {
+                            label: t('cases.detail.colDocument'),
+                            value: (
+                              <Pressable
+                                onPress={() => Linking.openURL(doc.href)}
+                                accessibilityRole="link"
+                                accessibilityLabel={t('cases.detail.docOpenA11y')}>
+                                <Text style={s.linkText}>{doc.title}</Text>
+                              </Pressable>
+                            ),
+                          },
+                          { label: t('cases.detail.colActor'), value: doc.actor },
+                        ]}
+                      />
                     ))}
-                  </View>
+                  </CaseDetailKvCardList>
                 )
               ) : null}
             </View>

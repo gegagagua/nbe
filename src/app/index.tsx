@@ -13,6 +13,7 @@ import { useFaceId } from '@/hooks/use-face-id';
 import { useLoginForm } from '@/hooks/use-login-form';
 import { useLoginIndexSessionRedirect } from '@/hooks/use-session-navigation';
 import { setGuestMode } from '@/lib/guest-mode';
+import { resetStackTo } from '@/lib/reset-navigation';
 import { showErrorToast } from '@/lib/show-error-toast';
 
 function LoginScreenContent() {
@@ -40,7 +41,7 @@ function LoginScreenContent() {
 
   function handleGuestPress() {
     setGuestMode(true);
-    router.replace('/dashboard');
+    resetStackTo('/dashboard');
   }
 
   function handleRegisterPress() {

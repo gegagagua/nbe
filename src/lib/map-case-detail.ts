@@ -264,7 +264,9 @@ export function mapLandregRealEstates(
   return (env.data ?? []).map((r) => ({
     cadCode: r.cadCode?.trim() ?? "",
     address: r.address?.trim() ?? "",
-    owner: r.owner === true,
+    // The owner (მესაკუთრე) can be a person or a legal entity; the backend
+    // sends the already-formatted identity in `person.name`.
+    ownerName: r.person?.name?.trim() ?? "",
     status: r.status?.name?.trim() ?? "",
   }));
 }

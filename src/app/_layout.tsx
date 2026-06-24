@@ -39,7 +39,14 @@ export default function RootLayout() {
                   animationDuration: 240,
                   gestureEnabled: true,
                 }}
-              />
+              >
+                {/* Auth and the logged-in tabs are different navigation worlds:
+                    disable the swipe-back gesture on both so you can't swipe
+                    across the auth boundary in either direction. In-app screens
+                    (cases, profile, …) keep their back-swipe from screenOptions. */}
+                <Stack.Screen name="index" options={{ gestureEnabled: false }} />
+                <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+              </Stack>
               <AppToast />
             </QueryProvider>
           </ThemeProvider>
