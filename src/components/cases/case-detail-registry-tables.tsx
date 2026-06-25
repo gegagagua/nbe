@@ -74,10 +74,6 @@ export function CaseDetailRegistryTables() {
                   value: row.ownerName || t('cases.detail.emptyTable'),
                 },
                 {
-                  label: t('cases.detail.regColOwnerAddress'),
-                  value: row.address || t('cases.detail.emptyTable'),
-                },
-                {
                   label: t('cases.detail.socialColStatus'),
                   value: row.status || t('cases.detail.emptyTable'),
                 },

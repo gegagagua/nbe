@@ -50,7 +50,10 @@ export type CaseDetailSearchPropertyRow = {
 
 // SSA rows (სოც. სააგენტო) are fetched live via useSsaRequests.
 export type CaseDetailSocialRow = {
-  nameId: string;
+  /** First + last name ("სახელი გვარი"). */
+  name: string;
+  /** Personal number ("პ.ნ"). */
+  personalId: string;
   addressPhone: string;
   sent: boolean;
   receivedAt: string;

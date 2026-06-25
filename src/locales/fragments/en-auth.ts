@@ -68,6 +68,8 @@ export const enAuth = {
     registerOtpVerifyButton: "Verify",
     registerOtpBackButton: "Back to registration",
     registerOtpGenericError: "Verification failed. Please try again.",
+    registerStatusSuccess: "Registration completed successfully",
+    registerStatusFailed: "Registration could not be completed. Please try again",
     sessionBootLoadingA11yLabel: "Checking session",
     forcedPwdChangeTitle: "Set a new password",
     forcedPwdChangeSubtitle:

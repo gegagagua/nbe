@@ -210,17 +210,23 @@ export function mapAuctionLots(env: EpsLotsEnvelope): CaseDetailAuctionLot[] {
 export function mapMiaProperties(
   env: EpsMiaPropertiesEnvelope,
 ): CaseDetailSearchPropertyRow[] {
-  return (env.data ?? []).map((p) => ({
-    nameObject:
-      [p.propertyType?.name?.trim(), p.model?.trim()]
-        .filter(Boolean)
-        .join(" — ") || (p.person?.name?.trim() ?? ""),
-    plateOrExtra: p.govNumber?.trim() ?? "",
-    orderRef: p.reqCode?.trim() ?? "",
-    orderAction: p.propertySt?.name?.trim() ?? "",
-    initiator: p.reqCreatedBy?.name?.trim() ?? "",
-    initiatorWhen: formatDateTime(p.reqCreatedDate),
-  }));
+  return (env.data ?? []).map((p) => {
+    // Column header is "სახელი გვარი, პირადი N, ობიექტი": show the person's
+    // identity (the backend pre-formats name + personal N in `person.name`) as
+    // the primary line, with the object — plate, type, model — beneath it.
+    const owner = p.person?.name?.trim() ?? "";
+    const object = [p.govNumber?.trim(), p.propertyType?.name?.trim(), p.model?.trim()]
+      .filter(Boolean)
+      .join(", ");
+    return {
+      nameObject: owner || object,
+      plateOrExtra: owner ? object : "",
+      orderRef: p.reqCode?.trim() ?? "",
+      orderAction: p.propertySt?.name?.trim() ?? "",
+      initiator: p.reqCreatedBy?.name?.trim() ?? "",
+      initiatorWhen: formatDateTime(p.reqCreatedDate),
+    };
+  });
 }
 
 /** Map the ssa-requests/by-app-id response into SSA (სოც. სააგენტო) rows. */
@@ -230,12 +236,13 @@ export function mapSsaRequests(
   return (env.data ?? []).map((r) => {
     const p = r.person;
     const name = `${p?.firstName ?? ""} ${p?.lastName ?? ""}`.trim();
-    const id = p?.idnumber?.trim();
+    const id = p?.idnumber?.trim() ?? "";
     const addressPhone = [r.address?.trim(), r.phone?.trim()]
       .filter(Boolean)
       .join(", ");
     return {
-      nameId: id ? `${name} ${id}`.trim() : name,
+      name,
+      personalId: id,
       addressPhone,
       sent: r.sent === true,
       receivedAt: formatDateTime(r.lastCheckDate),

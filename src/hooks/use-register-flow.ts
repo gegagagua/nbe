@@ -5,6 +5,7 @@ import i18n from "@/i18n/i18n";
 import { mapRegisterError } from "@/lib/map-register-error";
 import { normalizeGeorgianPhone } from "@/lib/phone";
 import { showErrorToast } from "@/lib/show-error-toast";
+import { showSuccessToast } from "@/lib/show-success-toast";
 import type { RegisterPhysicalValues } from "@/types/register-form-values";
 
 export type RegisterFlowStep = "form" | "otp" | "identomat" | "success";
@@ -74,9 +75,21 @@ export function useRegisterFlow() {
     if (isCheckingVerification || verificationId === null) return;
     setIsCheckingVerification(true);
     checkVerification(verificationId)
-      .then(() => setStep("success"))
-      .catch(() => {
-        showErrorToast(i18n.t("login.registerOtpGenericError"));
+      .then(() => {
+        // Surface the backend-confirmed registration result, then advance to the
+        // success step (which redirects to the main/auth page).
+        showSuccessToast(i18n.t("login.registerStatusSuccess"));
+        setStep("success");
+      })
+      .catch((err: unknown) => {
+        // Registration could not be completed — tell the user explicitly and
+        // return to the form so they can retry instead of being stuck on the
+        // Identomat screen.
+        showErrorToast(i18n.t("login.registerStatusFailed"), err);
+        setStep("form");
+        setUserId(null);
+        setVerificationUrl(null);
+        setVerificationId(null);
       })
       .finally(() => setIsCheckingVerification(false));
   }, [isCheckingVerification, verificationId]);

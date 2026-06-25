@@ -26,9 +26,16 @@ export function CaseDetailSocialTable() {
         <CaseDetailKvCardList>
           {rows.map((row, i) => (
             <CaseDetailKvCard
-              key={`${row.nameId}-${i}`}
+              key={`${row.personalId || row.name}-${i}`}
               rows={[
-                { label: t('cases.detail.socialColPerson'), value: row.nameId },
+                {
+                  label: t('cases.detail.socialColPerson'),
+                  value: row.name || t('cases.detail.emptyTable'),
+                },
+                {
+                  label: t('cases.detail.socialColPersonalId'),
+                  value: row.personalId || t('cases.detail.emptyTable'),
+                },
                 {
                   label: t('cases.detail.socialColAddressPhone'),
                   value: row.addressPhone || t('cases.detail.emptyTable'),

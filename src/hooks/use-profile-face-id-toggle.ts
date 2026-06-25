@@ -110,15 +110,23 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
       const { token, password } = pendingOtp;
       setIsVerifyingOtp(true);
       try {
-        await verifyLoginOtp(token, code);
-        // Close the OTP modal before triggering the biometric system prompt so
-        // the two don't compete (on iOS a visible JS modal can make the Face ID
-        // prompt fail/cancel). runEnable persists the credentials afterwards.
+        // Verify the OTP first, in its own try/catch. Only a failure *here* means
+        // the code was wrong/expired — otherwise a later Face ID setup failure
+        // would be mislabelled as an invalid code (and the user would never see
+        // the real reason Face ID didn't activate).
+        try {
+          await verifyLoginOtp(token, code);
+        } catch (err) {
+          showErrorToast(t('faceId.errorOtpInvalid'), err);
+          return;
+        }
+        // Code accepted. Close the OTP modal before triggering the biometric
+        // system prompt so the two don't compete (on iOS a visible JS modal can
+        // make the Face ID prompt fail/cancel). runEnable persists the
+        // credentials and reports its own, distinct error message.
         setPendingOtp(null);
         const error = await runEnable(password);
         if (error) showErrorToast(error);
-      } catch (err) {
-        showErrorToast(t('faceId.errorOtpInvalid'), err);
       } finally {
         setIsVerifyingOtp(false);
       }
