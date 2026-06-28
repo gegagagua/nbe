@@ -103,6 +103,8 @@ export const enAuth = {
     requiredPhone: "Enter your phone number.",
     invalidPhone: "Phone number must be 9 digits.",
     requiredActualAddress: "Enter your actual address.",
+    invalidActualAddress:
+      "Address must contain at least one letter and one digit.",
     requiredLegalAddress: "Enter your legal address.",
     requiredCompanyName: "Enter the legal name.",
     requiredIdentificationCode: "Enter the identification number.",

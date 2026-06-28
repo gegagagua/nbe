@@ -163,12 +163,14 @@ export function useLoginForm(): LoginFormState {
   const submitDisabled = isPending || !formState.isValid;
 
   const submitWithCredentials = useCallback(
-    async (values: LoginFormValues): Promise<{ ok: boolean }> => {
+    async (
+      values: LoginFormValues,
+    ): Promise<{ ok: true } | { ok: false; error: unknown }> => {
       try {
         await mutateAsync(values);
         return { ok: true };
-      } catch {
-        return { ok: false };
+      } catch (error) {
+        return { ok: false, error };
       }
     },
     [mutateAsync],

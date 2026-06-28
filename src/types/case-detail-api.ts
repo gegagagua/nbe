@@ -185,8 +185,12 @@ export type EpsMiaPropertiesEnvelope = { data: EpsMiaProperty[] };
 export type EpsSsaPerson = {
   id: number;
   idnumber: string | null;
-  firstName: string | null;
-  lastName: string | null;
+  // Some EPS services return a split first/last name; others (the common case)
+  // return a single pre-formatted `name` like every other person ref. Accept
+  // both so the identity always renders.
+  firstName?: string | null;
+  lastName?: string | null;
+  name?: string | null;
 };
 
 export type EpsSsaRequest = {

@@ -47,7 +47,9 @@ export type LoginFormState = {
   errors: FieldErrors<LoginFormValues>;
   onSubmit: () => void;
   submitDisabled: boolean;
-  submitWithCredentials: (values: LoginFormValues) => Promise<{ ok: boolean }>;
+  submitWithCredentials: (
+    values: LoginFormValues,
+  ) => Promise<{ ok: true } | { ok: false; error: unknown }>;
   forcedPwdChange: ForcedPwdChangeState;
   otpLogin: OtpLoginState;
 };

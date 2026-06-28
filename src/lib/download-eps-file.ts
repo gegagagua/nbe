@@ -27,6 +27,14 @@ function shareTypeForName(name: string) {
   return SHARE_TYPE_BY_EXT[ext];
 }
 
+/** A status file streamed and written to the on-device cache, ready to open. */
+export type PreparedFile = {
+  uri: string;
+  fileName: string;
+  mimeType?: string;
+  uti?: string;
+};
+
 /** Convert an ArrayBuffer to a base64 string (for writing on native). */
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
@@ -51,27 +59,32 @@ function triggerWebDownload(blob: Blob, fileName: string): void {
   URL.revokeObjectURL(url);
 }
 
-/**
- * Stream a status file and open it for the user to view.
- *
- * - Web: streams a Blob and triggers a browser download.
- * - Android: writes the bytes to cache and opens them in a viewer app via an
- *   ACTION_VIEW intent (a content:// URI granted read permission).
- * - iOS: there is no public "open in default app" API, so the saved file is
- *   presented through the OS preview / share sheet (QuickLook).
- */
-export async function downloadEpsFile(params: {
+type StreamParams = {
   appId: number | string;
   fileId: number | string;
   fileName: string;
   userId: number | string;
-}): Promise<void> {
+};
+
+/**
+ * Stream a status file so the user can read it.
+ *
+ * - Web: streams a Blob and triggers a browser download, then returns `null`
+ *   (there is nothing further to open in-app).
+ * - Native: streams the bytes, writes them to the cache, and returns the local
+ *   file so the caller can open it — Android in a viewer app, iOS in the in-app
+ *   reader (so the file opens directly instead of going straight to the share
+ *   sheet that forces "save to Drive / copy elsewhere").
+ */
+export async function prepareEpsFile(
+  params: StreamParams,
+): Promise<PreparedFile | null> {
   const { appId, fileId, fileName, userId } = params;
 
   if (Platform.OS === "web") {
     const data = (await streamEpsFile(appId, fileId, userId, "blob")) as Blob;
     triggerWebDownload(data, fileName);
-    return;
+    return null;
   }
 
   const buffer = (await streamEpsFile(
@@ -90,28 +103,36 @@ export async function downloadEpsFile(params: {
   file.write(base64, { encoding: "base64" });
 
   const shareType = shareTypeForName(safeName);
+  return {
+    uri: file.uri,
+    fileName: safeName,
+    mimeType: shareType?.mimeType,
+    uti: shareType?.uti,
+  };
+}
 
-  if (Platform.OS === "android") {
-    // ACTION_VIEW needs a content:// URI (file:// is blocked by FileProvider).
-    const { getContentUriAsync } = await import("expo-file-system/legacy");
-    const contentUri = await getContentUriAsync(file.uri);
-    const IntentLauncher = await import("expo-intent-launcher");
-    await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-      data: contentUri,
-      // FLAG_GRANT_READ_URI_PERMISSION so the viewer app can read the file.
-      flags: 1,
-      type: shareType?.mimeType,
-    });
-    return;
-  }
+/** Open a cached file in the Android default viewer via an ACTION_VIEW intent. */
+export async function openAndroidViewer(file: PreparedFile): Promise<void> {
+  // ACTION_VIEW needs a content:// URI (file:// is blocked by FileProvider).
+  const { getContentUriAsync } = await import("expo-file-system/legacy");
+  const contentUri = await getContentUriAsync(file.uri);
+  const IntentLauncher = await import("expo-intent-launcher");
+  await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+    data: contentUri,
+    // FLAG_GRANT_READ_URI_PERMISSION so the viewer app can read the file.
+    flags: 1,
+    type: file.mimeType,
+  });
+}
 
-  // iOS: present the saved file through the OS preview / share sheet.
+/** Present a cached file through the OS share sheet (download / share / save). */
+export async function shareCachedFile(file: PreparedFile): Promise<void> {
   const Sharing = await import("expo-sharing");
   if (!(await Sharing.isAvailableAsync())) {
     throw new Error("Sharing is not available on this device");
   }
   await Sharing.shareAsync(file.uri, {
-    mimeType: shareType?.mimeType,
-    UTI: shareType?.uti,
+    mimeType: file.mimeType,
+    UTI: file.uti,
   });
 }

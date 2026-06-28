@@ -80,7 +80,7 @@ export const kaAuth = {
     passwordResetNoticeText:
       "პაროლის აღდგენის მიზნით გთხოვთ, შეიყვანოთ პირადი ნომერი და ერთჯერადი პაროლი.",
     passwordResetNoticeButton: "გასაგრძელებლად",
-    otpLoginTitle: "ერთჯერადი პაროლი",
+    otpLoginTitle: "ერთჯერადი კოდი",
     otpLoginDescription: "შეიყვანეთ თქვენს რეგისტრირებულ ნომერზე გაგზავნილი 6-ნიშნა კოდი.",
     otpLoginPlaceholder: "xxxxxx",
     otpLoginVerifyButton: "გადამოწმება",
@@ -100,6 +100,8 @@ export const kaAuth = {
     requiredPhone: "მიუთითეთ ტელეფონი.",
     invalidPhone: "ტელეფონის ნომერი უნდა შედგებოდეს 9 ციფრისგან.",
     requiredActualAddress: "მიუთითეთ ფაქტობრივი მისამართი.",
+    invalidActualAddress:
+      "მისამართი უნდა შეიცავდეს მინიმუმ ერთ ასოს და ერთ ციფრს.",
     requiredLegalAddress: "მიუთითეთ იურიდიული მისამართი.",
     requiredCompanyName: "მიუთითეთ დასახელება.",
     requiredIdentificationCode: "მიუთითეთ საიდენტიფიკაციო კოდი.",

@@ -36,4 +36,8 @@ export const enCasesDetailUiA = {
   fileUploadedBy: 'Uploaded by: {{name}}',
   fileDownloadA11y: 'Download file',
   fileDownloadError: 'Could not download the file',
+  fileViewerClose: 'Close',
+  fileViewerCloseA11y: 'Close file',
+  fileViewerShare: 'Share',
+  fileViewerShareA11y: 'Share or download file',
 } as const;

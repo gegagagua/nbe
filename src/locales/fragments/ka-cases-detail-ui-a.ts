@@ -36,4 +36,8 @@ export const kaCasesDetailUiA = {
   fileUploadedBy: "ატვირთა: {{name}}",
   fileDownloadA11y: "ფაილის გადმოწერა",
   fileDownloadError: "ფაილის გადმოწერა ვერ მოხერხდა",
+  fileViewerClose: "დახურვა",
+  fileViewerCloseA11y: "ფაილის დახურვა",
+  fileViewerShare: "გაზიარება",
+  fileViewerShareA11y: "ფაილის გაზიარება ან გადმოწერა",
 } as const;

@@ -5,6 +5,10 @@ import { trimmedNonEmpty } from '@/schemas/fields';
 
 const PUNCTUATION_RE = /[~!@#$%^&*()_+`\-={}[\]|\\:";'<>,.?/]/;
 const PERSONAL_ID_RE = /^\d{11}$/;
+// A real address must contain at least one letter (Georgian or Latin) and one
+// digit — so a digits-only value like "123455" is rejected.
+const ADDRESS_LETTER_RE = /[Ⴀ-ჿa-zA-Z]/;
+const ADDRESS_DIGIT_RE = /\d/;
 const PHONE_RE = /^(\d{9}|995\d{9})$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -15,7 +19,10 @@ export function createRegisterPhysicalSchema(t: TFunction) {
         (v) => PERSONAL_ID_RE.test(v),
         { message: t('validation.invalidPersonalId') },
       ),
-      actualAddress: trimmedNonEmpty(t('validation.requiredActualAddress')),
+      actualAddress: trimmedNonEmpty(t('validation.requiredActualAddress')).refine(
+        (v) => ADDRESS_LETTER_RE.test(v) && ADDRESS_DIGIT_RE.test(v),
+        { message: t('validation.invalidActualAddress') },
+      ),
       phone: trimmedNonEmpty(t('validation.requiredPhone')).refine(
         (v) => PHONE_RE.test(v),
         { message: t('validation.invalidPhone') },

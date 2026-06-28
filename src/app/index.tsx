@@ -13,6 +13,7 @@ import { useFaceId } from '@/hooks/use-face-id';
 import { useLoginForm } from '@/hooks/use-login-form';
 import { useLoginIndexSessionRedirect } from '@/hooks/use-session-navigation';
 import { setGuestMode } from '@/lib/guest-mode';
+import { isInvalidCredentialsError } from '@/lib/is-invalid-credentials-error';
 import { resetStackTo } from '@/lib/reset-navigation';
 import { showErrorToast } from '@/lib/show-error-toast';
 
@@ -65,8 +66,11 @@ function LoginScreenContent() {
       );
       if (res.ok) {
         const result = await login.submitWithCredentials(res.credentials);
-        if (!result.ok) {
-          // stored credentials no longer work → reset Face ID so user re-enables it.
+        // Only forget Face ID when the credentials are genuinely rejected (401).
+        // Transient failures (network, lockout, server errors) must keep Face ID
+        // so the button stays for the user who enabled it. submitWithCredentials
+        // already surfaces the error toast.
+        if (!result.ok && isInvalidCredentialsError(result.error)) {
           await faceId.disable();
         }
         return;

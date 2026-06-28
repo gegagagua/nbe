@@ -235,7 +235,11 @@ export function mapSsaRequests(
 ): CaseDetailSocialRow[] {
   return (env.data ?? []).map((r) => {
     const p = r.person;
-    const name = `${p?.firstName ?? ""} ${p?.lastName ?? ""}`.trim();
+    // Prefer split first/last name when present, otherwise the pre-formatted
+    // `name` other EPS services send (covers legal entities too).
+    const name =
+      `${p?.firstName ?? ""} ${p?.lastName ?? ""}`.trim() ||
+      (p?.name?.trim() ?? "");
     const id = p?.idnumber?.trim() ?? "";
     const addressPhone = [r.address?.trim(), r.phone?.trim()]
       .filter(Boolean)
