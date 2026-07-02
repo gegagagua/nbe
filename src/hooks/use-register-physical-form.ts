@@ -18,6 +18,7 @@ const defaultValues: RegisterPhysicalValues = {
 
 export function useRegisterPhysicalForm(
   onValidSubmit: (values: RegisterPhysicalValues) => void,
+  initialValues?: RegisterPhysicalValues | null,
 ) {
   const { t, i18n } = useTranslation();
   const schema = useMemo(
@@ -29,7 +30,7 @@ export function useRegisterPhysicalForm(
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues,
+    defaultValues: initialValues ?? defaultValues,
   });
 
   const onSubmit = handleSubmit((values) => onValidSubmit(values));

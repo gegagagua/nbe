@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 
 import { checkVerification, createPortalUser, verifyPhoneOtp } from "@/api/users";
@@ -7,8 +8,6 @@ import { normalizeGeorgianPhone } from "@/lib/phone";
 import { showErrorToast } from "@/lib/show-error-toast";
 import { showSuccessToast } from "@/lib/show-success-toast";
 import type { RegisterPhysicalValues } from "@/types/register-form-values";
-
-export type RegisterFlowStep = "form" | "otp" | "identomat" | "success";
 
 function toCreatePortalUserPayload(values: RegisterPhysicalValues) {
   return {
@@ -22,8 +21,20 @@ function toCreatePortalUserPayload(values: RegisterPhysicalValues) {
   };
 }
 
+/**
+ * Drives the registration flow. Each step (form → otp → identomat → success)
+ * is a separate route under `/register`, so advancing pushes a new route and
+ * going back is the platform's own pop/swipe — this is what keeps the iOS
+ * swipe-back returning to the *previous step* rather than jumping straight out
+ * to the auth page. The flow state (entered values, created user id, Identomat
+ * verification) lives here and is shared across those routes through
+ * RegisterFlowProvider.
+ */
 export function useRegisterFlow() {
-  const [step, setStep] = useState<RegisterFlowStep>("form");
+  const router = useRouter();
+  const [formValues, setFormValues] = useState<RegisterPhysicalValues | null>(
+    null,
+  );
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
@@ -34,18 +45,21 @@ export function useRegisterFlow() {
   const handleFormSubmit = useCallback(
     (values: RegisterPhysicalValues) => {
       if (isCreatingUser) return;
+      // Remember the entered values so returning from OTP restores the form
+      // instead of showing an empty one.
+      setFormValues(values);
       setIsCreatingUser(true);
       createPortalUser(toCreatePortalUserPayload(values))
         .then((id) => {
           setUserId(id);
-          setStep("otp");
+          router.push("/register/otp");
         })
         .catch((err: unknown) => {
           showErrorToast(mapRegisterError(err), err);
         })
         .finally(() => setIsCreatingUser(false));
     },
-    [isCreatingUser],
+    [isCreatingUser, router],
   );
 
   const handleOtpVerify = useCallback(
@@ -56,20 +70,15 @@ export function useRegisterFlow() {
         .then(({ verificationUrl: url, verificationId: vid }) => {
           setVerificationUrl(url);
           setVerificationId(vid);
-          setStep("identomat");
+          router.push("/register/identomat");
         })
         .catch(() => {
           showErrorToast(i18n.t("login.registerOtpGenericError"));
         })
         .finally(() => setIsVerifyingOtp(false));
     },
-    [isVerifyingOtp, userId],
+    [isVerifyingOtp, userId, router],
   );
-
-  const handleOtpBack = useCallback(() => {
-    setStep("form");
-    setUserId(null);
-  }, []);
 
   const handleIdentomatDone = useCallback(() => {
     if (isCheckingVerification || verificationId === null) return;
@@ -77,42 +86,34 @@ export function useRegisterFlow() {
     checkVerification(verificationId)
       .then(() => {
         // Surface the backend-confirmed registration result, then advance to the
-        // success step (which redirects to the main/auth page).
+        // success step (replace so the completed Identomat step can't be swiped
+        // back into).
         showSuccessToast(i18n.t("login.registerStatusSuccess"));
-        setStep("success");
+        router.replace("/register/success");
       })
       .catch((err: unknown) => {
         // Registration could not be completed — tell the user explicitly and
         // return to the form so they can retry instead of being stuck on the
         // Identomat screen.
         showErrorToast(i18n.t("login.registerStatusFailed"), err);
-        setStep("form");
         setUserId(null);
         setVerificationUrl(null);
         setVerificationId(null);
+        router.dismissAll();
       })
       .finally(() => setIsCheckingVerification(false));
-  }, [isCheckingVerification, verificationId]);
-
-  // Backing out of identomat returns to the OTP step without running the
-  // verification check, so success is only reached via handleIdentomatDone.
-  const handleIdentomatBack = useCallback(() => {
-    if (isCheckingVerification) return;
-    setStep("otp");
-    setVerificationUrl(null);
-    setVerificationId(null);
-  }, [isCheckingVerification]);
+  }, [isCheckingVerification, verificationId, router]);
 
   return {
-    step,
+    formValues,
     isCreatingUser,
     isVerifyingOtp,
     isCheckingVerification,
     verificationUrl,
     handleFormSubmit,
     handleOtpVerify,
-    handleOtpBack,
     handleIdentomatDone,
-    handleIdentomatBack,
   };
 }
+
+export type RegisterFlow = ReturnType<typeof useRegisterFlow>;

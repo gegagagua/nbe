@@ -8,6 +8,14 @@ import type { CreateSessionResponse } from '@/types/session';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
+// Give a just-closed JS modal time to finish its fade-out before the biometric
+// system prompt is presented. On iOS the Face ID prompt is rejected (surfaces
+// as a failure/cancel) if it tries to present while an RN Modal is still on
+// screen, so we wait for the dismiss animation to land first.
+function waitForModalDismiss(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 350));
+}
+
 type VerifyPassword = (password: string) => Promise<CreateSessionResponse | null>;
 
 type Args = {
@@ -95,8 +103,15 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
             return;
           }
         }
+        // Close the password modal BEFORE the biometric system prompt — a
+        // visible RN Modal makes the iOS Face ID prompt fail (same reason the
+        // OTP path above closes its modal first). Wait for the dismiss
+        // animation, then enable; report any failure via toast since the modal
+        // is already gone.
+        setModalVisible(false);
+        await waitForModalDismiss();
         const error = await runEnable(password);
-        if (error) setModalError(error);
+        if (error) showErrorToast(error);
       } finally {
         setIsSubmitting(false);
       }
@@ -125,6 +140,7 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
         // make the Face ID prompt fail/cancel). runEnable persists the
         // credentials and reports its own, distinct error message.
         setPendingOtp(null);
+        await waitForModalDismiss();
         const error = await runEnable(password);
         if (error) showErrorToast(error);
       } finally {

@@ -12,11 +12,15 @@ import { RegisterFormField } from './register-form-field';
 
 type Props = {
   onValidSubmit: (values: RegisterPhysicalValues) => void;
+  initialValues?: RegisterPhysicalValues | null;
 };
 
-export function RegisterPhysicalForm({ onValidSubmit }: Props) {
+export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
   const { t } = useTranslation();
-  const { control, onSubmit, submitDisabled } = useRegisterPhysicalForm(onValidSubmit);
+  const { control, onSubmit, submitDisabled } = useRegisterPhysicalForm(
+    onValidSubmit,
+    initialValues,
+  );
 
   return (
     <View>

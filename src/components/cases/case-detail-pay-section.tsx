@@ -111,12 +111,13 @@ export function CaseDetailPaySection({
     return { destType: "EPS", appId, personId: person, amount: payValue };
   }, [caseId, personId, data, payValue]);
 
-  // A negative amount means there is nothing to collect (e.g. an overpaid or
-  // reversed debt): block payment and surface the negative value instead.
-  const isNegativeAmount = Number.isFinite(maxPayAmount) && maxPayAmount < 0;
+  // A zero or negative amount means there is nothing to collect (e.g. a fully
+  // paid, overpaid or reversed debt): block payment and surface the actual
+  // value instead of clamping it up to the 1-GEL minimum.
+  const isNonPayable = Number.isFinite(maxPayAmount) && maxPayAmount <= 0;
 
   // Reflect the editable amount in the pay button label.
-  const payButtonLabel = isNegativeAmount
+  const payButtonLabel = isNonPayable
     ? `${maxPayAmount}${currencySuffix ? ` ${currencySuffix}` : ""}`
     : payValue
       ? `${t("cases.detailPayButton")} · ${payValue}${
@@ -144,7 +145,7 @@ export function CaseDetailPaySection({
           onChangeText={handleAmountChange}
           onBlur={handleAmountBlur}
           keyboardType="numeric"
-          editable={!isPaying && !isNegativeAmount}
+          editable={!isPaying && !isNonPayable}
           placeholder={String(maxPayAmount)}
           accessibilityLabel={t("cases.detailPayAmountLabel")}
         />
@@ -152,10 +153,10 @@ export function CaseDetailPaySection({
       <Pressable
         style={[
           layout.payButton,
-          (isPaying || isNegativeAmount) && layout.payButtonDisabled,
+          (isPaying || isNonPayable) && layout.payButtonDisabled,
         ]}
         onPress={handlePay}
-        disabled={isPaying || isNegativeAmount}
+        disabled={isPaying || isNonPayable}
         accessibilityRole="button"
         accessibilityLabel={t("cases.detailPayButton")}
       >

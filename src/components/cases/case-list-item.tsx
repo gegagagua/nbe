@@ -38,6 +38,11 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
     item.finalRegistrationAt ?? item.inputDate,
   );
   const accentColor = item.status.colorCode || LoginPalette.primary;
+  // The category "number" (e.g. "03/3") comes from trType.prefix; the spec wants
+  // it shown next to the category name, matching the case-detail header.
+  const categoryLine = item.trType.prefix
+    ? `${item.trType.prefix} ${item.trType.name}`.trim()
+    : item.trType.name;
   const debt = debtSummary(item);
   const payAmount = parsePayAmount(item.debtAmountDisplay);
   const payPersonId = item.debtors[0]?.id;
@@ -78,7 +83,7 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
           <Text style={s.caseDate}>
             {t('cases.listRegistrationLine')}: {headlineDate}
           </Text>
-          <Text style={s.caseTitle}>{item.trType.name}</Text>
+          <Text style={s.caseTitle}>{categoryLine}</Text>
           {item.enforcementBureauName ? (
             <Text style={s.bureau}>{item.enforcementBureauName}</Text>
           ) : null}
