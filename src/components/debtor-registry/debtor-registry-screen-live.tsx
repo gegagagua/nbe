@@ -22,12 +22,13 @@ export function DebtorRegistryScreenLive({ displayName }: Props) {
 
   const handleSearch = useCallback(() => {
     const applicantPersonalNumber = draftApplicant.trim();
+    if (!applicantPersonalNumber) return;
     const requestedSubjectIdentifier = draftSubject.trim();
-    if (!applicantPersonalNumber || !requestedSubjectIdentifier) return;
-    setAppliedFilters({
-      applicantPersonalNumber,
-      requestedSubjectIdentifier,
-    });
+    setAppliedFilters(
+      requestedSubjectIdentifier
+        ? { applicantPersonalNumber, requestedSubjectIdentifier }
+        : { applicantPersonalNumber },
+    );
     setPage(0);
   }, [draftApplicant, draftSubject]);
 

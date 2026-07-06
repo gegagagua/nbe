@@ -11,12 +11,12 @@ const DEFAULT_PAGE_SIZE = 5;
 function buildSearchData(filters: DebtorSearchFilters) {
   const applicantIdnumber = filters.applicantPersonalNumber?.trim();
   const requestedPersonIdnumber = filters.requestedSubjectIdentifier?.trim();
-  if (!applicantIdnumber || !requestedPersonIdnumber) {
+  if (!applicantIdnumber) {
     return {};
   }
   return {
     applicantIdnumber,
-    requestedPersonIdnumber,
+    ...(requestedPersonIdnumber ? { requestedPersonIdnumber } : {}),
   };
 }
 
