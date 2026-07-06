@@ -1,26 +1,18 @@
-import { router } from 'expo-router';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
+import { useRegisterFlowContext } from '@/components/register/register-flow-context';
 import { RegisterSuccessStep } from '@/components/register/register-success-step';
-
-// How long the success confirmation stays up before redirecting to the auth page.
-const SUCCESS_REDIRECT_MS = 2000;
 
 export default function RegisterSuccessRoute() {
   const { t } = useTranslation();
+  const { verificationResult } = useRegisterFlowContext();
 
-  // A freshly registered user has no session yet, so the auth page is the
-  // correct destination.
-  useEffect(() => {
-    const timer = setTimeout(() => router.replace('/'), SUCCESS_REDIRECT_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
+  // No auto-redirect here: the verification result is shown so the user can
+  // read it, then they continue to the auth page via the button on the step.
   return (
     <LoginScreenLayout title={t('login.registrationPageTitle')} contentAlign="top">
-      <RegisterSuccessStep />
+      <RegisterSuccessStep result={verificationResult} />
     </LoginScreenLayout>
   );
 }

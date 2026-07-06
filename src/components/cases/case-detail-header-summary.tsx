@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
 
 import {
   DebtorRegistryLayout,
@@ -8,10 +9,17 @@ import {
 } from '@/constants/debtor-registry';
 import type { CaseDetailData } from '@/types/case-detail-data';
 
+import { CaseDetailExtraInfoModal } from './case-detail-extra-info-modal';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
+
+/** Category whose cases expose the agency "დამატებითი ინფორმაცია" details. */
+const ADMIN_FINE_PREFIX = '08/1';
 
 export function CaseDetailHeaderSummary({ data }: { data: CaseDetailData }) {
   const { t } = useTranslation();
+  const [extraInfoOpen, setExtraInfoOpen] = useState(false);
+  const showDetails = data.categoryPrefix === ADMIN_FINE_PREFIX;
+
   return (
     <View style={s.headerBlock}>
       <View style={s.bureauRow}>
@@ -30,8 +38,28 @@ export function CaseDetailHeaderSummary({ data }: { data: CaseDetailData }) {
             </View>
           ))}
         </View>
-        <Text style={s.categoryRight}>{data.categoryRight}</Text>
+        <View style={s.headerRightCol}>
+          <Text style={s.categoryRight}>{data.categoryRight}</Text>
+          {showDetails ? (
+            <Pressable
+              style={s.detailsBtn}
+              onPress={() => setExtraInfoOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('cases.detail.detailsButtonA11y')}
+            >
+              <Text style={s.detailsBtnText}>
+                {t('cases.detail.detailsButton')}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
+      {showDetails ? (
+        <CaseDetailExtraInfoModal
+          visible={extraInfoOpen}
+          onClose={() => setExtraInfoOpen(false)}
+        />
+      ) : null}
     </View>
   );
 }

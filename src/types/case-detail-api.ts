@@ -194,17 +194,37 @@ export type EpsSsaPerson = {
 };
 
 export type EpsSsaRequest = {
-  id: number;
-  person: EpsSsaPerson | null;
-  address: string | null;
-  phone: string | null;
+  id?: number;
+  // The service returns the identity fields flat on the row. `person` is kept
+  // as a fallback for services that nest them instead.
+  person?: EpsSsaPerson | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  idnumber?: string | null;
+  address?: string | null;
+  phone?: string | null;
   sent: boolean | null;
   active: boolean | null;
   lastCheckDate: string | null;
-  underProverty: boolean | null;
+  underPoverty?: boolean | null;
+  underProverty?: boolean | null;
 };
 
 export type EpsSsaRequestsEnvelope = { data: EpsSsaRequest[] };
+
+// ── Case "დამატებითი ინფორმაცია" / agency fine details ─────────────────────────
+// Optional, agency-specific key/value details for a fine (08/1). The exact
+// service path and item shape are not yet wired — `label`/`value` are the
+// working assumption; `key`/`name` are accepted as label fallbacks. Revisit
+// once the real endpoint + a sample response are available.
+export type EpsCaseExtraInfoItem = {
+  label?: string | null;
+  key?: string | null;
+  name?: string | null;
+  value?: string | null;
+};
+
+export type EpsCaseExtraInfoEnvelope = { data: EpsCaseExtraInfoItem[] };
 
 // ── NAPR landreg (საჯარო რეესტრი) ──────────────────────────────────────────────
 // POST /napr-portal/v1/landreg/infos/by-app-id        — my.gov.ge requests sent.

@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 
 import { checkVerification, createPortalUser, verifyPhoneOtp } from "@/api/users";
+import type { CheckVerificationResult } from "@/types/users";
 import i18n from "@/i18n/i18n";
 import { mapRegisterError } from "@/lib/map-register-error";
 import { normalizeGeorgianPhone } from "@/lib/phone";
@@ -41,6 +42,8 @@ export function useRegisterFlow() {
   const [verificationUrl, setVerificationUrl] = useState<string | null>(null);
   const [verificationId, setVerificationId] = useState<number | null>(null);
   const [isCheckingVerification, setIsCheckingVerification] = useState(false);
+  const [verificationResult, setVerificationResult] =
+    useState<CheckVerificationResult | null>(null);
 
   const handleFormSubmit = useCallback(
     (values: RegisterPhysicalValues) => {
@@ -84,10 +87,11 @@ export function useRegisterFlow() {
     if (isCheckingVerification || verificationId === null) return;
     setIsCheckingVerification(true);
     checkVerification(verificationId)
-      .then(() => {
+      .then((result) => {
         // Surface the backend-confirmed registration result, then advance to the
         // success step (replace so the completed Identomat step can't be swiped
-        // back into).
+        // back into). The result payload is shown on that step.
+        setVerificationResult(result);
         showSuccessToast(i18n.t("login.registerStatusSuccess"));
         router.replace("/register/success");
       })
@@ -110,6 +114,7 @@ export function useRegisterFlow() {
     isVerifyingOtp,
     isCheckingVerification,
     verificationUrl,
+    verificationResult,
     handleFormSubmit,
     handleOtpVerify,
     handleIdentomatDone,

@@ -2,7 +2,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import { WebView, type WebViewMessageEvent } from 'react-native-webview';
+import {
+  WebView,
+  type WebViewMessageEvent,
+  type WebViewNavigation,
+} from 'react-native-webview';
 
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { IDENTOMAT_DEMO_URL } from '@/constants/identomat';
@@ -39,6 +43,29 @@ true;`;
 // Terminal lifecycle events: once the widget finishes or closes itself we run
 // the verification check on the native side.
 const IDENTOMAT_TERMINAL_EVENTS = ['identomat_finished', 'identomat_close'];
+
+// After the user clears every KYC step, Identomat navigates the widget to a
+// result URL. The session URL is `widget.identomat.com/?session_token=…`, so
+// these markers only appear on the post-flow redirect — that URL change is our
+// signal that the flow is done (a complement to the postMessage bridge, which
+// can be unreliable across the widget's SPA navigation).
+const IDENTOMAT_COMPLETION_URL_MARKERS = [
+  'success',
+  'result',
+  'finished',
+  'finish',
+  'complete',
+  'done',
+  'error',
+];
+
+function isCompletionUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  return IDENTOMAT_COMPLETION_URL_MARKERS.some((marker) =>
+    lower.includes(marker),
+  );
+}
 
 /**
  * The Identomat widget falls back to a QR / copy-link card when the device has
@@ -173,6 +200,15 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
   // gets re-shown by a later onLoadStart and never hidden again — the spinner
   // hangs and the camera flow can't proceed (Android-only symptom).
   const hasLoadedRef = useRef(false);
+  // Both the postMessage bridge and the URL listener can report completion;
+  // this ensures the verification check runs exactly once.
+  const hasFinishedRef = useRef(false);
+
+  const finish = useCallback(() => {
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+    onSuccess?.();
+  }, [onSuccess]);
 
   const handleLoadStart = useCallback(() => {
     if (!hasLoadedRef.current) setLoading(true);
@@ -204,10 +240,20 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
   const handleMessage = useCallback(
     (event: WebViewMessageEvent) => {
       if (IDENTOMAT_TERMINAL_EVENTS.includes(event.nativeEvent.data)) {
-        onSuccess?.();
+        finish();
       }
     },
-    [onSuccess],
+    [finish],
+  );
+
+  // Watch the widget's URL: when it navigates to a result/success/error URL the
+  // user has been through every step, so we kick off the verification check.
+  const handleNavigationStateChange = useCallback(
+    (navState: WebViewNavigation) => {
+      if (navState.loading) return;
+      if (isCompletionUrl(navState.url)) finish();
+    },
+    [finish],
   );
 
   return (
@@ -238,6 +284,7 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
             onLoadEnd={finishLoading}
             onLoadProgress={handleLoadProgress}
             onMessage={handleMessage}
+            onNavigationStateChange={handleNavigationStateChange}
             javaScriptEnabled
             domStorageEnabled
             // Camera + mic access for Identomat's liveness / KYC capture.

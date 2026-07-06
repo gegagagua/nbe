@@ -2,6 +2,8 @@ import { ApiPaths, BASE_URL } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
 import type {
   CheckVerificationRequest,
+  CheckVerificationResponse,
+  CheckVerificationResult,
   CreatePortalUserRequest,
   CreatePortalUserResponse,
   GetUserResponse,
@@ -35,11 +37,17 @@ export async function verifyPhoneOtp(
   return { verificationUrl, verificationId };
 }
 
-export async function checkVerification(verificationId: number): Promise<void> {
+export async function checkVerification(
+  verificationId: number,
+): Promise<CheckVerificationResult> {
   const payload: CheckVerificationRequest = { verificationId };
-  await apiClient.post(`${BASE_URL}${ApiPaths.usersVerificationCheck}`, {
-    data: payload,
-  });
+  const response = await apiClient.post<CheckVerificationResponse>(
+    `${BASE_URL}${ApiPaths.usersVerificationCheck}`,
+    { data: payload },
+  );
+  // Prefer the enveloped `data`; fall back to the raw body so nothing is lost
+  // if the endpoint returns fields at the top level.
+  return response.data?.data ?? (response.data as CheckVerificationResult) ?? {};
 }
 
 export async function changePassword(

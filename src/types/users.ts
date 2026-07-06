@@ -33,6 +33,17 @@ export type CheckVerificationRequest = {
   verificationId: number;
 };
 
+/**
+ * The verification-check response shape is backend-owned and may evolve, so it
+ * is kept as an open record — the success screen renders whatever top-level
+ * fields it carries.
+ */
+export type CheckVerificationResult = Record<string, unknown>;
+
+export type CheckVerificationResponse = {
+  data?: CheckVerificationResult;
+};
+
 import type { UserAuthority } from '@/types/user-authority';
 
 export type UserAgencyBrief = {

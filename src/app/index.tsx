@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native';
 
 import { ForcedPasswordChangeModal } from '@/components/login/forced-password-change-modal';
-import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginForm } from '@/components/login/login-form';
+import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { PasswordResetNoticeModal } from '@/components/login/password-reset-notice-modal';
 import { LoginPalette } from '@/constants/login';
@@ -50,7 +50,7 @@ function LoginScreenContent() {
   }
 
   function handleIdentomatDemoPress() {
-    router.push('/identomat-demo?mode=guest');
+    // router.push('/identomat-demo?mode=guest');
   }
 
   function handleForgotPasswordPress() {

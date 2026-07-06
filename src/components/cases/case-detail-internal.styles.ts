@@ -35,7 +35,22 @@ export const caseDetailInternalStyles = StyleSheet.create({
     fontSize: DebtorRegistryTypography.small,
     color: DebtorRegistryPalette.textSecondary,
     textAlign: 'right',
+  },
+  headerRightCol: {
     flex: 1,
+    alignItems: 'flex-end',
+    gap: Space.small,
+  },
+  detailsBtn: {
+    backgroundColor: DebtorRegistryPalette.buttonBg,
+    paddingHorizontal: Space.medium,
+    paddingVertical: Space.extraSmall,
+    borderRadius: DebtorRegistryLayout.panelRadius,
+  },
+  detailsBtnText: {
+    fontSize: DebtorRegistryTypography.small,
+    fontWeight: '700',
+    color: DebtorRegistryPalette.buttonText,
   },
   tabRow: {
     flexDirection: 'row',

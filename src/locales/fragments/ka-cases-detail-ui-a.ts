@@ -40,4 +40,9 @@ export const kaCasesDetailUiA = {
   fileViewerCloseA11y: "ფაილის დახურვა",
   fileViewerShare: "გაზიარება",
   fileViewerShareA11y: "ფაილის გაზიარება ან გადმოწერა",
+  detailsButton: "დეტალები",
+  detailsButtonA11y: "დამატებითი ინფორმაციის ნახვა",
+  extraInfoTitle: "დამატებითი ინფორმაცია",
+  extraInfoEmpty: "დამატებითი ინფორმაცია ხელმისაწვდომი არ არის",
+  extraInfoCloseA11y: "დახურვა",
 } as const;

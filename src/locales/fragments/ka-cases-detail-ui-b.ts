@@ -23,6 +23,7 @@ export const kaCasesDetailUiB = {
   socialNo: 'არა',
   socialEmpty: 'ჩანაწერი ვერ მოიძებნა',
   regRequestsTitle: 'მოთხოვნები',
+  regColPerson: 'სახელი, გვარი, პირადი N (ორგანიზაციის კოდი)',
   regColCadCode: 'საკადასტრო კოდი',
   regColAddress: 'მისამართი',
   regColOwner: 'მესაკუთრე',

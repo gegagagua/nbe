@@ -33,6 +33,7 @@ export function useRegistrySearch(
         getLandregInfos(appId),
         getLandregRealEstates(appId),
       ]);
+      console.log("res getLandregInfos", infosRes, estatesRes);
       return {
         infos: mapLandregInfos(infosRes as EpsLandregInfosEnvelope),
         estates: mapLandregRealEstates(

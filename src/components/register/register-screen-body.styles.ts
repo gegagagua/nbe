@@ -52,6 +52,38 @@ export const registerScreenBodyStyles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
   },
+  resultList: {
+    alignSelf: 'stretch',
+    borderWidth: 1,
+    borderColor: LoginPalette.inputBorder,
+    borderRadius: Radius.small,
+    overflow: 'hidden',
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: Space.medium,
+    paddingVertical: Space.small,
+    paddingHorizontal: Space.medium,
+    borderBottomWidth: 1,
+    borderBottomColor: LoginPalette.inputBorder,
+  },
+  resultRowLast: {
+    borderBottomWidth: 0,
+  },
+  resultLabel: {
+    flex: 1,
+    fontSize: Typography.small,
+    color: LoginPalette.bodyText,
+  },
+  resultValue: {
+    flex: 1,
+    fontSize: Typography.small,
+    fontWeight: '700',
+    color: LoginPalette.titleText,
+    textAlign: 'right',
+  },
   successButton: {
     backgroundColor: LoginPalette.primary,
     borderRadius: Radius.small,

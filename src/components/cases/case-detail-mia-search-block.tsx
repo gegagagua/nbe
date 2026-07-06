@@ -1,13 +1,13 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import type { AppPersonType } from '@/api/mia';
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import { useMiaProperties } from '@/hooks/use-mia-properties';
 
-import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
+import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailMiaSearchBlock({
@@ -41,6 +41,9 @@ export function CaseDetailMiaSearchBlock({
                       <Text style={[s.primaryText, tb.kvValueText]}>{row.nameObject}</Text>
                       {row.plateOrExtra ? (
                         <Text style={[s.mutedText, tb.kvValueText]}>{row.plateOrExtra}</Text>
+                      ) : null}
+                      {row.address ? (
+                        <Text style={[s.mutedText, tb.kvValueText]}>{row.address}</Text>
                       ) : null}
                     </>
                   ),

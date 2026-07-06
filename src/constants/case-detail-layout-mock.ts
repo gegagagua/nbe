@@ -6,6 +6,7 @@ export const CASE_DETAIL_LAYOUT_MOCK: CaseDetailData = {
   officialCaseNo: 'A26412496',
   bureauLines: ['თბილისის სააღსრულებო ბიურო', 'სამცხე-ჯავახეთის სააღსრულებო ბიურო'],
   categoryRight: '09/1 სისხლის სამართლის ჯარიმა ან/და გირაოს პირობების დარღვევა',
+  categoryPrefix: '09/1',
   creditors: [
     {
       party: {

@@ -42,6 +42,7 @@ export type CaseDetailProceedingFile = {
 export type CaseDetailSearchPropertyRow = {
   nameObject: string;
   plateOrExtra?: string;
+  address?: string;
   orderRef: string;
   orderAction: string;
   initiator: string;
@@ -178,10 +179,18 @@ export type CaseDetailContactBlock = {
   website: string;
 };
 
+/** One "label : value" row of the agency-provided "დამატებითი ინფორმაცია" modal. */
+export type CaseDetailExtraInfoRow = {
+  label: string;
+  value: string;
+};
+
 export type CaseDetailData = {
   officialCaseNo: string;
   bureauLines: string[];
   categoryRight: string;
+  /** trType prefix, e.g. "08/1" — drives the header "დეტალები" button. */
+  categoryPrefix: string;
   creditors: CaseDetailCreditorRow[];
   debtors: CaseDetailDebtorRow[];
   writRows: CaseDetailWritRow[];

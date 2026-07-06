@@ -5,6 +5,7 @@ import type {
   CaseDetailAuctionLot,
   CaseDetailData,
   CaseDetailDebtorRow,
+  CaseDetailExtraInfoRow,
   CaseDetailFundsPartyInfo,
   CaseDetailInstallment,
   CaseDetailInstallmentPayment,
@@ -21,6 +22,7 @@ import type {
 import type {
   EpsAppDetail,
   EpsAppDetailEnvelope,
+  EpsCaseExtraInfoEnvelope,
   EpsDemand,
   EpsDemandsEnvelope,
   EpsInstallment,
@@ -51,6 +53,7 @@ export type CaseDetailApplication = Pick<
   | "officialCaseNo"
   | "bureauLines"
   | "categoryRight"
+  | "categoryPrefix"
   | "creditors"
   | "debtors"
   | "writRows"
@@ -221,6 +224,7 @@ export function mapMiaProperties(
     return {
       nameObject: owner || object,
       plateOrExtra: owner ? object : "",
+      address: p.address?.trim() ?? "",
       orderRef: p.reqCode?.trim() ?? "",
       orderAction: p.propertySt?.name?.trim() ?? "",
       initiator: p.reqCreatedBy?.name?.trim() ?? "",
@@ -235,12 +239,14 @@ export function mapSsaRequests(
 ): CaseDetailSocialRow[] {
   return (env.data ?? []).map((r) => {
     const p = r.person;
-    // Prefer split first/last name when present, otherwise the pre-formatted
-    // `name` other EPS services send (covers legal entities too).
+    // Identity fields come flat on the row; fall back to a nested `person`
+    // object (and its pre-formatted `name`, covering legal entities) when the
+    // service nests them instead.
+    const firstName = r.firstName ?? p?.firstName ?? "";
+    const lastName = r.lastName ?? p?.lastName ?? "";
     const name =
-      `${p?.firstName ?? ""} ${p?.lastName ?? ""}`.trim() ||
-      (p?.name?.trim() ?? "");
-    const id = p?.idnumber?.trim() ?? "";
+      `${firstName} ${lastName}`.trim() || (p?.name?.trim() ?? "");
+    const id = (r.idnumber ?? p?.idnumber)?.trim() ?? "";
     const addressPhone = [r.address?.trim(), r.phone?.trim()]
       .filter(Boolean)
       .join(", ");
@@ -251,9 +257,25 @@ export function mapSsaRequests(
       sent: r.sent === true,
       receivedAt: formatDateTime(r.lastCheckDate),
       active: r.active === true,
-      vulnerable: r.underProverty === true,
+      vulnerable: r.underPoverty === true || r.underProverty === true,
     };
   });
+}
+
+/**
+ * Map the agency "დამატებითი ინფორმაცია" payload into label/value rows. The
+ * service is optional and may return nothing; blank rows are dropped so the
+ * modal can fall back to its empty state.
+ */
+export function mapCaseExtraInfo(
+  env: EpsCaseExtraInfoEnvelope,
+): CaseDetailExtraInfoRow[] {
+  return (env.data ?? [])
+    .map((r) => ({
+      label: (r.label ?? r.key ?? r.name ?? "").trim(),
+      value: (r.value ?? "").trim(),
+    }))
+    .filter((row) => row.label.length > 0 || row.value.length > 0);
 }
 
 /** Map landreg/infos (my.gov.ge requests) into NAPR registry request rows. */
@@ -499,6 +521,7 @@ export function mapCaseDetail(
     officialCaseNo: app.regnumber?.trim() ?? "",
     bureauLines: (app.agencies ?? []).map((a) => a.name),
     categoryRight: categoryLabel(app),
+    categoryPrefix: app.trType?.prefix?.trim() ?? "",
     creditors: persons.filter(isCreditor).map(mapCreditorRow),
     debtors: persons.filter(isDebtor).map(mapDebtorRow),
     writRows: mapWritRows(app),

@@ -40,4 +40,9 @@ export const enCasesDetailUiA = {
   fileViewerCloseA11y: 'Close file',
   fileViewerShare: 'Share',
   fileViewerShareA11y: 'Share or download file',
+  detailsButton: 'Details',
+  detailsButtonA11y: 'View additional information',
+  extraInfoTitle: 'Additional information',
+  extraInfoEmpty: 'No additional information available',
+  extraInfoCloseA11y: 'Close',
 } as const;

@@ -1,12 +1,12 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import { useRegistrySearch } from '@/hooks/use-registry-search';
 
-import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
+import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailRegistryTables() {
@@ -37,7 +37,7 @@ export function CaseDetailRegistryTables() {
             <CaseDetailKvCard
               key={`${row.person}-${i}`}
               rows={[
-                { label: t('cases.detail.socialColPerson'), value: row.person },
+                { label: t('cases.detail.regColPerson'), value: row.person },
                 {
                   label: t('cases.detail.socialColSent'),
                   value: row.sent ? '✓' : t('cases.detail.emptyTable'),
@@ -72,6 +72,10 @@ export function CaseDetailRegistryTables() {
                 {
                   label: t('cases.detail.regColOwner'),
                   value: row.ownerName || t('cases.detail.emptyTable'),
+                },
+                {
+                  label: t('cases.detail.regColAddress'),
+                  value: row.address || t('cases.detail.emptyTable'),
                 },
                 {
                   label: t('cases.detail.socialColStatus'),

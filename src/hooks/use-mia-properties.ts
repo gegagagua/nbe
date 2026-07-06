@@ -27,6 +27,7 @@ export function useMiaProperties(
     enabled: canQuery,
     queryFn: async () => {
       const res = await getMiaProperties(appId, appPersonTypeId);
+      console.log("res getMiaProperties", res);
       return mapMiaProperties(res as EpsMiaPropertiesEnvelope);
     },
   });

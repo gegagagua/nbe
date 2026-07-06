@@ -1,12 +1,12 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { DebtorRegistryPalette } from '@/constants/debtor-registry';
 import { useSsaRequests } from '@/hooks/use-ssa-requests';
 
-import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
+import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailSocialTable() {
@@ -14,6 +14,7 @@ export function CaseDetailSocialTable() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? '');
   const { data: rows, isLoading } = useSsaRequests(appId);
+  // console.log('rows', rows);
   return (
     <View>
       {isLoading ? (

@@ -23,6 +23,7 @@ export const enCasesDetailUiB = {
   socialNo: 'No',
   socialEmpty: 'No records found',
   regRequestsTitle: 'Requests',
+  regColPerson: 'Name, personal N (organization code)',
   regColCadCode: 'Cadastral code',
   regColAddress: 'Address',
   regColOwner: 'Owner',
