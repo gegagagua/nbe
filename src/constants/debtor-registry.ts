@@ -26,6 +26,7 @@ export const DebtorRegistryLayout = {
   inputHeight: 36,
   modalRadius: 12,
   filterPanelIconSize: FontSize.xxl,
+  filterPanelToggleSize: 36,
   extractCtaMinHeight: 52,
   paymentMethodIconWrap: 40,
   paymentMethodRadioRing: 22,

@@ -10,18 +10,14 @@ import { debtorRegistrySearchFormStyles as s } from './debtor-registry-search-fo
 
 type Props = {
   applicantValue: string;
-  subjectValue: string;
   onApplicantChange: (v: string) => void;
-  onSubjectChange: (v: string) => void;
   onSearch: () => void;
   onClear: () => void;
 };
 
 export function DebtorRegistrySearchForm({
   applicantValue,
-  subjectValue,
   onApplicantChange,
-  onSubjectChange,
   onSearch,
   onClear,
 }: Props) {
