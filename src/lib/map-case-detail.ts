@@ -1,16 +1,41 @@
 import type {
+  EpsAppDetail,
+  EpsAppDetailEnvelope,
+  EpsCaseExtraInfoEnvelope,
+  EpsDemand,
+  EpsDemandsEnvelope,
+  EpsEnregActiveSharesEnvelope,
+  EpsEnregInfosEnvelope,
+  EpsInstallment,
+  EpsInstallmentPaymentsEnvelope,
+  EpsLandregInfosEnvelope,
+  EpsLandregRealEstatesEnvelope,
+  EpsLotsEnvelope,
+  EpsMiaInfoRestsEnvelope,
+  EpsMiaPropertiesEnvelope,
+  EpsMoneyDataItem,
+  EpsMoneyEnvelope,
+  EpsMoneyPerson,
+  EpsMoneyRow,
+  EpsPerson,
+  EpsPersonsEnvelope,
+  EpsSsaRequestsEnvelope,
+  EpsStatusesEnvelope,
+  EpsStatusFilesEnvelope,
+} from "@/types/case-detail-api";
+import type {
+  CaseDetailAuctionLot,
+  CaseDetailBusinessNotifyRow,
+  CaseDetailBusinessShareRow,
   CaseDetailClaimRow,
   CaseDetailCreditorParty,
   CaseDetailCreditorRow,
-  CaseDetailAuctionLot,
   CaseDetailData,
   CaseDetailDebtorRow,
   CaseDetailExtraInfoRow,
   CaseDetailFundsPartyInfo,
   CaseDetailInstallment,
   CaseDetailInstallmentPayment,
-  CaseDetailBusinessNotifyRow,
-  CaseDetailBusinessShareRow,
   CaseDetailProceedingFile,
   CaseDetailProceedingStatus,
   CaseDetailRegistryEstateRow,
@@ -19,30 +44,6 @@ import type {
   CaseDetailSocialRow,
   CaseDetailWritRow,
 } from "@/types/case-detail-data";
-import type {
-  EpsAppDetail,
-  EpsAppDetailEnvelope,
-  EpsCaseExtraInfoEnvelope,
-  EpsDemand,
-  EpsDemandsEnvelope,
-  EpsInstallment,
-  EpsInstallmentPaymentsEnvelope,
-  EpsLotsEnvelope,
-  EpsMiaPropertiesEnvelope,
-  EpsSsaRequestsEnvelope,
-  EpsLandregInfosEnvelope,
-  EpsLandregRealEstatesEnvelope,
-  EpsEnregInfosEnvelope,
-  EpsEnregActiveSharesEnvelope,
-  EpsMoneyDataItem,
-  EpsMoneyEnvelope,
-  EpsMoneyPerson,
-  EpsMoneyRow,
-  EpsPerson,
-  EpsPersonsEnvelope,
-  EpsStatusesEnvelope,
-  EpsStatusFilesEnvelope,
-} from "@/types/case-detail-api";
 
 /**
  * Fields of CaseDetailData backed by real endpoints: the header + application
@@ -218,7 +219,11 @@ export function mapMiaProperties(
     // identity (the backend pre-formats name + personal N in `person.name`) as
     // the primary line, with the object — plate, type, model — beneath it.
     const owner = p.person?.name?.trim() ?? "";
-    const object = [p.govNumber?.trim(), p.propertyType?.name?.trim(), p.model?.trim()]
+    const object = [
+      p.govNumber?.trim(),
+      p.propertyType?.name?.trim(),
+      p.model?.trim(),
+    ]
       .filter(Boolean)
       .join(", ");
     return {
@@ -229,6 +234,28 @@ export function mapMiaProperties(
       orderAction: p.propertySt?.name?.trim() ?? "",
       initiator: p.reqCreatedBy?.name?.trim() ?? "",
       initiatorWhen: formatDateTime(p.reqCreatedDate),
+    };
+  });
+}
+
+/** Map the info-rests/get-all response into MIA "found property" rows. */
+export function mapMiaInfoRests(
+  env: EpsMiaInfoRestsEnvelope,
+): CaseDetailSearchPropertyRow[] {
+  return (env.data ?? []).map((r) => {
+    // The person's identity leads, with the plate (when present) beneath it.
+    // `reqType` ("დაყადაღება / დაკავება") is the order action, and the
+    // initiator is `createdBy` / `createdDate`. This service carries no address.
+    const owner = r.person?.name?.trim() ?? "";
+    const plate = r.govNumber?.trim() ?? "";
+    return {
+      nameObject: owner || plate,
+      plateOrExtra: owner ? plate : "",
+      address: "",
+      orderRef: r.reqCode?.trim() ?? "",
+      orderAction: r.reqType?.name?.trim() ?? "",
+      initiator: r.createdBy?.name?.trim() ?? "",
+      initiatorWhen: formatDateTime(r.createdDate),
     };
   });
 }
@@ -244,8 +271,7 @@ export function mapSsaRequests(
     // service nests them instead.
     const firstName = r.firstName ?? p?.firstName ?? "";
     const lastName = r.lastName ?? p?.lastName ?? "";
-    const name =
-      `${firstName} ${lastName}`.trim() || (p?.name?.trim() ?? "");
+    const name = `${firstName} ${lastName}`.trim() || (p?.name?.trim() ?? "");
     const id = (r.idnumber ?? p?.idnumber)?.trim() ?? "";
     const addressPhone = [r.address?.trim(), r.phone?.trim()]
       .filter(Boolean)
@@ -285,6 +311,7 @@ export function mapLandregInfos(
   return (env.data ?? []).map((r) => ({
     person: r.person?.name?.trim() ?? "",
     sent: r.sent === 1,
+    address: r.address?.trim() ?? "",
     sentDate: formatDateTime(r.sendDate),
     found: (r.answer ?? 0) !== 0,
   }));
@@ -337,8 +364,7 @@ function installmentParty(inst: EpsInstallment): string {
   const d = (inst.debtors ?? [])[0];
   if (!d) return "";
   const name =
-    d.organization?.trim() ||
-    `${d.firstName ?? ""} ${d.lastName ?? ""}`.trim();
+    d.organization?.trim() || `${d.firstName ?? ""} ${d.lastName ?? ""}`.trim();
   const id = (d.idnubmer ?? d.idnumber ?? "").trim();
   const pay = d.payCode?.trim() ?? "";
   const tail = [id ? `(${id})` : "", pay].filter(Boolean).join(" - ");
@@ -396,8 +422,7 @@ function formatMoney(n: number | null, valuta: string): string {
 /** Identity line for a money-tab party, e.g. "შპს ბესო (448391801) - 1520574250". */
 function moneyPersonLine(p: EpsMoneyPerson): string {
   const name =
-    p.organization?.trim() ||
-    `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim();
+    p.organization?.trim() || `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim();
   const id = p.idnumber?.trim();
   const pay = p.payCode?.trim();
   const tail = [id ? `(${id})` : "", pay].filter(Boolean).join(" - ");

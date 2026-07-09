@@ -180,6 +180,24 @@ export type EpsMiaProperty = {
 
 export type EpsMiaPropertiesEnvelope = { data: EpsMiaProperty[] };
 
+// ── MIA info-rests (მოძიებული ქონება — endpoint name is misleading) ─────────────
+// POST /mia-portal/v1/info-rests/get-all — body { data: { appId, appPersonTypeId } }.
+// Despite the "rests" name this feeds the found-property block. Unlike
+// properties/get-all it carries NO address/model/propertySt: the request type
+// (`reqType`, e.g. "დაყადაღება / დაკავება") is the action, and the initiator is
+// `createdBy`/`createdDate` (not `reqCreatedBy`/`reqCreatedDate`).
+export type EpsMiaInfoRest = {
+  id: number;
+  person: EpsMiaRef | null;
+  reqType: (EpsMiaRef & { active?: boolean }) | null;
+  govNumber: string | null;
+  reqCode: string | null;
+  createdBy: EpsMiaRef | null;
+  createdDate: string | null;
+};
+
+export type EpsMiaInfoRestsEnvelope = { data: EpsMiaInfoRest[] };
+
 // ── SSA requests (სოციალური მომსახურების სააგენტო) ──────────────────────────────
 // POST /ssa-portal/v1/ssa-requests/by-app-id — body { data: { appId } }.
 export type EpsSsaPerson = {
@@ -236,6 +254,7 @@ export type EpsLandregInfo = {
   person: EpsLandregPerson | null;
   sent: number | null; // 1 = sent
   sendDate: string | null;
+  address: string | null;
   answer: number | null; // 0 = not found, anything else = found
 };
 

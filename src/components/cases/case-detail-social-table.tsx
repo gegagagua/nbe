@@ -14,7 +14,7 @@ export function CaseDetailSocialTable() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? '');
   const { data: rows, isLoading } = useSsaRequests(appId);
-  // console.log('rows', rows);
+
   return (
     <View>
       {isLoading ? (
