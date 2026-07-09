@@ -13,8 +13,8 @@ import {
 } from '@/schemas/guest-fine-check.schema';
 import type { GuestPersonType } from '@/types/guest-fine';
 
-import { CaseGuestFineResult } from './case-guest-fine-result';
 import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
+import { CaseGuestFineResult } from './case-guest-fine-result';
 import { CaseGuestPersonTabs } from './case-guest-person-tabs';
 
 export function CaseGuestFinePanel() {

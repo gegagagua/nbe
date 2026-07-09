@@ -50,20 +50,15 @@ export async function getAppDemands(appId: number | string, userId: number | str
 
 /**
  * Agency "დამატებითი ინფორმაცია" (fine details) for an 08/1 case.
- *
- * TODO(endpoint): the service path/host/body for these details is not yet
- * known — the info is agency-specific and optionally provided. Until it is
- * wired, this returns an empty envelope so the modal renders its empty state
- * instead of firing a 404. When the endpoint is available, replace the stub
- * with the real request, e.g.:
- *   const response = await apiClient.get(ApiPaths.appExtraInfo(appId), {
- *     headers: epsUserHeaders(userId),
- *   });
- *   return response.data;
+ * GET /external-apps-portal/v1/apps/{appId}/dtls (through the gateway). The
+ * details are agency-specific and optional, so the response may be empty.
  */
 export async function getCaseExtraInfo(
-  _appId: number | string,
-  _userId: number | string,
-): Promise<{ data: [] }> {
-  return { data: [] };
+  appId: number | string,
+  userId: number | string,
+) {
+  const response = await apiClient.get(ApiPaths.appExtraInfo(appId), {
+    headers: epsUserHeaders(userId),
+  });
+  return response.data;
 }

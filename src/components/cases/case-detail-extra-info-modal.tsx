@@ -89,7 +89,7 @@ export function CaseDetailExtraInfoModal({ visible, onClose }: Props) {
                 <CaseDetailKvCard
                   rows={rows.map((row) => ({
                     label: row.label || t("cases.detail.emptyTable"),
-                    value: row.value || t("cases.detail.emptyTable"),
+                    value: row.value,
                   }))}
                 />
               </ScrollView>

@@ -231,18 +231,37 @@ export type EpsSsaRequest = {
 export type EpsSsaRequestsEnvelope = { data: EpsSsaRequest[] };
 
 // ── Case "დამატებითი ინფორმაცია" / agency fine details ─────────────────────────
-// Optional, agency-specific key/value details for a fine (08/1). The exact
-// service path and item shape are not yet wired — `label`/`value` are the
-// working assumption; `key`/`name` are accepted as label fallbacks. Revisit
-// once the real endpoint + a sample response are available.
-export type EpsCaseExtraInfoItem = {
-  label?: string | null;
-  key?: string | null;
+// GET /external-apps-portal/v1/apps/{appId}/dtls — optional, agency-specific
+// key/value details for a fine (08/1). The details are dynamic: the backend
+// owns both the labels and the values, so the mapper renders whatever comes
+// back. The real EPS shape is an array of { key, value } where `key` is an
+// object carrying the Georgian label in `description` (English id in `name`).
+// Older/tolerated shapes: a { label|key|name, value } item with a plain string
+// key, or a plain { key: value } object — either bare or wrapped in { data }.
+export type EpsCaseExtraInfoValue = string | number | boolean | null;
+
+/** Descriptor for a detail row; `description` is the Georgian label to show. */
+export type EpsCaseExtraInfoKey = {
+  id?: number;
   name?: string | null;
-  value?: string | null;
+  description?: string | null;
+  active?: boolean;
 };
 
-export type EpsCaseExtraInfoEnvelope = { data: EpsCaseExtraInfoItem[] };
+export type EpsCaseExtraInfoItem = {
+  label?: string | null;
+  key?: EpsCaseExtraInfoKey | string | null;
+  name?: string | null;
+  value?: EpsCaseExtraInfoValue;
+};
+
+export type EpsCaseExtraInfoData =
+  | EpsCaseExtraInfoItem[]
+  | Record<string, EpsCaseExtraInfoValue>;
+
+export type EpsCaseExtraInfoEnvelope =
+  | { data?: EpsCaseExtraInfoData | null }
+  | EpsCaseExtraInfoData;
 
 // ── NAPR landreg (საჯარო რეესტრი) ──────────────────────────────────────────────
 // POST /napr-portal/v1/landreg/infos/by-app-id        — my.gov.ge requests sent.

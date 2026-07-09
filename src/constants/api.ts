@@ -37,6 +37,8 @@ export const ApiPaths = {
   appStatusFiles: "/eps-portal/v1/app/statuses/get-files",
   appPersons: (appId: number | string) => `/eps-portal/v1/persons/app/${appId}`,
   appDemands: (appId: number | string) => `/eps-portal/v1/demands/app/${appId}`,
+  appExtraInfo: (appId: number | string) =>
+    `/external-apps-portal/v1/apps/${appId}/dtls`,
   // EPS-FILE-API (separate host) — stream/download a status file.
   epsFilesStream: "/file-portal/v1/eps/files/stream",
 

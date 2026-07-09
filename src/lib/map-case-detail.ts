@@ -1,7 +1,10 @@
 import type {
   EpsAppDetail,
   EpsAppDetailEnvelope,
+  EpsCaseExtraInfoData,
   EpsCaseExtraInfoEnvelope,
+  EpsCaseExtraInfoItem,
+  EpsCaseExtraInfoValue,
   EpsDemand,
   EpsDemandsEnvelope,
   EpsEnregActiveSharesEnvelope,
@@ -290,18 +293,41 @@ export function mapSsaRequests(
 
 /**
  * Map the agency "დამატებითი ინფორმაცია" payload into label/value rows. The
- * service is optional and may return nothing; blank rows are dropped so the
- * modal can fall back to its empty state.
+ * backend owns the labels + values, so this renders them dynamically. Accepts
+ * an array of { label|key|name, value } items or a plain { key: value } object,
+ * bare or wrapped in { data }. Labelled rows with a blank value are kept (the
+ * agency layout shows empty fields); fully-empty rows are dropped, and a
+ * missing/empty payload yields no rows so the modal shows its empty state.
  */
 export function mapCaseExtraInfo(
   env: EpsCaseExtraInfoEnvelope,
 ): CaseDetailExtraInfoRow[] {
-  return (env.data ?? [])
-    .map((r) => ({
-      label: (r.label ?? r.key ?? r.name ?? "").trim(),
-      value: (r.value ?? "").trim(),
-    }))
-    .filter((row) => row.label.length > 0 || row.value.length > 0);
+  const payload =
+    env && typeof env === "object" && !Array.isArray(env) && "data" in env
+      ? env.data
+      : (env as EpsCaseExtraInfoData);
+  if (!payload) return [];
+
+  const toStr = (v: EpsCaseExtraInfoValue | undefined) =>
+    v == null ? "" : typeof v === "string" ? v.trim() : String(v).trim();
+
+  // The real EPS shape sends `key` as an object; its `description` is the
+  // Georgian label to show (falling back to the English `name`). A plain-string
+  // key is still tolerated for the older shapes.
+  const keyLabel = (k: EpsCaseExtraInfoItem["key"]) =>
+    k == null ? undefined : typeof k === "string" ? k : (k.description ?? k.name);
+
+  const rows = Array.isArray(payload)
+    ? payload.map((r) => ({
+        label: toStr(r.label ?? keyLabel(r.key) ?? r.name),
+        value: toStr(r.value),
+      }))
+    : Object.entries(payload).map(([key, value]) => ({
+        label: key.trim(),
+        value: toStr(value),
+      }));
+
+  return rows.filter((row) => row.label.length > 0 || row.value.length > 0);
 }
 
 /** Map landreg/infos (my.gov.ge requests) into NAPR registry request rows. */

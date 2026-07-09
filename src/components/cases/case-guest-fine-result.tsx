@@ -18,6 +18,7 @@ type Props = {
 };
 
 export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
+  console.log("result", result);
   const { t } = useTranslation();
   const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } =
     useGuestFinePayment({ onSynced: onPaymentSynced });
