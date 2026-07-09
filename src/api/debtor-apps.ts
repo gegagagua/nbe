@@ -1,19 +1,24 @@
-import { ApiConfig } from '@/constants/api';
+import { ApiPaths } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 import type {
+  DebtorAppSearchData,
+  DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
+  GetDebtorAppResponse,
   SearchDebtorAppsResponse,
 } from '@/types/debtor-registry';
 
 const DEFAULT_PAGE_SIZE = 5;
 
-function buildSearchData(filters: DebtorSearchFilters): Record<string, string> {
-  const applicantIdnumber = filters.applicantPersonalNumber?.trim();
-  if (!applicantIdnumber) {
+// The entered personal number filters on the requested person (`person.idnumber`),
+// per the backend `AppSearchPortal` schema. An empty filter returns all records.
+function buildSearchData(filters: DebtorSearchFilters): DebtorAppSearchData {
+  const idnumber = filters.applicantPersonalNumber?.trim();
+  if (!idnumber) {
     return {};
   }
-  return { applicantIdnumber };
+  return { person: { idnumber } };
 }
 
 export async function searchDebtorApps(
@@ -26,8 +31,18 @@ export async function searchDebtorApps(
   };
 
   const response = await apiClient.post<SearchDebtorAppsResponse>(
-    ApiConfig.debtorSearchPath,
+    ApiPaths.debtorAppsSearch,
     payload,
   );
   return response.data;
+}
+
+export async function getDebtorApp(
+  id: number | string,
+): Promise<DebtorRegistryApplicationDetail> {
+  const response = await apiClient.get<GetDebtorAppResponse>(
+    ApiPaths.debtorAppById(id),
+  );
+  console.log('[DEBTOR DETAIL]', JSON.stringify(response.data.data, null, 2));
+  return response.data.data;
 }

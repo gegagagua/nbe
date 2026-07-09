@@ -2,8 +2,19 @@ export type DebtorSearchFilters = {
   applicantPersonalNumber?: string;
 };
 
+// Matches the backend `AppSearchPortal` schema. Search filters on the requested
+// person (person.*) or the case registration number — there is no applicant filter.
+export type DebtorAppSearchData = {
+  regnumber?: string;
+  person?: {
+    payCode?: string;
+    idnumber?: string;
+    name?: string;
+  };
+};
+
 export type DebtorSearchRequest = {
-  data: Record<string, string>;
+  data: DebtorAppSearchData;
   page: {
     number: number;
     size: number;
@@ -64,6 +75,33 @@ export type DebtorRegistryPage = {
 export type SearchDebtorAppsResponse = {
   data: DebtorRegistryApplication[];
   page: DebtorRegistryPage;
+};
+
+// Matches the backend `AppResp` schema (GET /apps/{id}). Unlike the search rows
+// it has no `applicants`, but carries `payableAmount` (დავალიანება).
+export type DebtorRegistryApplicationDetail = {
+  id: number;
+  createdDate: string | null;
+  createdBy?: DebtorRegistryUser | null;
+  modifiedDate?: string | null;
+  modifiedBy?: DebtorRegistryUser | null;
+  inputDate?: string | null;
+  statusDate: string | null;
+  trType?: DebtorRegistryStatus | null;
+  status?: DebtorRegistryStatus | null;
+  caseNo: string | null;
+  caseDate: string | null;
+  caseAppId?: number | null;
+  caseTrackId?: number | null;
+  statusUser?: DebtorRegistryUser | null;
+  regnumber: string | null;
+  regDate: string | null;
+  payableAmount?: number | null;
+  requestedPerson?: DebtorRegistryPerson | null;
+};
+
+export type GetDebtorAppResponse = {
+  data: DebtorRegistryApplicationDetail;
 };
 
 export type DebtorRegistryFiltersProps = {

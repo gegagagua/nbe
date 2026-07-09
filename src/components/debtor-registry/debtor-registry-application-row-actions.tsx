@@ -1,23 +1,44 @@
 import type { TFunction } from 'i18next';
 import { Linking, Pressable, Share, Text, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
 import { LoginInteraction } from '@/constants/login';
-import type { DebtorRegistryApplication } from '@/types/debtor-registry';
+import { ToastLayout } from '@/constants/toast';
+import type {
+  DebtorRegistryApplicant,
+  DebtorRegistryStatus,
+  DebtorRegistryUser,
+} from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
 import { debtorRegistryApplicationRowActionsStyles as s } from './debtor-registry-application-row-actions.styles';
 
-function resolveDocumentUrl(app: DebtorRegistryApplication): string {
+// Structural subset shared by the list row (`DebtorRegistryApplication`) and the
+// detail response (`DebtorRegistryApplicationDetail`), so the actions work on both.
+type DebtorAppActionsSource = {
+  id: number;
+  regnumber: string | null;
+  regDate: string | null;
+  statusDate?: string | null;
+  status?: DebtorRegistryStatus | null;
+  trType?: DebtorRegistryStatus | null;
+  caseNo: string | null;
+  caseDate: string | null;
+  createdBy?: DebtorRegistryUser | null;
+  applicants?: DebtorRegistryApplicant[];
+  downloadUrl?: string | null;
+};
+
+function resolveDocumentUrl(app: DebtorAppActionsSource): string {
   return app.downloadUrl?.trim() ?? '';
 }
 
-function shareSummary(app: DebtorRegistryApplication, t: TFunction) {
+function shareSummary(app: DebtorAppActionsSource, t: TFunction) {
   const appNo = app.regnumber?.trim() && app.regnumber.trim().length > 0 ? app.regnumber.trim() : `#${app.id}`;
   const applicant = app.applicants?.[0];
-  const applicantLine = applicant?.name
-    ? `${t('debtors.listApplicantPrefix')} ${applicant.name}${applicant.idnumber ? ` (${applicant.idnumber})` : ''}`
-    : `${t('debtors.listApplicantPrefix')} ${app.createdBy.name}`;
+  const applicantName = applicant?.name ?? app.createdBy?.name ?? '—';
+  const applicantLine = `${t('debtors.listApplicantPrefix')} ${applicantName}${applicant?.idnumber ? ` (${applicant.idnumber})` : ''}`;
   const applicantAddr = applicant?.address?.trim() ? applicant.address.trim() : '';
   const caseNo = app.caseNo ?? '—';
   const caseDate = formatEnforcementDateTime(app.caseDate);
@@ -38,13 +59,21 @@ function shareSummary(app: DebtorRegistryApplication, t: TFunction) {
     .join('\n');
 }
 
-type Props = { app: DebtorRegistryApplication };
+type Props = { app: DebtorAppActionsSource };
 
 export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
   const documentUrl = resolveDocumentUrl(app);
   const onDownload = () => {
-    if (!documentUrl) return;
+    if (!documentUrl) {
+      Toast.show({
+        type: 'info',
+        text1: t('debtors.listDownloadNoUrlToast'),
+        visibilityTime: ToastLayout.visibilityMs,
+        position: 'top',
+      });
+      return;
+    }
     Linking.openURL(documentUrl);
   };
   const onShare = () => {
