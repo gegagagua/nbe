@@ -36,6 +36,23 @@ export type DebtorRegistryPerson = {
   idnumber: string | null;
   personName: string | null;
   address: string | null;
+  addInfo?: string | null;
+  note?: string | null;
+};
+
+// Body for PUT /apps/{id} — edit the requested person of an application.
+export type UpdateDebtorAppRequestedPerson = {
+  personName: string;
+  idnumber: string;
+  address?: string | null;
+  addInfo?: string | null;
+  note?: string | null;
+};
+
+export type UpdateDebtorAppRequest = {
+  data: {
+    requestedPerson: UpdateDebtorAppRequestedPerson;
+  };
 };
 
 export type DebtorRegistryApplicant = {

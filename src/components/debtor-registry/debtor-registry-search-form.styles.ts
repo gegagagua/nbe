@@ -36,6 +36,10 @@ export const debtorRegistrySearchFormStyles = StyleSheet.create({
     fontWeight: '600',
     color: DebtorRegistryPalette.textSecondary,
   },
+  errorText: {
+    fontSize: DebtorRegistryTypography.small,
+    color: '#b42318',
+  },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',

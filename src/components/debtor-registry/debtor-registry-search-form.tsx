@@ -23,7 +23,29 @@ export function DebtorRegistrySearchForm({
 }: Props) {
   const { t } = useTranslation();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [idError, setIdError] = useState(false);
   const applicantFilled = applicantValue.trim().length > 0;
+
+  // Personal ID number is 11 digits; organization identification code is 9.
+  const isIdValid = (value: string) => /^\d{9}$|^\d{11}$/.test(value);
+
+  const handleChange = (v: string) => {
+    onApplicantChange(v.replace(/\D/g, ''));
+    if (idError) setIdError(false);
+  };
+
+  const handleSearch = () => {
+    if (!isIdValid(applicantValue.trim())) {
+      setIdError(true);
+      return;
+    }
+    onSearch();
+  };
+
+  const handleClear = () => {
+    setIdError(false);
+    onClear();
+  };
   return (
     <View style={s.panel}>
       <View style={s.titleRow}>
@@ -48,19 +70,23 @@ export function DebtorRegistrySearchForm({
             <Text style={s.label}>{t('debtors.searchSubjectIdLabel')}</Text>
             <CaseFilterField
               value={applicantValue}
-              onChangeText={onApplicantChange}
+              onChangeText={handleChange}
               placeholder={t('debtors.searchSubjectIdPlaceholder')}
+              keyboardType="number-pad"
             />
+            {idError ? (
+              <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
+            ) : null}
           </View>
           <View style={s.actions}>
             <Pressable
               style={[s.searchButton, !applicantFilled && s.searchButtonDisabled]}
-              onPress={onSearch}
+              onPress={handleSearch}
               disabled={!applicantFilled}
               accessibilityRole="button">
               <Text style={s.searchText}>{t('debtors.searchButton')}</Text>
             </Pressable>
-            <Pressable style={s.clearButton} onPress={onClear} accessibilityRole="button">
+            <Pressable style={s.clearButton} onPress={handleClear} accessibilityRole="button">
               <Text style={s.clearText}>{t('debtors.clearButton')}</Text>
             </Pressable>
           </View>

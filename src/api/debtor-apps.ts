@@ -7,6 +7,8 @@ import type {
   DebtorSearchRequest,
   GetDebtorAppResponse,
   SearchDebtorAppsResponse,
+  UpdateDebtorAppRequest,
+  UpdateDebtorAppRequestedPerson,
 } from '@/types/debtor-registry';
 
 const DEFAULT_PAGE_SIZE = 5;
@@ -46,4 +48,12 @@ export async function getDebtorApp(
   );
   console.log('[DEBTOR DETAIL]', JSON.stringify(response.data.data, null, 2));
   return response.data.data;
+}
+
+export async function updateDebtorApp(
+  id: number | string,
+  requestedPerson: UpdateDebtorAppRequestedPerson,
+): Promise<void> {
+  const payload: UpdateDebtorAppRequest = { data: { requestedPerson } };
+  await apiClient.put(ApiPaths.debtorAppById(id), payload);
 }
