@@ -41,6 +41,7 @@ export const kaDebtors = {
   listRowStatus: "სტატუსი: {{status}} | რეგ.თარიღი: {{regDate}}",
   listRowCase: "საქმის #: {{caseNo}} | საქმის თარიღი: {{caseDate}}",
   listRowTr: "ტრანზაქცია: {{trType}} | #{{id}}",
+  listRegDateLabel: "რეგ. თარიღი",
   listRequestedSubject: "პირი რომელზეც მოთხოვნილია ამონაწერი: {{name}}",
   listRequestedSubjectId: "პირადი ნომერი/საიდენტიფიკაციო კოდი: {{identifier}}",
   extractRequestButton: "ამონაწერის მოთხოვნა",

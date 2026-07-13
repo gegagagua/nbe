@@ -1,5 +1,5 @@
 export type DebtorSearchFilters = {
-  applicantPersonalNumber?: string;
+  requestedPersonIdNumber?: string;
 };
 
 // Matches the backend `AppSearchPortal` schema. Search filters on the requested
@@ -60,6 +60,7 @@ export type DebtorRegistryApplication = {
   caseNo: string | null;
   caseDate: string | null;
   caseTrackId: number | null;
+  payableAmount?: number | null;
   requestedPerson?: DebtorRegistryPerson | null;
   applicants?: DebtorRegistryApplicant[];
   downloadUrl?: string | null;

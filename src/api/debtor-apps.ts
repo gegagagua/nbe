@@ -11,10 +11,11 @@ import type {
 
 const DEFAULT_PAGE_SIZE = 5;
 
-// The entered personal number filters on the requested person (`person.idnumber`),
-// per the backend `AppSearchPortal` schema. An empty filter returns all records.
+// `person.idnumber` is the only person filter in the backend `AppSearchPortal`
+// schema. NOTE: live tests show it currently matches the APPLICANT's idnumber,
+// not requestedPerson's — backend needs to add a requested-person filter.
 function buildSearchData(filters: DebtorSearchFilters): DebtorAppSearchData {
-  const idnumber = filters.applicantPersonalNumber?.trim();
+  const idnumber = filters.requestedPersonIdNumber?.trim();
   if (!idnumber) {
     return {};
   }

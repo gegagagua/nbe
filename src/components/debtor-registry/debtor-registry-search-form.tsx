@@ -45,11 +45,11 @@ export function DebtorRegistrySearchForm({
       {isPanelOpen ? (
         <>
           <View style={s.wrap}>
-            <Text style={s.label}>{t('debtors.searchApplicantPnLabel')}</Text>
+            <Text style={s.label}>{t('debtors.searchSubjectIdLabel')}</Text>
             <CaseFilterField
               value={applicantValue}
               onChangeText={onApplicantChange}
-              placeholder={t('debtors.searchApplicantPnPlaceholder')}
+              placeholder={t('debtors.searchSubjectIdPlaceholder')}
             />
           </View>
           <View style={s.actions}>

@@ -41,6 +41,7 @@ export const enDebtors = {
   listRowStatus: 'Status: {{status}} | Reg. date: {{regDate}}',
   listRowCase: 'Case #: {{caseNo}} | Case date: {{caseDate}}',
   listRowTr: 'Transaction: {{trType}} | #{{id}}',
+  listRegDateLabel: 'Reg. date',
   listRequestedSubject: 'Person for whom the extract is requested: {{name}}',
   listRequestedSubjectId: 'Personal ID number / identification code: {{identifier}}',
   extractRequestButton: 'Extract Request',
