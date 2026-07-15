@@ -22,6 +22,8 @@ type DetailParams = {
   applicantName?: string;
   applicantId?: string;
   payCode?: string;
+  applicantPhone?: string;
+  applicantAddress?: string;
 };
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -35,7 +37,8 @@ function Field({ label, value }: { label: string; value: string }) {
 
 export function DebtorAppDetailScreen() {
   const { t } = useTranslation();
-  const { id, applicantName, applicantId, payCode } = useLocalSearchParams<DetailParams>();
+  const { id, applicantName, applicantId, payCode, applicantPhone, applicantAddress } =
+    useLocalSearchParams<DetailParams>();
   const appId = Number(id);
   const query = useDebtorApp(Number.isFinite(appId) ? appId : null);
   const app = query.data;
@@ -107,6 +110,23 @@ export function DebtorAppDetailScreen() {
                 <View style={s.sectionCard}>
                   <Text style={s.sectionTitle}>{t('debtors.detailExtractSection')}</Text>
                   <DebtorRegistryApplicationRowActions app={app} />
+                  <Pressable
+                    style={da.fullBtn}
+                    accessibilityRole="button"
+                    onPress={() =>
+                      router.push({
+                        pathname: '/debtors/extract-request',
+                        params: {
+                          id: String(appId),
+                          applicantName: applicantName ?? '',
+                          applicantId: applicantId ?? '',
+                          applicantPhone: applicantPhone ?? '',
+                          applicantAddress: applicantAddress ?? '',
+                        },
+                      })
+                    }>
+                    <Text style={da.payLabel}>{t('debtors.extractRequestButton')}</Text>
+                  </Pressable>
                 </View>
               ) : (
                 // Visual-only actions for recorded (not-yet-registered) cases.

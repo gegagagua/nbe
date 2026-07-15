@@ -55,6 +55,17 @@ export type UpdateDebtorAppRequest = {
   };
 };
 
+// POST /apps — create an application. Same body as the edit endpoint, and it
+// returns the created case (`AppResp`). `applicants` isn't in the documented
+// schema, so it's optional here — that's where `payCode` would live if present.
+export type CreatedDebtorApp = DebtorRegistryApplicationDetail & {
+  applicants?: DebtorRegistryApplicant[];
+};
+
+export type CreateDebtorAppResponse = {
+  data: CreatedDebtorApp;
+};
+
 export type DebtorRegistryApplicant = {
   id: number;
   appId: number;
@@ -62,6 +73,7 @@ export type DebtorRegistryApplicant = {
   idnumber: string | null;
   phone: string | null;
   address: string | null;
+  payCode?: string | null;
 };
 
 export type DebtorRegistryApplication = {

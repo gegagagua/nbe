@@ -1,6 +1,8 @@
 import { ApiPaths } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 import type {
+  CreateDebtorAppResponse,
+  CreatedDebtorApp,
   DebtorAppSearchData,
   DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
@@ -56,4 +58,15 @@ export async function updateDebtorApp(
 ): Promise<void> {
   const payload: UpdateDebtorAppRequest = { data: { requestedPerson } };
   await apiClient.put(ApiPaths.debtorAppById(id), payload);
+}
+
+export async function createDebtorApp(
+  requestedPerson: UpdateDebtorAppRequestedPerson,
+): Promise<CreatedDebtorApp> {
+  const payload: UpdateDebtorAppRequest = { data: { requestedPerson } };
+  const response = await apiClient.post<CreateDebtorAppResponse>(
+    ApiPaths.debtorApps,
+    payload,
+  );
+  return response.data.data;
 }

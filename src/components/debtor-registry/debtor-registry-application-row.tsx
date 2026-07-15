@@ -38,7 +38,19 @@ export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
         accessibilityRole="button"
         accessibilityHint={t('debtors.detailsOpenHint')}
         onPress={() =>
-          router.push({ pathname: '/debtors/[id]', params: { id: String(app.id) } })
+          // Applicant details only exist in the search response, not in
+          // GET /apps/{id} — hand them to the detail screen via params.
+          router.push({
+            pathname: '/debtors/[id]',
+            params: {
+              id: String(app.id),
+              applicantName,
+              applicantId: applicantId ?? '',
+              payCode: applicant?.payCode ?? '',
+              applicantPhone: applicant?.phone ?? '',
+              applicantAddress: applicant?.address ?? '',
+            },
+          })
         }>
         <View style={[s.card, { borderLeftColor: LoginPalette.primary }]}>
           <Text style={s.caseNumber}>

@@ -41,6 +41,7 @@ export const ApiPaths = {
   epsFilesStream: "/file-portal/v1/eps/files/stream",
 
   // EPS-DEBTOR-API — debtor registry applications (gateway maps `debtor-portal` → debtor-api `/portal`)
+  debtorApps: "/debtor-portal/v1/apps",
   debtorAppsSearch: "/debtor-portal/v1/apps/search",
   debtorAppById: (id: number | string) => `/debtor-portal/v1/apps/${id}`,
 
