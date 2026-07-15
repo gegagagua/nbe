@@ -79,6 +79,7 @@ export const kaCases = {
     documentNumberPlaceholder: "ქვითრის ან ოქმის ნომერი",
     checkButton: "დავალიანების შემოწმება",
     personNameLabel: "სახელი",
+    detailsTitle: "დამატებითი ინფორმაცია",
     debtAmountLabel: "დავალიანების ოდენობა",
     notFound: "დავალიანება არ ფიქსირდება",
     checkError: "დავალიანების შემოწმება ვერ მოხერხდა. სცადეთ თავიდან.",

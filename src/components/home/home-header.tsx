@@ -1,7 +1,9 @@
+import Logo from "@/assets/images/logo.png";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 import { LocaleToggle } from "@/components/i18n/locale-toggle";
 import { UnreadCountBadge } from "@/components/ui/unread-count-badge";
@@ -43,13 +45,15 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
         accessibilityHint={t("home.headerLogoGoHomeA11yHint")}
         onPress={() => router.navigate("/dashboard")}
       >
-        <Text style={homeHeaderStyles.logoGeo} numberOfLines={2}>
-          {t("home.headerLogoGeo")}
-        </Text>
-        <View style={homeHeaderStyles.logoDivider} />
-        <Text style={homeHeaderStyles.logoEn} numberOfLines={2}>
-          {t("home.headerLogoEn")}
-        </Text>
+        <Image
+          source={Logo}
+          style={homeHeaderStyles.logoImage}
+          contentFit="contain"
+          cachePolicy="memory-disk"
+          priority="high"
+          transition={0}
+          accessibilityLabel={t("home.headerLogoA11yLabel")}
+        />
       </Pressable>
       <View style={homeHeaderStyles.actions}>
         <LocaleToggle />

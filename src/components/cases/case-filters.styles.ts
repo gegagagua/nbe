@@ -93,6 +93,7 @@ export const caseFiltersStyles = StyleSheet.create({
   clearButton: {
     width: DebtorRegistryLayout.inputHeight,
     height: DebtorRegistryLayout.inputHeight,
+    marginRight: Spacing.two,
     borderWidth: 1,
     borderColor: DebtorRegistryPalette.inputBorder,
     borderRadius: DebtorRegistryLayout.buttonRadius,

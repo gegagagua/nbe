@@ -16,6 +16,7 @@ import { Layout } from "@/constants/layout";
 import { LoginPalette } from "@/constants/login";
 import { Space } from "@/constants/theme";
 import { useCaseExtraInfo } from "@/hooks/use-case-extra-info";
+import type { CaseDetailExtraInfoRow } from "@/types/case-detail-data";
 
 import { CaseDetailKvCard } from "./case-detail-kv-card";
 import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
@@ -28,18 +29,24 @@ type Props = {
   onClose: () => void;
 };
 
+type ViewProps = Props & {
+  rows: CaseDetailExtraInfoRow[] | undefined;
+  isLoading: boolean;
+};
+
 /**
- * "დამატებითი ინფორმაცია" modal — agency-provided fine details for an 08/1 case.
- * Self-fetches off the `id` route param; only queries while open. The details
- * are optional, so an empty payload renders the empty-state message.
+ * Presentational "დამატებითი ინფორმაცია" modal. Given already-resolved detail
+ * rows, it renders the loading / empty / list states. Shared by the logged-in
+ * case screen (self-fetch wrapper below) and the guest fine check screen, which
+ * already holds the rows in hand.
  */
-export function CaseDetailExtraInfoModal({ visible, onClose }: Props) {
+export function CaseDetailExtraInfoModalView({
+  visible,
+  onClose,
+  rows,
+  isLoading,
+}: ViewProps) {
   const { t } = useTranslation();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const appId = Array.isArray(id) ? id[0] : (id ?? "");
-  const { data: rows, isLoading } = useCaseExtraInfo(appId, {
-    enabled: visible,
-  });
 
   return (
     <Modal
@@ -98,6 +105,28 @@ export function CaseDetailExtraInfoModal({ visible, onClose }: Props) {
         </View>
       </View>
     </Modal>
+  );
+}
+
+/**
+ * "დამატებითი ინფორმაცია" modal — agency-provided fine details for an 08/1 case.
+ * Self-fetches off the `id` route param; only queries while open. The details
+ * are optional, so an empty payload renders the empty-state message.
+ */
+export function CaseDetailExtraInfoModal({ visible, onClose }: Props) {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const appId = Array.isArray(id) ? id[0] : (id ?? "");
+  const { data: rows, isLoading } = useCaseExtraInfo(appId, {
+    enabled: visible,
+  });
+
+  return (
+    <CaseDetailExtraInfoModalView
+      visible={visible}
+      onClose={onClose}
+      rows={rows}
+      isLoading={isLoading}
+    />
   );
 }
 

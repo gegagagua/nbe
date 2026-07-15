@@ -22,7 +22,7 @@ export const homeNativeTabsStyles = StyleSheet.create({
   },
   tabItem: {
     marginHorizontal: Spacing.one,
-    borderRadius: HomeTabsLayout.tabBarRadius,
+    borderRadius: 20,
     overflow: "hidden",
   },
 });

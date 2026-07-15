@@ -1,3 +1,4 @@
+import { mapCaseExtraInfo } from '@/lib/map-case-detail';
 import type {
   GuestFineCheckResult,
   PaymentInfoItem,
@@ -25,8 +26,10 @@ function normalizePaymentInfoItems(data: unknown): PaymentInfoItem[] {
 function mapPaymentInfoItem(item: PaymentInfoItem): GuestFineCheckResult {
   const amount = item.amount;
   const personName = item.person?.name?.trim();
+  const personIdnumber = item.person?.idnumber?.trim();
   const appId = item.appId;
   const personId = item.person?.personId;
+  const details = item.appDtls?.length ? mapCaseExtraInfo(item.appDtls) : undefined;
   const paymentContext =
     appId != null && personId != null && amount != null
       ? {
@@ -44,10 +47,12 @@ function mapPaymentInfoItem(item: PaymentInfoItem): GuestFineCheckResult {
   return {
     found: true,
     personName: personName || undefined,
+    personIdnumber: personIdnumber || undefined,
     amount: amount != null ? formatGelAmount(amount) : undefined,
     currency: 'GEL',
     paymentUrl: null,
     paymentContext,
+    details,
   };
 }
 

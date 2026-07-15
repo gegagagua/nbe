@@ -39,7 +39,7 @@ export default function AppTabsLayout() {
         tabBarItemStyle: [
           homeNativeTabsStyles.tabItem,
           {
-            borderRadius: 12,
+            borderRadius: 20,
             paddingHorizontal: 8,
             paddingVertical: 4,
           },

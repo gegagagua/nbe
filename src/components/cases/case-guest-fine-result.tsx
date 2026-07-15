@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
@@ -8,6 +8,8 @@ import { useGuestFinePayment } from '@/hooks/use-guest-fine-payment';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { GuestFineCheckResult } from '@/types/guest-fine';
 
+import { CaseDetailExtraInfoModalView } from './case-detail-extra-info-modal';
+import { caseDetailInternalStyles as cd } from './case-detail-internal.styles';
 import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
 
 type Props = {
@@ -18,8 +20,8 @@ type Props = {
 };
 
 export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
-  console.log("result", result);
   const { t } = useTranslation();
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const { paymentUrl, closePayment, openPaymentUrl, startPayment, isPaying } =
     useGuestFinePayment({ onSynced: onPaymentSynced });
 
@@ -102,6 +104,22 @@ export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
             <Text style={s.resultValue}>{result.personName}</Text>
           </>
         ) : null}
+        {result.personIdnumber ? (
+          <>
+            <Text style={s.resultLabel}>{t('cases.personalIdNumberLabel')}</Text>
+            <Text style={s.resultMeta}>{result.personIdnumber}</Text>
+          </>
+        ) : null}
+        {result.details && result.details.length > 0 ? (
+          <Pressable
+            style={[cd.detailsBtn, s.detailsButton]}
+            onPress={() => setDetailsOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('cases.detail.detailsButtonA11y')}
+          >
+            <Text style={cd.detailsBtnText}>{t('cases.detail.detailsButton')}</Text>
+          </Pressable>
+        ) : null}
         {result.amount ? (
           <>
             <Text style={s.resultLabel}>{t('cases.guestFine.debtAmountLabel')}</Text>
@@ -130,6 +148,12 @@ export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
           disabled={isPaying}
         />
       </View>
+      <CaseDetailExtraInfoModalView
+        visible={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+        rows={result.details}
+        isLoading={false}
+      />
       <PaymentWebViewModal
         visible={paymentUrl != null}
         url={paymentUrl}
