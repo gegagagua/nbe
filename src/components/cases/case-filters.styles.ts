@@ -76,36 +76,4 @@ export const caseFiltersStyles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.one,
   },
-  actions: {
-    marginTop: Spacing.one,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  searchButton: {
-    flex: 1,
-    height: DebtorRegistryLayout.inputHeight,
-    borderRadius: DebtorRegistryLayout.buttonRadius,
-    backgroundColor: DebtorRegistryPalette.buttonBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  clearButton: {
-    width: DebtorRegistryLayout.inputHeight,
-    height: DebtorRegistryLayout.inputHeight,
-    borderWidth: 1,
-    borderColor: DebtorRegistryPalette.inputBorder,
-    borderRadius: DebtorRegistryLayout.buttonRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: DebtorRegistryPalette.inputBg,
-  },
-  searchText: {
-    color: DebtorRegistryPalette.buttonText,
-    fontWeight: '700',
-  },
-  clearText: {
-    color: DebtorRegistryPalette.textPrimary,
-    fontWeight: '700',
-  },
 });

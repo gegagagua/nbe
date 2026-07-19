@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { CaseFilterField } from '@/components/cases/case-filter-field';
+import { SearchActions } from '@/components/ui/search-actions';
 import { DebtorRegistryLayout, DebtorRegistryPalette } from '@/constants/debtor-registry';
 
 import { debtorRegistrySearchFormStyles as s } from './debtor-registry-search-form.styles';
@@ -78,18 +79,13 @@ export function DebtorRegistrySearchForm({
               <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
             ) : null}
           </View>
-          <View style={s.actions}>
-            <Pressable
-              style={[s.searchButton, !applicantFilled && s.searchButtonDisabled]}
-              onPress={handleSearch}
-              disabled={!applicantFilled}
-              accessibilityRole="button">
-              <Text style={s.searchText}>{t('debtors.searchButton')}</Text>
-            </Pressable>
-            <Pressable style={s.clearButton} onPress={handleClear} accessibilityRole="button">
-              <Text style={s.clearText}>{t('debtors.clearButton')}</Text>
-            </Pressable>
-          </View>
+          <SearchActions
+            searchLabel={t('debtors.searchButton')}
+            clearLabel={t('debtors.clearButton')}
+            onSearch={handleSearch}
+            onClear={handleClear}
+            searchDisabled={!applicantFilled}
+          />
         </>
       ) : null}
     </View>

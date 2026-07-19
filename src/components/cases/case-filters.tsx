@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
+import { SearchActions } from '@/components/ui/search-actions';
 import { DebtorRegistryLayout, DebtorRegistryPalette } from '@/constants/debtor-registry';
 import type { CaseFiltersProps, CaseSearchFilters } from '@/types/case-management';
 
@@ -37,14 +38,12 @@ export function CaseFilters({ values, onChange, onSearch, onClear }: CaseFilters
        <CaseParticipantSearch values={values} onChange={onChange} />
       )}
       {isPanelOpen && (
-        <View style={s.actions}>
-          <Pressable style={s.searchButton} onPress={onSearch}>
-            <Text style={s.searchText}>{t('cases.searchButton')}</Text>
-          </Pressable>
-          <Pressable style={s.clearButton} onPress={onClear}>
-            <Text style={s.clearText}>{t('cases.clearButton')}</Text>
-          </Pressable>
-        </View>
+        <SearchActions
+          searchLabel={t('cases.searchButton')}
+          clearLabel={t('cases.clearButton')}
+          onSearch={onSearch}
+          onClear={onClear}
+        />
       )}
     </View>
   );
