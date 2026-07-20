@@ -11,9 +11,12 @@ import { ToastLayout } from '@/constants/toast';
 import { useCreateDebtorApp } from '@/hooks/use-create-debtor-app';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
+import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
+import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-payment-options';
 
 import { debtorAppDetailActionsStyles as da } from './debtor-app-detail-actions.styles';
 import { DebtorAppEditModal } from './debtor-app-edit-modal';
+import { DebtorExtractPhasePayment } from './debtor-extract-phase-payment';
 import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 import { DebtorExtractSubheader } from './debtor-extract-subheader';
 
@@ -67,6 +70,13 @@ export function DebtorAppExtractRequestScreen() {
   const [subjectAddress, setSubjectAddress] = useState('');
   const [payCode, setPayCode] = useState<string | null>(null);
   const [editVisible, setEditVisible] = useState(false);
+
+  // Pay button switches the screen to the fee/methods phase (shared with the
+  // old extract flow); back returns to the form.
+  const [phase, setPhase] = useState<'form' | 'payment'>('form');
+  const [method, setMethod] = useState<DebtorExtractPaymentMethod>(
+    defaultDebtorExtractPaymentMethod,
+  );
 
   // Set once recorded — locks the form and switches editing over to PUT.
   const [createdAppId, setCreatedAppId] = useState<number | null>(null);
@@ -144,12 +154,22 @@ export function DebtorAppExtractRequestScreen() {
         <DebtorExtractSubheader
           title={t('debtors.extractRequestButton')}
           backA11y={t('debtors.extractBackA11y')}
-          onBack={() => router.back()}
+          onBack={() => (phase === 'payment' ? setPhase('form') : router.back())}
         />
         <ScrollView
           style={s.scroll}
           contentContainerStyle={s.content}
           keyboardShouldPersistTaps="handled">
+          {phase === 'payment' ? (
+            <DebtorExtractPhasePayment
+              selected={method}
+              onSelect={setMethod}
+              onPay={() => {
+                // TODO: wire the real payment once the backend endpoint exists.
+              }}
+            />
+          ) : (
+            <>
           <View style={s.sectionCard}>
             <Text style={s.sectionTitle}>{t('debtors.extractApplicantSection')}</Text>
             <Field label={t('debtors.extractApplicantPnLabel')} value={applicantId ?? ''} />
@@ -193,10 +213,12 @@ export function DebtorAppExtractRequestScreen() {
             <Pressable
               style={[da.btn, da.payBtn]}
               accessibilityRole="button"
-              onPress={() => {}}>
+              onPress={() => setPhase('payment')}>
               <Text style={da.payLabel}>{t('debtors.detailPayButton')}</Text>
             </Pressable>
           </View>
+            </>
+          )}
         </ScrollView>
       </AppSafeArea>
       <LoginFooter />
