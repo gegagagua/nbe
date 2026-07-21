@@ -85,6 +85,10 @@ export const debtorExtractRequestStyles = StyleSheet.create({
     minHeight: DebtorRegistryLayout.inputHeight * 2,
     textAlignVertical: 'top',
   },
+  inputDisabled: {
+    backgroundColor: DebtorRegistryPalette.panelBg,
+    color: DebtorRegistryPalette.textSecondary,
+  },
   primaryButtonWrap: {
     marginTop: Space.small,
   },

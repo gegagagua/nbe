@@ -36,40 +36,9 @@ export const debtorRegistrySearchFormStyles = StyleSheet.create({
     fontWeight: '600',
     color: DebtorRegistryPalette.textSecondary,
   },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Space.small,
-    marginTop: Space.extraSmall,
-  },
-  searchButton: {
-    flex: 1,
-    height: DebtorRegistryLayout.inputHeight,
-    borderRadius: DebtorRegistryLayout.buttonRadius,
-    backgroundColor: DebtorRegistryPalette.buttonBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchButtonDisabled: {
-    opacity: 0.5,
-  },
-  clearButton: {
-    width: DebtorRegistryLayout.inputHeight,
-    height: DebtorRegistryLayout.inputHeight,
-    borderWidth: 1,
-    borderColor: DebtorRegistryPalette.inputBorder,
-    borderRadius: DebtorRegistryLayout.buttonRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: DebtorRegistryPalette.inputBg,
-  },
-  searchText: {
-    color: DebtorRegistryPalette.buttonText,
-    fontWeight: '700',
-  },
-  clearText: {
-    color: DebtorRegistryPalette.textPrimary,
-    fontWeight: '700',
+  errorText: {
+    fontSize: DebtorRegistryTypography.small,
+    color: '#b42318',
   },
   panel: {
     borderRadius: DebtorRegistryLayout.panelRadius,

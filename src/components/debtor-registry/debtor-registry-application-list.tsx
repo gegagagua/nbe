@@ -21,8 +21,8 @@ export function DebtorRegistryApplicationList({
   }
   return (
     <View style={s.list}>
-      {items.map((app) => (
-        <DebtorRegistryApplicationRow key={app.id} app={app} />
+      {items.map((app, index) => (
+        <DebtorRegistryApplicationRow key={app.id} app={app} index={index} />
       ))}
     </View>
   );

@@ -1,63 +1,78 @@
-import type { TFunction } from 'i18next';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { AnimatedPressable } from '@/components/ui/animated-pressable';
+import { LoginPalette } from '@/constants/login';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
-import { DebtorRegistryApplicationRowActions } from './debtor-registry-application-row-actions';
 import { debtorRegistryApplicationRowStyles as s } from './debtor-registry-application-row.styles';
 
+// Registered case → registration number + preliminary number, e.g. "DE26714477 (2588690)".
+// Not yet registered (no regnumber) → preliminary number only, e.g. "2588691".
 function applicationNo(app: DebtorRegistryApplication) {
   const r = app.regnumber?.trim();
-  return r && r.length > 0 ? r : `#${app.id}`;
+  return r && r.length > 0 ? `${r} (${app.id})` : String(app.id);
 }
 
-function caseNoWithDePrefix(caseNo: string | null) {
-  const raw = caseNo?.trim();
-  if (!raw) return '—';
-  if (raw.toUpperCase().startsWith('DE')) return raw;
-  if (raw.startsWith('A')) return `DE${raw.slice(1)}`;
-  return `DE${raw}`;
-}
+type Props = {
+  app: DebtorRegistryApplication;
+  index?: number;
+};
 
-function applicantPrimaryLine(app: DebtorRegistryApplication, t: TFunction) {
-  const a = app.applicants?.[0];
-  if (a?.name) {
-    const tail = a.idnumber ? ` (${a.idnumber})` : '';
-    return `${t('debtors.listApplicantPrefix')} ${a.name}${tail}`;
-  }
-  return `${t('debtors.listApplicantPrefix')} ${app.createdBy.name}`;
-}
-
-export function DebtorRegistryApplicationRow({ app }: { app: DebtorRegistryApplication }) {
+export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
   const { t } = useTranslation();
-  const applicant = app.applicants?.[0];
-  const requested = app.requestedPerson;
-  const statusName = app.status?.name ?? '—';
   const regDate = formatEnforcementDateTime(app.regDate ?? app.statusDate);
-  const caseNo = caseNoWithDePrefix(app.caseNo);
-  const caseDate = formatEnforcementDateTime(app.caseDate);
-  const trName = app.trType?.name ?? '—';
-  const requestedName = requested?.personName ?? '—';
-  const requestedIdentifier = requested?.idnumber ?? '—';
+  const applicant = app.applicants?.[0];
+  const applicantName = applicant?.name ?? app.createdBy.name;
+  const applicantId = applicant?.idnumber;
+  const requested = app.requestedPerson;
+
   return (
-    <View style={s.card}>
-      <Text style={s.title}>{applicationNo(app)}</Text>
-      <Text style={s.meta}>
-        {t('debtors.listRowStatus', { status: statusName, regDate })}
-      </Text>
-      <Text style={s.meta}>{t('debtors.listRowCase', { caseNo, caseDate })}</Text>
-      <Text style={s.meta}>{t('debtors.listRowTr', { trType: trName, id: String(app.id) })}</Text>
-      <Text style={s.meta}>
-        {t('debtors.listRequestedSubject', {
-          name: requestedName,
-          identifier: requestedIdentifier,
-        })}
-      </Text>
-      <Text style={s.meta}>{applicantPrimaryLine(app, t)}</Text>
-      {applicant?.address ? <Text style={s.meta}>{applicant.address}</Text> : null}
-      <DebtorRegistryApplicationRowActions app={app} />
-    </View>
+    <Animated.View
+      entering={FadeInDown.duration(280).delay(Math.min(index, 8) * 40).springify().damping(18)}>
+      <AnimatedPressable
+        style={s.press}
+        accessibilityRole="button"
+        accessibilityHint={t('debtors.detailsOpenHint')}
+        onPress={() =>
+          // Applicant details only exist in the search response, not in
+          // GET /apps/{id} — hand them to the detail screen via params.
+          router.push({
+            pathname: '/debtors/[id]',
+            params: {
+              id: String(app.id),
+              applicantName,
+              applicantId: applicantId ?? '',
+              payCode: applicant?.payCode ?? '',
+              applicantPhone: applicant?.phone ?? '',
+              applicantAddress: applicant?.address ?? '',
+            },
+          })
+        }>
+        <View style={[s.card, { borderLeftColor: LoginPalette.primary }]}>
+          <Text style={s.caseNumber}>
+            {t('debtors.detailsLabelCaseNo')}: {applicationNo(app)}
+          </Text>
+          <Text style={s.caseDate}>
+            {t('debtors.listRegDateLabel')}: {regDate}
+          </Text>
+          <Text style={s.applicantLine}>
+            {t('debtors.listApplicantPrefix')} {applicantName}
+            {applicantId ? ` (${applicantId})` : ''}
+          </Text>
+          <View style={s.requestedBox}>
+            <Text style={s.requestedLabel}>
+              {t('debtors.listRequestedSubject', { name: requested?.personName ?? '—' })}
+            </Text>
+            <Text style={s.requestedLine}>
+              {t('debtors.listRequestedSubjectId', { identifier: requested?.idnumber ?? '—' })}
+            </Text>
+          </View>
+        </View>
+      </AnimatedPressable>
+    </Animated.View>
   );
 }

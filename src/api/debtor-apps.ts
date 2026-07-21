@@ -1,19 +1,29 @@
-import { ApiConfig } from '@/constants/api';
+import { ApiPaths } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 import type {
+  CreateDebtorAppResponse,
+  CreatedDebtorApp,
+  DebtorAppSearchData,
+  DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
+  GetDebtorAppResponse,
   SearchDebtorAppsResponse,
+  UpdateDebtorAppRequest,
+  UpdateDebtorAppRequestedPerson,
 } from '@/types/debtor-registry';
 
 const DEFAULT_PAGE_SIZE = 5;
 
-function buildSearchData(filters: DebtorSearchFilters): Record<string, string> {
-  const applicantIdnumber = filters.applicantPersonalNumber?.trim();
-  if (!applicantIdnumber) {
+// `person.idnumber` is the only person filter in the backend `AppSearchPortal`
+// schema. NOTE: live tests show it currently matches the APPLICANT's idnumber,
+// not requestedPerson's — backend needs to add a requested-person filter.
+function buildSearchData(filters: DebtorSearchFilters): DebtorAppSearchData {
+  const idnumber = filters.requestedPersonIdNumber?.trim();
+  if (!idnumber) {
     return {};
   }
-  return { applicantIdnumber };
+  return { person: { idnumber } };
 }
 
 export async function searchDebtorApps(
@@ -26,8 +36,37 @@ export async function searchDebtorApps(
   };
 
   const response = await apiClient.post<SearchDebtorAppsResponse>(
-    ApiConfig.debtorSearchPath,
+    ApiPaths.debtorAppsSearch,
     payload,
   );
   return response.data;
+}
+
+export async function getDebtorApp(
+  id: number | string,
+): Promise<DebtorRegistryApplicationDetail> {
+  const response = await apiClient.get<GetDebtorAppResponse>(
+    ApiPaths.debtorAppById(id),
+  );
+  console.log('[DEBTOR DETAIL]', JSON.stringify(response.data.data, null, 2));
+  return response.data.data;
+}
+
+export async function updateDebtorApp(
+  id: number | string,
+  requestedPerson: UpdateDebtorAppRequestedPerson,
+): Promise<void> {
+  const payload: UpdateDebtorAppRequest = { data: { requestedPerson } };
+  await apiClient.put(ApiPaths.debtorAppById(id), payload);
+}
+
+export async function createDebtorApp(
+  requestedPerson: UpdateDebtorAppRequestedPerson,
+): Promise<CreatedDebtorApp> {
+  const payload: UpdateDebtorAppRequest = { data: { requestedPerson } };
+  const response = await apiClient.post<CreateDebtorAppResponse>(
+    ApiPaths.debtorApps,
+    payload,
+  );
+  return response.data.data;
 }
