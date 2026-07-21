@@ -85,27 +85,34 @@ export function useRegisterFlow() {
 
   const handleIdentomatDone = useCallback(() => {
     if (isCheckingVerification || verificationId === null) return;
+    // Keep the Identomat screen's loading overlay (and disabled back button) up
+    // while we wait — the user can't leave until the check resolves.
     setIsCheckingVerification(true);
-    checkVerification(verificationId)
-      .then((result) => {
-        // Surface the backend-confirmed registration result, then advance to the
-        // success step (replace so the completed Identomat step can't be swiped
-        // back into). The result payload is shown on that step.
-        setVerificationResult(result);
-        showSuccessToast(i18n.t("login.registerStatusSuccess"));
-        router.replace("/register/success");
-      })
-      .catch((err: unknown) => {
-        // Registration could not be completed — tell the user explicitly and
-        // return to the form so they can retry instead of being stuck on the
-        // Identomat screen.
-        showErrorToast(i18n.t("login.registerStatusFailed"), err);
-        setUserId(null);
-        setVerificationUrl(null);
-        setVerificationId(null);
-        router.dismissAll();
-      })
-      .finally(() => setIsCheckingVerification(false));
+    // The backend needs a short while to finish processing the Identomat result,
+    // so give it a 10s head start before checking the verification status.
+    setTimeout(() => {
+      checkVerification(verificationId)
+        .then((result) => {
+          // Inspect what the verification-check endpoint returns.
+          console.log("checkVerification result:", result);
+          // Surface the backend-confirmed registration result, then send the
+          // user to the auth (login) page to sign in.
+          setVerificationResult(result);
+          showSuccessToast(i18n.t("login.registerStatusSuccess"));
+          router.replace("/");
+        })
+        .catch((err: unknown) => {
+          // Registration could not be completed — tell the user explicitly and
+          // return to the form so they can retry instead of being stuck on the
+          // Identomat screen.
+          showErrorToast(i18n.t("login.registerStatusFailed"), err);
+          setUserId(null);
+          setVerificationUrl(null);
+          setVerificationId(null);
+          router.dismissAll();
+        })
+        .finally(() => setIsCheckingVerification(false));
+    }, 10000);
   }, [isCheckingVerification, verificationId, router]);
 
   return {
