@@ -8,16 +8,12 @@ import type {
 
 const DEFAULT_PAGE_SIZE = 5;
 
-function buildSearchData(filters: DebtorSearchFilters) {
+function buildSearchData(filters: DebtorSearchFilters): Record<string, string> {
   const applicantIdnumber = filters.applicantPersonalNumber?.trim();
-  const requestedPersonIdnumber = filters.requestedSubjectIdentifier?.trim();
-  if (!applicantIdnumber || !requestedPersonIdnumber) {
+  if (!applicantIdnumber) {
     return {};
   }
-  return {
-    applicantIdnumber,
-    requestedPersonIdnumber,
-  };
+  return { applicantIdnumber };
 }
 
 export async function searchDebtorApps(

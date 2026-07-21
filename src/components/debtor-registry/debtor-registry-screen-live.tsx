@@ -10,7 +10,6 @@ type Props = { displayName: string };
 
 export function DebtorRegistryScreenLive({ displayName }: Props) {
   const [draftApplicant, setDraftApplicant] = useState('');
-  const [draftSubject, setDraftSubject] = useState('');
   const [appliedFilters, setAppliedFilters] = useState<DebtorSearchFilters>({});
   const [page, setPage] = useState(0);
 
@@ -22,18 +21,13 @@ export function DebtorRegistryScreenLive({ displayName }: Props) {
 
   const handleSearch = useCallback(() => {
     const applicantPersonalNumber = draftApplicant.trim();
-    const requestedSubjectIdentifier = draftSubject.trim();
-    if (!applicantPersonalNumber || !requestedSubjectIdentifier) return;
-    setAppliedFilters({
-      applicantPersonalNumber,
-      requestedSubjectIdentifier,
-    });
+    if (!applicantPersonalNumber) return;
+    setAppliedFilters({ applicantPersonalNumber });
     setPage(0);
-  }, [draftApplicant, draftSubject]);
+  }, [draftApplicant]);
 
   const handleClear = useCallback(() => {
     setDraftApplicant('');
-    setDraftSubject('');
     setAppliedFilters({});
     setPage(0);
   }, []);
@@ -47,9 +41,7 @@ export function DebtorRegistryScreenLive({ displayName }: Props) {
       searchForm={
         <DebtorRegistrySearchForm
           applicantValue={draftApplicant}
-          subjectValue={draftSubject}
           onApplicantChange={setDraftApplicant}
-          onSubjectChange={setDraftSubject}
           onSearch={handleSearch}
           onClear={handleClear}
         />

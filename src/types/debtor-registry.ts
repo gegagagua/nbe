@@ -1,6 +1,5 @@
 export type DebtorSearchFilters = {
   applicantPersonalNumber?: string;
-  requestedSubjectIdentifier?: string;
 };
 
 export type DebtorSearchRequest = {

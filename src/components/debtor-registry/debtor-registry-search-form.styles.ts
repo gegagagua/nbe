@@ -42,16 +42,34 @@ export const debtorRegistrySearchFormStyles = StyleSheet.create({
     gap: Space.small,
     marginTop: Space.extraSmall,
   },
-  clearPress: {
-    minWidth: 40,
+  searchButton: {
+    flex: 1,
+    height: DebtorRegistryLayout.inputHeight,
+    borderRadius: DebtorRegistryLayout.buttonRadius,
+    backgroundColor: DebtorRegistryPalette.buttonBg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Space.small,
+  },
+  searchButtonDisabled: {
+    opacity: 0.5,
+  },
+  clearButton: {
+    width: DebtorRegistryLayout.inputHeight,
+    height: DebtorRegistryLayout.inputHeight,
+    borderWidth: 1,
+    borderColor: DebtorRegistryPalette.inputBorder,
+    borderRadius: DebtorRegistryLayout.buttonRadius,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: DebtorRegistryPalette.inputBg,
+  },
+  searchText: {
+    color: DebtorRegistryPalette.buttonText,
+    fontWeight: '700',
   },
   clearText: {
-    fontSize: DebtorRegistryTypography.body,
+    color: DebtorRegistryPalette.textPrimary,
     fontWeight: '700',
-    color: DebtorRegistryPalette.textMuted,
   },
   panel: {
     borderRadius: DebtorRegistryLayout.panelRadius,
