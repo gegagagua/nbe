@@ -48,7 +48,6 @@ export async function getDebtorApp(
   const response = await apiClient.get<GetDebtorAppResponse>(
     ApiPaths.debtorAppById(id),
   );
-  console.log('[DEBTOR DETAIL]', JSON.stringify(response.data.data, null, 2));
   return response.data.data;
 }
 
