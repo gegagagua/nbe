@@ -12,7 +12,7 @@ export function DebtorRegistryExtractCta() {
         accessibilityRole="button"
         accessibilityLabel={t('debtors.extractRequestButton')}
         style={({ pressed }) => [s.press, pressed && s.pressPressed]}
-        onPress={() => router.push('/debtors/extract')}
+        onPress={() => router.push('/debtors/extract-request')}
       >
         <Text style={s.label}>{t('debtors.extractRequestButton')}</Text>
       </Pressable>
