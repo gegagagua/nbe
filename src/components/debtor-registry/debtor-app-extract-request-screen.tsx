@@ -106,10 +106,8 @@ export function DebtorAppExtractRequestScreen() {
         note: app?.requestedPerson?.note ?? undefined,
       },
       {
-        onSuccess: (created) => {
-          // TODO: the backend's create response has no payCode yet — placeholder
-          // until it's returned (or fetched separately).
-          setPayCode(created.applicants?.[0]?.payCode ?? 'default');
+        onSuccess: ({ app: created, payCode: fetchedPayCode }) => {
+          setPayCode(fetchedPayCode);
           setCreatedAppId(created.id);
         },
       },

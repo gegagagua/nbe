@@ -4,9 +4,11 @@ import type {
   CreateDebtorAppResponse,
   CreatedDebtorApp,
   DebtorAppSearchData,
+  DebtorRegistryApplicant,
   DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
+  GetDebtorAppPersonsResponse,
   GetDebtorAppResponse,
   SearchDebtorAppsResponse,
   UpdateDebtorAppRequest,
@@ -69,4 +71,13 @@ export async function createDebtorApp(
     payload,
   );
   return response.data.data;
+}
+
+export async function getDebtorAppPersons(
+  appId: number | string,
+): Promise<DebtorRegistryApplicant[]> {
+  const response = await apiClient.get<GetDebtorAppPersonsResponse>(
+    ApiPaths.debtorAppPersons(appId),
+  );
+  return response.data.data ?? [];
 }
