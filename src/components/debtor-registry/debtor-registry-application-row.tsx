@@ -47,8 +47,6 @@ export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
               applicantName,
               applicantId: applicantId ?? '',
               payCode: applicant?.payCode ?? '',
-              applicantPhone: applicant?.phone ?? '',
-              applicantAddress: applicant?.address ?? '',
             },
           })
         }>

@@ -12,8 +12,10 @@ export function useUpdateDebtorApp(appId: number | null) {
     mutationFn: (requestedPerson: UpdateDebtorAppRequestedPerson) =>
       updateDebtorApp(appId as number, requestedPerson),
     onSuccess: () => {
-      // Re-fetch the detail so the screen shows the freshly saved backend values.
+      // Re-fetch the detail so the screen shows the freshly saved backend values,
+      // and the list so the row reflects the edit when navigating back.
       queryClient.invalidateQueries({ queryKey: ['debtor-app', appId] });
+      queryClient.invalidateQueries({ queryKey: ['debtor-apps'] });
     },
     onError: (error) => {
       showErrorToast(i18n.t('debtors.detailEditError'), error);
