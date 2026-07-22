@@ -34,11 +34,27 @@ export type CheckVerificationRequest = {
 };
 
 /**
- * The verification-check response shape is backend-owned and may evolve, so it
- * is kept as an open record — the success screen renders whatever top-level
- * fields it carries.
+ * Identomat verification lifecycle reported by the backend. Only `APPROVED`
+ * means the registration is verified and complete; the rest are failure /
+ * in-progress states.
  */
-export type CheckVerificationResult = Record<string, unknown>;
+export type VerificationStatus =
+  | 'STARTED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'DATA_MISMATCH'
+  | 'CANCELLED';
+
+/**
+ * The verification-check response is backend-owned and may carry extra fields,
+ * so it stays an open record; the known fields it returns are `verificationId`
+ * and the outcome `status`.
+ */
+export type CheckVerificationResult = {
+  verificationId?: number;
+  status?: VerificationStatus;
+  [key: string]: unknown;
+};
 
 export type CheckVerificationResponse = {
   data?: CheckVerificationResult;
