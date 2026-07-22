@@ -80,7 +80,7 @@ export function DebtorAppDetailScreen() {
                   value={applicantName?.trim() || app.createdBy?.name || '—'}
                 />
                 <Field
-                  label={t('debtors.detailsLabelPersonalId')}
+                  label={t('debtors.extractApplicantPnLabel')}
                   value={applicantId?.trim() || '—'}
                 />
                 <Field label={t('debtors.detailLabelPayCode')} value={payCode?.trim() || '—'} />
@@ -118,7 +118,7 @@ export function DebtorAppDetailScreen() {
                     style={[da.btn, da.payBtn]}
                     accessibilityRole="button"
                     onPress={() => {}}>
-                    <Text style={da.payLabel}>{t('debtors.detailPayButton')}</Text>
+                    <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
                   </Pressable>
                 </View>
               )}

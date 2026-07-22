@@ -253,7 +253,7 @@ export function DebtorAppExtractRequestScreen() {
               style={[da.btn, da.payBtn]}
               accessibilityRole="button"
               onPress={() => setPhase('payment')}>
-              <Text style={da.payLabel}>{t('debtors.detailPayButton')}</Text>
+              <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
             </Pressable>
           </View>
             </>
