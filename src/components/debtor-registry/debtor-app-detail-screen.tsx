@@ -104,25 +104,7 @@ export function DebtorAppDetailScreen() {
                 <Field label={t('debtors.detailLabelReceiptNo')} value="—" />
               </View>
               {isRegistered ? (
-                <View style={s.sectionCard}>
-                  <Text style={s.sectionTitle}>{t('debtors.detailExtractSection')}</Text>
-                  <DebtorRegistryApplicationRowActions app={app} />
-                  <Pressable
-                    style={da.fullBtn}
-                    accessibilityRole="button"
-                    onPress={() =>
-                      router.push({
-                        pathname: '/debtors/extract-request',
-                        params: {
-                          id: String(appId),
-                          applicantName: applicantName ?? '',
-                          applicantId: applicantId ?? '',
-                        },
-                      })
-                    }>
-                    <Text style={da.payLabel}>{t('debtors.extractRequestButton')}</Text>
-                  </Pressable>
-                </View>
+                <DebtorRegistryApplicationRowActions app={app} />
               ) : (
                 // Visual-only actions for recorded (not-yet-registered) cases.
                 <View style={da.row}>

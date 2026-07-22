@@ -82,7 +82,6 @@ export const enDebtors = {
   detailLabelPaidAt: 'Payment time',
   detailLabelBank: 'Bank',
   detailLabelReceiptNo: 'Receipt number',
-  detailExtractSection: 'Extract',
   detailEditButton: 'Edit',
   detailPayButton: 'Pay',
   detailEditModalTitle: 'Edit requested person',
