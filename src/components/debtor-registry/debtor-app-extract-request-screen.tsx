@@ -8,9 +8,12 @@ import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { LoginPalette } from '@/constants/login';
 import { ToastLayout } from '@/constants/toast';
+import { getUserMe } from '@/api/users';
 import { useCreateDebtorApp } from '@/hooks/use-create-debtor-app';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
+import { isGuestMode } from '@/lib/guest-mode';
+import type { UserDetail } from '@/types/users';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
 import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-payment-options';
 
@@ -24,8 +27,6 @@ type Params = {
   id: string;
   applicantName?: string;
   applicantId?: string;
-  applicantPhone?: string;
-  applicantAddress?: string;
 };
 
 /** Keeps the input look throughout; omitting `onChangeText` renders it disabled
@@ -35,11 +36,13 @@ function Field({
   value,
   onChangeText,
   keyboardType,
+  maxLength,
 }: {
   label: string;
   value: string;
   onChangeText?: (v: string) => void;
   keyboardType?: 'number-pad' | 'phone-pad';
+  maxLength?: number;
 }) {
   const editable = Boolean(onChangeText);
   return (
@@ -50,6 +53,7 @@ function Field({
         onChangeText={onChangeText}
         editable={editable}
         keyboardType={keyboardType}
+        maxLength={maxLength}
         placeholderTextColor={LoginPalette.placeholderMuted}
         style={[s.input, !editable && s.inputDisabled]}
       />
@@ -59,11 +63,24 @@ function Field({
 
 export function DebtorAppExtractRequestScreen() {
   const { t } = useTranslation();
-  const { id, applicantName, applicantId, applicantPhone, applicantAddress } =
-    useLocalSearchParams<Params>();
+  const { id, applicantName, applicantId } = useLocalSearchParams<Params>();
   const appId = Number(id);
   const query = useDebtorApp(Number.isFinite(appId) ? appId : null);
   const app = query.data;
+
+  // Opened from the list there are no applicant params — fall back to the
+  // logged-in user's profile for the applicant block.
+  const [profile, setProfile] = useState<UserDetail | null>(null);
+  useEffect(() => {
+    if (isGuestMode()) return;
+    getUserMe()
+      .then(setProfile)
+      .catch(() => {});
+  }, []);
+
+  const profileName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ');
+  const applicantPnValue = applicantId?.trim() || profile?.idnumber || '';
+  const applicantNameValue = applicantName?.trim() || profileName;
 
   const [subjectId, setSubjectId] = useState('');
   const [subjectName, setSubjectName] = useState('');
@@ -82,6 +99,13 @@ export function DebtorAppExtractRequestScreen() {
   const [createdAppId, setCreatedAppId] = useState<number | null>(null);
   const isRecorded = createdAppId !== null;
 
+  // From the list this screen starts a brand-new application, so the
+  // requested-person fields are typed in directly; they lock after recording.
+  // Entered from an existing case, they stay locked (edit via the modal).
+  const cameFromCase = Number.isFinite(appId);
+  const subjectEditable = !cameFromCase && !isRecorded;
+  const [subjectIdError, setSubjectIdError] = useState(false);
+
   const createMutation = useCreateDebtorApp();
   const updateMutation = useUpdateDebtorApp(createdAppId);
 
@@ -97,6 +121,10 @@ export function DebtorAppExtractRequestScreen() {
   ]);
 
   const handleRecord = () => {
+    if (subjectEditable && !/^\d{9}$|^\d{11}$/.test(subjectId.trim())) {
+      setSubjectIdError(true);
+      return;
+    }
     createMutation.mutate(
       {
         personName: subjectName.trim(),
@@ -106,10 +134,8 @@ export function DebtorAppExtractRequestScreen() {
         note: app?.requestedPerson?.note ?? undefined,
       },
       {
-        onSuccess: (created) => {
-          // TODO: the backend's create response has no payCode yet — placeholder
-          // until it's returned (or fetched separately).
-          setPayCode(created.applicants?.[0]?.payCode ?? 'default');
+        onSuccess: ({ app: created, payCode: fetchedPayCode }) => {
+          setPayCode(fetchedPayCode);
           setCreatedAppId(created.id);
         },
       },
@@ -172,26 +198,39 @@ export function DebtorAppExtractRequestScreen() {
             <>
           <View style={s.sectionCard}>
             <Text style={s.sectionTitle}>{t('debtors.extractApplicantSection')}</Text>
-            <Field label={t('debtors.extractApplicantPnLabel')} value={applicantId ?? ''} />
+            <Field label={t('debtors.extractApplicantPnLabel')} value={applicantPnValue} />
             <Field
               label={t('debtors.extractApplicantNameLabel')}
-              value={applicantName ?? ''}
+              value={applicantNameValue}
             />
-            <Field
-              label={t('debtors.extractApplicantPhoneLabel')}
-              value={applicantPhone ?? ''}
-            />
-            <Field label={t('debtors.detailsLabelAddress')} value={applicantAddress ?? ''} />
             {payCode ? (
               <Field label={t('debtors.detailLabelPayCode')} value={payCode} />
             ) : null}
           </View>
           <View style={s.sectionCard}>
             <Text style={s.sectionTitle}>{t('debtors.extractSubjectSection')}</Text>
-            {/* Locked like the applicant block — changes go through the edit modal. */}
-            <Field label={t('debtors.extractSubjectIdLabel')} value={subjectId} />
-            <Field label={t('debtors.extractSubjectNameLabel')} value={subjectName} />
-            <Field label={t('debtors.detailsLabelAddress')} value={subjectAddress} />
+            <Field
+              label={t('debtors.extractSubjectIdLabel')}
+              value={subjectId}
+              onChangeText={
+                subjectEditable
+                  ? (v) => {
+                      setSubjectId(v.replace(/\D/g, ''));
+                      if (subjectIdError) setSubjectIdError(false);
+                    }
+                  : undefined
+              }
+              keyboardType="number-pad"
+              maxLength={11}
+            />
+            {subjectIdError ? (
+              <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
+            ) : null}
+            <Field
+              label={t('debtors.extractSubjectNameLabel')}
+              value={subjectName}
+              onChangeText={subjectEditable ? setSubjectName : undefined}
+            />
           </View>
           <Pressable
             style={[
@@ -214,7 +253,7 @@ export function DebtorAppExtractRequestScreen() {
               style={[da.btn, da.payBtn]}
               accessibilityRole="button"
               onPress={() => setPhase('payment')}>
-              <Text style={da.payLabel}>{t('debtors.detailPayButton')}</Text>
+              <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
             </Pressable>
           </View>
             </>

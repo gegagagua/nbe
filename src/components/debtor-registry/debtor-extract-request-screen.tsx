@@ -51,7 +51,7 @@ export function DebtorExtractRequestScreen() {
     <View style={s.page}>
       <AppSafeArea style={s.body}>
         <DebtorExtractSubheader
-          title={t('debtors.extractFlowTitle')}
+          title={t('debtors.extractRequestButton')}
           backA11y={t('debtors.extractBackA11y')}
           onBack={handleBack}
         />

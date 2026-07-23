@@ -5,6 +5,7 @@ import {
   DebtorRegistryPalette,
   DebtorRegistryTypography,
 } from '@/constants/debtor-registry';
+import { LoginPalette } from '@/constants/login';
 import { LineHeight, Space, Spacing } from '@/constants/theme';
 
 export const debtorExtractRequestStyles = StyleSheet.create({
@@ -96,5 +97,9 @@ export const debtorExtractRequestStyles = StyleSheet.create({
     fontSize: DebtorRegistryTypography.small,
     color: DebtorRegistryPalette.textMuted,
     lineHeight: LineHeight.comfortable,
+  },
+  errorText: {
+    fontSize: DebtorRegistryTypography.small,
+    color: LoginPalette.errorText,
   },
 });
