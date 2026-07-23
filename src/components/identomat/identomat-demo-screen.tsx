@@ -41,8 +41,70 @@ const IDENTOMAT_MESSAGE_BRIDGE = `(function () {
 true;`;
 
 // Terminal lifecycle events: once the widget finishes or closes itself we run
-// the verification check on the native side.
-const IDENTOMAT_TERMINAL_EVENTS = ['identomat_finished', 'identomat_close'];
+// the verification check on the native side. On completion the widget posts the
+// bare string 'DONE' and an object `{ type: 'done', sessionId }` to its parent
+// (see identomat-widget-next step-complete.tsx); it does NOT expose a
+// `step=success` URL — the `step` param is removed entirely at the end.
+const IDENTOMAT_TERMINAL_EVENTS = [
+  'DONE',
+  'identomat_finished',
+  'identomat_close',
+];
+
+// Some terminal signals arrive as a JSON object string, e.g.
+// `{"type":"done","sessionId":"…"}`. Detect the `done` type from the payload.
+function isTerminalMessage(data: string): boolean {
+  if (IDENTOMAT_TERMINAL_EVENTS.includes(data)) return true;
+  try {
+    const parsed = JSON.parse(data);
+    return parsed?.type === 'done';
+  } catch {
+    return false;
+  }
+}
+
+// The widget ends on a "Process finished" screen without changing its URL or
+// (reliably) posting a lifecycle message, so neither the postMessage bridge nor
+// the URL listener fire there. We detect that screen by its visible text
+// instead and post `identomat_finished` ourselves. Markers cover the widget's
+// Georgian and English copy; matching is lowercase + substring.
+const IDENTOMAT_COMPLETION_TEXT_MARKERS = [
+  'დასრულებულია',
+  'process finished',
+  'process is finished',
+  'verification finished',
+  'verification complete',
+];
+
+// Injected watcher: when the completion screen's text shows up, post the
+// terminal event once. Mirrors the no-HD-camera injection's approach (initial
+// pass + MutationObserver + interval) so it survives the widget's SPA renders.
+const IDENTOMAT_COMPLETION_INJECTION = `(function () {
+  var MARKERS = ${JSON.stringify(IDENTOMAT_COMPLETION_TEXT_MARKERS)};
+  var done = false;
+
+  function check() {
+    if (done) return;
+    var text = (document.body && document.body.innerText || '').toLowerCase();
+    for (var i = 0; i < MARKERS.length; i++) {
+      if (text.indexOf(MARKERS[i]) !== -1) {
+        done = true;
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage('identomat_finished');
+        }
+        return;
+      }
+    }
+  }
+
+  check();
+  try {
+    var observer = new MutationObserver(check);
+    observer.observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+  setInterval(check, 800);
+})();
+true;`;
 
 // After the user clears every KYC step, Identomat navigates the widget to a
 // result URL. The session URL is `widget.identomat.com/?session_token=…`, so
@@ -233,13 +295,16 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
       buildNoHdCameraInjection(
         t('login.identomatNoHdCameraTitle'),
         t('login.identomatNoHdCameraDescription'),
-      ) + IDENTOMAT_MESSAGE_BRIDGE,
+      ) +
+      IDENTOMAT_MESSAGE_BRIDGE +
+      IDENTOMAT_COMPLETION_INJECTION,
     [t],
   );
 
   const handleMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      if (IDENTOMAT_TERMINAL_EVENTS.includes(event.nativeEvent.data)) {
+      console.log('[Identomat] message:', event.nativeEvent.data);
+      if (isTerminalMessage(event.nativeEvent.data)) {
         finish();
       }
     },

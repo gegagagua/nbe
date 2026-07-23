@@ -89,15 +89,16 @@ export function useRegisterFlow() {
     // while we wait — the user can't leave until the check resolves.
     setIsCheckingVerification(true);
 
-    // Registration could not be completed (verification not APPROVED, or the
-    // check failed) — tell the user explicitly and return to the start so they
-    // can retry instead of being stuck on the Identomat screen.
-    const failVerification = (err?: unknown) => {
-      showErrorToast(i18n.t("login.registerStatusFailed"), err);
+    // Whatever the check resolves to — approved, not-approved, or a backend
+    // failure (e.g. 404 VERIFICATION_NOT_FOUND) — the user always lands on the
+    // auth (login) page. Only the toast differs. Leaving them stuck on the
+    // Identomat screen is never acceptable, so we clear the flow state and
+    // redirect regardless of the outcome.
+    const goToAuth = () => {
       setUserId(null);
       setVerificationUrl(null);
       setVerificationId(null);
-      router.dismissAll();
+      router.replace("/");
     };
 
     // The backend needs a short while to finish processing the Identomat result,
@@ -108,18 +109,21 @@ export function useRegisterFlow() {
           // The backend reports the Identomat outcome via `status`; only
           // APPROVED means the person is verified and registration is complete.
           // Any other status (STARTED / REJECTED / DATA_MISMATCH / CANCELLED)
-          // is treated as not-verified.
-          if (result.status !== "APPROVED") {
-            failVerification();
-            return;
+          // is treated as a failed validation.
+          if (result.status === "APPROVED") {
+            setVerificationResult(result);
+            showSuccessToast(i18n.t("login.registerStatusSuccess"));
+          } else {
+            showErrorToast(i18n.t("login.registerStatusFailed"));
           }
-          // Verified — send the user to the auth (login) page to sign in.
-          setVerificationResult(result);
-          showSuccessToast(i18n.t("login.registerStatusSuccess"));
-          router.replace("/");
+          goToAuth();
         })
         .catch((err: unknown) => {
-          failVerification(err);
+          // The check request itself failed (e.g. the 404 backend error) —
+          // still redirect, but flag it as a backend issue rather than a
+          // validation failure.
+          showErrorToast(i18n.t("login.registerStatusBackendError"), err);
+          goToAuth();
         })
         .finally(() => setIsCheckingVerification(false));
     }, 10000);

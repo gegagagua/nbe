@@ -70,7 +70,9 @@ export const kaAuth = {
     registerOtpBackButton: "დაბრუნება რეგისტრაციაზე",
     registerOtpGenericError: "ვერიფიკაცია ვერ მოხერხდა. სცადეთ თავიდან.",
     registerStatusSuccess: "რეგისტრაცია წარმატებით დასრულდა",
-    registerStatusFailed: "რეგისტრაცია ვერ დასრულდა. გთხოვთ, სცადოთ ხელახლა",
+    registerStatusFailed: "ვალიდაცია ვერ გაიარეთ. გთხოვთ, სცადოთ ხელახლა",
+    registerStatusBackendError:
+      "დაფიქსირდა ხარვეზი. გთხოვთ, სცადოთ მოგვიანებით",
     sessionBootLoadingA11yLabel: "სესიის შემოწმება",
     forcedPwdChangeTitle: "დააყენეთ ახალი პაროლი",
     forcedPwdChangeSubtitle: "თქვენი დროებითი პაროლის მოქმედება ამოიწურა. გასაგრძელებლად დააყენეთ ახალი პაროლი.",
