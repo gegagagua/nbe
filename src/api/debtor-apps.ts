@@ -1,12 +1,16 @@
+import type { ResponseType } from 'axios';
+
 import { ApiPaths } from '@/constants/api';
 import { apiClient } from '@/lib/api-client';
 import type {
   CreateDebtorAppResponse,
   CreatedDebtorApp,
+  DebtorAppFile,
   DebtorAppSearchData,
   DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
+  GetDebtorAppFilesResponse,
   GetDebtorAppResponse,
   SearchDebtorAppsResponse,
   UpdateDebtorAppRequest,
@@ -69,4 +73,26 @@ export async function createDebtorApp(
     payload,
   );
   return response.data.data;
+}
+
+export async function getDebtorAppFiles(
+  appId: number | string,
+): Promise<DebtorAppFile[]> {
+  const response = await apiClient.get<GetDebtorAppFilesResponse>(
+    ApiPaths.debtorAppFiles(appId),
+  );
+  return response.data.data ?? [];
+}
+
+export async function streamDebtorFile(
+  appId: number | string,
+  fileId: number | string,
+  responseType: ResponseType,
+): Promise<unknown> {
+  const res = await apiClient.post(
+    ApiPaths.debtorFilesStream,
+    { data: { appId, fileId } },
+    { responseType },
+  );
+  return res.data;
 }
