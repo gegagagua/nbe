@@ -147,3 +147,24 @@ export type DebtorRegistryListProps = {
   empty: boolean;
   emptyText?: string;
 };
+
+export type DebtorAppFileMeta = {
+  id: number;
+  fileName: string;
+  mimeType: string | null;
+  fileDesc: string | null;
+  signStatus: string | null;
+};
+
+export type DebtorAppFile = {
+  id: number;
+  appId: number;
+  createdBy?: DebtorRegistryUser | null;
+  createdDate: string | null;
+  file: DebtorAppFileMeta;
+  appFileType?: DebtorRegistryStatus | null;
+};
+
+export type GetDebtorAppFilesResponse = {
+  data: DebtorAppFile[];
+};

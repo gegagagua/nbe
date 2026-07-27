@@ -96,4 +96,6 @@ export const enDebtors = {
   listShare: 'Share',
   listShareTitle: 'Debtor Registry — application',
   listDownloadNoUrlToast: 'Download link is not available yet.',
+  listDownloadNoFileToast: 'The extract file is not available yet.',
+  listDownloadError: 'Could not download the file.',
 } as const;

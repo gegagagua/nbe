@@ -1,10 +1,13 @@
 import type { TFunction } from 'i18next';
-import { Linking, Pressable, Share, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, Share, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
 import { LoginInteraction } from '@/constants/login';
 import { ToastLayout } from '@/constants/toast';
+import { downloadDebtorAppFile } from '@/lib/download-debtor-file';
+import { showErrorToast } from '@/lib/show-error-toast';
 import type {
   DebtorRegistryApplicant,
   DebtorRegistryStatus,
@@ -64,17 +67,25 @@ type Props = { app: DebtorAppActionsSource };
 export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
   const documentUrl = resolveDocumentUrl(app);
-  const onDownload = () => {
-    if (!documentUrl) {
-      Toast.show({
-        type: 'info',
-        text1: t('debtors.listDownloadNoUrlToast'),
-        visibilityTime: ToastLayout.visibilityMs,
-        position: 'top',
-      });
-      return;
+  const [downloading, setDownloading] = useState(false);
+  const onDownload = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      const result = await downloadDebtorAppFile(app.id);
+      if (result === 'no-file') {
+        Toast.show({
+          type: 'info',
+          text1: t('debtors.listDownloadNoFileToast'),
+          visibilityTime: ToastLayout.visibilityMs,
+          position: 'top',
+        });
+      }
+    } catch (err) {
+      showErrorToast(t('debtors.listDownloadError'), err);
+    } finally {
+      setDownloading(false);
     }
-    Linking.openURL(documentUrl);
   };
   const onShare = () => {
     Share.share({
@@ -86,9 +97,13 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
   return (
     <View style={s.row}>
       <Pressable
-        style={({ pressed }) => [s.btn, pressed && { opacity: LoginInteraction.pressedOpacity }]}
+        style={({ pressed }) => [
+          s.btn,
+          (pressed || downloading) && { opacity: LoginInteraction.pressedOpacity },
+        ]}
         accessibilityRole="button"
         accessibilityLabel={t('debtors.listDownload')}
+        disabled={downloading}
         onPress={onDownload}>
         <Text style={s.btnLabel}>{t('debtors.listDownload')}</Text>
       </Pressable>

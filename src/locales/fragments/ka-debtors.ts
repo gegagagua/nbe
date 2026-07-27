@@ -96,4 +96,6 @@ export const kaDebtors = {
   listShare: "გაზიარება",
   listShareTitle: "მოვალეთა რეესტრი — განცხადება",
   listDownloadNoUrlToast: "გადმოწერის ბმული ჯერ არ არის ხელმისაწვდომი.",
+  listDownloadNoFileToast: "ამონაწერის ფაილი ჯერ არ არის ხელმისაწვდომი.",
+  listDownloadError: "ფაილის გადმოწერა ვერ მოხერხდა.",
 } as const;

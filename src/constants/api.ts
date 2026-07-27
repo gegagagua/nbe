@@ -46,6 +46,9 @@ export const ApiPaths = {
   debtorApps: "/debtor-portal/v1/apps",
   debtorAppsSearch: "/debtor-portal/v1/apps/search",
   debtorAppById: (id: number | string) => `/debtor-portal/v1/apps/${id}`,
+  debtorAppFiles: (appId: number | string) =>
+    `/debtor-portal/v1/app/${appId}/file`,
+  debtorFilesStream: "/file-portal/v1/debtor/files/stream",
 
   // EPS-MONEY-API
   debtorMoney: (appId: number | string) =>
