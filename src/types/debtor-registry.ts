@@ -66,6 +66,10 @@ export type CreateDebtorAppResponse = {
   data: CreatedDebtorApp;
 };
 
+export type GetDebtorAppPersonsResponse = {
+  data: DebtorRegistryApplicant[];
+};
+
 export type DebtorRegistryApplicant = {
   id: number;
   appId: number;

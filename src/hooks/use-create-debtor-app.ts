@@ -1,18 +1,36 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createDebtorApp } from '@/api/debtor-apps';
+import { createDebtorApp, getDebtorAppPersons } from '@/api/debtor-apps';
 import i18n from '@/i18n/i18n';
 import { showErrorToast } from '@/lib/show-error-toast';
-import type { UpdateDebtorAppRequestedPerson } from '@/types/debtor-registry';
+import type {
+  CreatedDebtorApp,
+  UpdateDebtorAppRequestedPerson,
+} from '@/types/debtor-registry';
+
+export type CreateDebtorAppResult = {
+  app: CreatedDebtorApp;
+  payCode: string | null;
+};
 
 export function useCreateDebtorApp() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (requestedPerson: UpdateDebtorAppRequestedPerson) =>
-      createDebtorApp(requestedPerson),
+    mutationFn: async (
+      requestedPerson: UpdateDebtorAppRequestedPerson,
+    ): Promise<CreateDebtorAppResult> => {
+      const app = await createDebtorApp(requestedPerson);
+      let payCode: string | null = null;
+      try {
+        const persons = await getDebtorAppPersons(app.id);
+        payCode = persons[0]?.payCode ?? null;
+      } catch {
+        payCode = null;
+      }
+      return { app, payCode };
+    },
     onSuccess: () => {
-      // The registry list now has one more application.
       queryClient.invalidateQueries({ queryKey: ['debtor-apps'] });
     },
     onError: (error) => {

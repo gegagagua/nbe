@@ -22,8 +22,6 @@ type DetailParams = {
   applicantName?: string;
   applicantId?: string;
   payCode?: string;
-  applicantPhone?: string;
-  applicantAddress?: string;
 };
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -37,8 +35,7 @@ function Field({ label, value }: { label: string; value: string }) {
 
 export function DebtorAppDetailScreen() {
   const { t } = useTranslation();
-  const { id, applicantName, applicantId, payCode, applicantPhone, applicantAddress } =
-    useLocalSearchParams<DetailParams>();
+  const { id, applicantName, applicantId, payCode } = useLocalSearchParams<DetailParams>();
   const appId = Number(id);
   const query = useDebtorApp(Number.isFinite(appId) ? appId : null);
   const app = query.data;
@@ -83,7 +80,7 @@ export function DebtorAppDetailScreen() {
                   value={applicantName?.trim() || app.createdBy?.name || '—'}
                 />
                 <Field
-                  label={t('debtors.detailsLabelPersonalId')}
+                  label={t('debtors.extractApplicantPnLabel')}
                   value={applicantId?.trim() || '—'}
                 />
                 <Field label={t('debtors.detailLabelPayCode')} value={payCode?.trim() || '—'} />
@@ -107,27 +104,7 @@ export function DebtorAppDetailScreen() {
                 <Field label={t('debtors.detailLabelReceiptNo')} value="—" />
               </View>
               {isRegistered ? (
-                <View style={s.sectionCard}>
-                  <Text style={s.sectionTitle}>{t('debtors.detailExtractSection')}</Text>
-                  <DebtorRegistryApplicationRowActions app={app} />
-                  <Pressable
-                    style={da.fullBtn}
-                    accessibilityRole="button"
-                    onPress={() =>
-                      router.push({
-                        pathname: '/debtors/extract-request',
-                        params: {
-                          id: String(appId),
-                          applicantName: applicantName ?? '',
-                          applicantId: applicantId ?? '',
-                          applicantPhone: applicantPhone ?? '',
-                          applicantAddress: applicantAddress ?? '',
-                        },
-                      })
-                    }>
-                    <Text style={da.payLabel}>{t('debtors.extractRequestButton')}</Text>
-                  </Pressable>
-                </View>
+                <DebtorRegistryApplicationRowActions app={app} />
               ) : (
                 // Visual-only actions for recorded (not-yet-registered) cases.
                 <View style={da.row}>
@@ -141,7 +118,7 @@ export function DebtorAppDetailScreen() {
                     style={[da.btn, da.payBtn]}
                     accessibilityRole="button"
                     onPress={() => {}}>
-                    <Text style={da.payLabel}>{t('debtors.detailPayButton')}</Text>
+                    <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
                   </Pressable>
                 </View>
               )}

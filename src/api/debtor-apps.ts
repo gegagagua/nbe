@@ -7,10 +7,12 @@ import type {
   CreatedDebtorApp,
   DebtorAppFile,
   DebtorAppSearchData,
+  DebtorRegistryApplicant,
   DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
   GetDebtorAppFilesResponse,
+  GetDebtorAppPersonsResponse,
   GetDebtorAppResponse,
   SearchDebtorAppsResponse,
   UpdateDebtorAppRequest,
@@ -94,4 +96,13 @@ export async function streamDebtorFile(
     { responseType },
   );
   return res.data;
+}
+
+export async function getDebtorAppPersons(
+  appId: number | string,
+): Promise<DebtorRegistryApplicant[]> {
+  const response = await apiClient.get<GetDebtorAppPersonsResponse>(
+    ApiPaths.debtorAppPersons(appId),
+  );
+  return response.data.data ?? [];
 }
