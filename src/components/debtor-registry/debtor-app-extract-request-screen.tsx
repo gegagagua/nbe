@@ -37,17 +37,22 @@ function Field({
   onChangeText,
   keyboardType,
   maxLength,
+  required = false,
 }: {
   label: string;
   value: string;
   onChangeText?: (v: string) => void;
   keyboardType?: 'number-pad' | 'phone-pad';
   maxLength?: number;
+  required?: boolean;
 }) {
   const editable = Boolean(onChangeText);
   return (
     <View style={s.fieldGap}>
-      <Text style={s.fieldLabel}>{label}</Text>
+      <Text style={s.fieldLabel}>
+        {label}
+        {required ? <Text style={s.requiredMark}> *</Text> : null}
+      </Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -137,6 +142,17 @@ export function DebtorAppExtractRequestScreen() {
         onSuccess: ({ app: created, payCode: fetchedPayCode }) => {
           setPayCode(fetchedPayCode);
           setCreatedAppId(created.id);
+          Toast.show({
+            type: 'success',
+            text1: t('debtors.extractRecordSuccess'),
+            visibilityTime: ToastLayout.visibilityMs,
+            position: 'top',
+          });
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.replace('/debtors');
+          }
         },
       },
     );
@@ -222,6 +238,7 @@ export function DebtorAppExtractRequestScreen() {
               }
               keyboardType="number-pad"
               maxLength={11}
+              required={subjectEditable}
             />
             {subjectIdError ? (
               <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
@@ -230,6 +247,7 @@ export function DebtorAppExtractRequestScreen() {
               label={t('debtors.extractSubjectNameLabel')}
               value={subjectName}
               onChangeText={subjectEditable ? setSubjectName : undefined}
+              required={subjectEditable}
             />
           </View>
           <Pressable
