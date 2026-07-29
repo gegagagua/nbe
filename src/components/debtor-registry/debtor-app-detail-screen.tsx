@@ -8,6 +8,7 @@ import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { ToastLayout } from '@/constants/toast';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
+import { useDebtorAppPayments } from '@/hooks/use-debtor-app-payments';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
@@ -47,6 +48,8 @@ export function DebtorAppDetailScreen() {
 
   const [editVisible, setEditVisible] = useState(false);
   const updateMutation = useUpdateDebtorApp(Number.isFinite(appId) ? appId : null);
+  const paymentsQuery = useDebtorAppPayments(Number.isFinite(appId) ? appId : null);
+  const payments = paymentsQuery.data ?? [];
 
   const requested = app?.requestedPerson;
 
@@ -98,10 +101,36 @@ export function DebtorAppDetailScreen() {
               </View>
               <View style={s.sectionCard}>
                 <Text style={s.sectionTitle}>{t('debtors.detailPaymentSection')}</Text>
-                <Field label={t('debtors.detailLabelPaidAmount')} value="—" />
-                <Field label={t('debtors.detailLabelPaidAt')} value="—" />
-                <Field label={t('debtors.detailLabelBank')} value="—" />
-                <Field label={t('debtors.detailLabelReceiptNo')} value="—" />
+                {payments.length === 0 ? (
+                  <Text style={s.hintText}>{t('debtors.detailNoPayments')}</Text>
+                ) : (
+                  payments.map((payment) => (
+                    <View key={payment.id} style={s.fieldGap}>
+                      <Field
+                        label={t('debtors.detailLabelPaidAmount')}
+                        value={
+                          payment.amount != null
+                            ? t('debtors.detailPaidAmountValue', {
+                                amount: payment.amount.toFixed(2),
+                              })
+                            : '—'
+                        }
+                      />
+                      <Field
+                        label={t('debtors.detailLabelPaidAt')}
+                        value={formatEnforcementDateTime(payment.paymentDate)}
+                      />
+                      <Field
+                        label={t('debtors.detailLabelBank')}
+                        value={payment.bank?.name || '—'}
+                      />
+                      <Field
+                        label={t('debtors.detailLabelReceiptNo')}
+                        value={payment.paymentId || '—'}
+                      />
+                    </View>
+                  ))
+                )}
               </View>
               {isRegistered ? (
                 <DebtorRegistryApplicationRowActions app={app} />

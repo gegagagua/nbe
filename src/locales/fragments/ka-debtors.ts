@@ -80,6 +80,8 @@ export const kaDebtors = {
   detailLabelPaidAt: "გადახდის დრო",
   detailLabelBank: "ბანკი",
   detailLabelReceiptNo: "ქვითრის ნომერი",
+  detailPaidAmountValue: "{{amount}} ლარი",
+  detailNoPayments: "გადახდა ჯერ არ დაფიქსირებულა.",
   detailEditButton: "რედაქტირება",
   detailEditModalTitle: "მოთხოვნილი პირის რედაქტირება",
   detailEditSave: "შენახვა",

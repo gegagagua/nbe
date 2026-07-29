@@ -80,6 +80,8 @@ export const enDebtors = {
   detailLabelPaidAt: 'Payment time',
   detailLabelBank: 'Bank',
   detailLabelReceiptNo: 'Receipt number',
+  detailPaidAmountValue: '{{amount}} GEL',
+  detailNoPayments: 'No payment recorded yet.',
   detailEditButton: 'Edit',
   detailEditModalTitle: 'Edit requested person',
   detailEditSave: 'Save',
