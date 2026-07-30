@@ -9,4 +9,18 @@ export const enFacts = {
   labelFee: "Fee",
   labelOwnershipType: "Ownership Type",
   backA11yLabel: "Go back",
+  filtersTitle: "Search",
+  filtersExpand: "Expand search filters",
+  filtersCollapse: "Collapse search filters",
+  regNumberLabel: "Registration number",
+  regNumberPlaceholder: "e.g. F26096532",
+  regPeriodLabel: "Registration date",
+  datePlaceholder: "YYYY-MM-DD",
+  searchButton: "Search",
+  clearButton: "Clear",
+  pickerWeekdays: "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  pickerMonths:
+    "January,February,March,April,May,June,July,August,September,October,November,December",
+  pickerClear: "Clear",
+  pickerClose: "Close",
 } as const;

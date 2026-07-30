@@ -9,4 +9,18 @@ export const kaFacts = {
   labelFee: "საფასური",
   labelOwnershipType: "საკუთრების ტიპი",
   backA11yLabel: "უკან დაბრუნება",
+  filtersTitle: "ძებნა",
+  filtersExpand: "ფილტრების გახსნა",
+  filtersCollapse: "ფილტრების დახურვა",
+  regNumberLabel: "რეგისტრაციის ნომერი",
+  regNumberPlaceholder: "მაგ. F26096532",
+  regPeriodLabel: "რეგისტრაციის თარიღი",
+  datePlaceholder: "წწწწ-თთ-დდ",
+  searchButton: "ძებნა",
+  clearButton: "გასუფთავება",
+  pickerWeekdays: "ორშ,სამ,ოთხ,ხუთ,პარ,შაბ,კვი",
+  pickerMonths:
+    "იანვარი,თებერვალი,მარტი,აპრილი,მაისი,ივნისი,ივლისი,აგვისტო,სექტემბერი,ოქტომბერი,ნოემბერი,დეკემბერი",
+  pickerClear: "გასუფთავება",
+  pickerClose: "დახურვა",
 } as const;

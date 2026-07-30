@@ -12,14 +12,28 @@ import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { useFactsApps } from "@/hooks/use-facts-apps";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 import { isGuestMode } from "@/lib/guest-mode";
+import type { FactsSearchFilters } from "@/types/facts";
 
 import { FactsList } from "./facts-list";
+import { FactsSearchForm } from "./facts-search-form";
 
 export function FactsScreen() {
   const { t } = useTranslation();
   const { displayName } = useSessionUserProfile();
+  const [draftFilters, setDraftFilters] = useState<FactsSearchFilters>({});
+  const [appliedFilters, setAppliedFilters] = useState<FactsSearchFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
-  const { data, isLoading } = useFactsApps(pageNumber);
+  const { data, isLoading } = useFactsApps(pageNumber, appliedFilters);
+
+  const onSearch = () => {
+    setPageNumber(0);
+    setAppliedFilters(draftFilters);
+  };
+  const onClear = () => {
+    setDraftFilters({});
+    setAppliedFilters({});
+    setPageNumber(0);
+  };
 
   const items = data.data;
   const emptyList = !isLoading && items.length === 0;
@@ -48,6 +62,12 @@ export function FactsScreen() {
             </Pressable>
             <Text style={s.title}>{t("facts.pageTitle")}</Text>
           </View>
+          <FactsSearchForm
+            values={draftFilters}
+            onChange={setDraftFilters}
+            onSearch={onSearch}
+            onClear={onClear}
+          />
           <View style={s.listWrap}>
             <FactsList items={items} loading={isLoading} empty={emptyList} />
             {!isLoading && items.length > 0 && (
