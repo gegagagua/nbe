@@ -42,6 +42,12 @@ export const ApiPaths = {
   // EPS-FILE-API (separate host) — stream/download a status file.
   epsFilesStream: "/file-portal/v1/eps/files/stream",
 
+  // EPS-FACT-API — ფაქტების კონსტატაცია / statement of facts (gateway maps `fact-portal` → fact-api `/portal`)
+  factAppsSearch: "/fact-portal/v1/apps/search",
+  factAppById: (id: number | string) => `/fact-portal/v1/apps/${id}`,
+  factAppPersons: (appId: number | string) =>
+    `/fact-portal/v1/persons/app/${appId}`,
+
   // EPS-DEBTOR-API — debtor registry applications (gateway maps `debtor-portal` → debtor-api `/portal`)
   debtorApps: "/debtor-portal/v1/apps",
   debtorAppsSearch: "/debtor-portal/v1/apps/search",

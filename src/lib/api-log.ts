@@ -78,9 +78,31 @@ export function logApiRequest(config: InternalAxiosRequestConfig): void {
 export function logApiResponse(response: AxiosResponse): void {
   if (!__DEV__) return;
   const { method, url } = describe(response.config);
-  console.log(`[API ← ${response.status}] ${method} ${url}`, {
-    response: response.data,
-  });
+  // JSON.stringify instead of passing the object — Metro's console collapses
+  // nested values to `[Object]`, hiding the actual response shape.
+  console.log(
+    `[API ← ${response.status}] ${method} ${url}`,
+    JSON.stringify(redact(response.data), null, 2),
+  );
+}
+
+/** Best-effort human-readable reason pulled from a response body. */
+function reasonFromData(data: unknown): string | undefined {
+  if (typeof data === "string" && data.trim()) return data.trim();
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    for (const key of ["message", "error_description", "error", "detail", "title"]) {
+      const value = obj[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+  }
+  return undefined;
+}
+
+/** Whether the failed request actually carried a non-empty Authorization header. */
+function wasAuthorized(cfg: InternalAxiosRequestConfig | undefined): boolean {
+  const value = cfg?.headers?.Authorization;
+  return typeof value === "string" && value.length > 0;
 }
 
 export function logApiError(error: unknown, context?: string): void {
@@ -91,6 +113,26 @@ export function logApiError(error: unknown, context?: string): void {
   }
   const status = error.response?.status ?? 0;
   const { method, url } = describe(error.config);
-  const body = JSON.stringify(stringifyBody(error.response?.data), null, 2);
-  console.error(status, method, url, body);
+  const authorized = wasAuthorized(error.config);
+  // A 401/403 with an empty body carries its real reason in the status line or
+  // in whether a token was even attached — surface both instead of logging `""`.
+  const reason =
+    reasonFromData(error.response?.data) ??
+    (error.response?.statusText?.trim() || undefined) ??
+    (status === 401 && !authorized
+      ? "no Authorization header sent (missing/expired session token)"
+      : undefined) ??
+    error.message;
+  const rawBody = error.response?.data;
+  const isEmptyBody =
+    rawBody == null || (typeof rawBody === "string" && rawBody.length === 0);
+  console.error(
+    `${label} ${status || "network"} ${method} ${url} — ${reason}`,
+    {
+      authorized,
+      statusText: error.response?.statusText || undefined,
+      // Distinguish "server sent no body" from a real payload we failed to read.
+      body: isEmptyBody ? "<empty — server returned no error body>" : stringifyBody(rawBody),
+    },
+  );
 }

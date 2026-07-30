@@ -3,6 +3,7 @@ import { enCases } from '@/locales/fragments/en-cases';
 import { enCasesDetailUiA } from '@/locales/fragments/en-cases-detail-ui-a';
 import { enCasesDetailUiB } from '@/locales/fragments/en-cases-detail-ui-b';
 import { enDebtors } from '@/locales/fragments/en-debtors';
+import { enFacts } from '@/locales/fragments/en-facts';
 import { homeFaqItemsEn } from '@/locales/fragments/en-home-faq';
 import { enHome } from '@/locales/fragments/en-home';
 import { enChatTab } from '@/locales/fragments/en-chat-tab';
@@ -14,6 +15,7 @@ export const en = {
   ...enAuth,
   cases: { ...enCases, detail: { ...enCasesDetailUiA, ...enCasesDetailUiB } },
   debtors: enDebtors,
+  facts: enFacts,
   home: enHome,
   homeTabs: enHomeTabs,
   chatTab: enChatTab,

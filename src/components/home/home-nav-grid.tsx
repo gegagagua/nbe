@@ -8,11 +8,14 @@ import type { HomeNavItem } from "@/types/home-dashboard";
 import { HomeNavCard } from "./home-nav-card";
 import { homeNavGridStyles } from "./home-nav-grid.styles";
 
-const homeRouteByNavItemId: Record<string, "/cases" | "/debtors" | undefined> =
-  {
-    cases: "/cases",
-    debtors: "/debtors",
-  };
+const homeRouteByNavItemId: Record<
+  string,
+  "/cases" | "/debtors" | "/facts" | undefined
+> = {
+  cases: "/cases",
+  debtors: "/debtors",
+  facts: "/facts",
+};
 
 export function HomeNavGrid() {
   const isGuest = isGuestMode();

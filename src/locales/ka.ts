@@ -3,6 +3,7 @@ import { kaCases } from '@/locales/fragments/ka-cases';
 import { kaCasesDetailUiA } from '@/locales/fragments/ka-cases-detail-ui-a';
 import { kaCasesDetailUiB } from '@/locales/fragments/ka-cases-detail-ui-b';
 import { kaDebtors } from '@/locales/fragments/ka-debtors';
+import { kaFacts } from '@/locales/fragments/ka-facts';
 import { homeFaqItemsKa } from '@/locales/fragments/ka-home-faq';
 import { kaHome } from '@/locales/fragments/ka-home';
 import { kaChatTab } from '@/locales/fragments/ka-chat-tab';
@@ -14,6 +15,7 @@ export const ka = {
   ...kaAuth,
   cases: { ...kaCases, detail: { ...kaCasesDetailUiA, ...kaCasesDetailUiB } },
   debtors: kaDebtors,
+  facts: kaFacts,
   home: kaHome,
   homeTabs: kaHomeTabs,
   chatTab: kaChatTab,
