@@ -7,9 +7,13 @@ import Toast from 'react-native-toast-message';
 import { LoginFooter } from '@/components/login/login-footer';
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { ToastLayout } from '@/constants/toast';
+import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
 import { useDebtorAppPayments } from '@/hooks/use-debtor-app-payments';
+import { useDebtorAppPersons } from '@/hooks/use-debtor-app-persons';
+import { useDebtorPayment } from '@/hooks/use-debtor-payment';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
+import { showErrorToast } from '@/lib/show-error-toast';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
 import { debtorAppDetailActionsStyles as da } from './debtor-app-detail-actions.styles';
@@ -50,6 +54,26 @@ export function DebtorAppDetailScreen() {
   const updateMutation = useUpdateDebtorApp(Number.isFinite(appId) ? appId : null);
   const paymentsQuery = useDebtorAppPayments(Number.isFinite(appId) ? appId : null);
   const payments = paymentsQuery.data ?? [];
+  const { personId } = useDebtorAppPersons(Number.isFinite(appId) ? appId : null);
+  const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
+
+  const handlePay = () => {
+    const amount = app?.payableAmount ?? 0;
+    if (personId == null) {
+      showErrorToast(t('debtors.payError'), new Error('personId missing'));
+      return;
+    }
+    if (!(amount > 0)) {
+      Toast.show({
+        type: 'info',
+        text1: t('debtors.payNoAmount'),
+        visibilityTime: ToastLayout.visibilityMs,
+        position: 'top',
+      });
+      return;
+    }
+    startPayment({ appId, personId, amount });
+  };
 
   const requested = app?.requestedPerson;
 
@@ -144,9 +168,10 @@ export function DebtorAppDetailScreen() {
                     <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
                   </Pressable>
                   <Pressable
-                    style={[da.btn, da.payBtn]}
+                    style={[da.btn, da.payBtn, isPaying && da.btnDisabled]}
                     accessibilityRole="button"
-                    onPress={() => {}}>
+                    disabled={isPaying}
+                    onPress={handlePay}>
                     <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
                   </Pressable>
                 </View>
@@ -156,6 +181,11 @@ export function DebtorAppDetailScreen() {
         </ScrollView>
       </AppSafeArea>
       <LoginFooter />
+      <PaymentWebViewModal
+        visible={paymentUrl != null}
+        url={paymentUrl}
+        onClose={closePayment}
+      />
       <DebtorAppEditModal
         visible={editVisible}
         name={requested?.personName ?? ''}

@@ -16,16 +16,29 @@ type Props = {
   selected: DebtorExtractPaymentMethod;
   onSelect: (m: DebtorExtractPaymentMethod) => void;
   onPay: () => void;
+  paying?: boolean;
+  /** Payable amount from the backend; falls back to the static fee when absent. */
+  amount?: number | null;
 };
 
-export function DebtorExtractPhasePayment({ selected, onSelect, onPay }: Props) {
+export function DebtorExtractPhasePayment({
+  selected,
+  onSelect,
+  onPay,
+  paying,
+  amount,
+}: Props) {
   const { t } = useTranslation();
   const methods = useMemo(() => getDebtorExtractPaymentOptions(), []);
+  const feeText =
+    amount != null
+      ? t('debtors.detailPaidAmountValue', { amount: amount.toFixed(2) })
+      : t('debtors.extractFeeAmount');
   return (
     <>
       <View style={ps.feeCard}>
         <Text style={ps.feeLabel}>{t('debtors.extractFeeTitle')}</Text>
-        <Text style={ps.feeAmount}>{t('debtors.extractFeeAmount')}</Text>
+        <Text style={ps.feeAmount}>{feeText}</Text>
       </View>
       <Text style={ps.methodsTitle}>{t('debtors.extractMethodsTitle')}</Text>
       <View style={[s.fieldGap, ps.methodsList]}>
@@ -61,7 +74,7 @@ export function DebtorExtractPhasePayment({ selected, onSelect, onPay }: Props) 
         })}
       </View>
       <View style={s.primaryButtonWrap}>
-        <Button label={t('debtors.extractPayButton')} onPress={onPay} />
+        <Button label={t('debtors.extractPayButton')} onPress={onPay} disabled={paying} />
       </View>
     </>
   );
