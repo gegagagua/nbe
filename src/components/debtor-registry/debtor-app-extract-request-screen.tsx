@@ -300,20 +300,6 @@ export function DebtorAppExtractRequestScreen() {
             onPress={handleRecord}>
             <Text style={da.payLabel}>{t('debtors.extractRecordButton')}</Text>
           </Pressable>
-          <View style={da.row}>
-            <Pressable
-              style={[da.btn, da.editBtn]}
-              accessibilityRole="button"
-              onPress={() => setEditVisible(true)}>
-              <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
-            </Pressable>
-            <Pressable
-              style={[da.btn, da.payBtn]}
-              accessibilityRole="button"
-              onPress={() => setPhase('payment')}>
-              <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
-            </Pressable>
-          </View>
             </>
           )}
         </ScrollView>
