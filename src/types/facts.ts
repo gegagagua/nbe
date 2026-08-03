@@ -60,7 +60,6 @@ export type FactsSearchPerson = {
   lastName?: string;
   address?: string;
   organization?: string;
-  payCode?: string;
 };
 
 export type FactsSearchRequest = {
@@ -68,6 +67,8 @@ export type FactsSearchRequest = {
     regnumber?: string;
     regDateFrom?: string;
     regDateTo?: string;
+    /** გადახდის იდენტიფიკატორი — backend filter field name */
+    Paycode?: string;
     person?: FactsSearchPerson;
   };
   page: { number: number; size: number };

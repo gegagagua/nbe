@@ -106,8 +106,18 @@ export function mapFactApplication(raw: unknown): FactApplication | null {
   const id = typeof idRaw === "number" ? idRaw : Number(idRaw);
   if (!Number.isFinite(id)) return null;
 
+  // Registered cases carry `finalRegistrationAt`; preliminary applications have
+  // no final date yet, so fall back to the input/registration/status date so the
+  // case line always shows a date next to the case number.
   const registeredAt = formatEnforcementDateTime(
-    firstString(root, ["finalRegistrationAt", "regDate", "inputDate", "createdDate"]),
+    firstString(root, [
+      "finalRegistrationAt",
+      "regDate",
+      "inputDate",
+      "createdDate",
+      "registrationDate",
+      "statusDate",
+    ]),
   );
 
   return {

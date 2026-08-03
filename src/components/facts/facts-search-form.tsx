@@ -90,6 +90,12 @@ export function FactsSearchForm({ values, onChange, onSearch, onClear }: Props) 
               />
             </View>
           </View>
+          <Text style={s.label}>{t("facts.payCodeLabel")}</Text>
+          <CaseFilterField
+            value={values.payCode ?? ""}
+            onChangeText={(v) => setValue("payCode", v)}
+            placeholder={t("facts.payCodePlaceholder")}
+          />
           <View style={fs.actions}>
             <Pressable
               style={fs.searchButton}

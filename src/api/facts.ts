@@ -22,12 +22,12 @@ function buildFactsSearchPayload(
   if (filters.address?.trim()) person.address = filters.address.trim();
   if (filters.organization?.trim())
     person.organization = filters.organization.trim();
-  if (filters.payCode?.trim()) person.payCode = filters.payCode.trim();
 
   const data: FactsSearchRequest["data"] = {};
   if (filters.regnumber?.trim()) data.regnumber = filters.regnumber.trim();
   if (filters.regDateFrom?.trim()) data.regDateFrom = filters.regDateFrom.trim();
   if (filters.regDateTo?.trim()) data.regDateTo = filters.regDateTo.trim();
+  if (filters.payCode?.trim()) data.Paycode = filters.payCode.trim();
   if (Object.keys(person).length) data.person = person;
 
   return {

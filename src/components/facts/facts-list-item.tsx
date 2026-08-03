@@ -32,7 +32,8 @@ export function FactsListItem({
             ) : null}
             <Text style={s.bureau}>{item.bureauName}</Text>
             <Text style={s.caseLine}>
-              # {item.caseNumber} - {item.registeredAt}
+              # {item.caseNumber}
+              {item.registeredAt ? ` - ${item.registeredAt}` : ""}
             </Text>
           </View>
           <View style={s.rightCol}>

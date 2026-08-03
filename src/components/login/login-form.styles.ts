@@ -40,7 +40,7 @@ export const loginFormStyles = StyleSheet.create({
   },
   forgotPasswordLink: {
     alignItems: "center",
-    paddingTop: Space.small,
+    paddingTop: Space.large,
   },
   forgotPasswordLinkText: {
     color: LoginPalette.primary,
@@ -53,8 +53,7 @@ export const loginFormStyles = StyleSheet.create({
   },
   registerLinkText: {
     color: LoginPalette.placeholderMuted,
-    fontSize: Typography.medium,
-    marginTop: Space.extraSmall,
+    fontSize: Typography.small,
   },
   guestLink: {
     alignItems: "center",
