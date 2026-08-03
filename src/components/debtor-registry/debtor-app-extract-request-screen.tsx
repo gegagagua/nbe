@@ -9,9 +9,13 @@ import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { LoginPalette } from '@/constants/login';
 import { ToastLayout } from '@/constants/toast';
 import { getUserMe } from '@/api/users';
+import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
 import { useCreateDebtorApp } from '@/hooks/use-create-debtor-app';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
+import { useDebtorAppPersons } from '@/hooks/use-debtor-app-persons';
+import { useDebtorPayment } from '@/hooks/use-debtor-payment';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
+import { showErrorToast } from '@/lib/show-error-toast';
 import { isGuestMode } from '@/lib/guest-mode';
 import type { UserDetail } from '@/types/users';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
@@ -37,17 +41,22 @@ function Field({
   onChangeText,
   keyboardType,
   maxLength,
+  required = false,
 }: {
   label: string;
   value: string;
   onChangeText?: (v: string) => void;
   keyboardType?: 'number-pad' | 'phone-pad';
   maxLength?: number;
+  required?: boolean;
 }) {
   const editable = Boolean(onChangeText);
   return (
     <View style={s.fieldGap}>
-      <Text style={s.fieldLabel}>{label}</Text>
+      <Text style={s.fieldLabel}>
+        {label}
+        {required ? <Text style={s.requiredMark}> *</Text> : null}
+      </Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -65,7 +74,17 @@ export function DebtorAppExtractRequestScreen() {
   const { t } = useTranslation();
   const { id, applicantName, applicantId } = useLocalSearchParams<Params>();
   const appId = Number(id);
-  const query = useDebtorApp(Number.isFinite(appId) ? appId : null);
+  const cameFromCase = Number.isFinite(appId);
+
+  // Set once recorded — locks the form and switches editing over to PUT.
+  const [createdAppId, setCreatedAppId] = useState<number | null>(null);
+  const [createdPayable, setCreatedPayable] = useState<number | null>(null);
+  const isRecorded = createdAppId !== null;
+
+  // The case this screen works on: the one it was opened with, or the one just
+  // recorded here — the latter is how the backend amount becomes available.
+  const payAppId = cameFromCase ? appId : createdAppId;
+  const query = useDebtorApp(payAppId);
   const app = query.data;
 
   // Opened from the list there are no applicant params — fall back to the
@@ -95,19 +114,44 @@ export function DebtorAppExtractRequestScreen() {
     defaultDebtorExtractPaymentMethod,
   );
 
-  // Set once recorded — locks the form and switches editing over to PUT.
-  const [createdAppId, setCreatedAppId] = useState<number | null>(null);
-  const isRecorded = createdAppId !== null;
-
   // From the list this screen starts a brand-new application, so the
   // requested-person fields are typed in directly; they lock after recording.
   // Entered from an existing case, they stay locked (edit via the modal).
-  const cameFromCase = Number.isFinite(appId);
   const subjectEditable = !cameFromCase && !isRecorded;
   const [subjectIdError, setSubjectIdError] = useState(false);
 
   const createMutation = useCreateDebtorApp();
   const updateMutation = useUpdateDebtorApp(createdAppId);
+
+  const { personId } = useDebtorAppPersons(payAppId);
+  const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
+
+  const handlePay = () => {
+    if (payAppId == null) {
+      Toast.show({
+        type: 'info',
+        text1: t('debtors.payRecordFirst'),
+        visibilityTime: ToastLayout.visibilityMs,
+        position: 'top',
+      });
+      return;
+    }
+    const amount = app?.payableAmount ?? createdPayable ?? 0;
+    if (personId == null) {
+      showErrorToast(t('debtors.payError'), new Error('personId missing'));
+      return;
+    }
+    if (!(amount > 0)) {
+      Toast.show({
+        type: 'info',
+        text1: t('debtors.payNoAmount'),
+        visibilityTime: ToastLayout.visibilityMs,
+        position: 'top',
+      });
+      return;
+    }
+    startPayment({ appId: payAppId, personId, amount });
+  };
 
   // Seed the requested-person fields once the app detail arrives.
   useEffect(() => {
@@ -137,6 +181,18 @@ export function DebtorAppExtractRequestScreen() {
         onSuccess: ({ app: created, payCode: fetchedPayCode }) => {
           setPayCode(fetchedPayCode);
           setCreatedAppId(created.id);
+          setCreatedPayable(created.payableAmount ?? null);
+          Toast.show({
+            type: 'success',
+            text1: t('debtors.extractRecordSuccess'),
+            visibilityTime: ToastLayout.visibilityMs,
+            position: 'top',
+          });
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.replace('/debtors');
+          }
         },
       },
     );
@@ -190,9 +246,9 @@ export function DebtorAppExtractRequestScreen() {
             <DebtorExtractPhasePayment
               selected={method}
               onSelect={setMethod}
-              onPay={() => {
-                // TODO: wire the real payment once the backend endpoint exists.
-              }}
+              onPay={handlePay}
+              paying={isPaying}
+              amount={app?.payableAmount ?? createdPayable}
             />
           ) : (
             <>
@@ -222,6 +278,7 @@ export function DebtorAppExtractRequestScreen() {
               }
               keyboardType="number-pad"
               maxLength={11}
+              required={subjectEditable}
             />
             {subjectIdError ? (
               <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
@@ -230,6 +287,7 @@ export function DebtorAppExtractRequestScreen() {
               label={t('debtors.extractSubjectNameLabel')}
               value={subjectName}
               onChangeText={subjectEditable ? setSubjectName : undefined}
+              required={subjectEditable}
             />
           </View>
           <Pressable
@@ -242,25 +300,16 @@ export function DebtorAppExtractRequestScreen() {
             onPress={handleRecord}>
             <Text style={da.payLabel}>{t('debtors.extractRecordButton')}</Text>
           </Pressable>
-          <View style={da.row}>
-            <Pressable
-              style={[da.btn, da.editBtn]}
-              accessibilityRole="button"
-              onPress={() => setEditVisible(true)}>
-              <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
-            </Pressable>
-            <Pressable
-              style={[da.btn, da.payBtn]}
-              accessibilityRole="button"
-              onPress={() => setPhase('payment')}>
-              <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
-            </Pressable>
-          </View>
             </>
           )}
         </ScrollView>
       </AppSafeArea>
       <LoginFooter />
+      <PaymentWebViewModal
+        visible={paymentUrl != null}
+        url={paymentUrl}
+        onClose={closePayment}
+      />
       <DebtorAppEditModal
         visible={editVisible}
         name={subjectName}

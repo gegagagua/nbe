@@ -24,7 +24,9 @@ type Props = {
 
 export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
   const { t } = useTranslation();
-  const regDate = formatEnforcementDateTime(app.regDate ?? app.statusDate);
+  const isRegistered = (app.regnumber ?? '').trim().length > 0;
+  const createdDate = formatEnforcementDateTime(app.createdDate);
+  const regDate = formatEnforcementDateTime(app.statusDate);
   const applicant = app.applicants?.[0];
   const applicantName = applicant?.name ?? app.createdBy.name;
   const applicantId = applicant?.idnumber;
@@ -55,8 +57,13 @@ export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
             {t('debtors.detailsLabelCaseNo')}: {applicationNo(app)}
           </Text>
           <Text style={s.caseDate}>
-            {t('debtors.listRegDateLabel')}: {regDate}
+            {t('debtors.listCreatedDateLabel')}: {createdDate}
           </Text>
+          {isRegistered ? (
+            <Text style={s.caseDate}>
+              {t('debtors.listRegDateLabel')}: {regDate}
+            </Text>
+          ) : null}
           <Text style={s.applicantLine}>
             {t('debtors.listApplicantPrefix')} {applicantName}
             {applicantId ? ` (${applicantId})` : ''}

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 
 import { ModalBackdrop } from '@/components/ui/modal-backdrop';
-import { LoginPalette } from '@/constants/login';
 
 import { debtorAppEditModalStyles as s } from './debtor-app-edit-modal.styles';
 
@@ -62,18 +61,22 @@ export function DebtorAppEditModal({
           <Text style={s.title}>{t('debtors.detailEditModalTitle')}</Text>
 
           <View style={s.fieldGap}>
-            <Text style={s.label}>{t('debtors.extractSubjectNameLabel')}</Text>
+            <Text style={s.label}>
+              {t('debtors.extractSubjectNameLabel')}{' '}
+              <Text style={s.requiredMark}>*</Text>
+            </Text>
             <TextInput
               value={draftName}
               onChangeText={setDraftName}
-              placeholder={t('debtors.extractSubjectNamePlaceholder')}
-              placeholderTextColor={LoginPalette.placeholderMuted}
               style={s.input}
             />
           </View>
 
           <View style={s.fieldGap}>
-            <Text style={s.label}>{t('debtors.extractSubjectIdLabel')}</Text>
+            <Text style={s.label}>
+              {t('debtors.extractSubjectIdLabel')}{' '}
+              <Text style={s.requiredMark}>*</Text>
+            </Text>
             <TextInput
               value={draftId}
               onChangeText={(v) => {
@@ -82,8 +85,6 @@ export function DebtorAppEditModal({
               }}
               keyboardType="number-pad"
               maxLength={11}
-              placeholder={t('debtors.extractSubjectIdPlaceholder')}
-              placeholderTextColor={LoginPalette.placeholderMuted}
               style={[s.input, idError && s.inputError]}
             />
             {idError ? (

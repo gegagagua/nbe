@@ -169,6 +169,22 @@ export type DebtorAppFile = {
   appFileType?: DebtorRegistryStatus | null;
 };
 
+export type DebtorAppPayment = {
+  id: number;
+  appId: number;
+  personId: number | null;
+  paymentId: string | null;
+  paymentDate: string | null;
+  bank?: DebtorRegistryUser | null;
+  amount: number | null;
+  paySrc: string | null;
+  createdDate: string | null;
+};
+
+export type GetDebtorAppPaymentsResponse = {
+  data: DebtorAppPayment[];
+};
+
 export type GetDebtorAppFilesResponse = {
   data: DebtorAppFile[];
 };

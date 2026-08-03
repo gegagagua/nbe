@@ -54,6 +54,8 @@ export const ApiPaths = {
   debtorAppById: (id: number | string) => `/debtor-portal/v1/apps/${id}`,
   debtorAppFiles: (appId: number | string) =>
     `/debtor-portal/v1/app/${appId}/file`,
+  debtorAppPayments: (appId: number | string) =>
+    `/debtor-portal/v1/payments/app/${appId}`,
   debtorFilesStream: "/file-portal/v1/debtor/files/stream",
   debtorAppPersons: (appId: number | string) =>
     `/debtor-portal/v1/persons/app/${appId}`,

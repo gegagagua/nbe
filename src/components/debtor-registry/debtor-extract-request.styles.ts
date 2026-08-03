@@ -102,4 +102,7 @@ export const debtorExtractRequestStyles = StyleSheet.create({
     fontSize: DebtorRegistryTypography.small,
     color: LoginPalette.errorText,
   },
+  requiredMark: {
+    color: LoginPalette.errorText,
+  },
 });

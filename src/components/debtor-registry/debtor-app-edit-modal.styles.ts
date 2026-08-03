@@ -56,6 +56,9 @@ export const debtorAppEditModalStyles = StyleSheet.create({
     fontSize: DebtorRegistryTypography.small,
     color: LoginPalette.errorText,
   },
+  requiredMark: {
+    color: LoginPalette.errorText,
+  },
   actions: {
     flexDirection: 'row',
     gap: Space.small,
