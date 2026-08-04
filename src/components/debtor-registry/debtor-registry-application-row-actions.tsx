@@ -4,9 +4,11 @@ import { Pressable, Share, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
+import { CaseDetailFileViewerModal } from '@/components/cases/case-detail-file-viewer-modal';
 import { LoginInteraction } from '@/constants/login';
 import { ToastLayout } from '@/constants/toast';
 import { downloadDebtorAppFile } from '@/lib/download-debtor-file';
+import type { PreparedFile } from '@/lib/download-eps-file';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type {
   DebtorRegistryApplicant,
@@ -68,18 +70,21 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
   const { t } = useTranslation();
   const documentUrl = resolveDocumentUrl(app);
   const [downloading, setDownloading] = useState(false);
+  const [viewerFile, setViewerFile] = useState<PreparedFile | null>(null);
   const onDownload = async () => {
     if (downloading) return;
     setDownloading(true);
     try {
       const result = await downloadDebtorAppFile(app.id);
-      if (result === 'no-file') {
+      if (result.status === 'no-file') {
         Toast.show({
           type: 'info',
           text1: t('debtors.listDownloadNoFileToast'),
           visibilityTime: ToastLayout.visibilityMs,
           position: 'top',
         });
+      } else if (result.status === 'preview') {
+        setViewerFile(result.file);
       }
     } catch (err) {
       showErrorToast(t('debtors.listDownloadError'), err);
@@ -95,6 +100,7 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
     });
   };
   return (
+    <>
     <View style={s.row}>
       <Pressable
         style={({ pressed }) => [
@@ -115,5 +121,7 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
         <Text style={s.btnLabel}>{t('debtors.listShare')}</Text>
       </Pressable>
     </View>
+    <CaseDetailFileViewerModal file={viewerFile} onClose={() => setViewerFile(null)} />
+    </>
   );
 }

@@ -1,19 +1,23 @@
 import { Platform } from 'react-native';
 
 import { getDebtorAppFiles, streamDebtorFile } from '@/api/debtor-apps';
-import {
-  openAndroidViewer,
-  prepareStreamedFile,
-  shareCachedFile,
-} from '@/lib/download-eps-file';
+import type { PreparedFile } from '@/lib/download-eps-file';
+import { openAndroidViewer, prepareStreamedFile } from '@/lib/download-eps-file';
+
+export type DebtorFileResult =
+  | { status: 'no-file' }
+  // Web downloaded it, Android handed it to a viewer app — nothing left to do.
+  | { status: 'handled' }
+  // iOS: opened in the in-app reader, where the user can then share/save it.
+  | { status: 'preview'; file: PreparedFile };
 
 export async function downloadDebtorAppFile(
   appId: number,
-): Promise<'downloaded' | 'no-file'> {
+): Promise<DebtorFileResult> {
   const files = await getDebtorAppFiles(appId);
   const target = files[0];
   if (!target) {
-    return 'no-file';
+    return { status: 'no-file' };
   }
 
   const fileId = target.file.id;
@@ -25,12 +29,11 @@ export async function downloadDebtorAppFile(
   );
 
   if (!prepared) {
-    return 'downloaded';
+    return { status: 'handled' };
   }
   if (Platform.OS === 'android') {
     await openAndroidViewer(prepared);
-  } else {
-    await shareCachedFile(prepared);
+    return { status: 'handled' };
   }
-  return 'downloaded';
+  return { status: 'preview', file: prepared };
 }
