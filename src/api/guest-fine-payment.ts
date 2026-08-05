@@ -29,8 +29,13 @@ export async function createBogPaymentIntent(
   return mapped;
 }
 
+/** Returns the intent status the provider reported, when the response carries one. */
 export async function syncBogPaymentIntentStatus(
   paymentIntentId: string | number,
-): Promise<void> {
-  await apiClient.post(ApiPaths.paymentBogIntentSyncStatus(paymentIntentId));
+): Promise<string | null> {
+  const response = await apiClient.post(
+    ApiPaths.paymentBogIntentSyncStatus(paymentIntentId),
+  );
+  const data = (response.data as { data?: { status?: unknown } } | null)?.data;
+  return typeof data?.status === "string" ? data.status : null;
 }

@@ -8,6 +8,9 @@ import {
 } from '@/api/guest-fine-payment';
 import { showErrorToast } from '@/lib/show-error-toast';
 
+const SETTLE_ATTEMPTS = 5;
+const SETTLE_DELAY_MS = 1500;
+
 export type DebtorPaymentInput = {
   appId: number;
   personId: number;
@@ -53,13 +56,27 @@ export function useDebtorPayment() {
     setPaymentUrl(null);
     intentIdRef.current = null;
     if (intentId == null) return;
-    syncBogPaymentIntentStatus(intentId)
-      .catch((error) => showErrorToast(t('debtors.payError'), error))
-      .finally(() => {
+
+    void (async () => {
+      try {
+        // The WebView closes the moment the provider redirects, while the intent
+        // can still be CREATED on their side. Keep syncing until it settles so
+        // the payment actually reaches the debtor record.
+        for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
+          const status = await syncBogPaymentIntentStatus(intentId);
+          if (status && status.toUpperCase() !== 'CREATED') break;
+          if (attempt < SETTLE_ATTEMPTS - 1) {
+            await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY_MS));
+          }
+        }
+      } catch (error) {
+        showErrorToast(t('debtors.payError'), error);
+      } finally {
         queryClient.invalidateQueries({ queryKey: ['debtor-payments', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-app', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-apps'] });
-      });
+      }
+    })();
   }, [queryClient, t]);
 
   return {
