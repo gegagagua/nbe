@@ -6,12 +6,14 @@ import type {
   CreateDebtorAppResponse,
   CreatedDebtorApp,
   DebtorAppFile,
+  DebtorAppPayment,
   DebtorAppSearchData,
   DebtorRegistryApplicant,
   DebtorRegistryApplicationDetail,
   DebtorSearchFilters,
   DebtorSearchRequest,
   GetDebtorAppFilesResponse,
+  GetDebtorAppPaymentsResponse,
   GetDebtorAppPersonsResponse,
   GetDebtorAppResponse,
   SearchDebtorAppsResponse,
@@ -74,6 +76,15 @@ export async function createDebtorApp(
     payload,
   );
   return response.data.data;
+}
+
+export async function getDebtorAppPayments(
+  appId: number | string,
+): Promise<DebtorAppPayment[]> {
+  const response = await apiClient.get<GetDebtorAppPaymentsResponse>(
+    ApiPaths.debtorAppPayments(appId),
+  );
+  return response.data.data ?? [];
 }
 
 export async function getDebtorAppFiles(

@@ -20,6 +20,9 @@ import { paymentWebViewModalStyles as s } from "@/components/ui/payment-web-view
 type BodyProps = {
   file: PreparedFile;
   onClose: () => void;
+  /** Overrides the header action label; defaults to the case "share" wording. */
+  actionLabel?: string;
+  actionIcon?: keyof typeof MaterialCommunityIcons.glyphMap;
 };
 
 /** Directory the cached file lives in — iOS WebView needs read access to it. */
@@ -28,7 +31,7 @@ function dirOf(uri: string): string {
   return idx >= 0 ? uri.slice(0, idx + 1) : uri;
 }
 
-function FileViewerModalBody({ file, onClose }: BodyProps) {
+function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
@@ -74,11 +77,13 @@ function FileViewerModalBody({ file, onClose }: BodyProps) {
           accessibilityLabel={t("cases.detail.fileViewerShareA11y")}
         >
           <MaterialCommunityIcons
-            name="export-variant"
+            name={actionIcon ?? "export-variant"}
             size={Layout.registerBackIconSize}
             color={LoginPalette.primary}
           />
-          <Text style={s.closeLabel}>{t("cases.detail.fileViewerShare")}</Text>
+          <Text style={s.closeLabel}>
+            {actionLabel ?? t("cases.detail.fileViewerShare")}
+          </Text>
         </Pressable>
       </View>
       <View style={s.webviewWrap}>
@@ -104,9 +109,16 @@ function FileViewerModalBody({ file, onClose }: BodyProps) {
 type Props = {
   file: PreparedFile | null;
   onClose: () => void;
+  actionLabel?: string;
+  actionIcon?: keyof typeof MaterialCommunityIcons.glyphMap;
 };
 
-export function CaseDetailFileViewerModal({ file, onClose }: Props) {
+export function CaseDetailFileViewerModal({
+  file,
+  onClose,
+  actionLabel,
+  actionIcon,
+}: Props) {
   if (!file) return null;
 
   return (
@@ -117,7 +129,12 @@ export function CaseDetailFileViewerModal({ file, onClose }: Props) {
       onRequestClose={onClose}
     >
       <SafeAreaProvider>
-        <FileViewerModalBody file={file} onClose={onClose} />
+        <FileViewerModalBody
+          file={file}
+          onClose={onClose}
+          actionLabel={actionLabel}
+          actionIcon={actionIcon}
+        />
       </SafeAreaProvider>
     </Modal>
   );

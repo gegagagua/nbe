@@ -121,7 +121,12 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
         <Text style={s.btnLabel}>{t('debtors.listShare')}</Text>
       </Pressable>
     </View>
-    <CaseDetailFileViewerModal file={viewerFile} onClose={() => setViewerFile(null)} />
+    <CaseDetailFileViewerModal
+      file={viewerFile}
+      onClose={() => setViewerFile(null)}
+      actionLabel={t('debtors.viewerDownload')}
+      actionIcon="tray-arrow-down"
+    />
     </>
   );
 }

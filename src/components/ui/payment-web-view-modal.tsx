@@ -52,15 +52,30 @@ function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
   const [loading, setLoading] = useState(true);
   const initialUrlRef = useRef(url);
   const resolvedRef = useRef(false);
+  const leftInitialRef = useRef(false);
+
+  const finish = () => {
+    if (resolvedRef.current) return;
+    resolvedRef.current = true;
+    onClose();
+  };
 
   const handleNavChange = (state: { url?: string }) => {
     if (resolvedRef.current) return;
     const next = state.url ?? "";
     // Ignore the initial load — only act on subsequent redirects.
     if (!next || next === initialUrlRef.current) return;
+    leftInitialRef.current = true;
     if (!isResolutionUrl(next)) return;
-    resolvedRef.current = true;
-    onClose();
+    finish();
+  };
+
+  // Once the provider has redirected away from the payment page, a failed load
+  // means it pointed at a merchant return URL the WebView cannot render. The
+  // payment itself is already settled, so close instead of stranding the user
+  // on an error page — sync-status then resolves the real outcome.
+  const handleLoadFailure = () => {
+    if (leftInitialRef.current) finish();
   };
 
   return (
@@ -97,6 +112,8 @@ function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
           onNavigationStateChange={handleNavChange}
+          onError={handleLoadFailure}
+          onHttpError={handleLoadFailure}
           javaScriptEnabled
           domStorageEnabled
         />
