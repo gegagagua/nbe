@@ -188,11 +188,6 @@ export function DebtorAppExtractRequestScreen() {
             visibilityTime: ToastLayout.visibilityMs,
             position: 'top',
           });
-          if (router.canGoBack()) {
-            router.back();
-          } else {
-            router.replace('/debtors');
-          }
         },
       },
     );
@@ -300,6 +295,24 @@ export function DebtorAppExtractRequestScreen() {
             onPress={handleRecord}>
             <Text style={da.payLabel}>{t('debtors.extractRecordButton')}</Text>
           </Pressable>
+          {/* Editing and paying only make sense once the application exists. */}
+          {isRecorded ? (
+            <View style={da.row}>
+              <Pressable
+                style={[da.btn, da.editBtn]}
+                accessibilityRole="button"
+                onPress={() => setEditVisible(true)}>
+                <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
+              </Pressable>
+              <Pressable
+                style={[da.btn, da.payBtn, isPaying && da.btnDisabled]}
+                accessibilityRole="button"
+                disabled={isPaying}
+                onPress={handlePay}>
+                <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
+              </Pressable>
+            </View>
+          ) : null}
             </>
           )}
         </ScrollView>
