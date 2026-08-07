@@ -416,3 +416,53 @@ export type EpsMoneyDataItem = {
 export type EpsMoneyEnvelope = {
   data: EpsMoneyDataItem[] | EpsMoneyDataItem | null;
 };
+
+// ── Credited payments (ჩარიცხული თანხები) ─────────────────────────────────────
+// POST /payment-portal-pub/v1/payments/by-app-and-app-prsn-type
+// body { data: { appId, appPersonTypeId }, page }
+
+/** One credited-payment row (a sum paid into the application). */
+export type EpsAppPaymentItem = {
+  id: number;
+  payoffDate: string | null;
+  paymentDate: string | null;
+  amount: number | null;
+  finished: boolean | null;
+  /** Payer / source note, e.g. the clearing house. */
+  note: string | null;
+  transferredAmount: number | null;
+  person: { id: number; name: string | null } | null;
+  cmnt: string | null;
+};
+
+export type EpsAppPaymentsResponse = {
+  data: EpsAppPaymentItem[] | null;
+  page?: {
+    totalRecords: number;
+    totalPages: number;
+    size: number;
+    number: number;
+  } | null;
+};
+
+// ── Transfers (გადარიცხვები) ──────────────────────────────────────────────────
+// GET /transfer-portal-pub/v1/schemas/app/{appId}
+
+export type EpsTransferStatus = {
+  id: number;
+  name: string | null;
+  /** Hex color for the status label, e.g. "#006699". */
+  description: string | null;
+  active: boolean | null;
+};
+
+export type EpsTransferItem = {
+  id: number;
+  appId: number;
+  status: EpsTransferStatus | null;
+  statusDate: string | null;
+};
+
+export type EpsTransfersResponse = {
+  data: EpsTransferItem[] | null;
+};

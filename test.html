@@ -18,8 +18,8 @@
             },
         };
 
-        console.log('URL:', url);
-        console.log('request:', JSON.stringify(requestBody, null, 2));
+        // console.log('URL:', url);
+        // console.log('request:', JSON.stringify(requestBody, null, 2));
 
         fetch(url, {
             method: 'POST',
@@ -31,8 +31,8 @@
         })
             .then(async (res) => {
                 const data = await res.json().catch(() => res.text());
-                console.log('status:', res.status);
-                console.log('response:', data);
+                // console.log('status:', res.status);
+                // console.log('response:', data);
             })
             .catch((err) => {
                 console.error('Error:', err.message);

@@ -303,7 +303,6 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
 
   const handleMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      console.log('[Identomat] message:', event.nativeEvent.data);
       if (isTerminalMessage(event.nativeEvent.data)) {
         finish();
       }

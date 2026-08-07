@@ -66,6 +66,12 @@ export const ApiPaths = {
   creditorMoney: (appId: number | string) =>
     `/money-portal/v1/reg-money/creditor/app/${appId}`,
 
+  // EPS-PAYMENT-API — ჩარიცხული თანხები (credited amounts on the funds sub-tab)
+  appPaymentsByType: "/payment-portal-pub/v1/payments/by-app-and-app-prsn-type",
+  // EPS-TRANSFER-API — გადარიცხვები (transfers on the funds sub-tab)
+  appTransfers: (appId: number | string) =>
+    `/transfer-portal-pub/v1/schemas/app/${appId}`,
+
   // EPS-INSTALLMENT-API
   installmentById: (id: number | string) =>
     `/installment-portal/v1/installments/app/${id}`,

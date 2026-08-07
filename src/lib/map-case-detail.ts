@@ -1,6 +1,7 @@
 import type {
   EpsAppDetail,
   EpsAppDetailEnvelope,
+  EpsAppPaymentsResponse,
   EpsCaseExtraInfoData,
   EpsCaseExtraInfoEnvelope,
   EpsCaseExtraInfoItem,
@@ -25,6 +26,7 @@ import type {
   EpsSsaRequestsEnvelope,
   EpsStatusesEnvelope,
   EpsStatusFilesEnvelope,
+  EpsTransfersResponse,
 } from "@/types/case-detail-api";
 import type {
   CaseDetailAuctionLot,
@@ -39,12 +41,14 @@ import type {
   CaseDetailFundsPartyInfo,
   CaseDetailInstallment,
   CaseDetailInstallmentPayment,
+  CaseDetailPaymentRow,
   CaseDetailProceedingFile,
   CaseDetailProceedingStatus,
   CaseDetailRegistryEstateRow,
   CaseDetailRegistryInfoRow,
   CaseDetailSearchPropertyRow,
   CaseDetailSocialRow,
+  CaseDetailTransferRow,
   CaseDetailWritRow,
 } from "@/types/case-detail-data";
 
@@ -531,6 +535,31 @@ export function mapMoneyParty(
     totalDebt: formatMoney(sumDue - sumPaid, fallbackValuta),
     rows: mappedRows,
   };
+}
+
+/** Map the credited-payments response into funds-tab rows (ჩარიცხული თანხები). */
+export function mapCasePayments(
+  response: EpsAppPaymentsResponse,
+): CaseDetailPaymentRow[] {
+  return (response.data ?? []).map((p) => ({
+    id: p.id,
+    amount: formatMoney(p.amount, "₾"),
+    paidAt: formatDateTime(p.paymentDate),
+    note: p.note?.trim() ?? "",
+    personName: p.person?.name?.trim() ?? "",
+  }));
+}
+
+/** Map the transfer-schemas response into funds-tab rows (გადარიცხვები). */
+export function mapCaseTransfers(
+  response: EpsTransfersResponse,
+): CaseDetailTransferRow[] {
+  return (response.data ?? []).map((tr) => ({
+    id: tr.id,
+    status: tr.status?.name?.trim() ?? "",
+    statusColor: tr.status?.description?.trim() ?? "",
+    statusDate: formatDateTime(tr.statusDate),
+  }));
 }
 
 /** Map the status-files response into downloadable file rows. */

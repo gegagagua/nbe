@@ -152,6 +152,24 @@ export type CaseDetailFundsInfo = {
   debtor: CaseDetailFundsPartyInfo | null;
 };
 
+/** One credited-payment row (ჩარიცხული თანხები) on the funds sub-tab. */
+export type CaseDetailPaymentRow = {
+  id: number;
+  amount: string;
+  paidAt: string;
+  note: string;
+  personName: string;
+};
+
+/** One transfer row (გადარიცხვები) on the funds sub-tab. */
+export type CaseDetailTransferRow = {
+  id: number;
+  status: string;
+  /** Hex color the backend assigns to the status label. */
+  statusColor: string;
+  statusDate: string;
+};
+
 export type CaseDetailInstallmentPayment = {
   paymentDate: string;
   amountToPay: string;
