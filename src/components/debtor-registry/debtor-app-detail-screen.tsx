@@ -57,6 +57,16 @@ export function DebtorAppDetailScreen() {
   const { personId } = useDebtorAppPersons(Number.isFinite(appId) ? appId : null);
   const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
 
+  const handlePaymentAutoClose = () => {
+    setTimeout(() => {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/debtors');
+      }
+    }, 0);
+  };
+
   const handlePay = () => {
     const amount = app?.payableAmount ?? 0;
     if (personId == null) {
@@ -185,6 +195,7 @@ export function DebtorAppDetailScreen() {
         visible={paymentUrl != null}
         url={paymentUrl}
         onClose={closePayment}
+        onAutoClose={handlePaymentAutoClose}
       />
       <DebtorAppEditModal
         visible={editVisible}
