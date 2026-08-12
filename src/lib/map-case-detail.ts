@@ -128,6 +128,15 @@ function formatDateTime(raw: string | null): string {
   return hhmm ? `${date} ${hhmm}` : date;
 }
 
+/** "2026-04-22T21:46:48" → "22/04/2026 21:46:48" (seconds precision). */
+function formatDateTimeSeconds(raw: string | null): string {
+  if (!raw) return "";
+  const [datePart, timePart] = raw.split("T");
+  const date = formatDocDate(datePart);
+  const hhmmss = (timePart ?? "").slice(0, 8);
+  return hhmmss ? `${date} ${hhmmss}` : date;
+}
+
 function isCreditor(p: EpsPerson): boolean {
   return p.appPersonType?.id === 1;
 }
@@ -541,25 +550,51 @@ export function mapMoneyParty(
 export function mapCasePayments(
   response: EpsAppPaymentsResponse,
 ): CaseDetailPaymentRow[] {
-  return (response.data ?? []).map((p) => ({
-    id: p.id,
-    amount: formatMoney(p.amount, "₾"),
-    paidAt: formatDateTime(p.paymentDate),
-    note: p.note?.trim() ?? "",
-    personName: p.person?.name?.trim() ?? "",
-  }));
+  return (response.data ?? []).map((p) => {
+    const amount = p.amount ?? 0;
+    const distributed = p.transferredAmount ?? 0;
+    return {
+      id: p.id,
+      participant: p.person?.name?.trim() ?? "",
+      payerName: p.note?.trim() ?? "",
+      distribution: formatMoney(p.transferredAmount, "₾"),
+      amount: formatMoney(p.amount, "₾"),
+      remaining: formatMoney(amount - distributed, "₾"),
+      paidAt: formatDateTime(p.paymentDate),
+      finished: p.finished ?? false,
+    };
+  });
 }
+
+/**
+ * Fixed hex colors per transfer status, per the money-tab requirements.
+ * Keyed by the Georgian status name the transfer portal returns.
+ */
+const TRANSFER_STATUS_COLORS: Record<string, string> = {
+  "მომზადების რეჟიმი": "#CCCCCC",
+  "გადაგზავნილია პირველ დასტურზე": "#7799DD",
+  "პირველი დასტური მიღებულია": "#339900",
+  "გადაგზავნილია დასტურზე": "#006699",
+  "დასტური მიღებულია": "#339900",
+  "გადარიცხვის ფაილის მომზადება": "#336600",
+  "უარი გადარიცხვაზე, ხარვეზის გამო": "#A3104C",
+  "გადარიცხვა დასრულებულია": "#000000",
+};
 
 /** Map the transfer-schemas response into funds-tab rows (გადარიცხვები). */
 export function mapCaseTransfers(
   response: EpsTransfersResponse,
 ): CaseDetailTransferRow[] {
-  return (response.data ?? []).map((tr) => ({
-    id: tr.id,
-    status: tr.status?.name?.trim() ?? "",
-    statusColor: tr.status?.description?.trim() ?? "",
-    statusDate: formatDateTime(tr.statusDate),
-  }));
+  return (response.data ?? []).map((tr) => {
+    const status = tr.status?.name?.trim() ?? "";
+    return {
+      id: tr.id,
+      status,
+      statusColor:
+        TRANSFER_STATUS_COLORS[status] ?? tr.status?.description?.trim() ?? "",
+      statusDate: formatDateTimeSeconds(tr.statusDate),
+    };
+  });
 }
 
 /** Map the status-files response into downloadable file rows. */

@@ -18,12 +18,22 @@ export type KeyValueRow = {
 export function CaseDetailKvCard({
   title,
   rows,
+  accentColor,
 }: {
   title?: string;
   rows: KeyValueRow[];
+  /** Optional left-border accent, e.g. red for in-progress / green for done. */
+  accentColor?: string;
 }) {
   return (
-    <View style={tb.borderBox}>
+    <View
+      style={[
+        tb.borderBox,
+        accentColor
+          ? { borderLeftWidth: 4, borderLeftColor: accentColor }
+          : null,
+      ]}
+    >
       {title ? <Text style={p.panelTitle}>{title}</Text> : null}
       {rows.map((row, i) => (
         <View

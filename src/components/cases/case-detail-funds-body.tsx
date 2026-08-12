@@ -76,32 +76,55 @@ function FundsPartyCard({
   );
 }
 
+/** In-progress transactions are red, completed ones green. */
+const PAYMENT_STATUS_COLORS = {
+  current: "#CC0000",
+  finished: "#339900",
+} as const;
+
 function PaymentsCard({ rows }: { rows: CaseDetailPaymentRow[] }) {
   const { t } = useTranslation();
+  // Unfinished (in-progress) transactions bubble to the top; stable otherwise.
+  const ordered = [...rows].sort(
+    (a, b) => Number(a.finished) - Number(b.finished),
+  );
   return (
     <View style={p.panel}>
       <Text style={p.panelTitle}>{t("cases.detail.fundsPaymentsTitle")}</Text>
       <View style={tb.padSm}>
         <CaseDetailKvCardList>
-          {rows.map((row) => (
+          {ordered.map((row) => (
             <CaseDetailKvCard
               key={row.id}
+              accentColor={
+                row.finished
+                  ? PAYMENT_STATUS_COLORS.finished
+                  : PAYMENT_STATUS_COLORS.current
+              }
               rows={[
+                {
+                  label: t("cases.detail.fundsPaymentParticipant"),
+                  value: row.participant || t("cases.detail.emptyTable"),
+                },
+                {
+                  label: t("cases.detail.fundsPaymentPayer"),
+                  value: row.payerName || t("cases.detail.emptyTable"),
+                },
+                {
+                  label: t("cases.detail.fundsPaymentDistribution"),
+                  value: row.distribution || t("cases.detail.emptyTable"),
+                },
                 {
                   label: t("cases.detail.fundsPaymentAmount"),
                   value: row.amount || t("cases.detail.emptyTable"),
                 },
                 {
+                  label: t("cases.detail.fundsPaymentRemaining"),
+                  value: row.remaining || t("cases.detail.emptyTable"),
+                },
+                {
                   label: t("cases.detail.fundsPaymentDate"),
                   value: row.paidAt || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentPayer"),
-                  value: row.note || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentPerson"),
-                  value: row.personName || t("cases.detail.emptyTable"),
                 },
               ]}
             />
@@ -124,6 +147,10 @@ function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
               key={row.id}
               rows={[
                 {
+                  label: t("cases.detail.fundsTransferDate"),
+                  value: row.statusDate || t("cases.detail.emptyTable"),
+                },
+                {
                   label: t("cases.detail.fundsTransferStatus"),
                   value: (
                     <Text
@@ -135,10 +162,6 @@ function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
                       {row.status || t("cases.detail.emptyTable")}
                     </Text>
                   ),
-                },
-                {
-                  label: t("cases.detail.fundsTransferDate"),
-                  value: row.statusDate || t("cases.detail.emptyTable"),
                 },
               ]}
             />

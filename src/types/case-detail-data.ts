@@ -152,13 +152,23 @@ export type CaseDetailFundsInfo = {
   debtor: CaseDetailFundsPartyInfo | null;
 };
 
-/** One credited-payment row (ჩარიცხული თანხები) on the funds sub-tab. */
+/** One credited-payment row (განცხადებაზე ჩარიცხული თანხები) on the funds sub-tab. */
 export type CaseDetailPaymentRow = {
   id: number;
+  /** Case participant — the person the payment is tied to (საქმის მონაწილე). */
+  participant: string;
+  /** Payer / source note, e.g. the clearing house (გადამხდელის სახელი). */
+  payerName: string;
+  /** Amount already distributed / transferred (განაწილება). */
+  distribution: string;
+  /** Total payment amount (თანხის ოდენობა). */
   amount: string;
+  /** Amount still outstanding, amount − distribution (დარჩენილი თანხა). */
+  remaining: string;
+  /** Payment date (გადახდის თარიღი). */
   paidAt: string;
-  note: string;
-  personName: string;
+  /** True once the transaction is complete — drives color and ordering. */
+  finished: boolean;
 };
 
 /** One transfer row (გადარიცხვები) on the funds sub-tab. */
