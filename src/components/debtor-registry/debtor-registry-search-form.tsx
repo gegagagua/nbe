@@ -31,7 +31,7 @@ export function DebtorRegistrySearchForm({
   const isIdValid = (value: string) => /^\d{9}$|^\d{11}$/.test(value);
 
   const handleChange = (v: string) => {
-    onApplicantChange(v.replace(/\D/g, ''));
+    onApplicantChange(v.replace(/\D/g, '').slice(0, 11));
     if (idError) setIdError(false);
   };
 

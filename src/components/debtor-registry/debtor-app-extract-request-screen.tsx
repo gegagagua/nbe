@@ -126,6 +126,16 @@ export function DebtorAppExtractRequestScreen() {
   const { personId } = useDebtorAppPersons(payAppId);
   const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
 
+  const handlePaymentAutoClose = () => {
+    setTimeout(() => {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/debtors');
+      }
+    }, 0);
+  };
+
   const handlePay = () => {
     if (payAppId == null) {
       Toast.show({
@@ -322,6 +332,7 @@ export function DebtorAppExtractRequestScreen() {
         visible={paymentUrl != null}
         url={paymentUrl}
         onClose={closePayment}
+        onAutoClose={handlePaymentAutoClose}
       />
       <DebtorAppEditModal
         visible={editVisible}
