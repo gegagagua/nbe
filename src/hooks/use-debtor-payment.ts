@@ -10,6 +10,7 @@ import { showErrorToast } from '@/lib/show-error-toast';
 
 const SETTLE_ATTEMPTS = 5;
 const SETTLE_DELAY_MS = 1500;
+const PAID_STATUSES = ['COMPLETED', 'PAID', 'SUCCESS', 'SUCCEEDED'];
 
 export type DebtorPaymentInput = {
   appId: number;
@@ -23,6 +24,8 @@ export function useDebtorPayment() {
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const intentIdRef = useRef<string | null>(null);
   const appIdRef = useRef<number | null>(null);
+  // Final provider status once the intent settles; drives post-payment routing.
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: ({ appId, personId, amount }: DebtorPaymentInput) =>
@@ -43,6 +46,7 @@ export function useDebtorPayment() {
   const startPayment = useCallback(
     (input: DebtorPaymentInput) => {
       appIdRef.current = input.appId;
+      setPaymentStatus(null);
       mutation.mutate(input);
     },
     [mutation],
@@ -64,7 +68,11 @@ export function useDebtorPayment() {
         // the payment actually reaches the debtor record.
         for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
           const status = await syncBogPaymentIntentStatus(intentId);
-          if (status && status.toUpperCase() !== 'CREATED') break;
+          if (status && status.toUpperCase() !== 'CREATED') {
+            console.log('[PAY STATUS]', status.toUpperCase());
+            setPaymentStatus(status.toUpperCase());
+            break;
+          }
           if (attempt < SETTLE_ATTEMPTS - 1) {
             await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY_MS));
           }
@@ -84,5 +92,7 @@ export function useDebtorPayment() {
     startPayment,
     closePayment,
     isPaying: mutation.isPending,
+    paymentStatus,
+    isPaid: paymentStatus != null && PAID_STATUSES.includes(paymentStatus),
   };
 }
