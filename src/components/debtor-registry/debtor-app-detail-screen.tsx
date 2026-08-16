@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -55,17 +55,19 @@ export function DebtorAppDetailScreen() {
   const paymentsQuery = useDebtorAppPayments(Number.isFinite(appId) ? appId : null);
   const payments = paymentsQuery.data ?? [];
   const { personId } = useDebtorAppPersons(Number.isFinite(appId) ? appId : null);
-  const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
+  const { paymentUrl, startPayment, closePayment, isPaying, isPaid } =
+    useDebtorPayment();
 
-  const handlePaymentAutoClose = () => {
-    setTimeout(() => {
-      if (router.canGoBack()) {
-        router.back();
-      } else {
-        router.replace('/debtors');
-      }
-    }, 0);
-  };
+  // A settled, successful payment ends the flow — go back to the list. A failed
+  // one leaves the user here so they can try again.
+  useEffect(() => {
+    if (!isPaid) return;
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/debtors');
+    }
+  }, [isPaid]);
 
   const handlePay = () => {
     const amount = app?.payableAmount ?? 0;
@@ -195,7 +197,6 @@ export function DebtorAppDetailScreen() {
         visible={paymentUrl != null}
         url={paymentUrl}
         onClose={closePayment}
-        onAutoClose={handlePaymentAutoClose}
       />
       <DebtorAppEditModal
         visible={editVisible}

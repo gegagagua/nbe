@@ -17,7 +17,6 @@ import { paymentWebViewModalStyles as s } from "./payment-web-view-modal.styles"
 type BodyProps = {
   url: string;
   onClose: () => void;
-  onAutoClose?: () => void;
 };
 
 // Keywords that show up in BOG's terminal pages (success / failure / cancel /
@@ -50,7 +49,7 @@ function isResolutionUrl(url: string): boolean {
   return RESOLUTION_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
-function PaymentWebViewModalBody({ url, onClose, onAutoClose }: BodyProps) {
+function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
@@ -62,7 +61,6 @@ function PaymentWebViewModalBody({ url, onClose, onAutoClose }: BodyProps) {
     if (resolvedRef.current) return;
     resolvedRef.current = true;
     onClose();
-    onAutoClose?.();
   };
 
   const handleNavChange = (state: { url?: string }) => {
@@ -136,10 +134,9 @@ type Props = {
   visible: boolean;
   url: string | null;
   onClose: () => void;
-  onAutoClose?: () => void;
 };
 
-export function PaymentWebViewModal({ visible, url, onClose, onAutoClose }: Props) {
+export function PaymentWebViewModal({ visible, url, onClose }: Props) {
   if (!url) return null;
 
   return (
@@ -150,11 +147,7 @@ export function PaymentWebViewModal({ visible, url, onClose, onAutoClose }: Prop
       onRequestClose={onClose}
     >
       <SafeAreaProvider>
-        <PaymentWebViewModalBody
-          url={url}
-          onClose={onClose}
-          onAutoClose={onAutoClose}
-        />
+        <PaymentWebViewModalBody url={url} onClose={onClose} />
       </SafeAreaProvider>
     </Modal>
   );

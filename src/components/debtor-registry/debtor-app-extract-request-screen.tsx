@@ -124,17 +124,19 @@ export function DebtorAppExtractRequestScreen() {
   const updateMutation = useUpdateDebtorApp(createdAppId);
 
   const { personId } = useDebtorAppPersons(payAppId);
-  const { paymentUrl, startPayment, closePayment, isPaying } = useDebtorPayment();
+  const { paymentUrl, startPayment, closePayment, isPaying, isPaid } =
+    useDebtorPayment();
 
-  const handlePaymentAutoClose = () => {
-    setTimeout(() => {
-      if (router.canGoBack()) {
-        router.back();
-      } else {
-        router.replace('/debtors');
-      }
-    }, 0);
-  };
+  // A settled, successful payment ends the flow — go back to the list. A failed
+  // one leaves the user here so they can try again.
+  useEffect(() => {
+    if (!isPaid) return;
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/debtors');
+    }
+  }, [isPaid]);
 
   const handlePay = () => {
     if (payAppId == null) {
@@ -332,7 +334,6 @@ export function DebtorAppExtractRequestScreen() {
         visible={paymentUrl != null}
         url={paymentUrl}
         onClose={closePayment}
-        onAutoClose={handlePaymentAutoClose}
       />
       <DebtorAppEditModal
         visible={editVisible}
