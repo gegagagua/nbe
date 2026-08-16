@@ -159,8 +159,6 @@ export type CaseDetailPaymentRow = {
   participant: string;
   /** Payer / source note, e.g. the clearing house (გადამხდელის სახელი). */
   payerName: string;
-  /** Amount already distributed / transferred (განაწილება). */
-  distribution: string;
   /** Total payment amount (თანხის ოდენობა). */
   amount: string;
   /** Amount still outstanding, amount − distribution (დარჩენილი თანხა). */

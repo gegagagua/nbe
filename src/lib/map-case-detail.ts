@@ -557,10 +557,9 @@ export function mapCasePayments(
       id: p.id,
       participant: p.person?.name?.trim() ?? "",
       payerName: p.note?.trim() ?? "",
-      distribution: formatMoney(p.transferredAmount, "₾"),
       amount: formatMoney(p.amount, "₾"),
       remaining: formatMoney(amount - distributed, "₾"),
-      paidAt: formatDateTime(p.paymentDate),
+      paidAt: formatDateTimeSeconds(p.paymentDate),
       finished: p.finished ?? false,
     };
   });

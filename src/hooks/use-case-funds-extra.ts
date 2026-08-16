@@ -8,15 +8,17 @@ import type {
 } from "@/types/case-detail-data";
 
 export type CaseFundsExtra = {
-  payments: CaseDetailPaymentRow[];
+  creditorPayments: CaseDetailPaymentRow[];
+  debtorPayments: CaseDetailPaymentRow[];
   transfers: CaseDetailTransferRow[];
 };
 
 /**
  * Credited payments (ჩარიცხული თანხები) and transfers (გადარიცხვები) for a case,
- * shown below the funds sub-tab. Payments are fetched for both parties
- * (creditor + debtor) and merged, deduped by payment id. Bearer-authenticated
- * through the gateway. Lazy — enable when the funds sub-tab opens.
+ * shown below the funds sub-tab. Payments are fetched separately for each party
+ * (creditor + debtor) and kept apart so the UI can show them under distinct
+ * "კრედიტორი" / "მოვალე" headers. Bearer-authenticated through the gateway.
+ * Lazy — enable when the funds sub-tab opens.
  */
 export function useCaseFundsExtra(appId: string, options?: { enabled?: boolean }) {
   const canQuery = (options?.enabled ?? true) && appId.trim().length > 0;
@@ -31,16 +33,9 @@ export function useCaseFundsExtra(appId: string, options?: { enabled?: boolean }
         getCaseTransfers(appId),
       ]);
 
-      const byId = new Map<number, CaseDetailPaymentRow>();
-      for (const row of [
-        ...mapCasePayments(creditorPayments),
-        ...mapCasePayments(debtorPayments),
-      ]) {
-        byId.set(row.id, row);
-      }
-
       return {
-        payments: [...byId.values()],
+        creditorPayments: mapCasePayments(creditorPayments),
+        debtorPayments: mapCasePayments(debtorPayments),
         transfers: mapCaseTransfers(transfers),
       };
     },

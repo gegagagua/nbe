@@ -82,55 +82,102 @@ const PAYMENT_STATUS_COLORS = {
   finished: "#339900",
 } as const;
 
-function PaymentsCard({ rows }: { rows: CaseDetailPaymentRow[] }) {
+/**
+ * A single credited-payment section for one party (creditor or debtor). The
+ * status color drives the participant/amount/remaining/distribution text —
+ * green when the payment is finished, red while it is still in progress.
+ */
+function PaymentsSection({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: CaseDetailPaymentRow[];
+}) {
   const { t } = useTranslation();
+  if (rows.length === 0) return null;
   // Unfinished (in-progress) transactions bubble to the top; stable otherwise.
   const ordered = [...rows].sort(
     (a, b) => Number(a.finished) - Number(b.finished),
   );
+  const colored = (value: string, finished: boolean) => (
+    <Text
+      style={[
+        tb.kvValueText,
+        {
+          color: finished
+            ? PAYMENT_STATUS_COLORS.finished
+            : PAYMENT_STATUS_COLORS.current,
+        },
+      ]}
+    >
+      {value || t("cases.detail.emptyTable")}
+    </Text>
+  );
+  return (
+    <View style={tb.padSm}>
+      <Text style={s.primaryText}>{title}</Text>
+      <CaseDetailKvCardList>
+        {ordered.map((row) => (
+          <CaseDetailKvCard
+            key={row.id}
+            rows={[
+              {
+                label: t("cases.detail.fundsPaymentParticipant"),
+                value: colored(row.participant, row.finished),
+              },
+              {
+                label: t("cases.detail.fundsPaymentPayer"),
+                value: row.payerName || t("cases.detail.emptyTable"),
+              },
+              {
+                label: t("cases.detail.fundsPaymentDistribution"),
+                value: colored(
+                  row.finished
+                    ? t("cases.detail.fundsPaymentFinished")
+                    : t("cases.detail.fundsPaymentCurrent"),
+                  row.finished,
+                ),
+              },
+              {
+                label: t("cases.detail.fundsPaymentAmount"),
+                value: colored(row.amount, row.finished),
+              },
+              {
+                label: t("cases.detail.fundsPaymentRemaining"),
+                value: colored(row.remaining, row.finished),
+              },
+              {
+                label: t("cases.detail.fundsPaymentDate"),
+                value: row.paidAt || t("cases.detail.emptyTable"),
+              },
+            ]}
+          />
+        ))}
+      </CaseDetailKvCardList>
+    </View>
+  );
+}
+
+function PaymentsCard({
+  creditorRows,
+  debtorRows,
+}: {
+  creditorRows: CaseDetailPaymentRow[];
+  debtorRows: CaseDetailPaymentRow[];
+}) {
+  const { t } = useTranslation();
   return (
     <View style={p.panel}>
       <Text style={p.panelTitle}>{t("cases.detail.fundsPaymentsTitle")}</Text>
-      <View style={tb.padSm}>
-        <CaseDetailKvCardList>
-          {ordered.map((row) => (
-            <CaseDetailKvCard
-              key={row.id}
-              accentColor={
-                row.finished
-                  ? PAYMENT_STATUS_COLORS.finished
-                  : PAYMENT_STATUS_COLORS.current
-              }
-              rows={[
-                {
-                  label: t("cases.detail.fundsPaymentParticipant"),
-                  value: row.participant || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentPayer"),
-                  value: row.payerName || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentDistribution"),
-                  value: row.distribution || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentAmount"),
-                  value: row.amount || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentRemaining"),
-                  value: row.remaining || t("cases.detail.emptyTable"),
-                },
-                {
-                  label: t("cases.detail.fundsPaymentDate"),
-                  value: row.paidAt || t("cases.detail.emptyTable"),
-                },
-              ]}
-            />
-          ))}
-        </CaseDetailKvCardList>
-      </View>
+      <PaymentsSection
+        title={t("cases.detail.fundsCreditorTitle")}
+        rows={creditorRows}
+      />
+      <PaymentsSection
+        title={t("cases.detail.fundsDebtorTitle")}
+        rows={debtorRows}
+      />
     </View>
   );
 }
@@ -148,18 +195,20 @@ function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
               rows={[
                 {
                   label: t("cases.detail.fundsTransferDate"),
-                  value: row.statusDate || t("cases.detail.emptyTable"),
+                  value: `${t("cases.detail.fundsTransferNo")} ${row.id}`,
                 },
                 {
                   label: t("cases.detail.fundsTransferStatus"),
                   value: (
-                    <Text
-                      style={[
-                        tb.kvValueText,
-                        row.statusColor ? { color: row.statusColor } : null,
-                      ]}
-                    >
-                      {row.status || t("cases.detail.emptyTable")}
+                    <Text style={tb.kvValueText}>
+                      <Text
+                        style={
+                          row.statusColor ? { color: row.statusColor } : undefined
+                        }
+                      >
+                        {row.status || t("cases.detail.emptyTable")}
+                      </Text>
+                      {row.statusDate ? ` ${row.statusDate}` : ""}
                     </Text>
                   ),
                 },
@@ -195,13 +244,15 @@ export function CaseDetailFundsBody() {
   const hasDebtor = Boolean(
     debtor && (debtor.rows.length > 0 || debtor.partyLines.length > 0),
   );
-  const payments = extra?.payments ?? [];
+  const creditorPayments = extra?.creditorPayments ?? [];
+  const debtorPayments = extra?.debtorPayments ?? [];
+  const hasPayments = creditorPayments.length > 0 || debtorPayments.length > 0;
   const transfers = extra?.transfers ?? [];
 
   if (
     !hasCreditor &&
     !hasDebtor &&
-    payments.length === 0 &&
+    !hasPayments &&
     transfers.length === 0
   ) {
     return (
@@ -227,7 +278,12 @@ export function CaseDetailFundsBody() {
           info={debtor!}
         />
       ) : null}
-      {payments.length > 0 ? <PaymentsCard rows={payments} /> : null}
+      {hasPayments ? (
+        <PaymentsCard
+          creditorRows={creditorPayments}
+          debtorRows={debtorPayments}
+        />
+      ) : null}
       {transfers.length > 0 ? <TransfersCard rows={transfers} /> : null}
     </View>
   );
