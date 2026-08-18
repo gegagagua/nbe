@@ -63,6 +63,7 @@ export function HomeHeader({ displayName }: HomeHeaderProps) {
               style={homeHeaderStyles.actionPress}
               accessibilityRole="button"
               accessibilityLabel={t("home.notificationsA11yLabel")}
+              onPress={() => router.push("/notifications")}
             >
               <MaterialCommunityIcons
                 name={count > 0 ? "bell-badge-outline" : "bell-outline"}

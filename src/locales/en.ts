@@ -6,6 +6,7 @@ import { enDebtors } from '@/locales/fragments/en-debtors';
 import { enFacts } from '@/locales/fragments/en-facts';
 import { homeFaqItemsEn } from '@/locales/fragments/en-home-faq';
 import { enHome } from '@/locales/fragments/en-home';
+import { enNotifications } from '@/locales/fragments/en-notifications';
 import { enChatTab } from '@/locales/fragments/en-chat-tab';
 import { enContactTab } from '@/locales/fragments/en-contact-tab';
 import { enHomeTabs } from '@/locales/fragments/en-home-tabs';
@@ -17,6 +18,7 @@ export const en = {
   debtors: enDebtors,
   facts: enFacts,
   home: enHome,
+  notifications: enNotifications,
   homeTabs: enHomeTabs,
   chatTab: enChatTab,
   contactTab: enContactTab,
