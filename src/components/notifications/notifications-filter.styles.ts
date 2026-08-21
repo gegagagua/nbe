@@ -24,47 +24,33 @@ export const notificationsFilterStyles = StyleSheet.create({
     fontWeight: '600',
     color: NotificationsPalette.textPrimary,
   },
-  select: {
-    height: NotificationsLayout.selectHeight,
+  track: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Space.medium,
+    alignItems: 'stretch',
+    height: NotificationsLayout.segmentTrackHeight,
+    padding: NotificationsLayout.segmentTrackPadding,
     borderWidth: 1,
-    borderColor: NotificationsPalette.selectBorder,
-    borderRadius: NotificationsLayout.selectRadius,
-    backgroundColor: NotificationsPalette.selectBg,
+    borderColor: NotificationsPalette.segmentTrackBorder,
+    borderRadius: NotificationsLayout.segmentTrackRadius,
+    backgroundColor: NotificationsPalette.segmentTrackBg,
   },
-  selectText: {
-    fontSize: NotificationsTypography.filterTitle,
-    color: NotificationsPalette.textPrimary,
-  },
-  scrim: {
+  segment: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: NotificationsPalette.sheetScrim,
-  },
-  sheet: {
-    backgroundColor: NotificationsPalette.cardBg,
-    borderTopLeftRadius: NotificationsLayout.sheetRadius,
-    borderTopRightRadius: NotificationsLayout.sheetRadius,
-    paddingVertical: Space.small,
-  },
-  option: {
-    paddingVertical: Space.medium,
-    paddingHorizontal: Space.large,
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    paddingHorizontal: Space.extraSmall,
+    borderRadius: NotificationsLayout.segmentRadius,
   },
-  optionSelected: {
-    backgroundColor: NotificationsPalette.sheetSelectedBg,
+  segmentActive: {
+    backgroundColor: NotificationsPalette.segmentActiveBg,
   },
-  optionText: {
-    fontSize: NotificationsTypography.filterTitle,
-    color: NotificationsPalette.textPrimary,
+  segmentLabel: {
+    fontSize: NotificationsTypography.segmentLabel,
+    fontWeight: '500',
+    color: NotificationsPalette.segmentInactiveText,
   },
-  optionTextSelected: {
+  segmentLabelActive: {
     fontWeight: '700',
+    color: NotificationsPalette.segmentActiveText,
   },
 });

@@ -34,8 +34,38 @@ export async function searchNotifications(
 
   const start = pageNumber * NotificationsPageSize;
   return {
-    data: matching.slice(start, start + NotificationsPageSize),
+    // copies, so the query cache never aliases the mutable mock rows
+    data: matching
+      .slice(start, start + NotificationsPageSize)
+      .map((item) => ({ ...item })),
     totalPages: Math.max(1, Math.ceil(matching.length / NotificationsPageSize)),
     totalRecords: matching.length,
   };
+}
+
+/**
+ * Marks the given notifications as read.
+ *
+ * TODO: replace the in-memory mutation with the real endpoint once the backend
+ * contract lands.
+ */
+export async function markNotificationsRead(ids: number[]): Promise<void> {
+  const targets = new Set(ids);
+  for (const item of MOCK_NOTIFICATIONS) {
+    if (targets.has(item.id)) {
+      item.isRead = true;
+    }
+  }
+}
+
+/**
+ * Marks the whole feed as read.
+ *
+ * TODO: replace the in-memory mutation with the real endpoint once the backend
+ * contract lands.
+ */
+export async function markAllNotificationsRead(): Promise<void> {
+  for (const item of MOCK_NOTIFICATIONS) {
+    item.isRead = true;
+  }
 }

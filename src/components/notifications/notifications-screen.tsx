@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
@@ -9,28 +9,87 @@ import { caseScreenStyles as s } from "@/components/cases/case-screen.styles";
 import { HomeHeader } from "@/components/home/home-header";
 import { LoginFooter } from "@/components/login/login-footer";
 import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { useMarkNotificationsRead } from "@/hooks/use-mark-notifications-read";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 import { isGuestMode } from "@/lib/guest-mode";
-import type { NotificationFilterValue } from "@/types/notifications";
+import type {
+  AppNotification,
+  NotificationFilterValue,
+  NotificationSelectPreset,
+} from "@/types/notifications";
 
 import { NotificationsFilter } from "./notifications-filter";
 import { NotificationsList } from "./notifications-list";
+import { NotificationsToolbar } from "./notifications-toolbar";
 
 export function NotificationsScreen() {
   const { t } = useTranslation();
   const { displayName } = useSessionUserProfile();
   const [readState, setReadState] = useState<NotificationFilterValue>("all");
   const [pageNumber, setPageNumber] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const { data, isLoading } = useNotifications(pageNumber, { readState });
-
-  const onReadStateChange = (next: NotificationFilterValue) => {
-    setPageNumber(0);
-    setReadState(next);
-  };
+  const { markRead, markAllRead, isPending } = useMarkNotificationsRead();
 
   const items = data.data;
   const emptyList = !isLoading && items.length === 0;
+
+  const onReadStateChange = (next: NotificationFilterValue) => {
+    setPageNumber(0);
+    setSelectedIds(new Set());
+    setReadState(next);
+  };
+
+  const onPageChange = (next: number) => {
+    setSelectedIds(new Set());
+    setPageNumber(next);
+  };
+
+  const onToggleSelected = useCallback((id: number) => {
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const onSelectPreset = (preset: NotificationSelectPreset) => {
+    if (preset === "none") {
+      setSelectedIds(new Set());
+      return;
+    }
+    const matching = items.filter((item) => {
+      if (preset === "read") {
+        return item.isRead;
+      }
+      if (preset === "unread") {
+        return !item.isRead;
+      }
+      return true;
+    });
+    setSelectedIds(new Set(matching.map((item) => item.id)));
+  };
+
+  const onItemPress = (item: AppNotification) => {
+    if (!item.isRead) {
+      markRead([item.id]);
+    }
+  };
+
+  const onMarkSelectedRead = () => {
+    markRead([...selectedIds]);
+    setSelectedIds(new Set());
+  };
+
+  const onMarkAllRead = () => {
+    markAllRead();
+    setSelectedIds(new Set());
+  };
 
   return (
     <View style={s.page}>
@@ -57,18 +116,31 @@ export function NotificationsScreen() {
             <Text style={s.title}>{t("notifications.pageTitle")}</Text>
           </View>
           <NotificationsFilter value={readState} onChange={onReadStateChange} />
+          {!isLoading && items.length > 0 && (
+            <NotificationsToolbar
+              selectedCount={selectedIds.size}
+              allSelected={selectedIds.size === items.length}
+              onSelectPreset={onSelectPreset}
+              onMarkSelectedRead={onMarkSelectedRead}
+              onMarkAllRead={onMarkAllRead}
+              busy={isPending}
+            />
+          )}
           <View style={s.listWrap}>
             <NotificationsList
               items={items}
               loading={isLoading}
               empty={emptyList}
+              selectedIds={selectedIds}
+              onToggleSelected={onToggleSelected}
+              onItemPress={onItemPress}
             />
             {!isLoading && items.length > 0 && data.totalPages > 1 && (
               <CasePagination
                 pageNumber={pageNumber}
                 totalPages={data.totalPages}
                 totalRecords={data.totalRecords}
-                onPageChange={setPageNumber}
+                onPageChange={onPageChange}
               />
             )}
           </View>

@@ -29,6 +29,9 @@ export type NotificationsPage = {
   totalRecords: number;
 };
 
+/** Bulk-select presets offered by the toolbar checkbox menu. */
+export type NotificationSelectPreset = "all" | "read" | "unread" | "none";
+
 export type NotificationsSearchFilters = {
   readState?: NotificationFilterValue;
 };

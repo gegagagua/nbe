@@ -9,15 +9,27 @@ import { Space } from '@/constants/theme';
 
 export const notificationListItemStyles = StyleSheet.create({
   card: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Space.small,
     backgroundColor: NotificationsPalette.cardBg,
     borderWidth: 1,
     borderColor: NotificationsPalette.cardBorderRead,
     borderRadius: NotificationsLayout.cardRadius,
     padding: NotificationsLayout.cardPadding,
-    gap: Space.extraSmall,
   },
   cardUnread: {
     borderColor: NotificationsPalette.cardBorderUnread,
+  },
+  cardSelected: {
+    backgroundColor: NotificationsPalette.cardSelectedBg,
+  },
+  checkbox: {
+    paddingTop: 1,
+  },
+  content: {
+    flex: 1,
+    gap: Space.extraSmall,
   },
   headRow: {
     flexDirection: 'row',

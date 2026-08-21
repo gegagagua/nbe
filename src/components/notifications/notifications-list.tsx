@@ -15,12 +15,16 @@ export function NotificationsList({
   items,
   loading,
   empty,
+  selectedIds,
+  onToggleSelected,
   onItemPress,
 }: {
   items: AppNotification[];
   loading: boolean;
   empty: boolean;
-  onItemPress?: (item: AppNotification) => void;
+  selectedIds: Set<number>;
+  onToggleSelected: (id: number) => void;
+  onItemPress: (item: AppNotification) => void;
 }) {
   const { t } = useTranslation();
 
@@ -46,6 +50,8 @@ export function NotificationsList({
         <NotificationListItem
           key={item.id}
           item={item}
+          selected={selectedIds.has(item.id)}
+          onToggleSelected={onToggleSelected}
           onPress={onItemPress}
         />
       ))}

@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import {
   NotificationsLayout,
@@ -18,13 +17,9 @@ type Props = {
   onChange: (next: NotificationFilterValue) => void;
 };
 
-/** Single-select read-state filter shown above the notifications feed. */
+/** Read-state segmented control shown above the notifications feed. */
 export function NotificationsFilter({ value, onChange }: Props) {
   const { t } = useTranslation();
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-
-  const optionLabel = (option: NotificationFilterValue) =>
-    t(`notifications.filterOptions.${option}`);
 
   return (
     <View style={s.panel}>
@@ -36,69 +31,34 @@ export function NotificationsFilter({ value, onChange }: Props) {
           color={NotificationsPalette.textPrimary}
         />
       </View>
-      <Pressable
-        style={s.select}
-        onPress={() => setIsSheetOpen(true)}
-        accessibilityRole="button"
+      <View
+        style={s.track}
+        accessibilityRole="tablist"
         accessibilityLabel={t("notifications.filterSelectA11yLabel")}
-        accessibilityValue={{ text: optionLabel(value) }}
       >
-        <Text style={s.selectText}>{optionLabel(value)}</Text>
-        <MaterialCommunityIcons
-          name="chevron-down"
-          size={NotificationsLayout.chevronSize}
-          color={NotificationsPalette.textPrimary}
-        />
-      </Pressable>
-
-      <Modal
-        transparent
-        visible={isSheetOpen}
-        animationType="fade"
-        onRequestClose={() => setIsSheetOpen(false)}
-      >
-        <View style={s.scrim}>
-          <Pressable
-            style={StyleSheet.absoluteFillObject}
-            onPress={() => setIsSheetOpen(false)}
-            accessibilityRole="button"
-            accessibilityLabel={t("notifications.filterCloseA11yLabel")}
-          />
-          <View style={s.sheet}>
-            {FILTER_OPTIONS.map((option) => {
-              const isSelected = option === value;
-              return (
-                <Pressable
-                  key={option}
-                  style={[s.option, isSelected ? s.optionSelected : null]}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
-                  onPress={() => {
-                    onChange(option);
-                    setIsSheetOpen(false);
-                  }}
-                >
-                  <Text
-                    style={[
-                      s.optionText,
-                      isSelected ? s.optionTextSelected : null,
-                    ]}
-                  >
-                    {optionLabel(option)}
-                  </Text>
-                  {isSelected && (
-                    <MaterialCommunityIcons
-                      name="check"
-                      size={NotificationsLayout.chevronSize}
-                      color={NotificationsPalette.textPrimary}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-      </Modal>
+        {FILTER_OPTIONS.map((option) => {
+          const isSelected = option === value;
+          return (
+            <Pressable
+              key={option}
+              style={[s.segment, isSelected ? s.segmentActive : null]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isSelected }}
+              onPress={() => onChange(option)}
+            >
+              <Text
+                style={[
+                  s.segmentLabel,
+                  isSelected ? s.segmentLabelActive : null,
+                ]}
+                numberOfLines={1}
+              >
+                {t(`notifications.filterOptions.${option}`)}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
