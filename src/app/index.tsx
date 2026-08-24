@@ -9,6 +9,7 @@ import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { PasswordResetNoticeModal } from '@/components/login/password-reset-notice-modal';
 import { LoginPalette } from '@/constants/login';
+import { useDeviceTrust } from '@/hooks/use-device-trust';
 import { useFaceId } from '@/hooks/use-face-id';
 import { useLoginForm } from '@/hooks/use-login-form';
 import { useLoginIndexSessionRedirect } from '@/hooks/use-session-navigation';
@@ -21,6 +22,7 @@ function LoginScreenContent() {
   const { t } = useTranslation();
   const login = useLoginForm();
   const faceId = useFaceId();
+  const deviceTrust = useDeviceTrust();
   const [isFaceIdLoading, setIsFaceIdLoading] = useState(false);
 
   const { passwordReset } = useLocalSearchParams<{ passwordReset?: string }>();
@@ -37,7 +39,9 @@ function LoginScreenContent() {
   useFocusEffect(
     useCallback(() => {
       faceId.refresh();
-    }, [faceId.refresh]),
+      deviceTrust.refresh();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [faceId.refresh, deviceTrust.refresh]),
   );
 
   function handleGuestPress() {
@@ -89,11 +93,39 @@ function LoginScreenContent() {
     }
   }, [faceId, login, t, isFaceIdLoading]);
 
+  const handlePasskeyPress = useCallback(async () => {
+    if (deviceTrust.isBusy) return;
+    const result = await deviceTrust.login();
+    if (result.ok) {
+      if (result.session.tokenType === 'SESSION') {
+        await login.completePasskeyLogin(result.session);
+      } else {
+        // A trusted device is expected to return a full session; anything else
+        // (forced password change, unexpected OTP) is safest handled by a normal
+        // password sign-in.
+        showErrorToast(t('deviceTrust.loginFallback'));
+      }
+      return;
+    }
+    if (result.reason === 'cancelled') return;
+    if (result.reason === 'no_credential') {
+      // The stored credential is gone; drop the local reference so the button
+      // stops showing. No session here to authorise a backend revoke.
+      await deviceTrust.forgetLocal();
+      showErrorToast(t('deviceTrust.errorNoCredential'));
+      return;
+    }
+    showErrorToast(t('deviceTrust.errorFailed'));
+  }, [deviceTrust, login, t]);
+
   const showFaceId =
     !faceId.isLoading &&
     faceId.isEnabled &&
     faceId.hasCredentials &&
     faceId.availability.isAvailable;
+
+  const showPasskey =
+    !deviceTrust.isLoading && deviceTrust.isSupported && deviceTrust.isTrusted;
 
   return (
     <LoginScreenLayout>
@@ -121,6 +153,12 @@ function LoginScreenContent() {
           iconName: faceId.kind === 'fingerprint' ? 'fingerprint' : 'face-recognition',
           onPress: () => { handleFaceIdPress(); },
           disabled: isFaceIdLoading,
+        }}
+        passkey={{
+          show: showPasskey,
+          label: t('deviceTrust.loginButton'),
+          onPress: () => { handlePasskeyPress(); },
+          disabled: deviceTrust.isBusy,
         }}
       />
     </LoginScreenLayout>

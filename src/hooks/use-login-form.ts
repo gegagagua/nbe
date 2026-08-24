@@ -46,20 +46,23 @@ export function useLoginForm(): LoginFormState {
     defaultValues: { username: "", password: "" },
   });
 
-  const finishLogin = useCallback(
+  // Shared session persistence for both password and passkey logins. `username`
+  // is stored as-is so Face ID (which re-runs createSession with it) stays valid;
+  // `syncFaceId` is only passed when we actually hold a plaintext password.
+  const persistSession = useCallback(
     async (
       session: import("@/types/session").CreateSessionResponse,
-      credentials: LoginFormValues,
+      opts: {
+        username: string;
+        syncFaceId?: { username: string; password: string };
+      },
     ) => {
       const { token, user, lastSession } = session;
       await setSessionToken(token);
       if (user) {
         await setSessionUserProfile({
           id: user.id,
-          // Store the exact identifier the user logged in with so Face ID
-          // (which re-runs createSession with this username) stays valid.
-          username:
-            credentials.username.trim() || user.username || user.idnumber || "",
+          username: opts.username || user.username || user.idnumber || "",
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
           lastSession: lastSession ?? null,
@@ -68,13 +71,39 @@ export function useLoginForm(): LoginFormState {
         });
       }
       setGuestMode(false);
-      await syncFaceIdCredentialsIfEnabled({
-        username: credentials.username,
-        password: credentials.password,
-      });
+      if (opts.syncFaceId) {
+        await syncFaceIdCredentialsIfEnabled(opts.syncFaceId);
+      }
       resetStackTo("/dashboard");
     },
     [],
+  );
+
+  const finishLogin = useCallback(
+    async (
+      session: import("@/types/session").CreateSessionResponse,
+      credentials: LoginFormValues,
+    ) => {
+      await persistSession(session, {
+        username: credentials.username.trim(),
+        syncFaceId: {
+          username: credentials.username,
+          password: credentials.password,
+        },
+      });
+    },
+    [persistSession],
+  );
+
+  // Passkey login already returns a SESSION token (biometric = strong auth); the
+  // caller in the login screen handles cancellation/failure reasons and toasts.
+  const completePasskeyLogin = useCallback(
+    async (session: import("@/types/session").CreateSessionResponse) => {
+      await persistSession(session, {
+        username: session.user?.username || session.user?.idnumber || "",
+      });
+    },
+    [persistSession],
   );
 
   const loginMutation = useMutation({
@@ -182,6 +211,7 @@ export function useLoginForm(): LoginFormState {
     onSubmit,
     submitDisabled,
     submitWithCredentials,
+    completePasskeyLogin,
     forcedPwdChange: {
       visible: pendingPwdChange !== null,
       isSubmitting: isForcingPwdChange,

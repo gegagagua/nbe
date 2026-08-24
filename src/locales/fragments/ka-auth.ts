@@ -249,4 +249,28 @@ export const kaAuth = {
     loginButton: "შესვლა Face ID-ით",
     loginButtonFingerprint: "შესვლა თითის ანაბეჭდით",
   },
+  deviceTrust: {
+    sectionTitle: "მოწყობილობის გასანდოება",
+    rowLabel: "ამ მოწყობილობის გასანდოება",
+    descriptionEnabled:
+      "გასანდოებულია — შესვლისას შეგიძლიათ Passkey-ით (Face ID / თითის ანაბეჭდით) სწრაფად შეხვიდეთ.",
+    descriptionDisabled:
+      "გაასანდოეთ ეს მოწყობილობა, რომ პაროლის ნაცვლად Passkey-ით შეხვიდეთ.",
+    unavailable: "ამ მოწყობილობაზე Passkey მიუწვდომელია.",
+    labelTitle: "მოწყობილობის სახელი",
+    labelDescription:
+      "მიუთითეთ სახელი, რომ მოგვიანებით ადვილად ცნოთ ეს მოწყობილობა (არასავალდებულო).",
+    labelPlaceholder: "მაგ. ჩემი ტელეფონი",
+    confirmButton: "გასანდოება",
+    cancelButton: "გაუქმება",
+    enableSuccess: "მოწყობილობა გასანდოებულია",
+    forgetSuccess: "მოწყობილობის გასანდოება გაუქმდა",
+    forgetFailed: "გასანდოების გაუქმება ვერ მოხერხდა. სცადეთ თავიდან.",
+    errorCancelled: "მოქმედება გაუქმდა.",
+    errorFailed: "მოწყობილობის გასანდოება ვერ მოხერხდა. სცადეთ თავიდან.",
+    errorNoCredential:
+      "ამ მოწყობილობაზე Passkey ვეღარ მოიძებნა. გთხოვთ, შეხვიდეთ პაროლით და თავიდან გაასანდოოთ.",
+    loginButton: "შესვლა Passkey-ით",
+    loginFallback: "ვერ დასრულდა Passkey-ით შესვლა. გთხოვთ, შეხვიდეთ პაროლით.",
+  },
 } as const;

@@ -18,6 +18,7 @@ import { signOut } from "@/lib/sign-out";
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
 import { ProfileChangePasswordSection } from "./profile-change-password-section";
+import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
 import { profileScreenStyles as s } from "./profile-screen.styles";
@@ -123,6 +124,10 @@ export function ProfileScreen() {
             passwordHistory={passwordHistory}
             verifyPassword={verifyPassword}
           />
+
+          <View style={s.divider} />
+
+          <ProfileDeviceTrustSection />
 
           <View style={s.divider} />
 

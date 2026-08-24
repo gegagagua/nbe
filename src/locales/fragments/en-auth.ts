@@ -253,4 +253,28 @@ export const enAuth = {
     loginButton: "Sign in with Face ID",
     loginButtonFingerprint: "Sign in with fingerprint",
   },
+  deviceTrust: {
+    sectionTitle: "Trusted device",
+    rowLabel: "Trust this device",
+    descriptionEnabled:
+      "Trusted — you can sign in quickly with a passkey (Face ID / fingerprint) instead of your password.",
+    descriptionDisabled:
+      "Trust this device to sign in with a passkey instead of typing your password.",
+    unavailable: "Passkeys aren't available on this device.",
+    labelTitle: "Device name",
+    labelDescription:
+      "Give this device a name so you can recognise it later (optional).",
+    labelPlaceholder: "e.g. My phone",
+    confirmButton: "Trust device",
+    cancelButton: "Cancel",
+    enableSuccess: "This device is now trusted",
+    forgetSuccess: "This device is no longer trusted",
+    forgetFailed: "Could not remove this trusted device. Please try again.",
+    errorCancelled: "The action was cancelled.",
+    errorFailed: "Could not trust this device. Please try again.",
+    errorNoCredential:
+      "The passkey for this device could not be found. Please sign in with your password and trust the device again.",
+    loginButton: "Sign in with a passkey",
+    loginFallback: "Passkey sign-in couldn't be completed. Please sign in with your password.",
+  },
 } as const;

@@ -21,6 +21,7 @@ export function LoginForm({
   onIdentomatDemoPress,
   onForgotPasswordPress,
   faceId,
+  passkey,
 }: LoginFormProps) {
   const { t } = useTranslation();
 
@@ -92,6 +93,24 @@ export function LoginForm({
               color={LoginPalette.primary}
             />
             <Text style={loginFormStyles.faceIdButtonText}>{faceId.label}</Text>
+          </Pressable>
+        ) : null}
+        {passkey?.show ? (
+          <Pressable
+            style={[
+              loginFormStyles.faceIdButton,
+              passkey.disabled && loginFormStyles.faceIdButtonDisabled,
+            ]}
+            onPress={passkey.onPress}
+            disabled={passkey.disabled}
+            accessibilityRole="button"
+            accessibilityLabel={passkey.label}>
+            <MaterialCommunityIcons
+              name="key-variant"
+              size={20}
+              color={LoginPalette.primary}
+            />
+            <Text style={loginFormStyles.faceIdButtonText}>{passkey.label}</Text>
           </Pressable>
         ) : null}
         <Pressable

@@ -39,6 +39,10 @@ function isPublicEndpoint(url: string): boolean {
     url.endsWith(ApiPaths.otpVerify) ||
     url.endsWith(ApiPaths.passwordReset) ||
     url.endsWith(ApiPaths.sessions) ||
+    // Passkey login runs before a session exists, so its challenge/login calls
+    // must not wait for (or attach) a bearer token.
+    url.endsWith(ApiPaths.webauthnLoginChallenge) ||
+    url.endsWith(ApiPaths.webauthnLogin) ||
     isSessionOtpVerify(url)
   );
 }

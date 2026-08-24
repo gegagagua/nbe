@@ -23,6 +23,18 @@ export const ApiPaths = {
   usersChangePhone: "/um-portal/v1/users/phone",
   passwordGhange: "/um-portal/v1/users/password",
 
+  // WebAuthn / Passkey — device trust (გასანდოება)
+  // Registration flow is authenticated; login flow is public (no session yet).
+  webauthnChallenge: "/um-portal/v1/webauthn/challenge",
+  webauthnRegister: "/um-portal/v1/webauthn/register",
+  webauthnLoginChallenge: "/um-portal-pub/v1/webauthn/challenge",
+  webauthnLogin: "/um-portal-pub/v1/webauthn/login",
+  // Trusted-device management (authenticated). DELETE revokes server-side
+  // (sets revokedDate) — local cleanup alone would leave the credential active.
+  webauthnCredentials: "/um-portal/v1/webauthn/credentials",
+  webauthnCredentialById: (credentialId: string) =>
+    `/um-portal/v1/webauthn/credentials/${credentialId}`,
+
   // EPS-MONEY-API — public guest payment search
   paymentInfo: "/payment-portal-pub/v1/payments/info",
   paymentBogIntent: "/payment-portal-pub/v1/payments/bog/intents",
@@ -114,3 +126,9 @@ export const SessionStorageKey = "nbe_session_token" as const;
 export const SessionUserProfileStorageKey = "nbe_session_user_profile" as const;
 export const FaceIdEnabledStorageKey = "nbe_face_id_enabled" as const;
 export const FaceIdCredentialsStorageKey = "nbe_face_id_credentials" as const;
+// Passkey / device trust. The credential id is returned by /webauthn/register and
+// is needed to start a passkey login challenge. The installation id is a stable
+// per-install UUID the backend uses to identify the device.
+export const PasskeyCredentialIdStorageKey = "nbe_passkey_credential_id" as const;
+export const PasskeyInstallationIdStorageKey =
+  "nbe_passkey_installation_id" as const;

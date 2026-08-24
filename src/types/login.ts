@@ -17,6 +17,13 @@ export type LoginFaceIdProps = {
   disabled?: boolean;
 };
 
+export type LoginPasskeyProps = {
+  show: boolean;
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+};
+
 export type LoginFormProps = {
   control: Control<LoginFormValues>;
   errors: FieldErrors<LoginFormValues>;
@@ -27,6 +34,7 @@ export type LoginFormProps = {
   onIdentomatDemoPress: () => void;
   onForgotPasswordPress: () => void;
   faceId?: LoginFaceIdProps;
+  passkey?: LoginPasskeyProps;
 };
 
 export type ForcedPwdChangeState = {
@@ -50,6 +58,10 @@ export type LoginFormState = {
   submitWithCredentials: (
     values: LoginFormValues,
   ) => Promise<{ ok: true } | { ok: false; error: unknown }>;
+  /** Persist a session produced by passkey login and navigate into the app. */
+  completePasskeyLogin: (
+    session: import('@/types/session').CreateSessionResponse,
+  ) => Promise<void>;
   forcedPwdChange: ForcedPwdChangeState;
   otpLogin: OtpLoginState;
 };

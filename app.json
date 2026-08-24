@@ -2,7 +2,7 @@
   "expo": {
     "name": "NBE",
     "slug": "NBE-n-R4DF",
-    "version": "1.0.55",
+    "version": "1.0.57",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "nbe-n-r4df",
@@ -10,6 +10,9 @@
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "ge.gov.nbe.app",
+      "associatedDomains": [
+        "webcredentials:eps-gateway-testing.nbe.gov.ge"
+      ],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "ნება დართეთ აპს კამერის გამოყენება ვინაობის გადამოწმებისთვის.",
