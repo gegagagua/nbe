@@ -1,13 +1,13 @@
-import { ApiConfig } from '@/constants/api';
-import { NotificationsPageSize } from '@/constants/notifications';
+import { ApiConfig, NotificationsApiPaths } from '@/constants/api';
+import { NotificationsFetchSize } from '@/constants/notifications';
 import { apiClient } from '@/lib/api-client';
+import { mapNotification } from '@/lib/map-notifications-response';
 import type {
+  AppNotification,
   NotificationsCountUnreadEnvelope,
-  NotificationsPage,
-  NotificationsSearchFilters,
+  NotificationsSearchEnvelope,
+  NotificationsSearchRequest,
 } from '@/types/notifications';
-
-import { MOCK_NOTIFICATIONS } from './notifications.mock';
 
 export async function getUnreadNotificationsCount() {
   const response = await apiClient.get<NotificationsCountUnreadEnvelope>(
@@ -17,55 +17,39 @@ export async function getUnreadNotificationsCount() {
 }
 
 /**
- * Returns a page of notifications.
+ * Fetches the notifications feed from `POST /notif-portal/v1/notifications/search`.
  *
- * TODO: replace the mock feed with the real endpoint once the backend contract
- * lands — only this function body should need to change.
+ * The endpoint filters server-side by `regnumber` / `createdDate*` only — it has
+ * no read-state filter — so the whole window is returned and the read/unread
+ * split is done client-side (see {@link useNotifications}).
  */
-export async function searchNotifications(
-  filters: NotificationsSearchFilters = {},
-  pageNumber = 0,
-): Promise<NotificationsPage> {
-  const readState = filters.readState ?? 'all';
-  const matching =
-    readState === 'all'
-      ? MOCK_NOTIFICATIONS
-      : MOCK_NOTIFICATIONS.filter((item) => item.isRead === (readState === 'read'));
-
-  const start = pageNumber * NotificationsPageSize;
-  return {
-    // copies, so the query cache never aliases the mutable mock rows
-    data: matching
-      .slice(start, start + NotificationsPageSize)
-      .map((item) => ({ ...item })),
-    totalPages: Math.max(1, Math.ceil(matching.length / NotificationsPageSize)),
-    totalRecords: matching.length,
+export async function fetchNotifications(): Promise<AppNotification[]> {
+  const body: NotificationsSearchRequest = {
+    data: {},
+    page: { number: 0, size: NotificationsFetchSize },
+    sort: [{ property: 'createdDate', direction: 'DESC' }],
   };
+  const response = await apiClient.post<NotificationsSearchEnvelope>(
+    NotificationsApiPaths.search,
+    body,
+  );
+  return (response.data.data ?? []).map(mapNotification);
 }
 
 /**
- * Marks the given notifications as read.
- *
- * TODO: replace the in-memory mutation with the real endpoint once the backend
- * contract lands.
+ * Marks the given notifications as read via
+ * `PUT /notif-portal/v1/notifications/mark-as-read` (body: `{ data: [ids] }`).
  */
 export async function markNotificationsRead(ids: number[]): Promise<void> {
-  const targets = new Set(ids);
-  for (const item of MOCK_NOTIFICATIONS) {
-    if (targets.has(item.id)) {
-      item.isRead = true;
-    }
+  if (ids.length === 0) {
+    return;
   }
+  await apiClient.put(NotificationsApiPaths.markAsRead, { data: ids });
 }
 
-/**
- * Marks the whole feed as read.
- *
- * TODO: replace the in-memory mutation with the real endpoint once the backend
- * contract lands.
- */
+/** Marks every currently-unread notification as read. */
 export async function markAllNotificationsRead(): Promise<void> {
-  for (const item of MOCK_NOTIFICATIONS) {
-    item.isRead = true;
-  }
+  const all = await fetchNotifications();
+  const unreadIds = all.filter((item) => !item.isRead).map((item) => item.id);
+  await markNotificationsRead(unreadIds);
 }

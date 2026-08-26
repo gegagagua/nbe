@@ -97,7 +97,9 @@ export const ApiPaths = {
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 export const NotificationsApiPaths = {
-  countUnread: "/um-portal/v1/notifications/count-unread",
+  countUnread: "/notif-portal/v1/notifications/count-unread",
+  search: "/notif-portal/v1/notifications/search",
+  markAsRead: "/notif-portal/v1/notifications/mark-as-read",
 } as const;
 
 // ── Legacy keys kept for backward compatibility ───────────────────────────────

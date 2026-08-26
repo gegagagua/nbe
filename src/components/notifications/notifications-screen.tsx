@@ -9,9 +9,11 @@ import { caseScreenStyles as s } from "@/components/cases/case-screen.styles";
 import { HomeHeader } from "@/components/home/home-header";
 import { LoginFooter } from "@/components/login/login-footer";
 import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { UnreadCountBadge } from "@/components/ui/unread-count-badge";
 import { useMarkNotificationsRead } from "@/hooks/use-mark-notifications-read";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
+import { useUnreadNotificationsCount } from "@/hooks/use-unread-notifications-count";
 import { isGuestMode } from "@/lib/guest-mode";
 import type {
   AppNotification,
@@ -30,6 +32,8 @@ export function NotificationsScreen() {
   const [pageNumber, setPageNumber] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const { data, isLoading } = useNotifications(pageNumber, { readState });
+  const { count: unreadCount, isLoading: unreadLoading } =
+    useUnreadNotificationsCount();
   const { markRead, markAllRead, isPending } = useMarkNotificationsRead();
 
   const items = data.data;
@@ -114,6 +118,9 @@ export function NotificationsScreen() {
               />
             </Pressable>
             <Text style={s.title}>{t("notifications.pageTitle")}</Text>
+            {unreadCount > 0 && (
+              <UnreadCountBadge count={unreadCount} loading={unreadLoading} />
+            )}
           </View>
           <NotificationsFilter value={readState} onChange={onReadStateChange} />
           {!isLoading && items.length > 0 && (

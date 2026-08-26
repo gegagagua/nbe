@@ -55,5 +55,12 @@ export const NotificationsTypography = {
   cardBody: FontSize.md,
 } as const;
 
-/** Page size used by the (mock, for now) notifications search. */
+/** Rows rendered per page in the feed (client-side pagination). */
 export const NotificationsPageSize = 20;
+
+/**
+ * How many rows we pull from the server in one search call. The read/unread
+ * filter is applied client-side (the backend `search` ignores a `read` field),
+ * so we fetch a generous window and paginate locally.
+ */
+export const NotificationsFetchSize = 100;
