@@ -26,4 +26,8 @@ export const enNotifications = {
   markAllRead: "Mark all as read",
   markReadSuccess: "Notifications marked as read",
   markReadError: "Failed to mark as read",
+  detailTitle: "Notification",
+  detailNotFound: "Notification not found",
+  detailCaseLabel: "Case number",
+  openCaseA11yLabel: "Open case #{{caseNumber}}",
 } as const;

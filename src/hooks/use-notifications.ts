@@ -6,6 +6,7 @@ import { NotificationsPageSize } from "@/constants/notifications";
 import i18n from "@/i18n/i18n";
 import { showErrorToast } from "@/lib/show-error-toast";
 import type {
+  AppNotification,
   NotificationsPage,
   NotificationsSearchFilters,
 } from "@/types/notifications";
@@ -24,7 +25,7 @@ const EMPTY_PAGE: NotificationsPage = {
 export function useNotifications(
   pageNumber: number,
   filters: NotificationsSearchFilters = {},
-): { data: NotificationsPage; isLoading: boolean } {
+): { data: NotificationsPage; isLoading: boolean; unreadCount: number } {
   const readState = filters.readState ?? "all";
 
   const query = useQuery({
@@ -55,5 +56,34 @@ export function useNotifications(
     };
   }, [query.data, readState, pageNumber]);
 
-  return { data: page, isLoading: query.isLoading };
+  // Derived from the fetched feed so the badge reflects the notifications the
+  // user actually sees. The `count-unread` endpoint is unreliable here — in
+  // testing it consistently reported one more than the real unread rows.
+  const unreadCount = useMemo(
+    () => (query.data ?? []).filter((item) => !item.isRead).length,
+    [query.data],
+  );
+
+  return { data: page, isLoading: query.isLoading, unreadCount };
+}
+
+/**
+ * Reads a single notification out of the cached feed by id. Reactive to the
+ * shared `["notifications"]` query, so it updates when the row is marked read.
+ */
+export function useNotificationById(id: number): {
+  notification: AppNotification | null;
+  isLoading: boolean;
+} {
+  const query = useQuery({
+    queryKey: ["notifications"],
+    queryFn: fetchNotifications,
+  });
+
+  const notification = useMemo(
+    () => query.data?.find((item) => item.id === id) ?? null,
+    [query.data, id],
+  );
+
+  return { notification, isLoading: query.isLoading };
 }

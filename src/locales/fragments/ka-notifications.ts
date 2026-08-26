@@ -26,4 +26,8 @@ export const kaNotifications = {
   markAllRead: "ყველას წაკითხულად მონიშვნა",
   markReadSuccess: "შეტყობინებები მონიშნულია წაკითხულად",
   markReadError: "წაკითხულად მონიშვნა ვერ მოხერხდა",
+  detailTitle: "შეტყობინება",
+  detailNotFound: "შეტყობინება ვერ მოიძებნა",
+  detailCaseLabel: "საქმის ნომერი",
+  openCaseA11yLabel: "საქმის გახსნა #{{caseNumber}}",
 } as const;
