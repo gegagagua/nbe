@@ -6,6 +6,7 @@ import { kaDebtors } from '@/locales/fragments/ka-debtors';
 import { kaFacts } from '@/locales/fragments/ka-facts';
 import { homeFaqItemsKa } from '@/locales/fragments/ka-home-faq';
 import { kaHome } from '@/locales/fragments/ka-home';
+import { kaNotifications } from '@/locales/fragments/ka-notifications';
 import { kaChatTab } from '@/locales/fragments/ka-chat-tab';
 import { kaContactTab } from '@/locales/fragments/ka-contact-tab';
 import { kaHomeTabs } from '@/locales/fragments/ka-home-tabs';
@@ -17,6 +18,7 @@ export const ka = {
   debtors: kaDebtors,
   facts: kaFacts,
   home: kaHome,
+  notifications: kaNotifications,
   homeTabs: kaHomeTabs,
   chatTab: kaChatTab,
   contactTab: kaContactTab,
