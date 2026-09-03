@@ -47,6 +47,7 @@ const initialAvailability: BiometricAvailability = {
   hasHardware: false,
   isEnrolled: false,
   isAvailable: false,
+  hasSecureLock: false,
   kind: 'none',
 };
 

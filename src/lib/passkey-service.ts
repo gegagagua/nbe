@@ -12,6 +12,7 @@ import {
   resolveDeviceName,
   resolvePlatform,
 } from '@/lib/device-info';
+import { softwarePasskeyAuthenticator } from '@/lib/passkey-software-authenticator';
 import {
   getOrCreateInstallationId,
   getPasskeyCredentialId,
@@ -40,10 +41,14 @@ let nativeModule: PasskeyNativeModule | null | undefined;
 
 function getPasskeyNative(): PasskeyNativeModule | null {
   if (nativeModule !== undefined) return nativeModule;
-  nativeModule =
+  const native =
     Platform.OS === 'web'
       ? null
       : requireOptionalNativeModule<PasskeyNativeModule>('ReactNativePasskeys');
+  // No native module (Expo Go, web, or a binary not rebuilt with it) → fall back
+  // to the pure-JS software authenticator so device trust still works. Real
+  // dev/prod builds resolve the OS module and never touch the fallback.
+  nativeModule = native ?? (softwarePasskeyAuthenticator as unknown as PasskeyNativeModule);
   return nativeModule;
 }
 
@@ -76,6 +81,13 @@ function isUserCancellation(error: unknown): boolean {
     message.includes('user canceled') ||
     message.includes('aborted')
   );
+}
+
+// Biometrics not set up on the device — device trust requires Face ID /
+// fingerprint, so this surfaces as "unsupported" (the OS module can't hit this;
+// it comes from the software authenticator's mandatory verification gate).
+function isBiometricUnavailable(error: unknown): boolean {
+  return error instanceof Error && error.name === 'BiometricUnavailable';
 }
 
 /**
@@ -113,6 +125,7 @@ export async function registerDevicePasskey(
     return { ok: true, credentialId };
   } catch (error) {
     if (isUserCancellation(error)) return { ok: false, reason: 'cancelled', error };
+    if (isBiometricUnavailable(error)) return { ok: false, reason: 'unsupported', error };
     return { ok: false, reason: 'error', error };
   }
 }
@@ -144,6 +157,7 @@ export async function loginWithPasskey(): Promise<PasskeyLoginResult> {
     return { ok: true, session };
   } catch (error) {
     if (isUserCancellation(error)) return { ok: false, reason: 'cancelled', error };
+    if (isBiometricUnavailable(error)) return { ok: false, reason: 'unsupported', error };
     return { ok: false, reason: 'error', error };
   }
 }

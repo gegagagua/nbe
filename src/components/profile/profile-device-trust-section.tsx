@@ -25,11 +25,13 @@ export function ProfileDeviceTrustSection() {
   const [modalVisible, setModalVisible] = useState(false);
   const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
 
-  const description = !trust.isSupported
-    ? t('deviceTrust.unavailable')
-    : trust.isTrusted
-      ? t('deviceTrust.descriptionEnabled')
-      : t('deviceTrust.descriptionDisabled');
+  const description = trust.isTrusted
+    ? t('deviceTrust.descriptionEnabled')
+    : trust.requiresBiometricSetup
+      ? t('deviceTrust.requiresBiometrics')
+      : !trust.isSupported
+        ? t('deviceTrust.unavailable')
+        : t('deviceTrust.descriptionDisabled');
 
   const mapError = useCallback(
     (result: Extract<RegisterDeviceResult, { ok: false }>): string => {
@@ -48,13 +50,14 @@ export function ProfileDeviceTrustSection() {
         setModalVisible(true);
         return;
       }
-      // Revoke on the backend first; the Switch stays on until it succeeds
-      // (its value is bound to `trust.isTrusted`, which only flips on success).
+      // Frontend-first: revokeDevice flips the switch off locally right away, so
+      // the toggle always reflects the action. Only note it if the backend sync
+      // failed — the device is already forgotten on this phone.
       const result = await trust.revokeDevice();
-      if (result.ok) {
+      if (result.serverSynced) {
         setStatusMessage({ type: 'success', text: t('deviceTrust.forgetSuccess') });
       } else {
-        showErrorToast(t('deviceTrust.forgetFailed'), result.error);
+        setStatusMessage({ type: 'error', text: t('deviceTrust.forgetServerFailed') });
       }
     },
     [trust, t],

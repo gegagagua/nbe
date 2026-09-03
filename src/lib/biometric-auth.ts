@@ -22,22 +22,38 @@ function mapKind(types: LocalAuthentication.AuthenticationType[]): BiometryKind 
 
 export async function getBiometricAvailability(): Promise<BiometricAvailability> {
   if (Platform.OS === 'web') {
-    return { hasHardware: false, isEnrolled: false, isAvailable: false, kind: 'none' };
+    return {
+      hasHardware: false,
+      isEnrolled: false,
+      isAvailable: false,
+      hasSecureLock: false,
+      kind: 'none',
+    };
   }
   try {
-    const [hasHardware, isEnrolled, types] = await Promise.all([
+    const [hasHardware, isEnrolled, types, enrolledLevel] = await Promise.all([
       LocalAuthentication.hasHardwareAsync(),
       LocalAuthentication.isEnrolledAsync(),
       LocalAuthentication.supportedAuthenticationTypesAsync(),
+      LocalAuthentication.getEnrolledLevelAsync(),
     ]);
     return {
       hasHardware,
       isEnrolled,
       isAvailable: hasHardware && isEnrolled,
+      // Any lock above NONE (SECRET = passcode/PIN/pattern, or biometric) means
+      // the device can authenticate via the passcode fallback.
+      hasSecureLock: enrolledLevel !== LocalAuthentication.SecurityLevel.NONE,
       kind: hasHardware ? mapKind(types) : 'none',
     };
   } catch {
-    return { hasHardware: false, isEnrolled: false, isAvailable: false, kind: 'none' };
+    return {
+      hasHardware: false,
+      isEnrolled: false,
+      isAvailable: false,
+      hasSecureLock: false,
+      kind: 'none',
+    };
   }
 }
 
@@ -46,11 +62,10 @@ export async function authenticateBiometric(promptMessage: string): Promise<Biom
     return { success: false, reason: 'unavailable' };
   }
   const availability = await getBiometricAvailability();
-  if (!availability.hasHardware) {
-    return { success: false, reason: 'unavailable' };
-  }
-  if (!availability.isEnrolled) {
-    return { success: false, reason: 'not_enrolled' };
+  // `disableDeviceFallback: false` lets a passcode-only device verify, so we only
+  // hard-fail when there's no secure lock at all — nothing to authenticate against.
+  if (!availability.hasSecureLock) {
+    return { success: false, reason: availability.hasHardware ? 'not_enrolled' : 'unavailable' };
   }
   try {
     const res = await LocalAuthentication.authenticateAsync({

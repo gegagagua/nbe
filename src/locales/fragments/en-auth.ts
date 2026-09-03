@@ -261,6 +261,8 @@ export const enAuth = {
     descriptionDisabled:
       "Trust this device to sign in with a passkey instead of typing your password.",
     unavailable: "Passkeys aren't available on this device.",
+    requiresBiometrics:
+      "Set up a screen lock (Face ID / fingerprint or a passcode) in your device settings first — device trust can't be enabled without one.",
     labelTitle: "Device name",
     labelDescription:
       "Give this device a name so you can recognise it later (optional).",
@@ -270,6 +272,8 @@ export const enAuth = {
     enableSuccess: "This device is now trusted",
     forgetSuccess: "This device is no longer trusted",
     forgetFailed: "Could not remove this trusted device. Please try again.",
+    forgetServerFailed:
+      "Removed from this device, but syncing with the server failed.",
     errorCancelled: "The action was cancelled.",
     errorFailed: "Could not trust this device. Please try again.",
     errorNoCredential:

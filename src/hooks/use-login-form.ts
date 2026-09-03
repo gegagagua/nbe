@@ -6,7 +6,14 @@ import { useTranslation } from "react-i18next";
 
 import { createSession, verifyLoginOtp } from "@/api/sessions";
 import { changePassword } from "@/api/users";
+import { getBiometricAvailability } from "@/lib/biometric-auth";
+import { resolveDeviceName } from "@/lib/device-info";
 import { setGuestMode } from "@/lib/guest-mode";
+import { getPasskeyCredentialId } from "@/lib/passkey-storage";
+import {
+    isPasskeySupported,
+    registerDevicePasskey,
+} from "@/lib/passkey-service";
 import { mapChangePasswordError } from "@/lib/map-change-password-error";
 import { resetStackTo } from "@/lib/reset-navigation";
 import { mapLoginError } from "@/lib/map-login-error";
@@ -39,6 +46,8 @@ export function useLoginForm(): LoginFormState {
     credentials: LoginFormValues;
   } | null>(null);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [pendingDeviceTrust, setPendingDeviceTrust] = useState(false);
+  const [isTrustingDevice, setIsTrustingDevice] = useState(false);
 
   const { control, handleSubmit, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(schema),
@@ -49,6 +58,8 @@ export function useLoginForm(): LoginFormState {
   // Shared session persistence for both password and passkey logins. `username`
   // is stored as-is so Face ID (which re-runs createSession with it) stays valid;
   // `syncFaceId` is only passed when we actually hold a plaintext password.
+  // Navigation is intentionally NOT done here — callers navigate once they've
+  // decided whether to first show the post-login "trust this device" prompt.
   const persistSession = useCallback(
     async (
       session: import("@/types/session").CreateSessionResponse,
@@ -74,10 +85,21 @@ export function useLoginForm(): LoginFormState {
       if (opts.syncFaceId) {
         await syncFaceIdCredentialsIfEnabled(opts.syncFaceId);
       }
-      resetStackTo("/dashboard");
     },
     [],
   );
+
+  // Whether to offer trusting this device after a password/OTP login: only when
+  // passkeys are usable here, biometrics are enrolled (device trust is a
+  // biometric login — never offer it without Face ID / fingerprint), and the
+  // device isn't already trusted. A passkey sign-in skips this — already trusted.
+  const shouldPromptDeviceTrust = useCallback(async () => {
+    if (!isPasskeySupported()) return false;
+    const availability = await getBiometricAvailability();
+    if (!availability.isAvailable) return false;
+    const credentialId = await getPasskeyCredentialId();
+    return !credentialId;
+  }, []);
 
   const finishLogin = useCallback(
     async (
@@ -91,8 +113,15 @@ export function useLoginForm(): LoginFormState {
           password: credentials.password,
         },
       });
+      // The session token is now set, which is what authorises the passkey
+      // registration below. Prompt if untrusted; otherwise go straight in.
+      if (await shouldPromptDeviceTrust()) {
+        setPendingDeviceTrust(true);
+        return;
+      }
+      resetStackTo("/dashboard");
     },
-    [persistSession],
+    [persistSession, shouldPromptDeviceTrust],
   );
 
   // Passkey login already returns a SESSION token (biometric = strong auth); the
@@ -102,9 +131,40 @@ export function useLoginForm(): LoginFormState {
       await persistSession(session, {
         username: session.user?.username || session.user?.idnumber || "",
       });
+      resetStackTo("/dashboard");
     },
     [persistSession],
   );
+
+  // Confirm handler for the post-login trust prompt: mint the passkey, then
+  // continue into the app regardless of the outcome (the user is already signed
+  // in — trusting the device is optional). The modal is closed before the OS
+  // passkey sheet appears; on iOS a visible RN Modal can make it fail.
+  const handleDeviceTrustConfirm = useCallback(
+    async (label: string) => {
+      setPendingDeviceTrust(false);
+      setIsTrustingDevice(true);
+      try {
+        const result = await registerDevicePasskey(label);
+        if (result.ok) {
+          showSuccessToast(t("deviceTrust.enableSuccess"));
+        } else if (result.reason === "unsupported") {
+          showErrorToast(t("deviceTrust.unavailable"));
+        } else if (result.reason !== "cancelled") {
+          showErrorToast(t("deviceTrust.errorFailed"), result.error);
+        }
+      } finally {
+        setIsTrustingDevice(false);
+        resetStackTo("/dashboard");
+      }
+    },
+    [t],
+  );
+
+  const handleDeviceTrustSkip = useCallback(() => {
+    setPendingDeviceTrust(false);
+    resetStackTo("/dashboard");
+  }, []);
 
   const loginMutation = useMutation({
     mutationFn: async (payload: LoginFormValues) =>
@@ -222,6 +282,13 @@ export function useLoginForm(): LoginFormState {
       isSubmitting: isVerifyingOtp,
       onSubmit: handleOtpVerify,
       onCancel: () => setPendingOtp(null),
+    },
+    deviceTrustPrompt: {
+      visible: pendingDeviceTrust,
+      isSubmitting: isTrustingDevice,
+      defaultLabel: resolveDeviceName(),
+      onConfirm: handleDeviceTrustConfirm,
+      onSkip: handleDeviceTrustSkip,
     },
   };
 }

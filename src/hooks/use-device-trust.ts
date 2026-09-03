@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { revokeCredential } from '@/api/passkey';
+import { getBiometricAvailability } from '@/lib/biometric-auth';
 import { clearPasskeyCredentialId, getPasskeyCredentialId } from '@/lib/passkey-storage';
 import {
   isPasskeySupported,
@@ -15,13 +16,24 @@ import type { PasskeyLoginResult, RegisterDeviceResult } from '@/types/passkey';
  * `useFaceId` so the two security features read the same way.
  */
 export function useDeviceTrust() {
-  const [isSupported] = useState<boolean>(() => isPasskeySupported());
+  // Device trust is a secure login, so it requires a device lock (Face ID /
+  // fingerprint, or a passcode/PIN via the OS fallback) — not just passkey
+  // support. `requiresBiometricSetup` lets the UI tell "no screen lock yet" apart
+  // from "passkeys genuinely unavailable".
+  const [isSupported, setIsSupported] = useState(false);
+  const [requiresBiometricSetup, setRequiresBiometricSetup] = useState(false);
   const [isTrusted, setIsTrusted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    const credentialId = await getPasskeyCredentialId();
+    const [credentialId, availability] = await Promise.all([
+      getPasskeyCredentialId(),
+      getBiometricAvailability(),
+    ]);
+    const passkeySupported = isPasskeySupported();
+    setIsSupported(passkeySupported && availability.hasSecureLock);
+    setRequiresBiometricSetup(passkeySupported && !availability.hasSecureLock);
     setIsTrusted(!!credentialId);
     setIsLoading(false);
   }, []);
@@ -66,21 +78,25 @@ export function useDeviceTrust() {
     }
   }, []);
 
-  // Full "remove trusted device": revoke on the backend first (so the credential
-  // stops being accepted), then drop the local reference. Local cleanup only
-  // runs on a successful revoke.
+  // "Remove trusted device", frontend-first: drop the local reference and flip
+  // the switch OFF immediately so the UI always reflects the user's action, then
+  // best-effort the backend revoke. A backend failure (e.g. 500) no longer keeps
+  // the device stuck as trusted here — it's reported as `serverSynced: false` so
+  // the caller can note the server wasn't reached, but the toggle stays off.
   const revokeDevice = useCallback(async (): Promise<
-    { ok: true } | { ok: false; error: unknown }
+    { ok: true; serverSynced: boolean; error?: unknown }
   > => {
     setIsBusy(true);
     try {
       const credentialId = await getPasskeyCredentialId();
-      if (credentialId) await revokeCredential(credentialId);
       await clearPasskeyCredentialId();
       setIsTrusted(false);
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
+      try {
+        if (credentialId) await revokeCredential(credentialId);
+        return { ok: true, serverSynced: true };
+      } catch (error) {
+        return { ok: true, serverSynced: false, error };
+      }
     } finally {
       setIsBusy(false);
     }
@@ -88,6 +104,7 @@ export function useDeviceTrust() {
 
   return {
     isSupported,
+    requiresBiometricSetup,
     isTrusted,
     isLoading,
     isBusy,

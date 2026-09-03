@@ -1,9 +1,9 @@
 import {
   DarkTheme,
   DefaultTheme,
+  Stack,
   ThemeProvider,
-} from "@react-navigation/native";
-import { Stack } from "expo-router";
+} from "expo-router";
 import { I18nextProvider } from "react-i18next";
 import { Dimensions, useColorScheme, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";

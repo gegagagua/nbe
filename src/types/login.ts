@@ -50,6 +50,19 @@ export type OtpLoginState = {
   onCancel: () => void;
 };
 
+/**
+ * Post-login "trust this device" prompt. Shown after a password/OTP sign-in when
+ * passkeys are supported and this device isn't trusted yet; confirming or
+ * skipping both continue into the app.
+ */
+export type DeviceTrustPromptState = {
+  visible: boolean;
+  isSubmitting: boolean;
+  defaultLabel: string;
+  onConfirm: (label: string) => Promise<void>;
+  onSkip: () => void;
+};
+
 export type LoginFormState = {
   control: Control<LoginFormValues>;
   errors: FieldErrors<LoginFormValues>;
@@ -64,4 +77,5 @@ export type LoginFormState = {
   ) => Promise<void>;
   forcedPwdChange: ForcedPwdChangeState;
   otpLogin: OtpLoginState;
+  deviceTrustPrompt: DeviceTrustPromptState;
 };

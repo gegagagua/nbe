@@ -8,6 +8,7 @@ import { LoginForm } from '@/components/login/login-form';
 import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { PasswordResetNoticeModal } from '@/components/login/password-reset-notice-modal';
+import { ProfileDeviceTrustModal } from '@/components/profile/profile-device-trust-modal';
 import { LoginPalette } from '@/constants/login';
 import { useDeviceTrust } from '@/hooks/use-device-trust';
 import { useFaceId } from '@/hooks/use-face-id';
@@ -135,6 +136,13 @@ function LoginScreenContent() {
       />
       <ForcedPasswordChangeModal {...login.forcedPwdChange} />
       <LoginOtpModal {...login.otpLogin} />
+      <ProfileDeviceTrustModal
+        visible={login.deviceTrustPrompt.visible}
+        isSubmitting={login.deviceTrustPrompt.isSubmitting}
+        defaultLabel={login.deviceTrustPrompt.defaultLabel}
+        onConfirm={(label) => { login.deviceTrustPrompt.onConfirm(label); }}
+        onClose={login.deviceTrustPrompt.onSkip}
+      />
       <LoginForm
         control={login.control}
         errors={login.errors}
