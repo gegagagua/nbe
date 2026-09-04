@@ -37,6 +37,8 @@ export function ProfileDeviceTrustSection() {
     (result: Extract<RegisterDeviceResult, { ok: false }>): string => {
       if (result.reason === 'unsupported') return t('deviceTrust.unavailable');
       if (result.reason === 'cancelled') return t('deviceTrust.errorCancelled');
+      if (result.reason === 'already-registered')
+        return t('deviceTrust.errorAlreadyRegistered');
       return t('deviceTrust.errorFailed');
     },
     [t],
@@ -72,6 +74,15 @@ export function ProfileDeviceTrustSection() {
       const result = await trust.register(label);
       if (result.ok) {
         setStatusMessage({ type: 'success', text: t('deviceTrust.enableSuccess') });
+        return;
+      }
+      // Already trusted server-side — the switch is on; show it as a success,
+      // not an error.
+      if (result.reason === 'already-registered') {
+        setStatusMessage({
+          type: 'success',
+          text: result.message ?? t('deviceTrust.errorAlreadyRegistered'),
+        });
         return;
       }
       if (result.reason !== 'cancelled') showErrorToast(mapError(result));

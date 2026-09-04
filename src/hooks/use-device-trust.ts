@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { revokeCredential } from '@/api/passkey';
+import { listTrustedCredentials, revokeCredential } from '@/api/passkey';
 import { getBiometricAvailability } from '@/lib/biometric-auth';
 import { clearPasskeyCredentialId, getPasskeyCredentialId } from '@/lib/passkey-storage';
 import {
   isPasskeySupported,
   loginWithPasskey,
+  reconcileDeviceTrust,
   registerDevicePasskey,
 } from '@/lib/passkey-service';
 import type { PasskeyLoginResult, RegisterDeviceResult } from '@/types/passkey';
@@ -34,8 +35,17 @@ export function useDeviceTrust() {
     const passkeySupported = isPasskeySupported();
     setIsSupported(passkeySupported && availability.hasSecureLock);
     setRequiresBiometricSetup(passkeySupported && !availability.hasSecureLock);
+    // Local credentialId first — fast, offline-capable initial state.
     setIsTrusted(!!credentialId);
     setIsLoading(false);
+
+    // Then reconcile against the server so the switch reflects real trust state:
+    // a device registered server-side but missing its local credentialId (the 409
+    // case) still shows as trusted. Best-effort — if the list can't be read we
+    // keep the local-derived state above.
+    const server = await reconcileDeviceTrust();
+    if (server === true) setIsTrusted(true);
+    else if (server === false) setIsTrusted(false);
   }, []);
 
   useEffect(() => {
@@ -47,7 +57,9 @@ export function useDeviceTrust() {
       setIsBusy(true);
       try {
         const result = await registerDevicePasskey(label);
-        if (result.ok) setIsTrusted(true);
+        // 'already-registered' means the device is trusted server-side, so flip
+        // the switch on too — same as a fresh success from the user's view.
+        if (result.ok || result.reason === 'already-registered') setIsTrusted(true);
         return result;
       } finally {
         setIsBusy(false);
@@ -92,7 +104,14 @@ export function useDeviceTrust() {
       await clearPasskeyCredentialId();
       setIsTrusted(false);
       try {
-        if (credentialId) await revokeCredential(credentialId);
+        if (credentialId) {
+          // DELETE wants the server record `id`, not the Base64URL credentialId —
+          // resolve it from the trusted-credentials list before revoking.
+          const list = await listTrustedCredentials();
+          const match = list.find((c) => c.credentialId === credentialId);
+          const id = match?.id ?? credentialId;
+          await revokeCredential(id);
+        }
         return { ok: true, serverSynced: true };
       } catch (error) {
         return { ok: true, serverSynced: false, error };

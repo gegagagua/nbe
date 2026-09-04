@@ -126,13 +126,22 @@ export function logApiError(error: unknown, context?: string): void {
   const rawBody = error.response?.data;
   const isEmptyBody =
     rawBody == null || (typeof rawBody === "string" && rawBody.length === 0);
+  // JSON.stringify instead of passing the object — Metro's console collapses
+  // nested values to `[Object]`, which hid the real backend error (e.g. the
+  // `errors[0].message` a 409 carries). Stringifying shows the full payload.
   console.error(
     `${label} ${status || "network"} ${method} ${url} — ${reason}`,
-    {
-      authorized,
-      statusText: error.response?.statusText || undefined,
-      // Distinguish "server sent no body" from a real payload we failed to read.
-      body: isEmptyBody ? "<empty — server returned no error body>" : stringifyBody(rawBody),
-    },
+    JSON.stringify(
+      {
+        authorized,
+        statusText: error.response?.statusText || undefined,
+        // Distinguish "server sent no body" from a real payload we failed to read.
+        body: isEmptyBody
+          ? "<empty — server returned no error body>"
+          : stringifyBody(rawBody),
+      },
+      null,
+      2,
+    ),
   );
 }

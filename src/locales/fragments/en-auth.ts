@@ -276,6 +276,7 @@ export const enAuth = {
       "Removed from this device, but syncing with the server failed.",
     errorCancelled: "The action was cancelled.",
     errorFailed: "Could not trust this device. Please try again.",
+    errorAlreadyRegistered: "This device is already trusted.",
     errorNoCredential:
       "The passkey for this device could not be found. Please sign in with your password and trust the device again.",
     loginButton: "Sign in with a passkey",

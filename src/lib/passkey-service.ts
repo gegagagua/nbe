@@ -2,11 +2,13 @@ import { requireOptionalNativeModule } from 'expo-modules-core';
 import { Platform } from 'react-native';
 
 import {
+  listTrustedCredentials,
   loginPasskey,
   registerPasskey,
   requestLoginChallenge,
   requestRegistrationChallenge,
 } from '@/api/passkey';
+import { backendErrorMessage } from '@/lib/backend-error-message';
 import {
   resolveAppVersion,
   resolveDeviceName,
@@ -90,6 +92,14 @@ function isBiometricUnavailable(error: unknown): boolean {
   return error instanceof Error && error.name === 'BiometricUnavailable';
 }
 
+// The backend rejects registering a device/credential that is already trusted
+// with HTTP 409 (Conflict) — surfaced distinctly so the UI can tell the user the
+// device is already registered rather than showing a generic failure.
+function isAlreadyRegistered(error: unknown): boolean {
+  const status = (error as { response?: { status?: number } })?.response?.status;
+  return status === 409;
+}
+
 /**
  * Trust this device: request a challenge, let the OS mint a passkey, register it
  * with the backend, and persist the returned credential id for future logins.
@@ -126,7 +136,47 @@ export async function registerDevicePasskey(
   } catch (error) {
     if (isUserCancellation(error)) return { ok: false, reason: 'cancelled', error };
     if (isBiometricUnavailable(error)) return { ok: false, reason: 'unsupported', error };
+    if (isAlreadyRegistered(error)) {
+      // Already trusted server-side. Surface the gateway's own message (e.g.
+      // "აღნიშნული მოწყობილობა უკვე რეგისტრირებულია!") so the UI shows exactly
+      // what the backend returned instead of a generic string.
+      return {
+        ok: false,
+        reason: 'already-registered',
+        message: backendErrorMessage(error),
+        error,
+      };
+    }
     return { ok: false, reason: 'error', error };
+  }
+}
+
+/**
+ * Reconcile this device's trust state against the backend list, so the profile
+ * switch reflects server truth (e.g. registered on a previous install whose local
+ * credentialId was lost — the 409 case). Matches this device by installationId
+ * (falling back to a lone active credential) and, when found, persists its
+ * credentialId so passkey login works and the switch stays on.
+ *
+ * Returns:
+ *  - true  → this device has an active credential server-side (credentialId stored)
+ *  - false → the list was readable but this device isn't trusted server-side
+ *  - null  → couldn't reach/read the list; caller should keep the local state
+ */
+export async function reconcileDeviceTrust(): Promise<boolean | null> {
+  try {
+    const installationId = await getOrCreateInstallationId();
+    const active = (await listTrustedCredentials()).filter((c) => !c.revokedDate);
+    const match =
+      active.find((c) => c.installationId === installationId) ??
+      (active.length === 1 ? active[0] : undefined);
+    if (match?.credentialId) {
+      await setPasskeyCredentialId(match.credentialId);
+      return true;
+    }
+    return false;
+  } catch {
+    return null;
   }
 }
 

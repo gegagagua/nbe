@@ -57,7 +57,7 @@ export function CaseDetailExtraInfoModalView({
     >
       <View style={m.scrimFill}>
         <Pressable
-          style={StyleSheet.absoluteFillObject}
+          style={StyleSheet.absoluteFill}
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t("cases.detail.extraInfoCloseA11y")}

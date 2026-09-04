@@ -148,6 +148,12 @@ export function useLoginForm(): LoginFormState {
         const result = await registerDevicePasskey(label);
         if (result.ok) {
           showSuccessToast(t("deviceTrust.enableSuccess"));
+        } else if (result.reason === "already-registered") {
+          // Already trusted server-side — show the backend's own message, not an
+          // error (falls back to the localized string if none was returned).
+          showSuccessToast(
+            result.message ?? t("deviceTrust.errorAlreadyRegistered"),
+          );
         } else if (result.reason === "unsupported") {
           showErrorToast(t("deviceTrust.unavailable"));
         } else if (result.reason !== "cancelled") {

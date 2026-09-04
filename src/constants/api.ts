@@ -31,9 +31,12 @@ export const ApiPaths = {
   webauthnLogin: "/um-portal-pub/v1/webauthn/login",
   // Trusted-device management (authenticated). DELETE revokes server-side
   // (sets revokedDate) — local cleanup alone would leave the credential active.
+  // Note the mismatch, per backend: the LIST is plural (`/webauthn/credentials`),
+  // but a single-credential op is SINGULAR and appends the record's own `id`
+  // (`/webauthn/credential/{id}`) — NOT the Base64URL credentialId.
   webauthnCredentials: "/um-portal/v1/webauthn/credentials",
-  webauthnCredentialById: (credentialId: string) =>
-    `/um-portal/v1/webauthn/credentials/${credentialId}`,
+  webauthnCredentialById: (id: string | number) =>
+    `/um-portal/v1/webauthn/credential/${id}`,
 
   // EPS-MONEY-API — public guest payment search
   paymentInfo: "/payment-portal-pub/v1/payments/info",

@@ -19,7 +19,7 @@ export function CaseDetailSubtabSheet({ visible, options, onClose, onSelect }: P
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={m.scrimFill}>
-        <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} accessibilityRole="button" />
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityRole="button" />
         <View style={m.sheetStack}>
           <View style={p.panel}>
             {options.map((o) => (

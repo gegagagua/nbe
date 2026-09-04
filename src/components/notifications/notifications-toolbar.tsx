@@ -108,7 +108,7 @@ export function NotificationsToolbar({
       >
         <View style={s.menuScrim}>
           <Pressable
-            style={StyleSheet.absoluteFillObject}
+            style={StyleSheet.absoluteFill}
             onPress={() => setAnchor(null)}
             accessibilityRole="button"
             accessibilityLabel={t("notifications.selectMenuCloseA11yLabel")}

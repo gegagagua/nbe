@@ -112,7 +112,11 @@ export type PasskeyLoginResponse = CreateSessionResponse;
 // A trusted device/credential as listed by GET /webauthn/credentials. The exact
 // DTO is still being finalised backend-side, so extra fields are tolerated.
 export type TrustedCredential = {
+  // Server-side record id — this is what DELETE /webauthn/credential/{id} expects,
+  // distinct from the Base64URL `credentialId` used by the WebAuthn login flow.
+  id?: string | number;
   credentialId: string;
+  installationId?: string;
   deviceName?: string;
   label?: string;
   platform?: string;
@@ -126,7 +130,14 @@ export type TrustedCredential = {
 
 export type RegisterDeviceResult =
   | { ok: true; credentialId: string }
-  | { ok: false; reason: 'unsupported' | 'cancelled' | 'error'; error?: unknown };
+  | {
+      ok: false;
+      reason: 'unsupported' | 'cancelled' | 'already-registered' | 'error';
+      // Message returned by the backend, when it carries a user-facing one
+      // (currently used for the 'already-registered' 409).
+      message?: string;
+      error?: unknown;
+    };
 
 export type PasskeyLoginResult =
   | { ok: true; session: CreateSessionResponse }
