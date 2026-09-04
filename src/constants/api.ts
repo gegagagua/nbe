@@ -34,7 +34,7 @@ export const ApiPaths = {
   // Note the mismatch, per backend: the LIST is plural (`/webauthn/credentials`),
   // but a single-credential op is SINGULAR and appends the record's own `id`
   // (`/webauthn/credential/{id}`) — NOT the Base64URL credentialId.
-  webauthnCredentials: "/um-portal/v1/webauthn/credentials",
+  webauthnCredentials: "/um-portal/v1/webauthn/credintials",
   webauthnCredentialById: (id: string | number) =>
     `/um-portal/v1/webauthn/credential/${id}`,
 
