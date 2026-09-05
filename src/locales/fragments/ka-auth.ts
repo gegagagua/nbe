@@ -228,6 +228,11 @@ export const kaAuth = {
     unavailableHardware: "მოწყობილობას არ აქვს ბიომეტრიული მკითხველი.",
     unavailableNotEnrolled:
       "ბიომეტრია არ არის გააქტიურებული. გთხოვთ, ჯერ მოაწყოთ Face ID / თითის ანაბეჭდი მოწყობილობის პარამეტრებში.",
+    // NM-319 #3: Android has no runtime biometric permission, so when Face unlock
+    // isn't set up we guide the user to the OS enrollment screen instead.
+    enrollPrompt:
+      "Face ID-ით შესასვლელად ჯერ მოწყობილობის პარამეტრებში უნდა ჩართოთ Face unlock / თითის ანაბეჭდი. ჩართვის შემდეგ დაბრუნდით და სცადეთ თავიდან.",
+    openSettingsButton: "პარამეტრების გახსნა",
     enablePromptMessage: "დაადასტურეთ Face ID-ის ჩართვა",
     disablePromptMessage: "დაადასტურეთ Face ID-ის გამორთვა",
     loginPromptMessage: "შესვლა Face ID-ით",
@@ -252,6 +257,9 @@ export const kaAuth = {
   deviceTrust: {
     sectionTitle: "მოწყობილობის გასანდოება",
     rowLabel: "ამ მოწყობილობის გასანდოება",
+    // On/off status shown next to the profile toggle (NM-318).
+    statusActive: "აქტიური",
+    statusInactive: "გამორთული",
     descriptionEnabled:
       "გასანდოებულია — შესვლისას შეგიძლიათ Passkey-ით (Face ID / თითის ანაბეჭდით) სწრაფად შეხვიდეთ.",
     descriptionDisabled:
@@ -277,5 +285,14 @@ export const kaAuth = {
       "ამ მოწყობილობაზე Passkey ვეღარ მოიძებნა. გთხოვთ, შეხვიდეთ პაროლით და თავიდან გაასანდოოთ.",
     loginButton: "შესვლა Passkey-ით",
     loginFallback: "ვერ დასრულდა Passkey-ით შესვლა. გთხოვთ, შეხვიდეთ პაროლით.",
+    // Post-login "trust this device?" prompt (NM-317): a Yes/No confirmation, not
+    // a device-name input. Confirming mints the passkey (the OS biometric / PIN
+    // gate covers the Face ID / fingerprint / PIN requirement check).
+    promptTitle: "მოწყობილობის გასანდოება",
+    promptQuestion: "გსურთ ამ მოწყობილობის სანდოდ მონიშვნა?",
+    promptDescription:
+      "სანდო მოწყობილობიდან შემდეგ ჯერზე შესვლა შეგეძლებათ Face ID / თითის ანაბეჭდით ან PIN-ით, პაროლის აკრეფის გარეშე.",
+    promptYes: "დიახ",
+    promptNo: "არა",
   },
 } as const;

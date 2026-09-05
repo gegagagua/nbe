@@ -90,13 +90,19 @@ export function useLoginForm(): LoginFormState {
   );
 
   // Whether to offer trusting this device after a password/OTP login: only when
-  // passkeys are usable here, biometrics are enrolled (device trust is a
-  // biometric login — never offer it without Face ID / fingerprint), and the
-  // device isn't already trusted. A passkey sign-in skips this — already trusted.
+  // passkeys are usable here, the device has a secure lock, and it isn't already
+  // trusted. A passkey sign-in skips this — already trusted.
+  //
+  // NM-319 #3: gate on `hasSecureLock`, not `isAvailable`. `isAvailable` requires
+  // an ENROLLED biometric, so on a phone where Face unlock isn't set up (the
+  // Pixel case) the prompt never appeared at all. A secure lock (PIN/pattern or
+  // biometric) is enough — the passkey step allows the passcode fallback
+  // (`disableDeviceFallback: false`) — and this now matches the profile screen's
+  // own `isSupported = passkeySupported && hasSecureLock` gate.
   const shouldPromptDeviceTrust = useCallback(async () => {
     if (!isPasskeySupported()) return false;
     const availability = await getBiometricAvailability();
-    if (!availability.isAvailable) return false;
+    if (!availability.hasSecureLock) return false;
     const credentialId = await getPasskeyCredentialId();
     return !credentialId;
   }, []);

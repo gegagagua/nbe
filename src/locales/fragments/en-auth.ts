@@ -232,6 +232,11 @@ export const enAuth = {
       "This device does not support biometric authentication.",
     unavailableNotEnrolled:
       "Biometrics aren't set up yet. Please configure Face ID / fingerprint in your device settings first.",
+    // NM-319 #3: Android has no runtime biometric permission, so when Face unlock
+    // isn't set up we guide the user to the OS enrollment screen instead.
+    enrollPrompt:
+      "To sign in with Face ID, first turn on Face unlock / fingerprint in your device settings. Once it's set up, come back and try again.",
+    openSettingsButton: "Open settings",
     enablePromptMessage: "Confirm enabling Face ID",
     disablePromptMessage: "Confirm disabling Face ID",
     loginPromptMessage: "Sign in with Face ID",
@@ -256,6 +261,9 @@ export const enAuth = {
   deviceTrust: {
     sectionTitle: "Trusted device",
     rowLabel: "Trust this device",
+    // On/off status shown next to the profile toggle (NM-318).
+    statusActive: "Active",
+    statusInactive: "Off",
     descriptionEnabled:
       "Trusted — you can sign in quickly with a passkey (Face ID / fingerprint) instead of your password.",
     descriptionDisabled:
@@ -281,5 +289,14 @@ export const enAuth = {
       "The passkey for this device could not be found. Please sign in with your password and trust the device again.",
     loginButton: "Sign in with a passkey",
     loginFallback: "Passkey sign-in couldn't be completed. Please sign in with your password.",
+    // Post-login "trust this device?" prompt (NM-317): a Yes/No confirmation, not
+    // a device-name input. Confirming mints the passkey (the OS biometric / PIN
+    // gate covers the Face ID / fingerprint / PIN requirement check).
+    promptTitle: "Trust this device",
+    promptQuestion: "Do you want to mark this device as trusted?",
+    promptDescription:
+      "From a trusted device you can sign in next time with Face ID / fingerprint or your PIN, without typing your password.",
+    promptYes: "Yes",
+    promptNo: "No",
   },
 } as const;

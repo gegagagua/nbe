@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator } from 'react-native';
 
 import { ForcedPasswordChangeModal } from '@/components/login/forced-password-change-modal';
+import { LoginDeviceTrustPrompt } from '@/components/login/login-device-trust-prompt';
 import { LoginForm } from '@/components/login/login-form';
 import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { LoginScreenLayout } from '@/components/login/login-screen-layout';
 import { PasswordResetNoticeModal } from '@/components/login/password-reset-notice-modal';
-import { ProfileDeviceTrustModal } from '@/components/profile/profile-device-trust-modal';
 import { LoginPalette } from '@/constants/login';
 import { useDeviceTrust } from '@/hooks/use-device-trust';
 import { useFaceId } from '@/hooks/use-face-id';
@@ -136,11 +136,14 @@ function LoginScreenContent() {
       />
       <ForcedPasswordChangeModal {...login.forcedPwdChange} />
       <LoginOtpModal {...login.otpLogin} />
-      <ProfileDeviceTrustModal
+      <LoginDeviceTrustPrompt
         visible={login.deviceTrustPrompt.visible}
         isSubmitting={login.deviceTrustPrompt.isSubmitting}
-        defaultLabel={login.deviceTrustPrompt.defaultLabel}
-        onConfirm={(label) => { login.deviceTrustPrompt.onConfirm(label); }}
+        onConfirm={() => {
+          // The label isn't asked for anymore (NM-317) — default to the device
+          // name so the trusted-devices list still shows something recognisable.
+          login.deviceTrustPrompt.onConfirm(login.deviceTrustPrompt.defaultLabel);
+        }}
         onClose={login.deviceTrustPrompt.onSkip}
       />
       <LoginForm

@@ -48,6 +48,19 @@ export const profileFaceIdSectionStyles = StyleSheet.create({
     color: LoginPalette.errorText,
     lineHeight: 18,
   },
+  enrollBanner: {
+    gap: Space.small,
+  },
+  statusText: {
+    fontSize: Typography.small,
+    fontWeight: '700',
+  },
+  statusActive: {
+    color: '#1a8a3d',
+  },
+  statusInactive: {
+    color: LoginPalette.placeholderMuted,
+  },
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(15, 23, 42, 0.45)',
@@ -60,10 +73,21 @@ export const profileFaceIdSectionStyles = StyleSheet.create({
     padding: Space.large,
     gap: Space.medium,
   },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: Space.small,
+  },
   modalTitle: {
     fontSize: Typography.large,
     fontWeight: '700',
     color: LoginPalette.titleText,
+  },
+  modalClose: {
+    padding: 4,
+    marginTop: -4,
+    marginRight: -4,
   },
   modalDescription: {
     fontSize: Typography.small,

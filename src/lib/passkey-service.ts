@@ -24,6 +24,7 @@ import type {
   PasskeyAuthenticationCredential,
   PasskeyLoginResult,
   PasskeyRegistrationCredential,
+  PublicKeyCredentialCreationOptionsJSON,
   RegisterDeviceResult,
 } from '@/types/passkey';
 
@@ -113,10 +114,33 @@ export async function registerDevicePasskey(
     const challenge = await requestRegistrationChallenge();
     if (!challenge.creationOptions) return { ok: false, reason: 'error' };
 
-    // The backend's creationOptions are already WebAuthn-JSON; hand them to the
-    // OS verbatim (challenge/user.id must not be altered).
+    // The backend's creationOptions are already WebAuthn-JSON; the challenge and
+    // user.id must be handed to the OS untouched. We do, however, force a
+    // device-bound (platform) passkey verified by this phone's Face ID /
+    // fingerprint / PIN:
+    //
+    //   • Without `authenticatorAttachment: 'platform'`, Android may offer a
+    //     cross-device ("use another device") passkey. On some phones that kicks
+    //     off Google's hybrid/email flow which never completes (NM-319 #2), and on
+    //     Samsung a Credential Manager round-trip that bounces the user back to
+    //     re-auth (NM-319 #1).
+    //   • `userVerification: 'required'` enforces the Face ID / fingerprint / PIN
+    //     check the spec asks for (a backend-provided value still wins).
+    //
+    // authenticatorSelection is a client-side hint — it is NOT covered by the
+    // attestation signature — so overriding it here is safe, unlike the challenge
+    // or user.id.
+    const creationOptions: PublicKeyCredentialCreationOptionsJSON = {
+      ...challenge.creationOptions,
+      authenticatorSelection: {
+        userVerification: 'required',
+        ...challenge.creationOptions.authenticatorSelection,
+        authenticatorAttachment: 'platform',
+      },
+    };
+
     const credential = (await native.create(
-      challenge.creationOptions,
+      creationOptions,
     )) as PasskeyRegistrationCredential | null;
     if (!credential) return { ok: false, reason: 'cancelled' };
 

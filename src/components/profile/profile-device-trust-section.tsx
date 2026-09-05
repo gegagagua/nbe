@@ -97,6 +97,16 @@ export function ProfileDeviceTrustSection() {
       <View style={s.row}>
         <View style={s.rowText}>
           <Text style={s.rowLabel}>{t('deviceTrust.rowLabel')}</Text>
+          {/* On/off status indicator (NM-318): green "აქტიური" when trusted. */}
+          <Text
+            style={[
+              s.statusText,
+              trust.isTrusted ? s.statusActive : s.statusInactive,
+            ]}>
+            {trust.isTrusted
+              ? t('deviceTrust.statusActive')
+              : t('deviceTrust.statusInactive')}
+          </Text>
           <Text style={s.rowDescription}>{description}</Text>
         </View>
         {trust.isLoading || trust.isBusy ? (
