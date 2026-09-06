@@ -2,13 +2,12 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Switch, Text, View } from 'react-native';
 
+import { LoginDeviceTrustPrompt } from '@/components/login/login-device-trust-prompt';
 import { LoginPalette } from '@/constants/login';
 import { useDeviceTrust } from '@/hooks/use-device-trust';
-import { resolveDeviceName } from '@/lib/device-info';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { RegisterDeviceResult } from '@/types/passkey';
 
-import { ProfileDeviceTrustModal } from './profile-device-trust-modal';
 import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
 import { profileScreenStyles as ps } from './profile-screen.styles';
 
@@ -66,12 +65,13 @@ export function ProfileDeviceTrustSection() {
   );
 
   const handleConfirm = useCallback(
-    async (label: string) => {
-      // Close the label modal before the OS passkey sheet appears — on iOS a
-      // visible RN Modal can make the system prompt fail (same reason the Face
-      // ID flow dismisses its modal first).
+    async () => {
+      // Close the confirmation modal before the OS passkey sheet appears — on iOS
+      // a visible RN Modal can make the system prompt fail (same reason the Face
+      // ID flow dismisses its modal first). No label is asked for: the backend
+      // still gets the technical device name as the label via `register`.
       setModalVisible(false);
-      const result = await trust.register(label);
+      const result = await trust.register('');
       if (result.ok) {
         setStatusMessage({ type: 'success', text: t('deviceTrust.enableSuccess') });
         return;
@@ -133,11 +133,12 @@ export function ProfileDeviceTrustSection() {
         </Text>
       ) : null}
 
-      <ProfileDeviceTrustModal
+      {/* Same Yes/No confirmation the post-login prompt shows — no device-name
+          input (NM-317). */}
+      <LoginDeviceTrustPrompt
         visible={modalVisible}
         isSubmitting={trust.isBusy}
-        defaultLabel={resolveDeviceName()}
-        onConfirm={(label) => { handleConfirm(label); }}
+        onConfirm={() => { handleConfirm(); }}
         onClose={() => setModalVisible(false)}
       />
     </View>

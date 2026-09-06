@@ -43,14 +43,6 @@ export const profileFaceIdSectionStyles = StyleSheet.create({
     color: LoginPalette.placeholderMuted,
     lineHeight: 18,
   },
-  warning: {
-    fontSize: Typography.small,
-    color: LoginPalette.errorText,
-    lineHeight: 18,
-  },
-  enrollBanner: {
-    gap: Space.small,
-  },
   statusText: {
     fontSize: Typography.small,
     fontWeight: '700',

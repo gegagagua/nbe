@@ -109,10 +109,11 @@ export type LoginPasskeyRequest = {
 // The passkey login endpoint returns the same session envelope as a normal login.
 export type PasskeyLoginResponse = CreateSessionResponse;
 
-// A trusted device/credential as listed by GET /webauthn/credentials. The exact
-// DTO is still being finalised backend-side, so extra fields are tolerated.
+// A trusted device/credential as listed by GET /webauthn/credintials (backend's
+// misspelling). The exact DTO is still being finalised backend-side, so extra
+// fields are tolerated.
 export type TrustedCredential = {
-  // Server-side record id — this is what DELETE /webauthn/credential/{id} expects,
+  // Server-side record id — this is what DELETE /webauthn/credintial/{id} expects,
   // distinct from the Base64URL `credentialId` used by the WebAuthn login flow.
   id?: string | number;
   credentialId: string;

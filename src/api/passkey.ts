@@ -70,7 +70,7 @@ export async function listTrustedCredentials(): Promise<TrustedCredential[]> {
 
 /**
  * Revoke a trusted credential server-side (sets revokedDate). Takes the server
- * record `id` (from GET /webauthn/credentials), NOT the Base64URL credentialId.
+ * record `id` (from GET /webauthn/credintials), NOT the Base64URL credentialId.
  * After this the credential can no longer start a passkey login, so the app
  * clears its local reference too.
  */

@@ -7,7 +7,6 @@ import { LoginOtpModal } from '@/components/login/login-otp-modal';
 import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import { LoginPalette } from '@/constants/login';
 import { useProfileFaceIdToggle } from '@/hooks/use-profile-face-id-toggle';
-import { openBiometricSettings } from '@/lib/open-biometric-settings';
 import type { CreateSessionResponse } from '@/types/session';
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from '@/types/users';
 
@@ -53,14 +52,6 @@ export function ProfileFaceIdSection({
         ? t('faceId.descriptionEnabled')
         : t('faceId.descriptionDisabled');
 
-  // NM-319 #3: the device supports biometrics but none is enrolled. Android can't
-  // request biometric access at runtime, so instead of a dead toggle we show an
-  // in-app hint plus a button that opens the OS enrollment screen.
-  const showEnrollGuidance =
-    !faceId.isLoading &&
-    faceId.availability.hasHardware &&
-    !faceId.availability.isEnrolled;
-
   return (
     <View style={ps.card}>
       <Text style={ps.sectionTitle}>{t('faceId.sectionTitle')}</Text>
@@ -76,27 +67,12 @@ export function ProfileFaceIdSection({
           <Switch
             value={faceId.isEnabled}
             onValueChange={(v) => { ctrl.handleToggle(v); }}
-            disabled={!faceId.availability.isAvailable && !faceId.isEnabled}
             trackColor={{ true: LoginPalette.primary, false: '#cfd8ea' }}
             thumbColor="#ffffff"
             ios_backgroundColor="#cfd8ea"
           />
         )}
       </View>
-
-      {showEnrollGuidance ? (
-        <View style={s.enrollBanner}>
-          <Text style={s.warning}>{t('faceId.enrollPrompt')}</Text>
-          <AnimatedPressable
-            style={ps.buttonPrimary}
-            onPress={() => { openBiometricSettings(); }}
-            accessibilityRole="button">
-            <Text style={ps.buttonPrimaryText}>
-              {t('faceId.openSettingsButton')}
-            </Text>
-          </AnimatedPressable>
-        </View>
-      ) : null}
 
       <View style={s.actionRow}>
         <AnimatedPressable
