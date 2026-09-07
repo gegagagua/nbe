@@ -1,5 +1,9 @@
 export const enNotifications = {
   pageTitle: "Notifications",
+  modules: {
+    enforcement: "Enforcement proceedings",
+    facts: "Statement of facts",
+  },
   backA11yLabel: "Go back",
   loadingMessage: "Loading...",
   emptyMessage: "No notifications found",
@@ -19,7 +23,6 @@ export const enNotifications = {
     all: "All",
     read: "Read",
     unread: "Unread",
-    none: "None",
   },
   markRowReadA11yHint: "Press to mark as read",
   markSelectedRead: "Mark as read ({{count}})",

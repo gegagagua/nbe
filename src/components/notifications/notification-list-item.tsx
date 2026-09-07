@@ -19,9 +19,10 @@ type Props = {
 };
 
 /**
- * One row of the notifications feed. Unread rows are bolder and outlined;
- * the leading checkbox ticks the row for bulk actions, while pressing the body
- * marks that single notification as read.
+ * One row of the notifications feed. Shows the module, the notification type,
+ * its case number and a body preview, plus the received date-time. Unread rows
+ * are bolder and outlined; the leading checkbox ticks the row for bulk actions,
+ * while pressing the body opens the detail.
  */
 export function NotificationListItem({
   item,
@@ -31,6 +32,8 @@ export function NotificationListItem({
 }: Props) {
   const { t } = useTranslation();
   const unread = !item.isRead;
+  const moduleLabel =
+    item.module === "other" ? "" : t(`notifications.modules.${item.module}`);
 
   return (
     <View
@@ -56,18 +59,21 @@ export function NotificationListItem({
           pressed ? { opacity: LoginInteraction.pressedOpacity } : null,
         ]}
         accessibilityRole="button"
-        accessibilityLabel={`${item.title} #${item.caseNumber} ${item.date}`}
+        accessibilityLabel={`${moduleLabel} ${item.title} #${item.caseNumber} ${item.receivedAt}`.trim()}
         accessibilityHint={
           unread ? t("notifications.markRowReadA11yHint") : undefined
         }
         onPress={() => onPress(item)}
       >
-        <View style={s.headRow}>
-          <Text style={[s.title, unread ? s.titleUnread : null]}>
-            {item.title}
+        <View style={s.metaRow}>
+          <Text style={s.module} numberOfLines={1}>
+            {moduleLabel}
           </Text>
-          <Text style={[s.date, unread ? s.dateUnread : null]}>{item.date}</Text>
+          <Text style={s.date}>{item.receivedAt}</Text>
         </View>
+        <Text style={[s.title, unread ? s.titleUnread : null]}>
+          {item.title}
+        </Text>
         <Text style={[s.caseNumber, unread ? s.caseNumberUnread : null]}>
           {`#${item.caseNumber}`}
         </Text>

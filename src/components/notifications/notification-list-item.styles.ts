@@ -31,27 +31,27 @@ export const notificationListItemStyles = StyleSheet.create({
     flex: 1,
     gap: Space.extraSmall,
   },
-  headRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: Space.small,
   },
-  title: {
+  module: {
     flex: 1,
+    fontSize: NotificationsTypography.cardModule,
+    color: NotificationsPalette.textMuted,
+  },
+  date: {
+    fontSize: NotificationsTypography.cardDate,
+    color: NotificationsPalette.textMuted,
+  },
+  title: {
     fontSize: NotificationsTypography.cardTitle,
     fontWeight: '400',
     color: NotificationsPalette.textPrimary,
   },
   titleUnread: {
-    fontWeight: '700',
-  },
-  date: {
-    fontSize: NotificationsTypography.cardDate,
-    fontWeight: '400',
-    color: NotificationsPalette.textPrimary,
-  },
-  dateUnread: {
     fontWeight: '700',
   },
   caseNumber: {
