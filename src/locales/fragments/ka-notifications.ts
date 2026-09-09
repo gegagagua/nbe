@@ -1,5 +1,9 @@
 export const kaNotifications = {
   pageTitle: "შეტყობინებები",
+  modules: {
+    enforcement: "სააღსრულებო წარმოება",
+    facts: "ფაქტების კონსტატაცია",
+  },
   backA11yLabel: "უკან დაბრუნება",
   loadingMessage: "იტვირთება...",
   emptyMessage: "შეტყობინებები ვერ მოიძებნა",
@@ -19,7 +23,6 @@ export const kaNotifications = {
     all: "ყველა",
     read: "წაკითხული",
     unread: "წაუკითხავი",
-    none: "არც ერთი",
   },
   markRowReadA11yHint: "წაკითხულად მოსანიშნად დააჭირეთ",
   markSelectedRead: "წაკითხულად მონიშვნა ({{count}})",

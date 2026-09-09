@@ -52,18 +52,23 @@ export type NotificationsSearchRequest = {
 /** Read-state filter segments shown above the feed. */
 export type NotificationFilterValue = "all" | "read" | "unread";
 
+/** App module the notification belongs to, inferred from the case number. */
+export type NotificationModule = "enforcement" | "facts" | "other";
+
 export type AppNotification = {
   id: number;
-  /** headline — mapped from `notifType.name` */
+  /** notification type / headline — mapped from `notifType.name` */
   title: string;
+  /** app module the notification relates to (drives the module label) */
+  module: NotificationModule;
   /** related case number rendered as `#A23022853` */
   caseNumber: string;
   /** enforcement application id, for navigating to the case */
   appId: number;
   /** preview text — `notifText` with its HTML stripped */
   body: string;
-  /** formatted date shown on the right, e.g. "20.08.26" */
-  date: string;
+  /** received date-time to the second, e.g. "20.08.2026 12:11:17" */
+  receivedAt: string;
   /** unread rows are emphasised (bold title, stronger border) */
   isRead: boolean;
 };
@@ -75,7 +80,7 @@ export type NotificationsPage = {
 };
 
 /** Bulk-select presets offered by the toolbar checkbox menu. */
-export type NotificationSelectPreset = "all" | "read" | "unread" | "none";
+export type NotificationSelectPreset = "all" | "read" | "unread";
 
 export type NotificationsSearchFilters = {
   readState?: NotificationFilterValue;
