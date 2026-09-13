@@ -76,9 +76,6 @@ export function NotificationListItem({
         <Text style={[s.caseNumber, unread ? s.caseNumberUnread : null]}>
           {`#${item.caseNumber}`}
         </Text>
-        <Text style={s.body} numberOfLines={1} ellipsizeMode="tail">
-          {item.body}
-        </Text>
       </Pressable>
     </View>
   );

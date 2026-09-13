@@ -29,7 +29,7 @@ export const notificationListItemStyles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: Space.extraSmall,
+    gap: Space.small,
   },
   metaRow: {
     flexDirection: 'row',
@@ -61,9 +61,5 @@ export const notificationListItemStyles = StyleSheet.create({
   },
   caseNumberUnread: {
     fontWeight: '700',
-  },
-  body: {
-    fontSize: NotificationsTypography.cardBody,
-    color: NotificationsPalette.textMuted,
   },
 });
