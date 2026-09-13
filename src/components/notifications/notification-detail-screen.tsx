@@ -79,9 +79,7 @@ export function NotificationDetailScreen() {
             <View style={d.card}>
               <View style={d.metaRow}>
                 <Text style={d.module} numberOfLines={1}>
-                  {notification.module === "other"
-                    ? ""
-                    : t(`notifications.modules.${notification.module}`)}
+                  {notification.module}
                 </Text>
                 <Text style={d.date}>{notification.receivedAt}</Text>
               </View>

@@ -1,9 +1,5 @@
 export const kaNotifications = {
   pageTitle: "შეტყობინებები",
-  modules: {
-    enforcement: "სააღსრულებო წარმოება",
-    facts: "ფაქტების კონსტატაცია",
-  },
   backA11yLabel: "უკან დაბრუნება",
   loadingMessage: "იტვირთება...",
   emptyMessage: "შეტყობინებები ვერ მოიძებნა",

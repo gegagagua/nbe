@@ -32,8 +32,7 @@ export function NotificationListItem({
 }: Props) {
   const { t } = useTranslation();
   const unread = !item.isRead;
-  const moduleLabel =
-    item.module === "other" ? "" : t(`notifications.modules.${item.module}`);
+  const moduleLabel = item.module;
 
   return (
     <View

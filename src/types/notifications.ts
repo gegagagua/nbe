@@ -20,6 +20,8 @@ export type NotificationDto = {
   appId: number;
   /** case reg number, e.g. "A23022853" */
   regnumber: string;
+  /** app module the notification belongs to; `name` is the display label */
+  sysModule?: { id?: number; name?: string } | null;
   notifType: NotificationTypeDto;
   /** HTML body, e.g. "<pre>…</pre>" */
   notifText: string;
@@ -52,15 +54,12 @@ export type NotificationsSearchRequest = {
 /** Read-state filter segments shown above the feed. */
 export type NotificationFilterValue = "all" | "read" | "unread";
 
-/** App module the notification belongs to, inferred from the case number. */
-export type NotificationModule = "enforcement" | "facts" | "other";
-
 export type AppNotification = {
   id: number;
   /** notification type / headline — mapped from `notifType.name` */
   title: string;
-  /** app module the notification relates to (drives the module label) */
-  module: NotificationModule;
+  /** module display label — from the backend `sysModule.name` (empty if none) */
+  module: string;
   /** related case number rendered as `#A23022853` */
   caseNumber: string;
   /** enforcement application id, for navigating to the case */

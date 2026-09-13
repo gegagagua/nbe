@@ -1,4 +1,3 @@
-import { resolveNotificationModule } from '@/lib/resolve-notification-module';
 import type { AppNotification, NotificationDto } from '@/types/notifications';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
@@ -11,12 +10,11 @@ function stripHtml(html: string): string {
 }
 
 export function mapNotification(dto: NotificationDto): AppNotification {
-  const regnumber = dto.regnumber ?? '';
   return {
     id: dto.id,
     title: dto.notifType?.name ?? '',
-    module: resolveNotificationModule(regnumber),
-    caseNumber: regnumber,
+    module: dto.sysModule?.name ?? '',
+    caseNumber: dto.regnumber ?? '',
     appId: dto.appId,
     body: stripHtml(dto.notifText ?? ''),
     receivedAt: formatEnforcementDateTime(dto.createdDate),
