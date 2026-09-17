@@ -77,10 +77,13 @@ export function NotificationDetailScreen() {
             </Text>
           ) : (
             <View style={d.card}>
-              <View style={d.headRow}>
-                <Text style={d.title}>{notification.title}</Text>
-                <Text style={d.date}>{notification.date}</Text>
+              <View style={d.metaRow}>
+                <Text style={d.module} numberOfLines={1}>
+                  {notification.module}
+                </Text>
+                <Text style={d.date}>{notification.receivedAt}</Text>
               </View>
+              <Text style={d.title}>{notification.title}</Text>
               <Text style={d.body}>{notification.body}</Text>
 
               {notification.caseNumber ? (

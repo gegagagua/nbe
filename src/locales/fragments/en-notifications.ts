@@ -19,7 +19,6 @@ export const enNotifications = {
     all: "All",
     read: "Read",
     unread: "Unread",
-    none: "None",
   },
   markRowReadA11yHint: "Press to mark as read",
   markSelectedRead: "Mark as read ({{count}})",

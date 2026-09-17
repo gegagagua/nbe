@@ -59,10 +59,6 @@ export function NotificationsScreen() {
   }, []);
 
   const onSelectPreset = (preset: NotificationSelectPreset) => {
-    if (preset === "none") {
-      setSelectedIds(new Set());
-      return;
-    }
     const matching = items.filter((item) => {
       if (preset === "read") {
         return item.isRead;

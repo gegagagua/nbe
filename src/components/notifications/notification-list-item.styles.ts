@@ -29,29 +29,29 @@ export const notificationListItemStyles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: Space.extraSmall,
+    gap: Space.small,
   },
-  headRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: Space.small,
   },
-  title: {
+  module: {
     flex: 1,
+    fontSize: NotificationsTypography.cardModule,
+    color: NotificationsPalette.textMuted,
+  },
+  date: {
+    fontSize: NotificationsTypography.cardDate,
+    color: NotificationsPalette.textMuted,
+  },
+  title: {
     fontSize: NotificationsTypography.cardTitle,
     fontWeight: '400',
     color: NotificationsPalette.textPrimary,
   },
   titleUnread: {
-    fontWeight: '700',
-  },
-  date: {
-    fontSize: NotificationsTypography.cardDate,
-    fontWeight: '400',
-    color: NotificationsPalette.textPrimary,
-  },
-  dateUnread: {
     fontWeight: '700',
   },
   caseNumber: {
@@ -61,9 +61,5 @@ export const notificationListItemStyles = StyleSheet.create({
   },
   caseNumberUnread: {
     fontWeight: '700',
-  },
-  body: {
-    fontSize: NotificationsTypography.cardBody,
-    color: NotificationsPalette.textMuted,
   },
 });

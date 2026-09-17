@@ -11,12 +11,7 @@ import type { NotificationSelectPreset } from "@/types/notifications";
 
 import { notificationsToolbarStyles as s } from "./notifications-toolbar.styles";
 
-const SELECT_PRESETS: NotificationSelectPreset[] = [
-  "all",
-  "read",
-  "unread",
-  "none",
-];
+const SELECT_PRESETS: NotificationSelectPreset[] = ["all", "read", "unread"];
 
 type MenuAnchor = { top: number; left: number };
 

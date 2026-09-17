@@ -20,6 +20,8 @@ export type NotificationDto = {
   appId: number;
   /** case reg number, e.g. "A23022853" */
   regnumber: string;
+  /** app module the notification belongs to; `name` is the display label */
+  sysModule?: { id?: number; name?: string } | null;
   notifType: NotificationTypeDto;
   /** HTML body, e.g. "<pre>…</pre>" */
   notifText: string;
@@ -54,16 +56,18 @@ export type NotificationFilterValue = "all" | "read" | "unread";
 
 export type AppNotification = {
   id: number;
-  /** headline — mapped from `notifType.name` */
+  /** notification type / headline — mapped from `notifType.name` */
   title: string;
+  /** module display label — from the backend `sysModule.name` (empty if none) */
+  module: string;
   /** related case number rendered as `#A23022853` */
   caseNumber: string;
   /** enforcement application id, for navigating to the case */
   appId: number;
   /** preview text — `notifText` with its HTML stripped */
   body: string;
-  /** formatted date shown on the right, e.g. "20.08.26" */
-  date: string;
+  /** received date-time to the second, e.g. "20.08.2026 12:11:17" */
+  receivedAt: string;
   /** unread rows are emphasised (bold title, stronger border) */
   isRead: boolean;
 };
@@ -75,7 +79,7 @@ export type NotificationsPage = {
 };
 
 /** Bulk-select presets offered by the toolbar checkbox menu. */
-export type NotificationSelectPreset = "all" | "read" | "unread" | "none";
+export type NotificationSelectPreset = "all" | "read" | "unread";
 
 export type NotificationsSearchFilters = {
   readState?: NotificationFilterValue;

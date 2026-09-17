@@ -49,8 +49,9 @@ export const NotificationsTypography = {
   menuHeader: FontSize.md,
   menuItem: FontSize.md,
   actionLabel: FontSize.md,
+  cardModule: FontSize.sm,
   cardTitle: FontSize.md,
-  cardDate: FontSize.md,
+  cardDate: FontSize.sm,
   cardCase: FontSize.md,
   cardBody: FontSize.md,
 } as const;

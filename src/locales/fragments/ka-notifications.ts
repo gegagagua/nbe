@@ -19,7 +19,6 @@ export const kaNotifications = {
     all: "ყველა",
     read: "წაკითხული",
     unread: "წაუკითხავი",
-    none: "არც ერთი",
   },
   markRowReadA11yHint: "წაკითხულად მოსანიშნად დააჭირეთ",
   markSelectedRead: "წაკითხულად მონიშვნა ({{count}})",

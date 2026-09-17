@@ -16,14 +16,18 @@ export const notificationDetailStyles = StyleSheet.create({
     padding: NotificationsLayout.cardPadding,
     gap: Space.small,
   },
-  headRow: {
+  metaRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     gap: Space.small,
   },
-  title: {
+  module: {
     flex: 1,
+    fontSize: NotificationsTypography.cardModule,
+    color: NotificationsPalette.textMuted,
+  },
+  title: {
     fontSize: NotificationsTypography.filterTitle,
     fontWeight: '700',
     color: NotificationsPalette.textPrimary,
