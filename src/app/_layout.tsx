@@ -14,10 +14,12 @@ import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { AppToast } from "@/components/app-toast";
 import { I18nLocaleBootstrap } from "@/components/i18n/i18n-locale-bootstrap";
 import { QueryProvider } from "@/components/query-provider";
+import { useNotificationNavigation } from "@/hooks/use-notification-navigation";
 import i18n from "@/i18n/i18n";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  useNotificationNavigation();
   const screenWidth = Dimensions.get('window').width;
   const maxTabletWidth = 920;
   const maxWidth = screenWidth > maxTabletWidth ? 590 : screenWidth;
