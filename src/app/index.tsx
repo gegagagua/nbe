@@ -119,14 +119,22 @@ function LoginScreenContent() {
     showErrorToast(t('deviceTrust.errorFailed'));
   }, [deviceTrust, login, t]);
 
-  const showFaceId =
+  // A trusted device (a stored passkey) is available for OTP-free sign-in.
+  const hasPasskey =
+    !deviceTrust.isLoading && deviceTrust.isSupported && deviceTrust.isTrusted;
+
+  const canFaceIdLogin =
     !faceId.isLoading &&
     faceId.isEnabled &&
     faceId.hasCredentials &&
     faceId.availability.isAvailable;
 
-  const showPasskey =
-    !deviceTrust.isLoading && deviceTrust.isSupported && deviceTrust.isTrusted;
+  // We show ONE biometric button, never two. When the device is trusted the
+  // single Face ID button drives the passkey login (full SESSION, no OTP) and
+  // the separate Passkey button is hidden; otherwise it does the Face ID
+  // password login as before. Both flows unlock with the same Face ID/biometric.
+  const showFaceId = hasPasskey || canFaceIdLogin;
+  const showPasskey = false;
 
   return (
     <LoginScreenLayout>
@@ -162,8 +170,16 @@ function LoginScreenContent() {
               ? t('faceId.loginButtonFingerprint')
               : t('faceId.loginButton'),
           iconName: faceId.kind === 'fingerprint' ? 'fingerprint' : 'face-recognition',
-          onPress: () => { handleFaceIdPress(); },
-          disabled: isFaceIdLoading,
+          // When a passkey is trusted, this button takes over the passkey login
+          // (SESSION, no OTP); otherwise it runs the normal Face ID login.
+          onPress: () => {
+            if (hasPasskey) {
+              handlePasskeyPress();
+            } else {
+              handleFaceIdPress();
+            }
+          },
+          disabled: hasPasskey ? deviceTrust.isBusy : isFaceIdLoading,
         }}
         passkey={{
           show: showPasskey,

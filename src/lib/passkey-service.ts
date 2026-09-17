@@ -40,17 +40,34 @@ type PasskeyNativeModule = {
   get: (request: unknown) => Promise<unknown>;
 };
 
+// TEMPORARY: force the pure-JS software authenticator on ALL builds — including
+// real dev/prod (TestFlight) binaries that DO bundle react-native-passkeys.
+//
+// The OS passkey path needs the RP domain's Associated Domains to be validated
+// by Apple's CDN (AASA) / Google (assetlinks). Right now the gateway serves a
+// 503 maintenance page at `/.well-known/apple-app-site-association` (and
+// `assetlinks.json`), so Apple's CDN has NO valid association
+// (app-site-association.cdn-apple.com → 404) and native passkeys fail on real
+// devices even though they "work" on the simulator (which never validates AASA,
+// and in Expo Go already uses the software path). The software authenticator is
+// self-contained — it never touches Apple/Google association — and the backend
+// webauthn endpoints already accept its "none"-attestation credentials
+// (verified end-to-end), so it works on TestFlight with no backend/DevOps
+// changes. Flip this back to `false` once the .well-known files are served
+// correctly and Apple's CDN has cached them, to return to OS-backed passkeys.
+const FORCE_SOFTWARE_PASSKEY = true;
+
 let nativeModule: PasskeyNativeModule | null | undefined;
 
 function getPasskeyNative(): PasskeyNativeModule | null {
   if (nativeModule !== undefined) return nativeModule;
   const native =
-    Platform.OS === 'web'
+    FORCE_SOFTWARE_PASSKEY || Platform.OS === 'web'
       ? null
       : requireOptionalNativeModule<PasskeyNativeModule>('ReactNativePasskeys');
-  // No native module (Expo Go, web, or a binary not rebuilt with it) → fall back
-  // to the pure-JS software authenticator so device trust still works. Real
-  // dev/prod builds resolve the OS module and never touch the fallback.
+  // No native module (forced, Expo Go, web, or a binary not rebuilt with it) →
+  // fall back to the pure-JS software authenticator so device trust still works.
+  // With FORCE_SOFTWARE_PASSKEY off, real dev/prod builds resolve the OS module.
   nativeModule = native ?? (softwarePasskeyAuthenticator as unknown as PasskeyNativeModule);
   return nativeModule;
 }
