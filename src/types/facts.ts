@@ -1,4 +1,6 @@
 export type FactApplicationParty = {
+  /** person record id (`persons/app/{appId}` → `id`), when the list returns it */
+  id?: number;
   name: string;
   idnumber: string;
 };
@@ -73,4 +75,93 @@ export type FactsSearchRequest = {
   };
   page: { number: number; size: number };
   sort?: { property: string; direction: "ASC" | "DESC" }[];
+};
+
+// ── Single statement (GET /fact-portal/v1/apps/{id}) ──────────────────────────
+type FactNamedRef = { id: number; name: string };
+
+export type FactAppNote = {
+  request: string | null;
+  otherDocs: string | null;
+  note: string | null;
+  officeNote: string | null;
+  propertyAddress: string | null;
+  cadCode: string | null;
+  propertyType: FactNamedRef | null;
+};
+
+export type FactAppDetailResponse = {
+  data: {
+    id: number;
+    createdDate: string;
+    createdBy: FactNamedRef | null;
+    inputDate: string | null;
+    statusDate: string | null;
+    agency: FactNamedRef | null;
+    trType: FactNamedRef | null;
+    service: FactNamedRef | null;
+    status: FactNamedRef | null;
+    trService: (FactNamedRef & { price: number | null }) | null;
+    regnumber: string | null;
+    regDate: string | null;
+    fixedDayFrom: string | null;
+    fixedDayTo: string | null;
+    fixedHourFrom: number | null;
+    fixedHourTo: number | null;
+    appNote: FactAppNote | null;
+  };
+};
+
+// ── Persons (GET /fact-portal/v1/persons/app/{appId}) ─────────────────────────
+/** `appPersonType.id` values used on the detail page. */
+export const FactPersonType = {
+  applicant: 1,
+  owner: 3,
+} as const;
+
+export type FactPersonResponse = {
+  id: number;
+  appId: number;
+  appPersonType: FactNamedRef | null;
+  personType: FactNamedRef | null;
+  firstName: string | null;
+  lastName: string | null;
+  organization: string | null;
+  idnumber: string | null;
+  addresses:
+    | {
+        id: number;
+        type: string;
+        region: FactNamedRef | null;
+        city: FactNamedRef | null;
+        address: string | null;
+      }[]
+    | null;
+  payCode: string | null;
+};
+
+export type FactPerson = {
+  id: number;
+  /** სახელი, გვარი / ორგანიზაციის დასახელება */
+  name: string;
+  /** პირადი ნომერი / საიდ. კოდი */
+  idnumber: string;
+  address: string;
+  payCode: string;
+};
+
+export type FactAppDetail = {
+  id: number;
+  regnumber: string;
+  /** date-only, shown next to the clock icon in the header */
+  date: string;
+  bureauName: string;
+  /** ფაქტის დადგენის დრო (დან / მდე) */
+  factTimeFrom: string;
+  factTimeTo: string;
+  propertyType: string;
+  cadCode: string;
+  propertyAddress: string;
+  feeName: string;
+  request: string;
 };
