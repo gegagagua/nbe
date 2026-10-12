@@ -174,6 +174,11 @@ export const kaAuth = {
   },
   profile: {
     pageTitle: "პირადი კაბინეტი",
+    viewPersonalInfo: "პერსონალური ინფორმაციის ნახვა",
+    switchAccountA11yLabel: "ანგარიშის გადართვა",
+    switchAccountTitle: "მომხმარებლის ანგარიში",
+    switchAccountEmpty: "ინფორმაცია ვერ მოიძებნა",
+    viewCompanyDetails: "კომპანიის დეტალები",
     backA11yLabel: "უკან",
     sectionInfo: "პირადი ინფორმაცია",
     labelId: "ID",
@@ -215,6 +220,14 @@ export const kaAuth = {
     phoneOtpTitle: "ნომრის დადასტურება",
     phoneOtpDescription: "შეიყვანეთ ახალ ნომერზე გამოგზავნილი 6-ნიშნა კოდი.",
     phoneOtpCancel: "გაუქმება",
+  },
+  legalEntity: {
+    pageTitle: "იურიდიული პირი",
+    description: "იურიდიულ პირზე გადასართავად მიუთითეთ ფაქტობრივი მისამართი.",
+    saveButton: "შენახვა და გადართვა",
+    saveSuccess: "ანგარიში წარმატებით გადაირთო",
+    saveError: "მონაცემების შენახვა ვერ მოხერხდა",
+    notFound: "იურიდიული პირი ვერ მოიძებნა",
   },
   faceId: {
     sectionTitle: "უსაფრთხოება",

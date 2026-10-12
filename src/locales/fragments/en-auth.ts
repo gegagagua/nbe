@@ -179,6 +179,11 @@ export const enAuth = {
   },
   profile: {
     pageTitle: "My Profile",
+    viewPersonalInfo: "View personal information",
+    switchAccountA11yLabel: "Switch account",
+    switchAccountTitle: "User account",
+    switchAccountEmpty: "No information found",
+    viewCompanyDetails: "Company details",
     backA11yLabel: "Back",
     sectionInfo: "Personal Information",
     labelId: "ID",
@@ -218,6 +223,14 @@ export const enAuth = {
     phoneOtpTitle: "Confirm your number",
     phoneOtpDescription: "Enter the 6-digit code sent to the new number.",
     phoneOtpCancel: "Cancel",
+  },
+  legalEntity: {
+    pageTitle: "Legal entity",
+    description: "Enter the actual address to switch to this legal entity.",
+    saveButton: "Save and switch",
+    saveSuccess: "Account switched successfully",
+    saveError: "Could not save the details",
+    notFound: "Legal entity not found",
   },
   faceId: {
     sectionTitle: "Security",

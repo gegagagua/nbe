@@ -6,7 +6,10 @@ import type {
   CheckVerificationResult,
   CreatePortalUserRequest,
   CreatePortalUserResponse,
+  GetLegalEntitiesResponse,
   GetUserResponse,
+  LegalEntity,
+  UpdateLegalEntityRequest,
   UpdateUserPasswordRequest,
   UpdateUserRequest,
   UserDetail,
@@ -59,6 +62,20 @@ export async function changePassword(
 export async function getUserMe(): Promise<UserDetail> {
   const response = await apiClient.get<GetUserResponse>(ApiPaths.usersMe);
   return response.data.data;
+}
+
+export async function getLegalEntities(): Promise<LegalEntity[]> {
+  const response = await apiClient.get<GetLegalEntitiesResponse>(
+    ApiPaths.legalEntities,
+  );
+  return response.data.data ?? [];
+}
+
+export async function updateLegalEntity(
+  id: number,
+  payload: UpdateLegalEntityRequest,
+): Promise<void> {
+  await apiClient.put(ApiPaths.legalEntityById(id), { data: payload });
 }
 
 export async function updateUserMe(payload: UpdateUserRequest): Promise<void> {
