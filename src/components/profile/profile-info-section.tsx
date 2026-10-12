@@ -82,7 +82,7 @@ export function ProfileInfoSection({
     <View style={s.card}>
       <Text style={s.sectionTitle}>{t('profile.sectionInfo')}</Text>
 
-      <View style={s.fieldGroup}>
+      <View style={s.infoFieldGroup}>
         <ProfileReadOnlyField label={t('profile.labelFirstName')} value={firstName ?? ''} />
         <ProfileReadOnlyField label={t('profile.labelLastName')} value={lastName ?? ''} />
         {idnumber ? (

@@ -65,7 +65,7 @@ export function LegalEntityDetailsScreen() {
       showSuccessToast(t("legalEntity.saveSuccess"));
       router.back();
     } catch (err: unknown) {
-      showErrorToast(t("legalEntity.saveError"), err);
+      showErrorToast(t("profile.saveError"), err);
     } finally {
       setIsSaving(false);
     }
@@ -87,7 +87,7 @@ export function LegalEntityDetailsScreen() {
           >
             <Text style={s.backButtonText}>←</Text>
           </Pressable>
-          <Text style={s.pageTitle}>{t("legalEntity.pageTitle")}</Text>
+          <Text style={s.pageTitle}>{t("login.registerTabLegal")}</Text>
         </View>
 
         {legalEntities.isLoading && !entity ? (

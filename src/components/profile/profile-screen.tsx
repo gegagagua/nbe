@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import {
@@ -32,6 +32,7 @@ import { ProfileChangePasswordSection } from "./profile-change-password-section"
 import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
+import { ProfileLegalEntityInfoSection } from "./profile-legal-entity-info-section";
 import { profileScreenStyles as s } from "./profile-screen.styles";
 
 export function ProfileScreen() {
@@ -50,6 +51,19 @@ export function ProfileScreen() {
   const [accountSwitchVisible, setAccountSwitchVisible] = useState(false);
   const legalEntities = useLegalEntities();
   const activeLegalEntity = useActiveLegalEntity();
+  const activeLegalEntityId = activeLegalEntity.entity?.id;
+  const { refetch: refetchLegalEntities } = legalEntities;
+
+  // Refresh the active entity's details from the backend; the stored copy is
+  // only a fallback until the list arrives.
+  useEffect(() => {
+    if (activeLegalEntityId !== undefined) refetchLegalEntities();
+  }, [activeLegalEntityId, refetchLegalEntities]);
+
+  const legalEntityInfo = activeLegalEntity.entity
+    ? (legalEntities.entities.find((e) => e.id === activeLegalEntityId) ??
+      activeLegalEntity.entity)
+    : null;
 
   // Surface lastSession + pwdChngDate that came back with the login response in
   // the same modals the /users/me history feeds, so users see them even when
@@ -68,10 +82,6 @@ export function ProfileScreen() {
   }
 
   function handleViewInfo() {
-    if (activeLegalEntity.entity) {
-      router.push(`/legal-entity/${activeLegalEntity.entity.id}`);
-      return;
-    }
     scrollRef.current?.scrollTo({ y: infoSectionY.current, animated: true });
   }
 
@@ -164,7 +174,7 @@ export function ProfileScreen() {
           bottomOffset={16}
         >
           <ProfileAccountCard
-            fullName={activeLegalEntity.entity?.name ?? fullName}
+            fullName={legalEntityInfo?.name ?? fullName}
             subtitle={
               activeLegalEntity.entity
                 ? t("profile.viewCompanyDetails")
@@ -179,19 +189,28 @@ export function ProfileScreen() {
               infoSectionY.current = e.nativeEvent.layout.y;
             }}
           >
-            <ProfileInfoSection
-              firstName={detail?.firstName ?? null}
-              lastName={detail?.lastName ?? null}
-              idnumber={detail?.idnumber?.trim() || undefined}
-              phone={resolveUserPhone(detail?.contacts)}
-              email={resolveUserEmail(detail?.contacts)}
-              realAddress={detail?.realAddress?.trim() ?? ""}
-              legalAddress={detail?.legalAddress?.trim() ?? ""}
-              canEdit={detail !== null}
-              onSave={actions.handleSaveInfo}
-              isSaving={actions.isSavingInfo}
-              statusMessage={actions.infoStatus}
-            />
+            {legalEntityInfo ? (
+              <ProfileLegalEntityInfoSection
+                entity={legalEntityInfo}
+                onEdit={() =>
+                  router.push(`/legal-entity/${legalEntityInfo.id}`)
+                }
+              />
+            ) : (
+              <ProfileInfoSection
+                firstName={detail?.firstName ?? null}
+                lastName={detail?.lastName ?? null}
+                idnumber={detail?.idnumber?.trim() || undefined}
+                phone={resolveUserPhone(detail?.contacts)}
+                email={resolveUserEmail(detail?.contacts)}
+                realAddress={detail?.realAddress?.trim() ?? ""}
+                legalAddress={detail?.legalAddress?.trim() ?? ""}
+                canEdit={detail !== null}
+                onSave={actions.handleSaveInfo}
+                isSaving={actions.isSavingInfo}
+                statusMessage={actions.infoStatus}
+              />
+            )}
           </View>
 
           <View style={s.divider} />

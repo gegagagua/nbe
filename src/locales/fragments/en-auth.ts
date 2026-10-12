@@ -225,11 +225,11 @@ export const enAuth = {
     phoneOtpCancel: "Cancel",
   },
   legalEntity: {
-    pageTitle: "Legal entity",
+    sectionInfo: "Company information",
+    labelMemberName: "Role",
     description: "Enter the actual address to switch to this legal entity.",
     saveButton: "Save and switch",
     saveSuccess: "Account switched successfully",
-    saveError: "Could not save the details",
     notFound: "Legal entity not found",
   },
   faceId: {

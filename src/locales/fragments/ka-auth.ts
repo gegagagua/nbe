@@ -222,11 +222,11 @@ export const kaAuth = {
     phoneOtpCancel: "გაუქმება",
   },
   legalEntity: {
-    pageTitle: "იურიდიული პირი",
+    sectionInfo: "კომპანიის ინფორმაცია",
+    labelMemberName: "უფლებამოსილება",
     description: "იურიდიულ პირზე გადასართავად მიუთითეთ ფაქტობრივი მისამართი.",
     saveButton: "შენახვა და გადართვა",
     saveSuccess: "ანგარიში წარმატებით გადაირთო",
-    saveError: "მონაცემების შენახვა ვერ მოხერხდა",
     notFound: "იურიდიული პირი ვერ მოიძებნა",
   },
   faceId: {
