@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import {
@@ -20,6 +20,7 @@ import {
     resolveUserEmail,
     resolveUserPhone,
 } from "@/lib/resolve-user-contacts";
+import { showSuccessToast } from "@/lib/show-success-toast";
 import { signOut } from "@/lib/sign-out";
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
@@ -54,14 +55,20 @@ export function ProfileScreen() {
   const activeLegalEntityId = activeLegalEntity.entity?.id;
   const { refetch: refetchLegalEntities } = legalEntities;
 
-  // Refresh the active entity's details from the backend; the stored copy is
-  // only a fallback until the list arrives.
-  useEffect(() => {
-    if (activeLegalEntityId !== undefined) refetchLegalEntities();
-  }, [activeLegalEntityId, refetchLegalEntities]);
+  // Refresh the active entity's details from the backend on every focus, so an
+  // edit made on the details page shows up on return. The stored copy is only a
+  // fallback until the list arrives.
+  useFocusEffect(
+    useCallback(() => {
+      if (activeLegalEntityId !== undefined) refetchLegalEntities();
+    }, [activeLegalEntityId, refetchLegalEntities]),
+  );
 
+  // While the list reloads it may still hold pre-edit values, so the stored
+  // copy (updated right after a save) is shown until the fresh list arrives.
   const legalEntityInfo = activeLegalEntity.entity
-    ? (legalEntities.entities.find((e) => e.id === activeLegalEntityId) ??
+    ? ((!legalEntities.isLoading &&
+        legalEntities.entities.find((e) => e.id === activeLegalEntityId)) ||
       activeLegalEntity.entity)
     : null;
 
@@ -116,9 +123,16 @@ export function ProfileScreen() {
       activeLegalEntity.switchToPersonal();
       return;
     }
-    // Switching to a legal entity goes through its details page, which
-    // collects the required actual address before the switch is saved.
-    router.push(`/legal-entity/${account.id.replace("legal-", "")}`);
+    const entityId = Number(account.id.replace("legal-", ""));
+    const entity = legalEntities.entities.find((e) => e.id === entityId);
+    // An entity that already has an actual address can be switched to right
+    // away; otherwise the details page collects it first.
+    if (entity?.realAddress?.trim()) {
+      activeLegalEntity.switchToLegal(entity);
+      showSuccessToast(t("legalEntity.saveSuccess"));
+      return;
+    }
+    router.push(`/legal-entity/${entityId}`);
   }
 
   if (isLoading) {
@@ -193,7 +207,7 @@ export function ProfileScreen() {
               <ProfileLegalEntityInfoSection
                 entity={legalEntityInfo}
                 onEdit={() =>
-                  router.push(`/legal-entity/${legalEntityInfo.id}`)
+                  router.push(`/legal-entity/${legalEntityInfo.id}?mode=edit`)
                 }
               />
             ) : (

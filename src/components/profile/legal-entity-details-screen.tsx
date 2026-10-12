@@ -28,8 +28,11 @@ import { profileScreenStyles as s } from "./profile-screen.styles";
  */
 export function LegalEntityDetailsScreen() {
   const { t, i18n } = useTranslation();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const entityId = Number(id);
+  // Opened from "edit" on the profile: start from the saved values. The switch
+  // flow starts empty so the user enters the details themselves.
+  const isEdit = mode === "edit";
   const legalEntities = useLegalEntities();
   const { refetch } = legalEntities;
   const [isSaving, setIsSaving] = useState(false);
@@ -41,7 +44,7 @@ export function LegalEntityDetailsScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, i18n.language],
   );
-  const { control, handleSubmit, formState } =
+  const { control, handleSubmit, formState, reset } =
     useForm<LegalEntityDetailsValues>({
       resolver: zodResolver(schema),
       mode: "onChange",
@@ -51,6 +54,15 @@ export function LegalEntityDetailsScreen() {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  useEffect(() => {
+    if (isEdit && entity) {
+      reset({
+        realAddress: entity.realAddress?.trim() ?? "",
+        email: entity.email?.trim() ?? "",
+      });
+    }
+  }, [isEdit, entity, reset]);
 
   const onSubmit = handleSubmit(async (values) => {
     if (!entity) return;
@@ -62,7 +74,9 @@ export function LegalEntityDetailsScreen() {
     try {
       await updateLegalEntity(entity.id, payload);
       await setActiveLegalEntity({ ...entity, ...payload });
-      showSuccessToast(t("legalEntity.saveSuccess"));
+      showSuccessToast(
+        isEdit ? t("profile.saveSuccess") : t("legalEntity.saveSuccess"),
+      );
       router.back();
     } catch (err: unknown) {
       showErrorToast(t("profile.saveError"), err);
@@ -110,7 +124,9 @@ export function LegalEntityDetailsScreen() {
           >
             <View style={s.card}>
               <Text style={s.sectionTitle}>{entity.name}</Text>
-              <Text style={s.label}>{t("legalEntity.description")}</Text>
+              {!isEdit && (
+                <Text style={s.label}>{t("legalEntity.description")}</Text>
+              )}
 
               <View style={s.fieldGroup}>
                 <View style={s.fieldRow}>
@@ -153,7 +169,7 @@ export function LegalEntityDetailsScreen() {
               </View>
 
               <Button
-                label={t("legalEntity.saveButton")}
+                label={isEdit ? t("profile.saveButton") : t("legalEntity.saveButton")}
                 onPress={() => {
                   onSubmit();
                 }}

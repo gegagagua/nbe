@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import {
   clearActiveLegalEntity,
   getActiveLegalEntity,
+  setActiveLegalEntity,
 } from "@/lib/active-legal-entity-storage";
 import type { LegalEntity } from "@/types/users";
 
@@ -31,5 +32,10 @@ export function useActiveLegalEntity() {
     setEntity(null);
   }, []);
 
-  return { entity, switchToPersonal };
+  const switchToLegal = useCallback(async (next: LegalEntity) => {
+    await setActiveLegalEntity(next);
+    setEntity(next);
+  }, []);
+
+  return { entity, switchToPersonal, switchToLegal };
 }
