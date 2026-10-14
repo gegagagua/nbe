@@ -12,6 +12,10 @@ import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { IDENTOMAT_DEMO_URL } from '@/constants/identomat';
 import { Layout } from '@/constants/layout';
 import { LoginPalette } from '@/constants/login';
+import {
+  WEBVIEW_ALLOWED_HOSTS,
+  isAllowedWebViewUrl,
+} from '@/lib/is-allowed-webview-url';
 
 import { identomatDemoScreenStyles } from './identomat-demo-screen.styles';
 
@@ -320,6 +324,24 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
     [finish],
   );
 
+  // Security (PEN073 F-2): gate every main-frame navigation against the host
+  // allowlist. Even though the initial `sourceUrl` is validated before this
+  // screen mounts (see register/identomat.tsx), a tampered/compromised page
+  // could try to redirect the top frame to an attacker origin to keep the
+  // camera/mic grant. Block any navigation whose host isn't allowlisted; permit
+  // the WebView's own inline/injected content (about:/data:/blob:).
+  const handleShouldStartLoadWithRequest = useCallback((request: { url: string }) => {
+    const { url } = request;
+    if (
+      url.startsWith('about:') ||
+      url.startsWith('data:') ||
+      url.startsWith('blob:')
+    ) {
+      return true;
+    }
+    return isAllowedWebViewUrl(url);
+  }, []);
+
   return (
     <View style={identomatDemoScreenStyles.page}>
       <AppSafeArea style={identomatDemoScreenStyles.safe} edges={['top']}>
@@ -349,17 +371,26 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
             onLoadProgress={handleLoadProgress}
             onMessage={handleMessage}
             onNavigationStateChange={handleNavigationStateChange}
+            // Security (PEN073 F-2): restrict which origins may load in the main
+            // frame. `originWhitelist` is the declarative first line;
+            // `onShouldStartLoadWithRequest` is the programmatic gate the audit
+            // calls for and the authoritative check.
+            originWhitelist={WEBVIEW_ALLOWED_HOSTS.flatMap((host) => [
+              `https://${host}`,
+              `https://*.${host}`,
+            ])}
+            onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
             javaScriptEnabled
             domStorageEnabled
             // Camera + mic access for Identomat's liveness / KYC capture.
-            // iOS: render the camera inline (not the native fullscreen player),
-            // allow getUserMedia without a tap, and auto-grant the WKWebView
-            // capture prompt once the OS permission is granted. Android grants
-            // are handled natively by react-native-webview once CAMERA is
-            // declared in the manifest (see app.json android.permissions).
+            // iOS: render the camera inline (not the native fullscreen player)
+            // and allow getUserMedia without a tap.
+            // Security (PEN073 F-11): do NOT auto-grant the capture permission.
+            // "prompt" makes WKWebView ask the user before handing camera/mic to
+            // the page, so a page we didn't intend to trust can't silently record.
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
-            mediaCapturePermissionGrantType="grant"
+            mediaCapturePermissionGrantType="prompt"
             injectedJavaScript={injectedJavaScript}
           />
           {(loading || isCheckingVerification) ? (

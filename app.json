@@ -2,13 +2,13 @@
   "expo": {
     "name": "NBE",
     "slug": "NBE-n-R4DF",
-    "version": "1.1.7",
+    "version": "1.2.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/ios-icon.png",
     "scheme": "nbe-n-r4df",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/images/ios-icon.png",
       "bundleIdentifier": "ge.gov.nbe.app",
       "associatedDomains": [
         "webcredentials:eps-gateway-testing.nbe.gov.ge"
@@ -86,7 +86,12 @@
     },
     "owner": "infomygov",
     "updates": {
-      "url": "https://u.expo.dev/f1b83546-5348-402e-af53-7a4375976c72"
+      "url": "https://u.expo.dev/f1b83546-5348-402e-af53-7a4375976c72",
+      "codeSigningCertificate": "./certs/certificate.pem",
+      "codeSigningMetadata": {
+        "keyid": "main",
+        "alg": "rsa-v1_5-sha256"
+      }
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
