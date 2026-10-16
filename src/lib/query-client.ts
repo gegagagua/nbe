@@ -25,3 +25,12 @@ export function createAppQueryClient() {
 export function clearAppQueryCache(): void {
   appQueryClient?.clear();
 }
+
+/**
+ * Drops cached data and refetches the queries of screens that are currently
+ * mounted. Used when the acting account changes, so open screens reload with
+ * the new account instead of keeping the previous account's data.
+ */
+export function resetAppQueries(): void {
+  appQueryClient?.resetQueries();
+}

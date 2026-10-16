@@ -29,5 +29,6 @@ export const homeNavItems: HomeNavItem[] = [
     icon: 'account-search',
     accent: 'slate',
     hiddenForGuest: true,
+    disabledForLegalEntity: true,
   },
 ];

@@ -1,9 +1,15 @@
 import type { InternalAxiosRequestConfig } from "axios";
 import axios, { isAxiosError } from "axios";
 
-import { ApiConfig, ApiPaths, BASE_URL } from "@/constants/api";
+import {
+  ApiConfig,
+  ApiPaths,
+  BASE_URL,
+  LegalEntityIdHeader,
+} from "@/constants/api";
 import i18n from "@/i18n/i18n";
 import { logApiError, logApiRequest, logApiResponse } from "@/lib/api-log";
+import { getActiveLegalEntityId } from "@/lib/active-legal-entity-storage";
 import {
     getSessionToken
 } from "@/lib/session-token-storage";
@@ -59,10 +65,20 @@ apiClient.interceptors.request.use(async (config) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    const legalEntityId = await getActiveLegalEntityId();
+    if (legalEntityId !== null) {
+      config.headers[LegalEntityIdHeader] = String(legalEntityId);
+    }
   }
   logApiRequest(config);
   return config;
 });
+
+function hadLegalEntityHeader(
+  cfg: InternalAxiosRequestConfig | undefined,
+): boolean {
+  return cfg?.headers?.[LegalEntityIdHeader] != null;
+}
 
 function hadAuthorizationHeader(
   cfg: InternalAxiosRequestConfig | undefined,
@@ -78,6 +94,14 @@ apiClient.interceptors.response.use(
   },
   async (error: unknown) => {
     logApiError(error);
+    if (
+      isAxiosError(error) &&
+      error.response?.status === 403 &&
+      hadLegalEntityHeader(error.config)
+    ) {
+      showErrorToast(i18n.t("toast.legalEntityAccessDenied"), error);
+      return Promise.reject(error);
+    }
     if (!isAxiosError(error) || error.response?.status !== 401) {
       return Promise.reject(error);
     }

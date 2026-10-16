@@ -9,7 +9,7 @@ type Props = {
 
 export function ProfileReadOnlyField({ label, value }: Props) {
   return (
-    <View style={s.fieldRow}>
+    <View style={s.infoFieldRow}>
       <Text style={s.label}>{label}</Text>
       <Text style={[s.valueText, s.valueDisabled]}>{value?.trim() || '—'}</Text>
     </View>

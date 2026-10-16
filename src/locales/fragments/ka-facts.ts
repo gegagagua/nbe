@@ -5,6 +5,7 @@ export const kaFacts = {
   loadError: "ფაქტების სიის ჩატვირთვა ვერ მოხერხდა",
   listCaseNumberLabel: "საქმის ნომერი",
   labelExecutor: "აღმასრულებელი",
+  externalSourceA11yLabel: "გარე წყაროდან შემოსული განცხადება",
   labelApplicant: "განმცხადებელი",
   labelFee: "საფასური",
   labelOwnershipType: "საკუთრების ტიპი",
