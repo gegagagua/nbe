@@ -30,6 +30,15 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# expo-updates OTA code signing (PEN073 F-1)
+# The PRIVATE key signs every `eas update` and must never be committed — keep it
+# in an EAS secret / vault and inject it in CI. The whole keys/ dir stays out.
+/keys/
+# The certificate is PUBLIC: app.json references it and it is bundled into the
+# binary so the client can verify update signatures. It must be committed, so
+# re-include it despite the global *.pem ignore above.
+!/certs/certificate.pem
+
 # local env files
 .env*.local
 

@@ -1,34 +1,23 @@
 import { getBiometricAvailability } from '@/lib/biometric-auth';
-import {
-  getFaceIdCredentials,
-  getFaceIdEnabled,
-  setFaceIdEnabled,
-} from '@/lib/face-id-storage';
+import { getFaceIdEnabled } from '@/lib/face-id-storage';
 import type { BiometricAvailability } from '@/types/face-id';
 
 export async function loadFaceIdState(): Promise<{
   availability: BiometricAvailability;
   isActive: boolean;
 }> {
-  const [availability, enabledFlag, credentials] = await Promise.all([
+  // The `enabled` flag is the auth-free source of truth for whether Face ID is
+  // set up. We deliberately do NOT read the credentials here: since PEN073
+  // F-3/F-4 the credential item is biometric-gated, so reading it would trigger
+  // an OS auth prompt on every app launch / profile open. enable() only sets
+  // the flag AFTER the gated credential write succeeds, and disable()/
+  // clearFaceIdAll() wipe both together, so the flag reliably implies a stored
+  // secret. A stale flag with no readable secret is reconciled at login time
+  // (authenticateAndGetCredentials clears both and reports no_credentials).
+  const [availability, enabled] = await Promise.all([
     getBiometricAvailability(),
     getFaceIdEnabled(),
-    getFaceIdCredentials(),
   ]);
 
-  // The stored credentials are the source of truth: they only exist because the
-  // user enabled Face ID (enable() writes them, disable()/clearFaceIdAll() wipe
-  // both keys together). If the two keys ever disagree — e.g. the `enabled`
-  // flag write didn't land while the credentials did — reconcile *toward* the
-  // credentials rather than deleting them, so a transient/partial write can't
-  // silently wipe a working Face ID setup.
-  if (credentials && !enabledFlag) {
-    await setFaceIdEnabled(true);
-  }
-  if (!credentials && enabledFlag) {
-    // No secret to authenticate with: drop the dangling flag.
-    await setFaceIdEnabled(false);
-  }
-
-  return { availability, isActive: !!credentials };
+  return { availability, isActive: enabled };
 }

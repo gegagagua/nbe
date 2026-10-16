@@ -28,7 +28,6 @@ import {
 import { setSessionUserProfile } from "@/lib/session-user-profile-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
 import { showSuccessToast } from "@/lib/show-success-toast";
-import { syncFaceIdCredentialsIfEnabled } from "@/lib/sync-face-id-credentials";
 import { createLoginFormSchema } from "@/schemas/login-form.schema";
 import type { LoginFormState } from "@/types/login";
 import type { LoginFormValues } from "@/types/login-form-values";
@@ -57,7 +56,6 @@ export function useLoginForm(): LoginFormState {
 
   // Shared session persistence for both password and passkey logins. `username`
   // is stored as-is so Face ID (which re-runs createSession with it) stays valid;
-  // `syncFaceId` is only passed when we actually hold a plaintext password.
   // Navigation is intentionally NOT done here — callers navigate once they've
   // decided whether to first show the post-login "trust this device" prompt.
   const persistSession = useCallback(
@@ -65,7 +63,6 @@ export function useLoginForm(): LoginFormState {
       session: import("@/types/session").CreateSessionResponse,
       opts: {
         username: string;
-        syncFaceId?: { username: string; password: string };
       },
     ) => {
       const { token, user, lastSession } = session;
@@ -82,9 +79,11 @@ export function useLoginForm(): LoginFormState {
         });
       }
       setGuestMode(false);
-      if (opts.syncFaceId) {
-        await syncFaceIdCredentialsIfEnabled(opts.syncFaceId);
-      }
+      // NOTE (PEN073 F-3/F-4): we no longer silently refresh stored Face ID
+      // credentials here. The credential item is now biometric-gated, so a
+      // background re-write would force an OS prompt. If the password changes,
+      // the next Face ID login fails with 401 and the login screen disables
+      // Face ID (handleFaceIdPress) so the user re-enables it once.
     },
     [],
   );
@@ -114,10 +113,6 @@ export function useLoginForm(): LoginFormState {
     ) => {
       await persistSession(session, {
         username: credentials.username.trim(),
-        syncFaceId: {
-          username: credentials.username,
-          password: credentials.password,
-        },
       });
       // The session token is now set, which is what authorises the passkey
       // registration below. Prompt if untrusted; otherwise go straight in.
