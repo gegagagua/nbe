@@ -67,7 +67,14 @@ function mapApplicant(root: Raw): FactApplicationParty {
     if (!obj) continue;
     const name = personName(obj);
     const idnumber = firstString(obj, ["idnumber", "idNumber", "personalNo"]);
-    if (name || idnumber) return { name, idnumber: idnumber ?? "" };
+    const personId = typeof obj.id === "number" ? obj.id : undefined;
+    if (name || idnumber) {
+      return {
+        id: personId,
+        name,
+        idnumber: idnumber ?? "",
+      };
+    }
   }
   return { name: "", idnumber: "" };
 }
