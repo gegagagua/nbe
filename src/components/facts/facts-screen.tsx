@@ -15,6 +15,7 @@ import { isGuestMode } from "@/lib/guest-mode";
 import type { FactsSearchFilters } from "@/types/facts";
 
 import { FactsList } from "./facts-list";
+import { FactsMakeStatementCta } from "./facts-make-statement-cta";
 import { FactsSearchForm } from "./facts-search-form";
 
 export function FactsScreen() {
@@ -62,6 +63,7 @@ export function FactsScreen() {
             </Pressable>
             <Text style={s.title}>{t("facts.pageTitle")}</Text>
           </View>
+          <FactsMakeStatementCta />
           <FactsSearchForm
             values={draftFilters}
             onChange={setDraftFilters}

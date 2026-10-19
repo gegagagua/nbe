@@ -8,6 +8,8 @@ import type {
   FactsSearchFilters,
   FactsSearchPerson,
   FactsSearchRequest,
+  FactStatusFilesResponse,
+  FactStatusResponse,
 } from "@/types/facts";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -69,4 +71,31 @@ export async function getFactPersons(
     ApiPaths.factAppPersons(appId),
   );
   return response.data.data ?? [];
+}
+
+/** GET /fact-portal/v1/app/{appId}/status — ოქმი tab proceeding status(es). */
+export async function getFactStatus(
+  appId: number | string,
+): Promise<FactStatusResponse> {
+  const response = await apiClient.get<FactStatusResponse>(
+    ApiPaths.factAppStatus(appId),
+  );
+  return response.data;
+}
+
+/** POST /fact-portal/v1/status/get-files — downloadable files for one status. */
+export async function getFactStatusFiles(
+  appStatusId: number | string,
+  appId: number | string,
+  pageNumber = 0,
+  pageSize = 10,
+): Promise<FactStatusFilesResponse> {
+  const response = await apiClient.post<FactStatusFilesResponse>(
+    ApiPaths.factStatusGetFiles,
+    {
+      data: { appStatusId, appId },
+      page: { number: pageNumber, size: pageSize },
+    },
+  );
+  return response.data;
 }

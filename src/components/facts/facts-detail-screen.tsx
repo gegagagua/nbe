@@ -15,6 +15,7 @@ import { useFactPersons } from "@/hooks/use-fact-persons";
 import type { FactAppDetail, FactPerson } from "@/types/facts";
 
 import { factsDetailStyles as s } from "./facts-detail.styles";
+import { FactProtocolTab } from "./fact-protocol-tab";
 import { FactsDetailTabs, type FactsDetailTab } from "./facts-detail-tabs";
 
 function Field({ label, value }: { label: string; value?: string }) {
@@ -166,15 +167,6 @@ function ApplicationTab({
   );
 }
 
-function ProtocolTab() {
-  const { t } = useTranslation();
-  return (
-    <View style={[s.detailsCard, s.section]}>
-      <Text style={page.hintText}>{t("facts.detailProtocolEmpty")}</Text>
-    </View>
-  );
-}
-
 export function FactsDetailScreen() {
   const { t } = useTranslation();
   const { id, personId } = useLocalSearchParams<{
@@ -238,7 +230,7 @@ export function FactsDetailScreen() {
                   owners={owners}
                 />
               ) : (
-                <ProtocolTab />
+                <FactProtocolTab appId={appId} />
               )}
             </>
           ) : null}

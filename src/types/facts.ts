@@ -150,6 +150,63 @@ export type FactPerson = {
   payCode: string;
 };
 
+// ── Protocol tab (ოქმი) ───────────────────────────────────────────────────────
+// GET /fact-portal/v1/app/{appId}/status — proceeding status(es), usually a
+// single "ფაქტების კონსტატაცია" (105) entry. Shape mirrors the EPS statuses
+// endpoint. Bearer-only.
+export type FactStatusEntryResponse = {
+  id: number; // = appStatusId, passed to get-files
+  appId: number;
+  createdDate: string | null;
+  statusNumber: string | null;
+  status: { id: number; name: string | null } | null;
+};
+
+export type FactStatusResponse = { data: FactStatusEntryResponse[] | null };
+
+// POST /fact-portal/v1/status/get-files — downloadable files for one status.
+export type FactStatusFileMeta = {
+  id: number;
+  fileName: string | null;
+  fileDesc: string | null;
+  mimeType: string | null;
+};
+
+export type FactStatusFileEntryResponse = {
+  id: number;
+  createdDate: string | null;
+  uploadedBy: { id: number; name: string | null } | null;
+  file: FactStatusFileMeta | null;
+};
+
+export type FactStatusFilesResponse = {
+  data: FactStatusFileEntryResponse[] | null;
+};
+
+/** A downloadable item shown on the protocol tab (mapped). */
+export type FactProtocolFile = {
+  /** File id streamed by the download endpoint. */
+  fileId: number;
+  /** Display title (fileDesc, or the file name). */
+  title: string;
+  fileName: string;
+  mimeType: string;
+  uploadedBy: string;
+  createdDate: string;
+};
+
+/** One proceeding status plus its files, as rendered on the ოქმი tab. */
+export type FactProtocolStatus = {
+  appStatusId: number;
+  appId: number;
+  /** e.g. "ოქმი ფაქტების კონსტატაციის შესახებ (მოხდა ფაქტის კონსტატაცია)". */
+  statusName: string;
+  /** e.g. "105". */
+  statusNumber: string;
+  date: string;
+  files: FactProtocolFile[];
+};
+
 export type FactAppDetail = {
   id: number;
   regnumber: string;

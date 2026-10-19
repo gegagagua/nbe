@@ -64,6 +64,15 @@ export const ApiPaths = {
   factAppById: (id: number | string) => `/fact-portal/v1/apps/${id}`,
   factAppPersons: (appId: number | string) =>
     `/fact-portal/v1/persons/app/${appId}`,
+  // ოქმი tab — proceeding status(es) for a statement (usually a single "105"
+  // status) and its downloadable files. Bearer-only, through the gateway.
+  factAppStatus: (appId: number | string) =>
+    `/fact-portal/v1/app/${appId}/status`,
+  factStatusGetFiles: "/fact-portal/v1/status/get-files",
+  // EPS-FILE-API (through the gateway) — stream/download a protocol file.
+  // NOTE: mirrors `epsFilesStream` / `debtorFilesStream`; confirm the exact
+  // `fact` segment with backend once a token is available to test download.
+  factFilesStream: "/file-portal/v1/fact/files/stream",
 
   // EPS-DEBTOR-API — debtor registry applications (gateway maps `debtor-portal` → debtor-api `/portal`)
   debtorApps: "/debtor-portal/v1/apps",
