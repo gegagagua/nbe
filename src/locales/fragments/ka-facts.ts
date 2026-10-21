@@ -30,6 +30,7 @@ export const kaFacts = {
   detailTabProtocol: "ოქმი",
   detailEditButton: "რედაქტირება",
   detailPayButton: "გადახდა",
+  detailCloseButton: "დახურვა",
   detailLabelApplicantName:
     "სახელი, გვარი / ორგანიზაციის დასახელება (პირადი ნომერი / საიდ. კოდი)",
   detailLabelAddress: "მისამართი",
@@ -92,6 +93,11 @@ export const kaFacts = {
   stValidationError:
     "არ არის შევსებული აუცილებელი ველ(ებ)ი, ან შევსებულია დაუშვებელი მნიშვნელობით",
   stRequiredHint: "სავალდებულო ველები მონიშნულია წითელი ფიფქით",
+  stPayIdentifierLabel: "გადახდის იდენტიფიკატორი",
+  stRecordedHint:
+    "განცხადება ჩაწერილია. შეგიძლიათ დაარედაქტიროთ, გადაიხადოთ ან დახუროთ.",
+  stEditButton: "რედაქტირება",
+  stCloseButton: "დახურვა",
   stFeeTitle: "გადასახდელი თანხა",
   stMethodsTitle: "გადახდის მეთოდები",
   stMethodCard: "ბარათით გადახდა",

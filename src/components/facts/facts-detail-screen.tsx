@@ -147,21 +147,33 @@ function ApplicationTab({
       {/* Recorded (not yet registered) cases only — a registered case has a
           regnumber and can no longer be edited or paid from here. */}
       {!app.regnumber ? (
-        // TODO: visual only until the edit ("ჩაწერა") and payment endpoints exist.
-        <View style={actions.row}>
+        // Edit / Pay are visual only until the "ჩაწერა" and payment endpoints
+        // exist; Close simply leaves the opened case (spec: რედაქტირება / გადახდა / დახურვა).
+        <>
+          <View style={actions.row}>
+            <Pressable
+              style={[actions.btn, actions.editBtn]}
+              accessibilityRole="button"
+            >
+              <Text style={actions.editLabel}>
+                {t("facts.detailEditButton")}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[actions.btn, actions.payBtn]}
+              accessibilityRole="button"
+            >
+              <Text style={actions.payLabel}>{t("facts.detailPayButton")}</Text>
+            </Pressable>
+          </View>
           <Pressable
-            style={[actions.btn, actions.editBtn]}
+            style={actions.fullBtn}
+            onPress={() => router.back()}
             accessibilityRole="button"
           >
-            <Text style={actions.editLabel}>{t("facts.detailEditButton")}</Text>
+            <Text style={actions.payLabel}>{t("facts.detailCloseButton")}</Text>
           </Pressable>
-          <Pressable
-            style={[actions.btn, actions.payBtn]}
-            accessibilityRole="button"
-          >
-            <Text style={actions.payLabel}>{t("facts.detailPayButton")}</Text>
-          </Pressable>
-        </View>
+        </>
       ) : null}
     </>
   );

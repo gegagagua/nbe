@@ -1,4 +1,4 @@
-export type FactStatementPhase = "form" | "payment" | "submit";
+export type FactStatementPhase = "form" | "recorded" | "payment" | "submit";
 
 /** საფასური — working hours (200 GEL) vs non-working hours (300 GEL). */
 export type FactFeeKind = "working" | "nonworking";

@@ -50,6 +50,25 @@ export const factStatementStyles = StyleSheet.create({
     fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
+  payIdCard: {
+    borderRadius: DebtorRegistryLayout.buttonRadius,
+    borderWidth: 1,
+    borderColor: DebtorRegistryPalette.cardBorder,
+    backgroundColor: DebtorRegistryPalette.panelBg,
+    paddingVertical: Space.medium,
+    paddingHorizontal: Space.medium,
+    gap: Space.extraSmall,
+    alignItems: "center",
+  },
+  payIdLabel: {
+    fontSize: DebtorRegistryTypography.label,
+    color: DebtorRegistryPalette.textMuted,
+  },
+  payIdValue: {
+    fontSize: DebtorRegistryTypography.title,
+    fontWeight: "700",
+    color: DebtorRegistryPalette.textPrimary,
+  },
   reviewRow: {
     gap: Space.extraSmall,
   },

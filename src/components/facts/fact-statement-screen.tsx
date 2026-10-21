@@ -21,6 +21,7 @@ import { emptyFactStatementForm } from "@/types/fact-statement";
 
 import { FactStatementForm } from "./fact-statement-form";
 import { FactStatementPayment } from "./fact-statement-payment";
+import { FactStatementRecorded } from "./fact-statement-recorded";
 import { FactStatementSubmit } from "./fact-statement-submit";
 
 /** All required fields must be filled (owner fields only when a kind is picked). */
@@ -63,6 +64,7 @@ export function FactStatementScreen() {
     defaultFactStatementPaymentMethod(),
   );
   const [referenceNumber, setReferenceNumber] = useState<string | null>(null);
+  const [payIdentifier, setPayIdentifier] = useState<string | null>(null);
 
   // Auto-fill the applicant segment from the signed-in profile.
   useEffect(() => {
@@ -96,21 +98,35 @@ export function FactStatementScreen() {
       return;
     }
     setError(null);
-    setPhase("payment");
+    // ჩაწერა — recording the statement generates a preliminary application /
+    // payment identifier (fig.2) and moves to the read-only review step where
+    // the user can Edit, Pay, or Close. Keep any identifier already generated so
+    // an Edit → Record round-trip doesn't mint a new one.
+    if (!payIdentifier) {
+      const now = new Date();
+      setPayIdentifier(String(now.getTime()).slice(-5));
+    }
+    setPhase("recorded");
   };
 
   const onPay = () => {
     // TODO: wire the real fact-portal statement create + payment endpoints.
     // Until then a client-side reference number is generated (mirrors the
-    // debtor-extract request flow).
+    // debtor-extract request flow). The registration number (F…) is only minted
+    // once payment goes through — the preliminary pay identifier was generated
+    // earlier, on Record.
     const now = new Date();
     setReferenceNumber(`F${now.getFullYear()}${String(now.getTime()).slice(-6)}`);
     setPhase("submit");
   };
 
   const handleBack = () => {
-    if (phase === "payment") {
+    if (phase === "recorded") {
       setPhase("form");
+      return;
+    }
+    if (phase === "payment") {
+      setPhase("recorded");
       return;
     }
     router.back();
@@ -135,6 +151,15 @@ export function FactStatementScreen() {
               onChange={setField}
               error={error}
               onContinue={onRecord}
+            />
+          ) : null}
+          {phase === "recorded" && payIdentifier ? (
+            <FactStatementRecorded
+              form={form}
+              payIdentifier={payIdentifier}
+              onEdit={() => setPhase("form")}
+              onPay={() => setPhase("payment")}
+              onClose={() => router.back()}
             />
           ) : null}
           {phase === "payment" ? (

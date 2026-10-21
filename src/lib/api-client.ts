@@ -11,10 +11,10 @@ import { showErrorToast } from "@/lib/show-error-toast";
 import { signOut } from "@/lib/sign-out";
 
 function isSessionOtpVerify(url: string): boolean {
-  // Matches the gateway path `/um-portal/v1/sessions/otp/{code}`. Don't anchor on
-  // `/portal/...` — the real host segment is `um-portal`, so a leading-slash match
-  // never fires and the OTP token would be overwritten by the stored session token.
-  return url.includes("/sessions/otp/");
+  // Matches the gateway path `/um-portal/v1/sessions/otp`. The OTP code now rides
+  // in the PATCH body (cyber-security review), so the path has no trailing
+  // `/{code}` segment to anchor on — match the bare path instead.
+  return url.endsWith(ApiPaths.sessionOtpVerify);
 }
 
 function isAuthRequest(config: InternalAxiosRequestConfig) {

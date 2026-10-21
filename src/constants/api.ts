@@ -7,8 +7,9 @@ export const ApiPaths = {
   logout: "/um-portal/v1/sessions/logout",
   otpSend: "/um-portal/v1/otp/send",
   otpVerify: "/um-portal/v1/otp/verify",
-  sessionOtpVerify: (otp: string | number) =>
-    `/um-portal/v1/sessions/otp/${otp}`,
+  // Cyber-security review moved the OTP code out of the URL path and into the
+  // request body (PATCH /sessions/otp with `{ data: { otp } }`).
+  sessionOtpVerify: "/um-portal/v1/sessions/otp",
   passwordReset: "/um-portal/v1/password/reset",
 
   // Public (unauthenticated)

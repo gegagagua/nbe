@@ -30,6 +30,7 @@ export const enFacts = {
   detailTabProtocol: "Protocol",
   detailEditButton: "Edit",
   detailPayButton: "Pay",
+  detailCloseButton: "Close",
   detailLabelApplicantName:
     "Name, surname / Organization name (Personal number / Identification code)",
   detailLabelAddress: "Address",
@@ -92,6 +93,11 @@ export const enFacts = {
   stValidationError:
     "A required field (or fields) is empty, or filled with an invalid value",
   stRequiredHint: "Required fields are marked with a red asterisk",
+  stPayIdentifierLabel: "Payment identifier",
+  stRecordedHint:
+    "The statement is recorded. You can edit it, pay, or close.",
+  stEditButton: "Edit",
+  stCloseButton: "Close",
   stFeeTitle: "Amount due",
   stMethodsTitle: "Payment methods",
   stMethodCard: "Pay by card",

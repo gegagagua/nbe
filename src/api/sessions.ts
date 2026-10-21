@@ -23,8 +23,8 @@ export async function verifyLoginOtp(
   code: string,
 ): Promise<CreateSessionResponse> {
   const res = await apiClient.patch<CreateSessionApiEnvelope>(
-    `${BASE_URL}${ApiPaths.sessionOtpVerify(code)}`,
-    null,
+    `${BASE_URL}${ApiPaths.sessionOtpVerify}`,
+    { data: { otp: Number(code) } },
     { headers: { Authorization: `Bearer ${otpToken}` } },
   );
   return res.data.data;
