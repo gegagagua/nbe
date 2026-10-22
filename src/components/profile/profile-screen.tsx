@@ -1,11 +1,17 @@
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  KeyboardAwareScrollView,
+  type KeyboardAwareScrollViewRef,
+} from "react-native-keyboard-controller";
 
 import { LoginOtpModal } from "@/components/login/login-otp-modal";
 import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { LoginPalette } from "@/constants/login";
+import { useActiveLegalEntity } from "@/hooks/use-active-legal-entity";
+import { useLegalEntities } from "@/hooks/use-legal-entities";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 import { useUserDetail } from "@/hooks/use-user-detail";
@@ -14,13 +20,20 @@ import {
     resolveUserEmail,
     resolveUserPhone,
 } from "@/lib/resolve-user-contacts";
+import { showSuccessToast } from "@/lib/show-success-toast";
 import { signOut } from "@/lib/sign-out";
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
+import { ProfileAccountCard } from "./profile-account-card";
+import {
+  ProfileAccountSwitchModal,
+  type ProfileAccountOption,
+} from "./profile-account-switch-modal";
 import { ProfileChangePasswordSection } from "./profile-change-password-section";
 import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
+import { ProfileLegalEntityInfoSection } from "./profile-legal-entity-info-section";
 import { profileScreenStyles as s } from "./profile-screen.styles";
 
 export function ProfileScreen() {
@@ -34,6 +47,30 @@ export function ProfileScreen() {
     onDetailRefetch: refetch,
   });
   const verifyPassword = useVerifyCurrentPassword(profile?.username);
+  const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
+  const infoSectionY = useRef(0);
+  const [accountSwitchVisible, setAccountSwitchVisible] = useState(false);
+  const legalEntities = useLegalEntities();
+  const activeLegalEntity = useActiveLegalEntity();
+  const activeLegalEntityId = activeLegalEntity.entity?.id;
+  const { refetch: refetchLegalEntities } = legalEntities;
+
+  // Refresh the active entity's details from the backend on every focus, so an
+  // edit made on the details page shows up on return. The stored copy is only a
+  // fallback until the list arrives.
+  useFocusEffect(
+    useCallback(() => {
+      if (activeLegalEntityId !== undefined) refetchLegalEntities();
+    }, [activeLegalEntityId, refetchLegalEntities]),
+  );
+
+  // While the list reloads it may still hold pre-edit values, so the stored
+  // copy (updated right after a save) is shown until the fresh list arrives.
+  const legalEntityInfo = activeLegalEntity.entity
+    ? ((!legalEntities.isLoading &&
+        legalEntities.entities.find((e) => e.id === activeLegalEntityId)) ||
+      activeLegalEntity.entity)
+    : null;
 
   // Surface lastSession + pwdChngDate that came back with the login response in
   // the same modals the /users/me history feeds, so users see them even when
@@ -49,6 +86,53 @@ export function ProfileScreen() {
 
   function handleSignOut() {
     signOut();
+  }
+
+  function handleViewInfo() {
+    scrollRef.current?.scrollTo({ y: infoSectionY.current, animated: true });
+  }
+
+  const fullName =
+    [detail?.firstName, detail?.lastName].filter(Boolean).join(" ") ||
+    profile?.username ||
+    "";
+
+  // The physical user first, then the legal entities they can switch to.
+  // Ids are prefixed so a user id never collides with a legal-entity id.
+  const personalAccountId = profile ? `user-${profile.id}` : null;
+  const currentAccountId = activeLegalEntity.entity
+    ? `legal-${activeLegalEntity.entity.id}`
+    : personalAccountId;
+  const accounts: ProfileAccountOption[] = [
+    ...(personalAccountId ? [{ id: personalAccountId, name: fullName }] : []),
+    ...legalEntities.entities.map((entity) => ({
+      id: `legal-${entity.id}`,
+      name: entity.name,
+    })),
+  ];
+
+  function handleOpenAccountSwitch() {
+    setAccountSwitchVisible(true);
+    legalEntities.refetch();
+  }
+
+  function handleSelectAccount(account: ProfileAccountOption) {
+    setAccountSwitchVisible(false);
+    if (account.id === currentAccountId) return;
+    if (account.id === personalAccountId) {
+      activeLegalEntity.switchToPersonal();
+      return;
+    }
+    const entityId = Number(account.id.replace("legal-", ""));
+    const entity = legalEntities.entities.find((e) => e.id === entityId);
+    // An entity that already has an actual address can be switched to right
+    // away; otherwise the details page collects it first.
+    if (entity?.realAddress?.trim()) {
+      activeLegalEntity.switchToLegal(entity);
+      showSuccessToast(t("legalEntity.saveSuccess"));
+      return;
+    }
+    router.push(`/legal-entity/${entityId}`);
   }
 
   if (isLoading) {
@@ -96,25 +180,52 @@ export function ProfileScreen() {
         </View>
 
         <KeyboardAwareScrollView
+          ref={scrollRef}
           style={s.scroll}
           contentContainerStyle={s.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bottomOffset={16}
         >
-          <ProfileInfoSection
-            firstName={detail?.firstName ?? null}
-            lastName={detail?.lastName ?? null}
-            idnumber={detail?.idnumber?.trim() || undefined}
-            phone={resolveUserPhone(detail?.contacts)}
-            email={resolveUserEmail(detail?.contacts)}
-            realAddress={detail?.realAddress?.trim() ?? ""}
-            legalAddress={detail?.legalAddress?.trim() ?? ""}
-            canEdit={detail !== null}
-            onSave={actions.handleSaveInfo}
-            isSaving={actions.isSavingInfo}
-            statusMessage={actions.infoStatus}
+          <ProfileAccountCard
+            fullName={legalEntityInfo?.name ?? fullName}
+            subtitle={
+              activeLegalEntity.entity
+                ? t("profile.viewCompanyDetails")
+                : t("profile.viewPersonalInfo")
+            }
+            onViewInfo={handleViewInfo}
+            onSwitchAccount={handleOpenAccountSwitch}
           />
+
+          <View
+            onLayout={(e) => {
+              infoSectionY.current = e.nativeEvent.layout.y;
+            }}
+          >
+            {legalEntityInfo ? (
+              <ProfileLegalEntityInfoSection
+                entity={legalEntityInfo}
+                onEdit={() =>
+                  router.push(`/legal-entity/${legalEntityInfo.id}?mode=edit`)
+                }
+              />
+            ) : (
+              <ProfileInfoSection
+                firstName={detail?.firstName ?? null}
+                lastName={detail?.lastName ?? null}
+                idnumber={detail?.idnumber?.trim() || undefined}
+                phone={resolveUserPhone(detail?.contacts)}
+                email={resolveUserEmail(detail?.contacts)}
+                realAddress={detail?.realAddress?.trim() ?? ""}
+                legalAddress={detail?.legalAddress?.trim() ?? ""}
+                canEdit={detail !== null}
+                onSave={actions.handleSaveInfo}
+                isSaving={actions.isSavingInfo}
+                statusMessage={actions.infoStatus}
+              />
+            )}
+          </View>
 
           <View style={s.divider} />
 
@@ -148,6 +259,14 @@ export function ProfileScreen() {
           </Pressable>
         </KeyboardAwareScrollView>
       </AppSafeArea>
+      <ProfileAccountSwitchModal
+        visible={accountSwitchVisible}
+        accounts={accounts}
+        selectedId={currentAccountId}
+        isLoading={legalEntities.isLoading}
+        onSelect={handleSelectAccount}
+        onClose={() => setAccountSwitchVisible(false)}
+      />
       <LoginOtpModal
         visible={actions.phoneOtp.visible}
         isSubmitting={actions.phoneOtp.isSubmitting}

@@ -23,6 +23,10 @@ export const ApiPaths = {
   usersMeUpdate: "/um-portal/v1/users",
   usersChangePhone: "/um-portal/v1/users/phone",
   passwordGhange: "/um-portal/v1/users/password",
+  // Legal entities the signed-in physical user can switch to.
+  legalEntities: "/um-portal/v1/legal-entities",
+  legalEntityById: (id: number | string) =>
+    `/um-portal/v1/legal-entities/${id}`,
 
   // WebAuthn / Passkey — device trust (გასანდოება)
   // Registration flow is authenticated; login flow is public (no session yet).
@@ -141,6 +145,9 @@ export const ApiConfig = {
 
 export const SessionStorageKey = "nbe_session_token" as const;
 export const SessionUserProfileStorageKey = "nbe_session_user_profile" as const;
+// Legal entity the user switched to from the profile; absent = acting as themselves.
+export const LegalEntityIdHeader = "X-Legal-Entity-ID" as const;
+export const ActiveLegalEntityStorageKey = "nbe_active_legal_entity" as const;
 export const FaceIdEnabledStorageKey = "nbe_face_id_enabled" as const;
 export const FaceIdCredentialsStorageKey = "nbe_face_id_credentials" as const;
 // Passkey / device trust. The credential id is returned by /webauthn/register and

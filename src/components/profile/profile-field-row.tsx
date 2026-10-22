@@ -12,7 +12,7 @@ type Props = {
 
 export function ProfileFieldRow({ label, editing, displayValue, children }: Props) {
   return (
-    <View style={s.fieldRow}>
+    <View style={s.infoFieldRow}>
       <Text style={s.label}>{label}</Text>
       {editing ? children : <Text style={s.valueText}>{displayValue || '—'}</Text>}
     </View>

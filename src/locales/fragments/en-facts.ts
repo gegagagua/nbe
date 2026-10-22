@@ -5,6 +5,7 @@ export const enFacts = {
   loadError: "Failed to load the statement of facts list",
   listCaseNumberLabel: "Case number",
   labelExecutor: "Enforcement Officer",
+  externalSourceA11yLabel: "Application received from an external source",
   labelApplicant: "Applicant",
   labelFee: "Fee",
   labelOwnershipType: "Ownership Type",

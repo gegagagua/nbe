@@ -60,6 +60,14 @@ export const profileScreenStyles = StyleSheet.create({
   fieldRow: {
     gap: Space.extraSmall,
   },
+  // Personal and company info cards. The row gap stays below the group gap so
+  // each label reads as belonging to its value.
+  infoFieldGroup: {
+    gap: 10,
+  },
+  infoFieldRow: {
+    gap: 6,
+  },
   label: {
     fontSize: Typography.small,
     color: LoginPalette.placeholderMuted,
