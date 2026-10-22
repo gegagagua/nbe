@@ -69,6 +69,10 @@ export const factStatementStyles = StyleSheet.create({
     fontWeight: "700",
     color: DebtorRegistryPalette.textPrimary,
   },
+  payIdDate: {
+    fontSize: DebtorRegistryTypography.label,
+    color: DebtorRegistryPalette.textSecondary,
+  },
   reviewRow: {
     gap: Space.extraSmall,
   },

@@ -31,13 +31,17 @@ export type FactStatementForm = {
   applicantFirstName: string;
   applicantLastName: string;
   applicantPersonalId: string;
-  applicantAddress: string;
+  /** ფაქტობრივი მისამართი — kept separate from the legal address, as in the backend. */
+  applicantActualAddress: string;
+  /** იურიდიული მისამართი. */
+  applicantLegalAddress: string;
   applicantPhone: string;
   applicantEmail: string;
   // საფასური
   fee: FactFeeKind;
-  // ფაქტის დადგენის თარიღი
-  factDate: string; // YYYY-MM-DD
+  // ფაქტის დადგენის თარიღი — date range (დღე დან / დღე მდე)
+  factDateFrom: string; // YYYY-MM-DD
+  factDateTo: string; // YYYY-MM-DD
   factHourFrom: string; // "HH:00" | ""
   factHourTo: string; // "HH:00" | ""
   // ფაქტების დადგენის ადგილი
@@ -61,11 +65,13 @@ export const emptyFactStatementForm = (): FactStatementForm => ({
   applicantFirstName: "",
   applicantLastName: "",
   applicantPersonalId: "",
-  applicantAddress: "",
+  applicantActualAddress: "",
+  applicantLegalAddress: "",
   applicantPhone: "",
   applicantEmail: "",
   fee: "working",
-  factDate: "",
+  factDateFrom: "",
+  factDateTo: "",
   factHourFrom: "",
   factHourTo: "",
   propertyType: "",

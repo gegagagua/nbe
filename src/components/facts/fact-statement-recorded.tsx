@@ -10,8 +10,12 @@ import { factStatementStyles as fs } from "./fact-statement.styles";
 
 type Props = {
   form: FactStatementForm;
-  /** Preliminary application / payment identifier generated on Record (fig.2). */
+  /** გადახდის იდენტიფიკატორი — payment identifier, shown as the last applicant field. */
   payIdentifier: string;
+  /** საქმის წინასწარი ნომერი — preliminary case number, shown in the top card. */
+  preliminaryNumber: string;
+  /** Date the statement was recorded, shown next to the number (Confluence parity). */
+  preliminaryDate?: string | null;
   onEdit: () => void;
   onPay: () => void;
   onClose: () => void;
@@ -52,6 +56,8 @@ function ReviewSection({
 export function FactStatementRecorded({
   form,
   payIdentifier,
+  preliminaryNumber,
+  preliminaryDate,
   onEdit,
   onPay,
   onClose,
@@ -78,10 +84,15 @@ export function FactStatementRecorded({
 
   return (
     <>
-      {/* გადახდის იდენტიფიკატორი — generated the moment the statement is recorded. */}
+      {/* საქმის წინასწარი ნომერი — preliminary case number of the recorded statement. */}
       <View style={fs.payIdCard}>
-        <Text style={fs.payIdLabel}>{t("facts.stPayIdentifierLabel")}</Text>
-        <Text style={fs.payIdValue}>{payIdentifier}</Text>
+        <Text style={fs.payIdLabel}>
+          {t("facts.stPreliminaryNumberLabel")}
+        </Text>
+        <Text style={fs.payIdValue}>{preliminaryNumber}</Text>
+        {preliminaryDate ? (
+          <Text style={fs.payIdDate}>{preliminaryDate}</Text>
+        ) : null}
       </View>
 
       <ReviewSection title={t("facts.stOrganizationLabel")}>
@@ -98,11 +109,20 @@ export function FactStatementRecorded({
           value={form.applicantPersonalId}
         />
         <ReviewRow
-          label={t("facts.stApplicantAddressLabel")}
-          value={form.applicantAddress}
+          label={t("facts.stActualAddressLabel")}
+          value={form.applicantActualAddress}
+        />
+        <ReviewRow
+          label={t("facts.stLegalAddressLabel")}
+          value={form.applicantLegalAddress}
         />
         <ReviewRow label={t("facts.stPhoneLabel")} value={form.applicantPhone} />
         <ReviewRow label={t("facts.stEmailLabel")} value={form.applicantEmail} />
+        {/* გადახდის იდენტიფიკატორი — last field in the applicant segment. */}
+        <ReviewRow
+          label={t("facts.stPayIdentifierLabel")}
+          value={payIdentifier}
+        />
       </ReviewSection>
 
       <ReviewSection title={t("facts.stFeeSection")}>
@@ -110,7 +130,8 @@ export function FactStatementRecorded({
       </ReviewSection>
 
       <ReviewSection title={t("facts.stFactDateSection")}>
-        <ReviewRow label={t("facts.stCalendarLabel")} value={form.factDate} />
+        <ReviewRow label={t("facts.stDateFrom")} value={form.factDateFrom} />
+        <ReviewRow label={t("facts.stDateTo")} value={form.factDateTo} />
         <ReviewRow label={t("facts.stTimeLabel")} value={factTime} />
       </ReviewSection>
 
