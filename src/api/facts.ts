@@ -2,10 +2,14 @@ import { ApiPaths } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
 import { mapFactsResponse } from "@/lib/map-facts-response";
 import type {
+  FactAppDetailResponse,
+  FactPersonResponse,
   FactsPage,
   FactsSearchFilters,
   FactsSearchPerson,
   FactsSearchRequest,
+  FactStatusFilesResponse,
+  FactStatusResponse,
 } from "@/types/facts";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -25,7 +29,8 @@ function buildFactsSearchPayload(
 
   const data: FactsSearchRequest["data"] = {};
   if (filters.regnumber?.trim()) data.regnumber = filters.regnumber.trim();
-  if (filters.regDateFrom?.trim()) data.regDateFrom = filters.regDateFrom.trim();
+  if (filters.regDateFrom?.trim())
+    data.regDateFrom = filters.regDateFrom.trim();
   if (filters.regDateTo?.trim()) data.regDateTo = filters.regDateTo.trim();
   if (filters.payCode?.trim()) data.Paycode = filters.payCode.trim();
   if (Object.keys(person).length) data.person = person;
@@ -48,14 +53,49 @@ export async function searchFacts(
   return mapFactsResponse(response.data);
 }
 
-/** GET /fact-portal/v1/apps/{id} — single fact statement (dynamic response). */
-export async function getFactById(id: number | string) {
-  const response = await apiClient.get(ApiPaths.factAppById(id));
+/** GET /fact-portal/v1/apps/{id} — single fact statement (opened case). */
+export async function getFactById(
+  id: number | string,
+): Promise<FactAppDetailResponse> {
+  const response = await apiClient.get<FactAppDetailResponse>(
+    ApiPaths.factAppById(id),
+  );
   return response.data;
 }
 
 /** GET /fact-portal/v1/persons/app/{appId} — persons linked to a fact statement. */
-export async function getFactPersons(appId: number | string) {
-  const response = await apiClient.get(ApiPaths.factAppPersons(appId));
+export async function getFactPersons(
+  appId: number | string,
+): Promise<FactPersonResponse[]> {
+  const response = await apiClient.get<{ data: FactPersonResponse[] | null }>(
+    ApiPaths.factAppPersons(appId),
+  );
+  return response.data.data ?? [];
+}
+
+/** GET /fact-portal/v1/app/{appId}/status — ოქმი tab proceeding status(es). */
+export async function getFactStatus(
+  appId: number | string,
+): Promise<FactStatusResponse> {
+  const response = await apiClient.get<FactStatusResponse>(
+    ApiPaths.factAppStatus(appId),
+  );
+  return response.data;
+}
+
+/** POST /fact-portal/v1/status/get-files — downloadable files for one status. */
+export async function getFactStatusFiles(
+  appStatusId: number | string,
+  appId: number | string,
+  pageNumber = 0,
+  pageSize = 10,
+): Promise<FactStatusFilesResponse> {
+  const response = await apiClient.post<FactStatusFilesResponse>(
+    ApiPaths.factStatusGetFiles,
+    {
+      data: { appStatusId, appId },
+      page: { number: pageNumber, size: pageSize },
+    },
+  );
   return response.data;
 }
