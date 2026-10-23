@@ -28,7 +28,7 @@ export const enAuth = {
     registerPhysicalLastName: "Last name",
     registerPhysicalPersonalId: "Personal ID number",
     registerPhysicalActualAddress: "Actual address",
-    registerPhysicalLegalAddress: "Legal address (optional)",
+    registerPhysicalLegalAddress: "Legal address",
     registerPhysicalEmail: "Email (optional)",
     registerPhysicalPhone: "Phone",
     registerPhysicalPassword: "Password",
