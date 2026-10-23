@@ -141,6 +141,7 @@ export function mapFactApplication(raw: unknown): FactApplication | null {
       firstString(root, ["executorName", "executor", "executorFullName"]) ??
       (asObject(root.ownerUser) ? personName(asObject(root.ownerUser)!) : undefined),
     applicant: mapApplicant(root),
+    incomeSource: firstString(root, ["incomeSource"]),
   };
 }
 

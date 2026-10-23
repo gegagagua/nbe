@@ -10,6 +10,7 @@ import { SelectField, type SelectOption } from "@/components/ui/select-field";
 import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { FactStatementHourOptions } from "@/constants/fact-statement";
 import { LoginPalette } from "@/constants/login";
+import { parseOptionList } from "@/lib/fact-statement-helpers";
 import type {
   FactFeeKind,
   FactOwnerKind,
@@ -26,6 +27,12 @@ type Props = {
   ) => void;
   error: string | null;
   onContinue: () => void;
+  /**
+   * When editing an already-recorded statement, the applicant segment is
+   * read-only — everything else stays editable (per spec: on a recorded
+   * application all data is editable except the applicant's data).
+   */
+  lockApplicant?: boolean;
 };
 
 /** "ლეიბლი *" — appends a red asterisk for required fields. */
@@ -38,23 +45,21 @@ function FieldLabel({ label, required }: { label: string; required?: boolean }) 
   );
 }
 
-function toOptions(joined: string): SelectOption[] {
-  return joined
-    .split(",")
-    .map((v) => v.trim())
-    .filter(Boolean)
-    .map((label) => ({ value: label, label }));
-}
-
-export function FactStatementForm({ form, onChange, error, onContinue }: Props) {
+export function FactStatementForm({
+  form,
+  onChange,
+  error,
+  onContinue,
+  lockApplicant = false,
+}: Props) {
   const { t } = useTranslation();
 
   const bureauOptions = useMemo(
-    () => toOptions(t("facts.stBureauOptions")),
+    () => parseOptionList(t("facts.stBureauOptions")),
     [t],
   );
   const propertyTypeOptions = useMemo(
-    () => toOptions(t("facts.stPropertyTypeOptions")),
+    () => parseOptionList(t("facts.stPropertyTypeOptions")),
     [t],
   );
   const hourOptions = useMemo<SelectOption[]>(
@@ -100,7 +105,8 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
           <TextInput
             value={form.applicantFirstName}
             onChangeText={(v) => onChange("applicantFirstName", v)}
-            style={s.input}
+            editable={!lockApplicant}
+            style={[s.input, lockApplicant && s.inputDisabled]}
             placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stFirstNameLabel")}
           />
@@ -110,7 +116,8 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
           <TextInput
             value={form.applicantLastName}
             onChangeText={(v) => onChange("applicantLastName", v)}
-            style={s.input}
+            editable={!lockApplicant}
+            style={[s.input, lockApplicant && s.inputDisabled]}
             placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stLastNameLabel")}
           />
@@ -120,21 +127,35 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
           <TextInput
             value={form.applicantPersonalId}
             onChangeText={(v) => onChange("applicantPersonalId", v)}
+            editable={!lockApplicant}
             keyboardType="number-pad"
-            style={s.input}
+            style={[s.input, lockApplicant && s.inputDisabled]}
             placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stPersonalIdLabel")}
           />
         </View>
         <View style={s.fieldGap}>
-          <FieldLabel label={t("facts.stApplicantAddressLabel")} required />
+          <FieldLabel label={t("facts.stActualAddressLabel")} required />
           <TextInput
-            value={form.applicantAddress}
-            onChangeText={(v) => onChange("applicantAddress", v)}
-            style={[s.input, s.inputMultiline]}
+            value={form.applicantActualAddress}
+            onChangeText={(v) => onChange("applicantActualAddress", v)}
+            editable={!lockApplicant}
+            style={[s.input, s.inputMultiline, lockApplicant && s.inputDisabled]}
             multiline
             placeholderTextColor={LoginPalette.placeholderMuted}
-            accessibilityLabel={t("facts.stApplicantAddressLabel")}
+            accessibilityLabel={t("facts.stActualAddressLabel")}
+          />
+        </View>
+        <View style={s.fieldGap}>
+          <FieldLabel label={t("facts.stLegalAddressLabel")} />
+          <TextInput
+            value={form.applicantLegalAddress}
+            onChangeText={(v) => onChange("applicantLegalAddress", v)}
+            editable={!lockApplicant}
+            style={[s.input, s.inputMultiline, lockApplicant && s.inputDisabled]}
+            multiline
+            placeholderTextColor={LoginPalette.placeholderMuted}
+            accessibilityLabel={t("facts.stLegalAddressLabel")}
           />
         </View>
         <View style={s.fieldGap}>
@@ -142,8 +163,9 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
           <TextInput
             value={form.applicantPhone}
             onChangeText={(v) => onChange("applicantPhone", v)}
+            editable={!lockApplicant}
             keyboardType="phone-pad"
-            style={s.input}
+            style={[s.input, lockApplicant && s.inputDisabled]}
             placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stPhoneLabel")}
           />
@@ -153,9 +175,10 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
           <TextInput
             value={form.applicantEmail}
             onChangeText={(v) => onChange("applicantEmail", v)}
+            editable={!lockApplicant}
             keyboardType="email-address"
             autoCapitalize="none"
-            style={s.input}
+            style={[s.input, lockApplicant && s.inputDisabled]}
             placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stEmailLabel")}
           />
@@ -196,10 +219,22 @@ export function FactStatementForm({ form, onChange, error, onContinue }: Props) 
       <View style={s.sectionCard}>
         <Text style={s.sectionTitle}>{t("facts.stFactDateSection")}</Text>
         <View style={s.fieldGap}>
-          <FieldLabel label={t("facts.stCalendarLabel")} required />
+          <FieldLabel label={t("facts.stDateFrom")} required />
           <DatePickerField
-            value={form.factDate}
-            onChange={(v) => onChange("factDate", v)}
+            value={form.factDateFrom}
+            onChange={(v) => onChange("factDateFrom", v)}
+            placeholder={t("facts.datePlaceholder")}
+            weekdays={t("facts.pickerWeekdays").split(",")}
+            months={t("facts.pickerMonths").split(",")}
+            clearLabel={t("facts.pickerClear")}
+            closeLabel={t("facts.pickerClose")}
+          />
+        </View>
+        <View style={s.fieldGap}>
+          <FieldLabel label={t("facts.stDateTo")} required />
+          <DatePickerField
+            value={form.factDateTo}
+            onChange={(v) => onChange("factDateTo", v)}
             placeholder={t("facts.datePlaceholder")}
             weekdays={t("facts.pickerWeekdays").split(",")}
             months={t("facts.pickerMonths").split(",")}

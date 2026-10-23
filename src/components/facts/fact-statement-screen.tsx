@@ -11,6 +11,14 @@ import {
   FactStatementFee,
   defaultFactStatementPaymentMethod,
 } from "@/constants/fact-statement";
+import { getUserMe } from "@/api/users";
+import {
+  formatCaseDate,
+  hasMissingRequired,
+  mergeApplicantProfile,
+  mintRegistrationNumber,
+  mintStatementIdentifiers,
+} from "@/lib/fact-statement-helpers";
 import { getSessionUserProfile } from "@/lib/session-user-profile-storage";
 import type {
   FactStatementForm as FactStatementFormState,
@@ -24,35 +32,6 @@ import { FactStatementPayment } from "./fact-statement-payment";
 import { FactStatementRecorded } from "./fact-statement-recorded";
 import { FactStatementSubmit } from "./fact-statement-submit";
 
-/** All required fields must be filled (owner fields only when a kind is picked). */
-function findMissing(form: FactStatementFormState): boolean {
-  const base = [
-    form.organization,
-    form.applicantFirstName,
-    form.applicantLastName,
-    form.applicantPersonalId,
-    form.applicantAddress,
-    form.applicantPhone,
-    form.factDate,
-    form.factHourFrom,
-    form.factHourTo,
-    form.propertyType,
-    form.placeAddress,
-    form.request,
-  ];
-  if (form.ownerKind === "physical") {
-    base.push(
-      form.ownerPersonalId,
-      form.ownerFirstName,
-      form.ownerLastName,
-      form.ownerAddress,
-    );
-  } else if (form.ownerKind === "legal") {
-    base.push(form.ownerLegalCode, form.ownerLegalName, form.ownerAddress);
-  }
-  return base.some((v) => !v.trim());
-}
-
 export function FactStatementScreen() {
   const { t } = useTranslation();
   const [form, setForm] = useState<FactStatementFormState>(() =>
@@ -65,20 +44,49 @@ export function FactStatementScreen() {
   );
   const [referenceNumber, setReferenceNumber] = useState<string | null>(null);
   const [payIdentifier, setPayIdentifier] = useState<string | null>(null);
+  const [preliminaryNumber, setPreliminaryNumber] = useState<string | null>(
+    null,
+  );
+  // Dates shown next to the case numbers (Confluence parity).
+  const [recordedDate, setRecordedDate] = useState<string | null>(null);
+  const [registeredDate, setRegisteredDate] = useState<string | null>(null);
+  // When editing an already-recorded statement the applicant fields are locked.
+  const [lockApplicant, setLockApplicant] = useState(false);
 
-  // Auto-fill the applicant segment from the signed-in profile.
+  // Auto-fill the applicant segment from the signed-in profile. The stored
+  // session brief only carries name + username, so the full user record
+  // (`/users/me`) is fetched for the personal number and the actual / legal
+  // addresses — exactly the fields the spec wants pre-filled.
   useEffect(() => {
     let active = true;
+    const apply = (next: Parameters<typeof mergeApplicantProfile>[1]) => {
+      if (!active) return;
+      setForm((prev) => mergeApplicantProfile(prev, next));
+    };
+
     getSessionUserProfile().then((profile) => {
-      if (!active || !profile) return;
-      setForm((prev) => ({
-        ...prev,
-        applicantFirstName: prev.applicantFirstName || profile.firstName || "",
-        applicantLastName: prev.applicantLastName || profile.lastName || "",
-        applicantPersonalId:
-          prev.applicantPersonalId || profile.username || "",
-      }));
+      if (!profile) return;
+      apply({
+        applicantFirstName: profile.firstName || "",
+        applicantLastName: profile.lastName || "",
+        applicantPersonalId: profile.username || "",
+      });
     });
+
+    getUserMe()
+      .then((user) => {
+        apply({
+          applicantFirstName: user.firstName || "",
+          applicantLastName: user.lastName || "",
+          applicantPersonalId: user.idnumber || user.username || "",
+          applicantActualAddress: user.realAddress || "",
+          applicantLegalAddress: user.legalAddress || "",
+        });
+      })
+      .catch(() => {
+        // Keep whatever the session brief provided; no hard failure on the form.
+      });
+
     return () => {
       active = false;
     };
@@ -93,19 +101,26 @@ export function FactStatementScreen() {
   };
 
   const onRecord = () => {
-    if (findMissing(form)) {
+    if (hasMissingRequired(form)) {
       setError(t("facts.stValidationError"));
       return;
     }
     setError(null);
-    // ჩაწერა — recording the statement generates a preliminary application /
-    // payment identifier (fig.2) and moves to the read-only review step where
-    // the user can Edit, Pay, or Close. Keep any identifier already generated so
-    // an Edit → Record round-trip doesn't mint a new one.
-    if (!payIdentifier) {
+    // ჩაწერა — recording the statement generates a preliminary case number
+    // (საქმის წინასწარი ნომერი, shown at the top) and a separate payment
+    // identifier (გადახდის იდენტიფიკატორი, shown as the last applicant field),
+    // then moves to the read-only review step where the user can Edit, Pay, or
+    // Close. Keep any identifiers already generated so an Edit → Record
+    // round-trip doesn't mint new ones.
+    if (!preliminaryNumber || !payIdentifier) {
       const now = new Date();
-      setPayIdentifier(String(now.getTime()).slice(-5));
+      const ids = mintStatementIdentifiers(now);
+      setPreliminaryNumber(ids.preliminaryNumber);
+      setPayIdentifier(ids.payIdentifier);
+      setRecordedDate(formatCaseDate(now));
     }
+    // Editing resumes an existing record — unlock for the next recorded view.
+    setLockApplicant(false);
     setPhase("recorded");
   };
 
@@ -116,7 +131,8 @@ export function FactStatementScreen() {
     // once payment goes through — the preliminary pay identifier was generated
     // earlier, on Record.
     const now = new Date();
-    setReferenceNumber(`F${now.getFullYear()}${String(now.getTime()).slice(-6)}`);
+    setReferenceNumber(mintRegistrationNumber(now));
+    setRegisteredDate(formatCaseDate(now));
     setPhase("submit");
   };
 
@@ -151,13 +167,21 @@ export function FactStatementScreen() {
               onChange={setField}
               error={error}
               onContinue={onRecord}
+              lockApplicant={lockApplicant}
             />
           ) : null}
-          {phase === "recorded" && payIdentifier ? (
+          {phase === "recorded" && payIdentifier && preliminaryNumber ? (
             <FactStatementRecorded
               form={form}
               payIdentifier={payIdentifier}
-              onEdit={() => setPhase("form")}
+              preliminaryNumber={preliminaryNumber}
+              preliminaryDate={recordedDate}
+              onEdit={() => {
+                // On a recorded statement everything is editable except the
+                // applicant's data (spec), so lock those fields on the way back.
+                setLockApplicant(true);
+                setPhase("form");
+              }}
               onPay={() => setPhase("payment")}
               onClose={() => router.back()}
             />
@@ -173,6 +197,7 @@ export function FactStatementScreen() {
           {phase === "submit" && referenceNumber ? (
             <FactStatementSubmit
               referenceNumber={referenceNumber}
+              registeredDate={registeredDate}
               paymentMethod={method}
               onSent={() => router.back()}
             />

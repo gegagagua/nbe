@@ -53,7 +53,22 @@ export function FactsListItem({
               </Text>
             </View>
             <View style={s.rightCol}>
-              <Text style={s.fieldLabel}>{t("facts.labelExecutor")}:</Text>
+              <View style={s.executorRow}>
+                <Text style={s.fieldLabel}>{t("facts.labelExecutor")}:</Text>
+                {item.incomeSource === "EXTERNAL" ? (
+                  <View
+                    style={s.sourceBadge}
+                    accessible
+                    accessibilityLabel={t("facts.externalSourceA11yLabel")}
+                  >
+                    <MaterialCommunityIcons
+                      name="cellphone"
+                      size={16}
+                      color={LoginPalette.primary}
+                    />
+                  </View>
+                ) : null}
+              </View>
               {item.executor ? (
                 <Text style={s.partyValue}>{item.executor}</Text>
               ) : (

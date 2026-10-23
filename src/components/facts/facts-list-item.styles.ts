@@ -39,6 +39,20 @@ export const factsListItemStyles = StyleSheet.create({
     flexShrink: 0,
     maxWidth: "48%",
   },
+  executorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.one,
+  },
+  sourceBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: LoginPalette.inputFill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   reference: {
     fontSize: FontSize.md,
     fontWeight: "700",

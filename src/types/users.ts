@@ -109,6 +109,26 @@ export type GetUserResponse = {
   data: UserDetail;
 };
 
+export type LegalEntity = {
+  id: number;
+  name: string;
+  legalNumber: string;
+  memberTypeId: string | null;
+  memberName: string | null;
+  address: string | null;
+  realAddress: string | null;
+  email: string | null;
+};
+
+export type GetLegalEntitiesResponse = {
+  data: LegalEntity[];
+};
+
+export type UpdateLegalEntityRequest = {
+  realAddress: string;
+  email: string | null;
+};
+
 export type UpdateUserPasswordRequest = {
   crntPwd: string;
   newPwd: string;

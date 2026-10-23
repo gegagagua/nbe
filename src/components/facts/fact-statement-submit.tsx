@@ -23,12 +23,15 @@ const METHOD_LABEL: Record<
 
 type Props = {
   referenceNumber: string;
+  /** Date shown next to the registration number (Confluence parity). */
+  registeredDate?: string | null;
   paymentMethod: FactStatementPaymentMethod;
   onSent: () => void;
 };
 
 export function FactStatementSubmit({
   referenceNumber,
+  registeredDate,
   paymentMethod,
   onSent,
 }: Props) {
@@ -53,6 +56,12 @@ export function FactStatementSubmit({
           <Text style={ps.summaryLabel}>{t("facts.stRefNumberLabel")}</Text>
           <Text style={ps.summaryValue}>{referenceNumber}</Text>
         </View>
+        {registeredDate ? (
+          <View style={ps.summaryRow}>
+            <Text style={ps.summaryLabel}>{t("facts.stRegDateLabel")}</Text>
+            <Text style={ps.summaryValue}>{registeredDate}</Text>
+          </View>
+        ) : null}
         <View style={ps.summaryRow}>
           <Text style={ps.summaryLabel}>{t("facts.stMethodsTitle")}</Text>
           <Text style={ps.summaryValue}>{t(METHOD_LABEL[paymentMethod])}</Text>

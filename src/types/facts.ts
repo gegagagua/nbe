@@ -32,6 +32,7 @@ export type FactApplication = {
   executor?: string;
   /** applicant (declarant) */
   applicant: FactApplicationParty;
+  incomeSource?: string;
 };
 
 export type FactsPage = {
