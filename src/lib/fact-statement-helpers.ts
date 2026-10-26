@@ -1,4 +1,5 @@
 import type { FactStatementForm } from "@/types/fact-statement";
+import type { LegalEntity } from "@/types/users";
 
 /**
  * Pure (React-Native-free) helpers for the "ფაქტების კონსტატაცია" make-statement
@@ -34,10 +35,16 @@ export function parseOptionList(
  * address is required.
  */
 export function hasMissingRequired(form: FactStatementForm): boolean {
+  // A legal-entity applicant supplies a single დასახელება (company name); a
+  // physical applicant supplies first name + last name. Both require an
+  // identifier (საიდენტიფიკაციო კოდი / პირადი ნომერი).
+  const applicantIdentity =
+    form.applicantKind === "legal"
+      ? [form.applicantOrgName]
+      : [form.applicantFirstName, form.applicantLastName];
   const base = [
     form.organization,
-    form.applicantFirstName,
-    form.applicantLastName,
+    ...applicantIdentity,
     form.applicantPersonalId,
     form.applicantActualAddress,
     form.applicantPhone,
@@ -90,6 +97,30 @@ export function mergeApplicantProfile(
       form.applicantActualAddress || patch.applicantActualAddress || "",
     applicantLegalAddress:
       form.applicantLegalAddress || patch.applicantLegalAddress || "",
+  };
+}
+
+/**
+ * Pre-fill the applicant segment from the legal entity the user switched to.
+ * Switches the form into "legal" mode so the company field set is shown:
+ * დასახელება (name) + საიდენტიფიკაციო კოდი instead of first/last name +
+ * personal number. The factual / legal addresses and email come straight from
+ * the entity; the phone has no source on the entity, so it stays as entered.
+ * Already-typed values are preserved (an edit round-trip never clobbers them).
+ */
+export function mergeApplicantLegalEntity(
+  form: FactStatementForm,
+  entity: LegalEntity,
+): FactStatementForm {
+  return {
+    ...form,
+    applicantKind: "legal",
+    applicantOrgName: form.applicantOrgName || entity.name || "",
+    applicantPersonalId: form.applicantPersonalId || entity.legalNumber || "",
+    applicantActualAddress:
+      form.applicantActualAddress || entity.realAddress || "",
+    applicantLegalAddress: form.applicantLegalAddress || entity.address || "",
+    applicantEmail: form.applicantEmail || entity.email || "",
   };
 }
 

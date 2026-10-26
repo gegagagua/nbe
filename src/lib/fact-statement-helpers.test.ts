@@ -3,6 +3,7 @@ import { describe, expect, it } from "@jest/globals";
 import {
   formatCaseDate,
   hasMissingRequired,
+  mergeApplicantLegalEntity,
   mergeApplicantProfile,
   mintRegistrationNumber,
   mintStatementIdentifiers,
@@ -10,6 +11,7 @@ import {
 } from "@/lib/fact-statement-helpers";
 import type { FactStatementForm } from "@/types/fact-statement";
 import { emptyFactStatementForm } from "@/types/fact-statement";
+import type { LegalEntity } from "@/types/users";
 
 /** A fully-filled, valid form (all required fields present, no owner). */
 function validForm(overrides: Partial<FactStatementForm> = {}): FactStatementForm {
@@ -77,6 +79,21 @@ describe("hasMissingRequired", () => {
     expect(hasMissingRequired(validForm({ applicantPhone: "" }))).toBe(true);
     expect(hasMissingRequired(validForm({ propertyType: "" }))).toBe(true);
     expect(hasMissingRequired(validForm({ request: "" }))).toBe(true);
+  });
+
+  it("requires დასახელება + საიდენტიფიკაციო კოდი for a legal applicant, not name/surname", () => {
+    const legal = validForm({
+      applicantKind: "legal",
+      applicantFirstName: "",
+      applicantLastName: "",
+      applicantOrgName: "შპს თერი",
+    });
+    // Company name present, name/surname empty → still valid.
+    expect(hasMissingRequired(legal)).toBe(false);
+    // Company name missing → invalid.
+    expect(hasMissingRequired({ ...legal, applicantOrgName: "" })).toBe(true);
+    // The identifier (საიდენტიფიკაციო კოდი) is still required.
+    expect(hasMissingRequired({ ...legal, applicantPersonalId: "" })).toBe(true);
   });
 
   it("validates owner fields only once an owner kind is picked", () => {
@@ -153,6 +170,52 @@ describe("mergeApplicantProfile", () => {
     const merged = mergeApplicantProfile(form, { applicantFirstName: "x" });
     expect(merged.request).toBe("დაცული");
     expect(merged.propertyType).toBe(form.propertyType);
+  });
+});
+
+describe("mergeApplicantLegalEntity", () => {
+  const entity: LegalEntity = {
+    id: 7,
+    name: "შპს თერი",
+    legalNumber: "202205684",
+    memberTypeId: null,
+    memberName: "დირექტორი",
+    address: "იურიდიული მის. 1",
+    realAddress: "ფაქტობრივი მის. 2",
+    email: "test@test.com",
+  };
+
+  it("switches to legal mode and fills the company field set", () => {
+    const merged = mergeApplicantLegalEntity(emptyFactStatementForm(), entity);
+    expect(merged.applicantKind).toBe("legal");
+    expect(merged.applicantOrgName).toBe("შპს თერი");
+    expect(merged.applicantPersonalId).toBe("202205684"); // საიდენტიფიკაციო კოდი
+    expect(merged.applicantActualAddress).toBe("ფაქტობრივი მის. 2");
+    expect(merged.applicantLegalAddress).toBe("იურიდიული მის. 1");
+    expect(merged.applicantEmail).toBe("test@test.com");
+  });
+
+  it("does not overwrite values the user already typed", () => {
+    const base = {
+      ...emptyFactStatementForm(),
+      applicantOrgName: "ხელით",
+      applicantLegalAddress: "ხელით მის.",
+    };
+    const merged = mergeApplicantLegalEntity(base, entity);
+    expect(merged.applicantOrgName).toBe("ხელით");
+    expect(merged.applicantLegalAddress).toBe("ხელით მის.");
+  });
+
+  it("tolerates null entity fields", () => {
+    const merged = mergeApplicantLegalEntity(emptyFactStatementForm(), {
+      ...entity,
+      address: null,
+      realAddress: null,
+      email: null,
+    });
+    expect(merged.applicantLegalAddress).toBe("");
+    expect(merged.applicantActualAddress).toBe("");
+    expect(merged.applicantEmail).toBe("");
   });
 });
 

@@ -65,6 +65,8 @@ export const kaFacts = {
   stFirstNameLabel: "სახელი",
   stLastNameLabel: "გვარი",
   stPersonalIdLabel: "პირადი ნომერი",
+  stOrgNameLabel: "დასახელება",
+  stIdCodeLabel: "საიდენტიფიკაციო კოდი",
   stActualAddressLabel: "ფაქტობრივი მისამართი",
   stLegalAddressLabel: "იურიდიული მისამართი",
   stPhoneLabel: "ტელეფონი",

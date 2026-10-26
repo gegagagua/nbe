@@ -15,10 +15,12 @@ import { getUserMe } from "@/api/users";
 import {
   formatCaseDate,
   hasMissingRequired,
+  mergeApplicantLegalEntity,
   mergeApplicantProfile,
   mintRegistrationNumber,
   mintStatementIdentifiers,
 } from "@/lib/fact-statement-helpers";
+import { getActiveLegalEntity } from "@/lib/active-legal-entity-storage";
 import { getSessionUserProfile } from "@/lib/session-user-profile-storage";
 import type {
   FactStatementForm as FactStatementFormState,
@@ -53,10 +55,12 @@ export function FactStatementScreen() {
   // When editing an already-recorded statement the applicant fields are locked.
   const [lockApplicant, setLockApplicant] = useState(false);
 
-  // Auto-fill the applicant segment from the signed-in profile. The stored
-  // session brief only carries name + username, so the full user record
-  // (`/users/me`) is fetched for the personal number and the actual / legal
-  // addresses — exactly the fields the spec wants pre-filled.
+  // Auto-fill the applicant segment. When the user has switched to a legal
+  // entity, the applicant IS that entity: the form shows the company field set
+  // (დასახელება + საიდენტიფიკაციო კოდი) pre-filled from the stored entity.
+  // Otherwise it's the signed-in physical person — the stored session brief
+  // carries name + username, and the full record (`/users/me`) supplies the
+  // personal number and the actual / legal addresses.
   useEffect(() => {
     let active = true;
     const apply = (next: Parameters<typeof mergeApplicantProfile>[1]) => {
@@ -64,28 +68,38 @@ export function FactStatementScreen() {
       setForm((prev) => mergeApplicantProfile(prev, next));
     };
 
-    getSessionUserProfile().then((profile) => {
-      if (!profile) return;
-      apply({
-        applicantFirstName: profile.firstName || "",
-        applicantLastName: profile.lastName || "",
-        applicantPersonalId: profile.username || "",
-      });
-    });
+    getActiveLegalEntity().then((entity) => {
+      if (!active) return;
+      if (entity) {
+        // Acting as a legal entity — fill from the entity, skip the physical
+        // person lookups so the company fields aren't overwritten.
+        setForm((prev) => mergeApplicantLegalEntity(prev, entity));
+        return;
+      }
 
-    getUserMe()
-      .then((user) => {
+      getSessionUserProfile().then((profile) => {
+        if (!profile) return;
         apply({
-          applicantFirstName: user.firstName || "",
-          applicantLastName: user.lastName || "",
-          applicantPersonalId: user.idnumber || user.username || "",
-          applicantActualAddress: user.realAddress || "",
-          applicantLegalAddress: user.legalAddress || "",
+          applicantFirstName: profile.firstName || "",
+          applicantLastName: profile.lastName || "",
+          applicantPersonalId: profile.username || "",
         });
-      })
-      .catch(() => {
-        // Keep whatever the session brief provided; no hard failure on the form.
       });
+
+      getUserMe()
+        .then((user) => {
+          apply({
+            applicantFirstName: user.firstName || "",
+            applicantLastName: user.lastName || "",
+            applicantPersonalId: user.idnumber || user.username || "",
+            applicantActualAddress: user.realAddress || "",
+            applicantLegalAddress: user.legalAddress || "",
+          });
+        })
+        .catch(() => {
+          // Keep whatever the session brief provided; no hard failure.
+        });
+    });
 
     return () => {
       active = false;
