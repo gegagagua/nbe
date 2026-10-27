@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAppTheme } from '@/theme';
 import { useGuestFineCheck } from '@/hooks/use-guest-fine-check';
 import {
   createGuestFineCheckSchema,
@@ -13,12 +14,12 @@ import {
 } from '@/schemas/guest-fine-check.schema';
 import type { GuestPersonType } from '@/types/guest-fine';
 
-import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
 import { CaseGuestFineResult } from './case-guest-fine-result';
 import { CaseGuestPersonTabs } from './case-guest-person-tabs';
 
 export function CaseGuestFinePanel() {
   const { t, i18n } = useTranslation();
+  const theme = useAppTheme();
   const { result, handleCheck, clearResult, isChecking } = useGuestFineCheck();
   const schema = useMemo(() => createGuestFineCheckSchema(t), [t, i18n.language]);
 
@@ -48,14 +49,14 @@ export function CaseGuestFinePanel() {
   const onSubmit = handleSubmit((values) => handleCheck(values));
 
   return (
-    <View style={s.card}>
-      <Text style={s.hint}>{t('cases.guestFine.categoryHint')}</Text>
+    <View className="gap-4 rounded-md bg-surface p-6" style={theme.shadows.md}>
+      <Text className="text-caption text-fg">{t('cases.guestFine.categoryHint')}</Text>
       <CaseGuestPersonTabs
         value={personType}
         onChange={(next: GuestPersonType) => setValue('personType', next)}
       />
-      <View style={s.fieldRow}>
-        <Text style={s.label}>{idLabel}</Text>
+      <View className="gap-1">
+        <Text className="text-caption font-semibold text-fg-muted">{idLabel}</Text>
         <Controller
           control={control}
           name="idNumber"
@@ -71,8 +72,8 @@ export function CaseGuestFinePanel() {
           )}
         />
       </View>
-      <View style={s.fieldRow}>
-        <Text style={s.label}>{t('cases.guestFine.documentNumberLabel')}</Text>
+      <View className="gap-1">
+        <Text className="text-caption font-semibold text-fg-muted">{t('cases.guestFine.documentNumberLabel')}</Text>
         <Controller
           control={control}
           name="documentNumber"

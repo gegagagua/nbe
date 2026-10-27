@@ -1,15 +1,16 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   type KeyboardAwareScrollViewRef,
 } from "react-native-keyboard-controller";
 
 import { LoginOtpModal } from "@/components/login/login-otp-modal";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
-import { LoginPalette } from "@/constants/login";
+import { AppHeader } from "@/components/ui/app-header";
+import { Button } from "@/components/ui/button";
+import { useAppTheme } from "@/theme";
 import { useActiveLegalEntity } from "@/hooks/use-active-legal-entity";
 import { useLegalEntities } from "@/hooks/use-legal-entities";
 import { useProfileActions } from "@/hooks/use-profile-actions";
@@ -25,6 +26,7 @@ import { signOut } from "@/lib/sign-out";
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
 import { ProfileAccountCard } from "./profile-account-card";
+import { ProfileAppearanceSection } from "./profile-appearance-section";
 import type { ProfileAccountOption } from "./profile-account-switch-modal";
 import { ProfileAccountSwitcher } from "./profile-account-switcher";
 import { ProfileChangePasswordSection } from "./profile-change-password-section";
@@ -32,10 +34,10 @@ import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
 import { ProfileLegalEntityInfoSection } from "./profile-legal-entity-info-section";
-import { profileScreenStyles as s } from "./profile-screen.styles";
 
 export function ProfileScreen() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { profile, isLoading } = useSessionUserProfile();
 
   const { detail, refetch } = useUserDetail();
@@ -134,52 +136,31 @@ export function ProfileScreen() {
 
   if (isLoading) {
     return (
-      <View
-        style={[s.page, { justifyContent: "center", alignItems: "center" }]}
-      >
-        <ActivityIndicator size="large" color={LoginPalette.primary} />
+      <View className="flex-1 items-center justify-center bg-bg">
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   if (!profile) {
     return (
-      <View
-        style={[s.page, { justifyContent: "center", alignItems: "center" }]}
-      >
-        <View style={s.header}>
-          <Pressable
-            style={s.backButton}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-          >
-            <Text style={s.backButtonText}>←</Text>
-          </Pressable>
+      <View className="flex-1 bg-bg">
+        <AppHeader title={t("profile.pageTitle")} />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-        <ActivityIndicator size="large" color={LoginPalette.primary} />
       </View>
     );
   }
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={{ flex: 1 }}>
-        <View style={s.header}>
-          <Pressable
-            style={s.backButton}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel={t("profile.backA11yLabel")}
-          >
-            <Text style={s.backButtonText}>←</Text>
-          </Pressable>
-          <Text style={s.pageTitle}>{t("profile.pageTitle")}</Text>
-        </View>
-
+    <View className="flex-1 bg-bg">
+      <AppHeader title={t("profile.pageTitle")} />
+      <View className="flex-1">
         <KeyboardAwareScrollView
           ref={scrollRef}
-          style={s.scroll}
-          contentContainerStyle={s.scrollContent}
+          className="flex-1"
+          contentContainerClassName="gap-4 px-4 py-4 pb-10"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bottomOffset={16}
@@ -230,7 +211,7 @@ export function ProfileScreen() {
             )}
           </View>
 
-          <View style={s.divider} />
+          <View className="h-px bg-border" />
 
           <ProfileFaceIdSection
             username={profile.username}
@@ -239,11 +220,11 @@ export function ProfileScreen() {
             verifyPassword={verifyPassword}
           />
 
-          <View style={s.divider} />
+          <View className="h-px bg-border" />
 
           <ProfileDeviceTrustSection />
 
-          <View style={s.divider} />
+          <View className="h-px bg-border" />
 
           <ProfileChangePasswordSection
             onSubmit={actions.handleChangePassword}
@@ -251,17 +232,17 @@ export function ProfileScreen() {
             statusMessage={actions.pwStatus}
           />
 
-          <Pressable
-            style={s.signOutButton}
+          <View className="h-px bg-border" />
+
+          <ProfileAppearanceSection />
+
+          <Button
+            label={t("profile.signOutButton")}
             onPress={handleSignOut}
-            accessibilityRole="button"
-          >
-            <Text style={s.signOutButtonText}>
-              {t("profile.signOutButton")}
-            </Text>
-          </Pressable>
+            variant="destructive"
+          />
         </KeyboardAwareScrollView>
-      </AppSafeArea>
+      </View>
       <LoginOtpModal
         visible={actions.phoneOtp.visible}
         isSubmitting={actions.phoneOtp.isSubmitting}

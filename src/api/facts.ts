@@ -1,5 +1,6 @@
 import { ApiPaths } from "@/constants/api";
 import { apiClient } from "@/lib/api-client";
+import { epsUserHeaders } from "@/lib/eps-user-headers";
 import { mapFactsResponse } from "@/lib/map-facts-response";
 import type {
   FactAppDetailResponse,
@@ -73,12 +74,18 @@ export async function getFactPersons(
   return response.data.data ?? [];
 }
 
-/** GET /fact-portal/v1/app/{appId}/status — ოქმი tab proceeding status(es). */
+/**
+ * GET /fact-portal/v1/app/{appId}/status — ოქმი tab proceeding status(es).
+ * Needs the `X-User-ID` header (same as the EPS status/files routes); without
+ * it the gateway returns 401/403 and the ოქმი tab comes back empty.
+ */
 export async function getFactStatus(
   appId: number | string,
+  userId: number | string,
 ): Promise<FactStatusResponse> {
   const response = await apiClient.get<FactStatusResponse>(
     ApiPaths.factAppStatus(appId),
+    { headers: epsUserHeaders(userId) },
   );
   return response.data;
 }
@@ -87,6 +94,7 @@ export async function getFactStatus(
 export async function getFactStatusFiles(
   appStatusId: number | string,
   appId: number | string,
+  userId: number | string,
   pageNumber = 0,
   pageSize = 10,
 ): Promise<FactStatusFilesResponse> {
@@ -96,6 +104,7 @@ export async function getFactStatusFiles(
       data: { appStatusId, appId },
       page: { number: pageNumber, size: pageSize },
     },
+    { headers: epsUserHeaders(userId) },
   );
   return response.data;
 }

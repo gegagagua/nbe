@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
+import { useAppTheme } from "@/theme";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 import { useStatusFiles } from "@/hooks/use-status-files";
 import {
@@ -14,8 +14,6 @@ import {
 import { showErrorToast } from "@/lib/show-error-toast";
 
 import { CaseDetailFileViewerModal } from "./case-detail-file-viewer-modal";
-import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
 
 export function CaseDetailProceedingFiles({
   appId,
@@ -25,6 +23,7 @@ export function CaseDetailProceedingFiles({
   appStatusId?: number;
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { profile } = useSessionUserProfile();
   const { data: files, isLoading } = useStatusFiles(appId, appStatusId);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
@@ -32,15 +31,15 @@ export function CaseDetailProceedingFiles({
 
   if (isLoading) {
     return (
-      <View style={s.stackGapSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="mt-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   if (!files || files.length === 0) {
     return (
-      <Text style={[s.mutedText, s.stackGapSm]}>
+      <Text className="mt-2 text-caption text-fg-secondary">
         {t("cases.detail.proceedingsNoDocs")}
       </Text>
     );
@@ -75,34 +74,34 @@ export function CaseDetailProceedingFiles({
   };
 
   return (
-    <View style={[tb.borderBox, s.claimsTableWrap]}>
+    <View className="mt-2 rounded-md border border-border">
       {files.map((file) => (
         <Pressable
           key={file.fileId}
-          style={[tb.tableRow, s.fileRow]}
+          className="flex-row items-center justify-between gap-2 border-b border-border"
           onPress={() => handleOpen(file.fileId, file.fileName)}
           disabled={downloadingId != null}
           accessibilityRole="button"
           accessibilityLabel={t("cases.detail.docOpenA11y")}
         >
-          <View style={s.fileInfo}>
-            <Text style={s.linkText}>{file.title}</Text>
+          <View className="flex-1 gap-1">
+            <Text className="text-label text-primary underline">{file.title}</Text>
             {file.uploadedBy ? (
-              <Text style={s.mutedText}>
+              <Text className="text-caption text-fg-secondary">
                 {t("cases.detail.fileUploadedBy", { name: file.uploadedBy })}
               </Text>
             ) : null}
             {file.createdDate ? (
-              <Text style={s.mutedText}>{file.createdDate}</Text>
+              <Text className="text-caption text-fg-secondary">{file.createdDate}</Text>
             ) : null}
           </View>
           {downloadingId === file.fileId ? (
-            <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+            <ActivityIndicator color={colors.primary} />
           ) : (
             <MaterialCommunityIcons
               name="eye-outline"
               size={22}
-              color={DebtorRegistryPalette.buttonBg}
+              color={colors.primary}
             />
           )}
         </Pressable>

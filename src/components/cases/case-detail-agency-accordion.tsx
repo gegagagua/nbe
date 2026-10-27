@@ -2,10 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
-
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   title: string;
@@ -15,14 +12,17 @@ type Props = {
 };
 
 export function CaseDetailAgencyAccordion({ title, open, onToggle, children }: Props) {
+  const { colors } = useAppTheme();
   return (
-    <View style={p.panel}>
-      <Pressable style={p.panelHeadRow} onPress={onToggle}>
-        <Text style={s.primaryText}>{title}</Text>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Pressable
+        className="flex-row items-center justify-between border-b border-border p-2"
+        onPress={onToggle}>
+        <Text className="text-label font-bold text-fg">{title}</Text>
         <MaterialCommunityIcons
           name={open ? 'chevron-up' : 'chevron-down'}
           size={22}
-          color={DebtorRegistryPalette.buttonBg}
+          color={colors.primary}
         />
       </Pressable>
       {open ? <View>{children}</View> : null}

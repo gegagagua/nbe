@@ -1,35 +1,30 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Layout } from '@/constants/layout';
-import { LoginPalette } from '@/constants/login';
+import { PressableScale } from '@/components/ui/pressable-scale';
+import { useAppTheme } from '@/theme';
 import type { RegisterScreenBodyProps } from '@/types/register';
-
-import { registerNavRowStyles } from './register-nav-row.styles';
 
 type RegisterNavRowProps = Pick<RegisterScreenBodyProps, 'onBack'>;
 
 export function RegisterNavRow({ onBack }: RegisterNavRowProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
 
   return (
-    <View style={registerNavRowStyles.row}>
-      <Pressable
-        style={registerNavRowStyles.hit}
+    <View className="mb-4 self-stretch">
+      <PressableScale
+        haptic="none"
+        pressedScale={0.98}
         onPress={onBack}
         accessibilityRole="button"
         accessibilityLabel={t('login.registerBackA11yLabel')}
-        accessibilityHint={t('login.pageTitle')}>
-        <MaterialCommunityIcons
-          name="chevron-left"
-          size={Layout.registerBackIconSize}
-          color={LoginPalette.primary}
-        />
-        <Text style={registerNavRowStyles.backLabel}>
-          {t('login.pageTitle')}
-        </Text>
-      </Pressable>
+        accessibilityHint={t('login.pageTitle')}
+        className="flex-row items-center gap-1 self-start pr-4">
+        <MaterialCommunityIcons name="chevron-left" size={24} color={colors.primary} />
+        <Text className="text-body font-semibold text-primary">{t('login.pageTitle')}</Text>
+      </PressableScale>
     </View>
   );
 }

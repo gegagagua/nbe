@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { CaseDetailMainTab } from '@/types/case-detail-ui';
 
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-
 type Props = {
   value: CaseDetailMainTab;
   onChange: (v: CaseDetailMainTab) => void;
@@ -18,17 +16,23 @@ export function CaseDetailMainTabs({ value, onChange }: Props) {
     { key: 'contact', label: t('cases.detail.tabContact') },
   ];
   return (
-    <View style={s.tabRow}>
+    <View className="mb-4 flex-row border-b border-border">
       {items.map((it) => {
         const active = value === it.key;
         return (
           <Pressable
             key={it.key}
-            style={[s.tabBtn, active && s.tabBtnActive]}
+            className={`flex-1 items-center border-b-2 py-2 ${
+              active ? 'border-primary' : 'border-transparent'
+            }`}
             onPress={() => onChange(it.key)}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}>
-            <Text style={[s.tabLabel, active && s.tabLabelActive]} numberOfLines={2}>
+            <Text
+              className={`text-center text-label ${
+                active ? 'font-bold text-primary' : 'text-fg-secondary'
+              }`}
+              numberOfLines={2}>
               {it.label}
             </Text>
           </Pressable>

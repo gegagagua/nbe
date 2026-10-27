@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
+import { useAppTheme } from "@/theme";
 import { useInstallments } from "@/hooks/use-installments";
 import type { CaseDetailInstallment } from "@/types/case-detail-data";
 
@@ -12,29 +12,27 @@ import {
   CaseDetailKvCard,
   CaseDetailKvCardList,
 } from "./case-detail-kv-card";
-import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
-import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
 
 function InstallmentCard({ item }: { item: CaseDetailInstallment }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [open, setOpen] = useState(true);
   return (
-    <View style={p.panel}>
-      <Pressable style={p.panelHeadRow} onPress={() => setOpen((v) => !v)}>
-        <Text style={s.linkText}>{item.headerLine}</Text>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Pressable className="flex-row items-center justify-between border-b border-border p-2" onPress={() => setOpen((v) => !v)}>
+        <Text className="text-label text-primary underline">{item.headerLine}</Text>
         <MaterialCommunityIcons
           name={open ? "chevron-up" : "chevron-down"}
           size={22}
-          color={DebtorRegistryPalette.buttonBg}
+          color={colors.primary}
         />
       </Pressable>
       {open ? (
-        <View style={tb.padSm}>
-          <View style={s.fileRow}>
-            <Text style={s.mutedText}>{item.partyLine}</Text>
+        <View className="p-2">
+          <View className="flex-row items-center justify-between gap-2">
+            <Text className="text-caption text-fg-secondary">{item.partyLine}</Text>
             {item.status ? (
-              <Text style={s.mutedText}>
+              <Text className="text-caption text-fg-secondary">
                 {t("cases.detail.installmentStatusLabel")}: {item.status}
               </Text>
             ) : null}
@@ -70,9 +68,9 @@ function InstallmentCard({ item }: { item: CaseDetailInstallment }) {
                       label: t("cases.detail.instColConfirmedBy"),
                       value: (
                         <>
-                          <Text style={s.primaryText}>{pay.confirmedBy}</Text>
+                          <Text className="text-label font-bold text-fg">{pay.confirmedBy}</Text>
                           {pay.confirmDate ? (
-                            <Text style={s.mutedText}>{pay.confirmDate}</Text>
+                            <Text className="text-caption text-fg-secondary">{pay.confirmDate}</Text>
                           ) : null}
                         </>
                       ),
@@ -90,22 +88,23 @@ function InstallmentCard({ item }: { item: CaseDetailInstallment }) {
 
 export function CaseDetailInstallmentBody() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? "");
   const { data: installments, isLoading } = useInstallments(appId);
 
   if (isLoading) {
     return (
-      <View style={tb.padSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="p-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   if (!installments || installments.length === 0) {
     return (
-      <View style={p.panel}>
-        <Text style={[s.mutedText, p.panelBodyPad]}>
+      <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+        <Text className="px-4 py-2 text-caption text-fg-secondary">
           {t("cases.detail.installmentEmpty")}
         </Text>
       </View>

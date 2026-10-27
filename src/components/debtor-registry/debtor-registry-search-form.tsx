@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { CaseFilterField } from '@/components/cases/case-filter-field';
+import { Card } from '@/components/ui/card';
 import { SearchActions } from '@/components/ui/search-actions';
-import { DebtorRegistryLayout, DebtorRegistryPalette } from '@/constants/debtor-registry';
-
-import { debtorRegistrySearchFormStyles as s } from './debtor-registry-search-form.styles';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   applicantValue: string;
@@ -23,6 +22,7 @@ export function DebtorRegistrySearchForm({
   onClear,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [idError, setIdError] = useState(false);
   const applicantFilled = applicantValue.trim().length > 0;
@@ -48,11 +48,11 @@ export function DebtorRegistrySearchForm({
     onClear();
   };
   return (
-    <View style={s.panel}>
-      <View style={s.titleRow}>
-        <Text style={s.title}>{t('debtors.filtersTitle')}</Text>
+    <Card className="gap-4">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-body font-bold text-fg">{t('debtors.filtersTitle')}</Text>
         <Pressable
-          style={s.toggleButton}
+          className="h-9 w-9 items-center justify-center rounded-full border border-input-border bg-input"
           onPress={() => setIsPanelOpen((v) => !v)}
           accessibilityRole="button"
           accessibilityLabel={
@@ -60,15 +60,17 @@ export function DebtorRegistrySearchForm({
           }>
           <MaterialCommunityIcons
             name={isPanelOpen ? 'chevron-up' : 'chevron-down'}
-            size={DebtorRegistryLayout.filterPanelIconSize}
-            color={DebtorRegistryPalette.textPrimary}
+            size={22}
+            color={colors.text}
           />
         </Pressable>
       </View>
       {isPanelOpen ? (
         <>
-          <View style={s.wrap}>
-            <Text style={s.label}>{t('debtors.searchSubjectIdLabel')}</Text>
+          <View className="gap-2">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t('debtors.searchSubjectIdLabel')}
+            </Text>
             <CaseFilterField
               value={applicantValue}
               onChangeText={handleChange}
@@ -76,7 +78,7 @@ export function DebtorRegistrySearchForm({
               keyboardType="number-pad"
             />
             {idError ? (
-              <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
+              <Text className="text-caption text-danger">{t('debtors.detailEditIdError')}</Text>
             ) : null}
           </View>
           <SearchActions
@@ -88,6 +90,6 @@ export function DebtorRegistrySearchForm({
           />
         </>
       ) : null}
-    </View>
+    </Card>
   );
 }

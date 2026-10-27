@@ -11,13 +11,11 @@ import {
 import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { IDENTOMAT_DEMO_URL } from '@/constants/identomat';
 import { Layout } from '@/constants/layout';
-import { LoginPalette } from '@/constants/login';
 import {
   WEBVIEW_ALLOWED_HOSTS,
   isAllowedWebViewUrl,
 } from '@/lib/is-allowed-webview-url';
-
-import { identomatDemoScreenStyles } from './identomat-demo-screen.styles';
+import { useAppTheme } from '@/theme';
 
 type IdentomatDemoScreenProps = {
   onBack: () => void;
@@ -258,6 +256,7 @@ true;`;
 
 export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVerification }: IdentomatDemoScreenProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [loading, setLoading] = useState(true);
   // Tracks whether the very first page load has completed. Identomat redirects
   // its session URL and then behaves as an SPA; on Android react-native-webview
@@ -343,11 +342,11 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
   }, []);
 
   return (
-    <View style={identomatDemoScreenStyles.page}>
-      <AppSafeArea style={identomatDemoScreenStyles.safe} edges={['top']}>
-        <View style={identomatDemoScreenStyles.navRow}>
+    <View className="flex-1 bg-bg">
+      <AppSafeArea style={{ flex: 1 }} edges={['top']}>
+        <View className="mb-2 self-stretch">
           <Pressable
-            style={identomatDemoScreenStyles.hit}
+            className="flex-row items-center gap-1 self-start"
             onPress={onBack}
             disabled={isCheckingVerification}
             accessibilityRole="button"
@@ -355,17 +354,17 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
             <MaterialCommunityIcons
               name="chevron-left"
               size={Layout.registerBackIconSize}
-              color={LoginPalette.primary}
+              color={colors.primary}
             />
-            <Text style={identomatDemoScreenStyles.backLabel}>
+            <Text className="text-body font-semibold text-primary">
               {t('login.identomatDemoPageTitle')}
             </Text>
           </Pressable>
         </View>
-        <View style={identomatDemoScreenStyles.webviewWrap}>
+        <View className="mb-4 flex-1 rounded-sm">
           <WebView
             source={{ uri: sourceUrl ?? IDENTOMAT_DEMO_URL }}
-            style={identomatDemoScreenStyles.webview}
+            style={{ flex: 1 }}
             onLoadStart={handleLoadStart}
             onLoadEnd={finishLoading}
             onLoadProgress={handleLoadProgress}
@@ -394,8 +393,8 @@ export function IdentomatDemoScreen({ onBack, onSuccess, sourceUrl, isCheckingVe
             injectedJavaScript={injectedJavaScript}
           />
           {(loading || isCheckingVerification) ? (
-            <View style={identomatDemoScreenStyles.loadingOverlay}>
-              <ActivityIndicator size="large" color={LoginPalette.primary} />
+            <View className="absolute inset-0 z-10 items-center justify-center bg-surface">
+              <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : null}
         </View>

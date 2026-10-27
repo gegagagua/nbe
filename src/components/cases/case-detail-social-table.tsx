@@ -2,15 +2,14 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import { useSsaRequests } from '@/hooks/use-ssa-requests';
 
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailSocialTable() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? '');
   const { data: rows, isLoading } = useSsaRequests(appId);
@@ -18,11 +17,11 @@ export function CaseDetailSocialTable() {
   return (
     <View>
       {isLoading ? (
-        <View style={tb.padSm}>
-          <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+        <View className="p-2">
+          <ActivityIndicator color={colors.primary} />
         </View>
       ) : !rows || rows.length === 0 ? (
-        <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.socialEmpty')}</Text>
+        <Text className="p-2 text-caption text-fg-secondary">{t('cases.detail.socialEmpty')}</Text>
       ) : (
         <CaseDetailKvCardList>
           {rows.map((row, i) => (

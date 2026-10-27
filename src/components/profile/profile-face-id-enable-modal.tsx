@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
-import { profileScreenStyles as ps } from './profile-screen.styles';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   visible: boolean;
@@ -23,6 +22,7 @@ export function ProfileFaceIdEnableModal({
   onClose,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [password, setPassword] = useState('');
 
   // Drop the typed password whenever the modal is dismissed so it never
@@ -47,10 +47,10 @@ export function ProfileFaceIdEnableModal({
       animationType="fade"
       visible={visible}
       onRequestClose={handleClose}>
-      <View style={s.modalBackdrop}>
-        <View style={s.modalCard}>
-          <Text style={s.modalTitle}>{t('faceId.enablePasswordTitle')}</Text>
-          <Text style={s.modalDescription}>
+      <View className="flex-1 justify-center px-5" style={{ backgroundColor: colors.overlay }}>
+        <View className="gap-3 rounded-xl bg-surface p-5">
+          <Text className="text-heading font-bold text-fg">{t('faceId.enablePasswordTitle')}</Text>
+          <Text className="text-label leading-[18px] text-fg-secondary">
             {t('faceId.enablePasswordDescription')}
           </Text>
           <Input
@@ -60,22 +60,23 @@ export function ProfileFaceIdEnableModal({
             secureTextEntry
             errorMessage={errorMessage ?? undefined}
           />
-          {errorMessage ? <Text style={s.fieldError}>{errorMessage}</Text> : null}
-          <View style={s.modalActions}>
-            <Pressable
-              style={[ps.buttonOutline, isSubmitting && ps.buttonDisabled]}
-              onPress={handleClose}
-              disabled={isSubmitting}
-              accessibilityRole="button">
-              <Text style={ps.buttonOutlineText}>{t('faceId.cancelButton')}</Text>
-            </Pressable>
-            <Pressable
-              style={[ps.buttonPrimary, (isSubmitting || !password) && ps.buttonDisabled]}
-              onPress={handleSubmit}
-              disabled={isSubmitting || !password}
-              accessibilityRole="button">
-              <Text style={ps.buttonPrimaryText}>{t('faceId.enableConfirmButton')}</Text>
-            </Pressable>
+          {errorMessage ? <Text className="text-label text-danger">{errorMessage}</Text> : null}
+          <View className="flex-row gap-2">
+            <View className="flex-1">
+              <Button
+                label={t('faceId.cancelButton')}
+                onPress={handleClose}
+                disabled={isSubmitting}
+                variant="secondary"
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                label={t('faceId.enableConfirmButton')}
+                onPress={handleSubmit}
+                disabled={isSubmitting || !password}
+              />
+            </View>
           </View>
         </View>
       </View>

@@ -3,13 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import type { AppPersonType } from '@/api/mia';
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import { useMiaInfoRests, useMiaProperties } from '@/hooks/use-mia-properties';
 import type { CaseDetailSearchPropertyRow } from '@/types/case-detail-data';
 
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
 import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 /** Shared renderer for the property/restriction rows (identical column layout). */
 function CaseDetailMiaRows({
@@ -20,15 +18,16 @@ function CaseDetailMiaRows({
   isLoading: boolean;
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   if (isLoading) {
     return (
-      <View style={tb.padSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="p-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
   if (!rows || rows.length === 0) {
-    return <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>;
+    return <Text className="p-2 text-caption text-fg-secondary">{t('cases.detail.emptyTable')}</Text>;
   }
   return (
     <CaseDetailKvCardList>
@@ -40,12 +39,12 @@ function CaseDetailMiaRows({
               label: t('cases.detail.searchColNameObject'),
               value: (
                 <>
-                  <Text style={[s.primaryText, tb.kvValueText]}>{row.nameObject}</Text>
+                  <Text className="text-right text-label font-bold text-fg">{row.nameObject}</Text>
                   {row.plateOrExtra ? (
-                    <Text style={[s.mutedText, tb.kvValueText]}>{row.plateOrExtra}</Text>
+                    <Text className="text-right text-caption text-fg-secondary">{row.plateOrExtra}</Text>
                   ) : null}
                   {row.address ? (
-                    <Text style={[s.mutedText, tb.kvValueText]}>{row.address}</Text>
+                    <Text className="text-right text-caption text-fg-secondary">{row.address}</Text>
                   ) : null}
                 </>
               ),
@@ -54,8 +53,8 @@ function CaseDetailMiaRows({
               label: t('cases.detail.searchColOrder'),
               value: (
                 <>
-                  <Text style={[s.primaryText, tb.kvValueText]}>{row.orderRef}</Text>
-                  <Text style={[s.mutedText, tb.kvValueText]}>{row.orderAction}</Text>
+                  <Text className="text-right text-label font-bold text-fg">{row.orderRef}</Text>
+                  <Text className="text-right text-caption text-fg-secondary">{row.orderAction}</Text>
                 </>
               ),
             },
@@ -63,8 +62,8 @@ function CaseDetailMiaRows({
               label: t('cases.detail.searchColInitiator'),
               value: (
                 <>
-                  <Text style={[s.primaryText, tb.kvValueText]}>{row.initiator}</Text>
-                  <Text style={[s.mutedText, tb.kvValueText]}>{row.initiatorWhen}</Text>
+                  <Text className="text-right text-label font-bold text-fg">{row.initiator}</Text>
+                  <Text className="text-right text-caption text-fg-secondary">{row.initiatorWhen}</Text>
                 </>
               ),
             },
@@ -93,9 +92,9 @@ export function CaseDetailMiaSearchBlock({
   );
   return (
     <View>
-      <Text style={tb.subSectionTitle}>{t('cases.detail.subFoundProperty')}</Text>
+      <Text className="bg-surface-sunken p-2 text-label font-bold text-fg">{t('cases.detail.subFoundProperty')}</Text>
       <CaseDetailMiaRows rows={restrictions} isLoading={restrictionsLoading} />
-      <Text style={tb.subSectionTitle}>{t('cases.detail.subRestrictions')}</Text>
+      <Text className="bg-surface-sunken p-2 text-label font-bold text-fg">{t('cases.detail.subRestrictions')}</Text>
       <CaseDetailMiaRows rows={properties} isLoading={propertiesLoading} />
     </View>
   );

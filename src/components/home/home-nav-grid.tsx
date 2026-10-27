@@ -7,7 +7,6 @@ import { isGuestMode } from "@/lib/guest-mode";
 import type { HomeNavItem } from "@/types/home-dashboard";
 
 import { HomeNavCard } from "./home-nav-card";
-import { homeNavGridStyles } from "./home-nav-grid.styles";
 
 const homeRouteByNavItemId: Record<
   string,
@@ -40,7 +39,7 @@ export function HomeNavGrid() {
   };
 
   return (
-    <View style={homeNavGridStyles.row}>
+    <View className="flex-row flex-wrap justify-between gap-y-3">
       {visibleItems.map((item, index) => (
         <HomeNavCard
           key={item.id}

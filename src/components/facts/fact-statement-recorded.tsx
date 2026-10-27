@@ -1,12 +1,9 @@
 import { useMemo, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
-import { debtorAppDetailActionsStyles as actions } from "@/components/debtor-registry/debtor-app-detail-actions.styles";
-import { debtorExtractRequestStyles as s } from "@/components/debtor-registry/debtor-extract-request.styles";
+import { Button, Card } from "@/components/ui";
 import type { FactStatementForm } from "@/types/fact-statement";
-
-import { factStatementStyles as fs } from "./fact-statement.styles";
 
 type Props = {
   form: FactStatementForm;
@@ -25,9 +22,9 @@ type Props = {
 function ReviewRow({ label, value }: { label: string; value?: string }) {
   if (!value?.trim()) return null;
   return (
-    <View style={fs.reviewRow}>
-      <Text style={fs.reviewLabel}>{label}</Text>
-      <Text style={fs.reviewValue}>{value}</Text>
+    <View className="gap-0.5">
+      <Text className="text-label text-fg-muted">{label}</Text>
+      <Text className="text-body font-semibold text-fg">{value}</Text>
     </View>
   );
 }
@@ -40,10 +37,10 @@ function ReviewSection({
   children: ReactNode;
 }) {
   return (
-    <View style={s.sectionCard}>
-      <Text style={s.sectionTitle}>{title}</Text>
+    <Card className="gap-2">
+      <Text className="text-subtitle font-bold text-fg">{title}</Text>
       {children}
-    </View>
+    </Card>
   );
 }
 
@@ -88,15 +85,15 @@ export function FactStatementRecorded({
   return (
     <>
       {/* საქმის წინასწარი ნომერი — preliminary case number of the recorded statement. */}
-      <View style={fs.payIdCard}>
-        <Text style={fs.payIdLabel}>
+      <Card className="items-center gap-0.5 bg-surface-sunken">
+        <Text className="text-label text-fg-muted">
           {t("facts.stPreliminaryNumberLabel")}
         </Text>
-        <Text style={fs.payIdValue}>{preliminaryNumber}</Text>
+        <Text className="text-title font-bold text-fg">{preliminaryNumber}</Text>
         {preliminaryDate ? (
-          <Text style={fs.payIdDate}>{preliminaryDate}</Text>
+          <Text className="text-label text-fg-secondary">{preliminaryDate}</Text>
         ) : null}
-      </View>
+      </Card>
 
       <ReviewSection title={t("facts.stOrganizationLabel")}>
         <ReviewRow
@@ -195,30 +192,22 @@ export function FactStatementRecorded({
         <ReviewRow label={t("facts.stRequestLabel")} value={form.request} />
       </ReviewSection>
 
-      <Text style={s.hintText}>{t("facts.stRecordedHint")}</Text>
-      <View style={actions.row}>
-        <Pressable
-          style={[actions.btn, actions.editBtn]}
-          onPress={onEdit}
-          accessibilityRole="button"
-        >
-          <Text style={actions.editLabel}>{t("facts.stEditButton")}</Text>
-        </Pressable>
-        <Pressable
-          style={[actions.btn, actions.payBtn]}
-          onPress={onPay}
-          accessibilityRole="button"
-        >
-          <Text style={actions.payLabel}>{t("facts.stPayButton")}</Text>
-        </Pressable>
+      <Text className="text-caption text-fg-muted">
+        {t("facts.stRecordedHint")}
+      </Text>
+      <View className="flex-row gap-3">
+        <View className="flex-1">
+          <Button
+            label={t("facts.stEditButton")}
+            variant="secondary"
+            onPress={onEdit}
+          />
+        </View>
+        <View className="flex-1">
+          <Button label={t("facts.stPayButton")} onPress={onPay} />
+        </View>
       </View>
-      <Pressable
-        style={actions.fullBtn}
-        onPress={onClose}
-        accessibilityRole="button"
-      >
-        <Text style={actions.payLabel}>{t("facts.stCloseButton")}</Text>
-      </Pressable>
+      <Button label={t("facts.stCloseButton")} onPress={onClose} />
     </>
   );
 }

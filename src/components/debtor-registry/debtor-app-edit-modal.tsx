@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { Modal, Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ModalBackdrop } from '@/components/ui/modal-backdrop';
-
-import { debtorAppEditModalStyles as s } from './debtor-app-edit-modal.styles';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   visible: boolean;
@@ -24,6 +25,7 @@ export function DebtorAppEditModal({
   onSave,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [draftName, setDraftName] = useState(name);
   const [draftId, setDraftId] = useState(idnumber);
   const [idError, setIdError] = useState(false);
@@ -56,57 +58,59 @@ export function DebtorAppEditModal({
       animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent>
-      <ModalBackdrop onClose={onClose} style={s.overlay}>
-        <View style={s.sheet}>
-          <Text style={s.title}>{t('debtors.detailEditModalTitle')}</Text>
+      <ModalBackdrop
+        onClose={onClose}
+        style={{
+          flex: 1,
+          backgroundColor: colors.overlay,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        }}>
+        <View className="w-full max-w-[480px] gap-4 rounded-lg bg-surface p-5">
+          <Text className="text-center text-title font-bold text-fg">
+            {t('debtors.detailEditModalTitle')}
+          </Text>
 
-          <View style={s.fieldGap}>
-            <Text style={s.label}>
-              {t('debtors.extractSubjectNameLabel')}{' '}
-              <Text style={s.requiredMark}>*</Text>
-            </Text>
-            <TextInput
-              value={draftName}
-              onChangeText={setDraftName}
-              style={s.input}
-            />
-          </View>
+          <Input
+            label={t('debtors.extractSubjectNameLabel')}
+            required
+            placeholder=""
+            value={draftName}
+            onChangeText={setDraftName}
+          />
 
-          <View style={s.fieldGap}>
-            <Text style={s.label}>
-              {t('debtors.extractSubjectIdLabel')}{' '}
-              <Text style={s.requiredMark}>*</Text>
-            </Text>
-            <TextInput
-              value={draftId}
-              onChangeText={(v) => {
-                setDraftId(v.replace(/\D/g, ''));
-                if (idError) setIdError(false);
-              }}
-              keyboardType="number-pad"
-              maxLength={11}
-              style={[s.input, idError && s.inputError]}
-            />
-            {idError ? (
-              <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
-            ) : null}
-          </View>
+          <Input
+            label={t('debtors.extractSubjectIdLabel')}
+            required
+            placeholder=""
+            value={draftId}
+            onChangeText={(v) => {
+              setDraftId(v.replace(/\D/g, ''));
+              if (idError) setIdError(false);
+            }}
+            keyboardType="number-pad"
+            maxLength={11}
+            errorMessage={idError ? t('debtors.detailEditIdError') : undefined}
+          />
 
-          <View style={s.actions}>
-            <Pressable
-              style={[s.btn, s.cancelBtn]}
-              onPress={onClose}
-              disabled={saving}
-              accessibilityRole="button">
-              <Text style={s.cancelLabel}>{t('debtors.detailEditCancel')}</Text>
-            </Pressable>
-            <Pressable
-              style={[s.btn, s.saveBtn, saving && s.btnDisabled]}
-              accessibilityRole="button"
-              disabled={saving}
-              onPress={handleSave}>
-              <Text style={s.saveLabel}>{t('debtors.detailEditSave')}</Text>
-            </Pressable>
+          <View className="mt-1 flex-row gap-2">
+            <View className="flex-1">
+              <Button
+                label={t('debtors.detailEditCancel')}
+                variant="secondary"
+                disabled={saving}
+                onPress={onClose}
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                label={t('debtors.detailEditSave')}
+                loading={saving}
+                disabled={saving}
+                onPress={handleSave}
+              />
+            </View>
           </View>
         </View>
       </ModalBackdrop>

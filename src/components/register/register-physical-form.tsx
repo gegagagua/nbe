@@ -1,13 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
-import { LoginPalette } from '@/constants/login';
-import { Space, Typography } from '@/constants/theme';
 import { useRegisterPhysicalForm } from '@/hooks/use-register-physical-form';
 import type { RegisterPhysicalValues } from '@/types/register-form-values';
 
-import { registerFormActionsStyles } from './register-form-actions.styles';
 import { RegisterFormField } from './register-form-field';
 
 type Props = {
@@ -24,7 +21,9 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
 
   return (
     <View>
-      <Text style={styles.requirementsHint}>{t('login.registerPasswordRequirements')}</Text>
+      <Text className="mb-4 text-caption leading-[18px] text-fg-muted">
+        {t('login.registerPasswordRequirements')}
+      </Text>
 
       <RegisterFormField
         control={control}
@@ -77,7 +76,7 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
         secureTextEntry
       />
 
-      <View style={registerFormActionsStyles.submit}>
+      <View className="mt-1">
         <Button
           label={t('login.registerSubmit')}
           onPress={() => { onSubmit(); }}
@@ -87,12 +86,3 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  requirementsHint: {
-    fontSize: Typography.small,
-    color: LoginPalette.placeholderMuted,
-    marginBottom: Space.medium,
-    lineHeight: 18,
-  },
-});

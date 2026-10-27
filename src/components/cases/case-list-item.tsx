@@ -5,11 +5,10 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { AnimatedPressable } from '@/components/ui/animated-pressable';
 import { LoginPalette } from '@/constants/login';
+import { useAppTheme } from '@/theme';
 import type { CaseApplication, CaseParty } from '@/types/case-management';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 import { formatOfficialCaseNumberDisplay } from '@/utils/format-official-case-number';
-
-import { caseListItemStyles as s } from './case-list-item.styles';
 
 function formatPartyLine(party: CaseParty) {
   const fullName = [party.firstName, party.lastName].filter(Boolean).join(' ').trim();
@@ -32,6 +31,7 @@ function parsePayAmount(display?: string | null): number | null {
 
 export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index?: number }) {
   const { t } = useTranslation();
+  const theme = useAppTheme();
   const officialNo = formatOfficialCaseNumberDisplay(item.regnumber, item.id);
   const regDate = item.regDate ? formatEnforcementDateTime(item.regDate) : null;
   const headlineDate = formatEnforcementDateTime(
@@ -51,7 +51,7 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
   return (
     <Animated.View entering={FadeInDown.duration(280).delay(Math.min(index, 8) * 40).springify().damping(18)}>
       <AnimatedPressable
-        style={s.press}
+        className="w-full"
         onPress={() =>
           router.push({
             pathname: '/cases/[id]',
@@ -65,49 +65,51 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
         }
         accessibilityRole="button"
         accessibilityLabel={a11y}>
-      <View style={[s.card, s.cardAccent, { borderLeftColor: accentColor }]}>
-        <View style={s.topBlock}>
+      <View
+        className="rounded-md border border-l-4 border-border bg-surface p-4"
+        style={[theme.shadows.sm, { borderLeftColor: accentColor }]}>
+        <View className="mb-2">
           {item.listSequenceLabel ? (
-            <Text style={s.sequence}>{item.listSequenceLabel}</Text>
+            <Text className="text-caption font-semibold text-fg-muted mb-0.5">{item.listSequenceLabel}</Text>
           ) : (
-            <Text style={s.sequence}>{item.trType.prefix}</Text>
+            <Text className="text-caption font-semibold text-fg-muted mb-0.5">{item.trType.prefix}</Text>
           )}
-          <Text style={s.caseNumber}>
+          <Text className="text-body font-bold text-fg mt-0.5">
             {t('cases.listCaseNumberLabel')}: {officialNo}
           </Text>
           {regDate ? (
-            <Text style={s.caseDate}>
+            <Text className="text-caption text-fg-muted mt-0.5">
               {t('cases.listRegDateLabel')}: {regDate}
             </Text>
           ) : null}
-          <Text style={s.caseDate}>
+          <Text className="text-caption text-fg-muted mt-0.5">
             {t('cases.listRegistrationLine')}: {headlineDate}
           </Text>
-          <Text style={s.caseTitle}>{categoryLine}</Text>
+          <Text className="text-caption text-fg mt-1 leading-[18px]">{categoryLine}</Text>
           {item.enforcementBureauName ? (
-            <Text style={s.bureau}>{item.enforcementBureauName}</Text>
+            <Text className="text-caption text-fg-muted mt-1">{item.enforcementBureauName}</Text>
           ) : null}
         </View>
-        <View style={s.partiesRow}>
-          <View style={s.partyBox}>
-            <Text style={s.partyLabel}>{t('cases.creditor')}</Text>
+        <View className="flex-row gap-2">
+          <View className="flex-1 min-w-0 rounded-sm border border-border bg-surface-sunken p-2 gap-1">
+            <Text className="text-caption font-bold text-fg-muted">{t('cases.creditor')}</Text>
             {item.creditors.length === 0 ? (
-              <Text style={s.partyLine}>—</Text>
+              <Text className="text-caption font-semibold text-fg">—</Text>
             ) : (
               item.creditors.map((c) => (
-                <Text key={c.id} style={s.partyLine}>
+                <Text key={c.id} className="text-caption font-semibold text-fg">
                   {formatPartyLine(c)}
                 </Text>
               ))
             )}
           </View>
-          <View style={s.partyBox}>
-            <Text style={s.partyLabel}>{t('cases.debtor')}</Text>
+          <View className="flex-1 min-w-0 rounded-sm border border-border bg-surface-sunken p-2 gap-1">
+            <Text className="text-caption font-bold text-fg-muted">{t('cases.debtor')}</Text>
             {item.debtors.length === 0 ? (
-              <Text style={s.partyLine}>—</Text>
+              <Text className="text-caption font-semibold text-fg">—</Text>
             ) : (
               item.debtors.map((d) => (
-                <Text key={d.id} style={s.partyLine}>
+                <Text key={d.id} className="text-caption font-semibold text-fg">
                   {formatPartyLine(d)}
                 </Text>
               ))
@@ -115,10 +117,10 @@ export function CaseListItem({ item, index = 0 }: { item: CaseApplication; index
           </View>
         </View>
         {debt ? (
-          <View style={s.debtRow}>
-            <View style={s.debtLineInner}>
-              <Text style={s.debtLabel}>{t('cases.listDebtLine')}:</Text>
-              <Text style={s.debtValue}>{debt}</Text>
+          <View className="mt-2 pt-2 border-t border-border">
+            <View className="flex-row flex-wrap items-baseline gap-1">
+              <Text className="text-label font-semibold text-fg">{t('cases.listDebtLine')}:</Text>
+              <Text className="text-body font-bold text-fg">{debt}</Text>
             </View>
           </View>
         ) : null}

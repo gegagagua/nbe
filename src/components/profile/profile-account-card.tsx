@@ -1,9 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { LoginPalette } from '@/constants/login';
-
-import { profileAccountCardStyles as s } from './profile-account-card.styles';
+import { Card } from '@/components/ui/card';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   fullName: string;
@@ -12,25 +11,24 @@ type Props = {
 };
 
 export function ProfileAccountCard({ fullName, subtitle, onViewInfo }: Props) {
+  const { colors } = useAppTheme();
+
   return (
-    <View style={s.card}>
-      <Pressable
-        style={({ pressed }) => [s.main, pressed && s.pressed]}
-        onPress={onViewInfo}
-        accessibilityRole="button"
-      >
-        <View style={s.avatar}>
-          <MaterialCommunityIcons name="account" size={24} color={LoginPalette.primary} />
+    <Card onPress={onViewInfo} padding="md" elevation="sm" className="rounded-2xl">
+      <View className="flex-row items-center gap-3">
+        <View className="h-14 w-14 items-center justify-center rounded-2xl bg-primary-subtle">
+          <MaterialCommunityIcons name="account" size={28} color={colors.primary} />
         </View>
-        <View style={s.textWrap}>
-          <Text style={s.name} numberOfLines={1}>
+        <View className="flex-1">
+          <Text numberOfLines={1} className="text-subtitle font-bold text-fg">
             {fullName}
           </Text>
-          <Text style={s.subtitle} numberOfLines={1}>
+          <Text numberOfLines={1} className="text-caption text-fg-muted">
             {subtitle}
           </Text>
         </View>
-      </Pressable>
-    </View>
+        <MaterialCommunityIcons name="chevron-right" size={22} color={colors.textMuted} />
+      </View>
+    </Card>
   );
 }

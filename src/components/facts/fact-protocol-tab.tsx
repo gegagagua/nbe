@@ -1,44 +1,39 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Platform, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { streamFactFile } from "@/api/fact-files";
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
-import { LoginPalette } from "@/constants/login";
+import { Card, PressableScale } from "@/components/ui";
 import { useFactProtocol } from "@/hooks/use-fact-protocol";
+import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 import {
   openAndroidViewer,
   prepareStreamedFile,
   shareCachedFile,
 } from "@/lib/download-eps-file";
 import { showErrorToast } from "@/lib/show-error-toast";
+import { useAppTheme } from "@/theme";
 import type { FactProtocolFile, FactProtocolStatus } from "@/types/facts";
-
-import { factsDetailStyles as d } from "./facts-detail.styles";
-import { factProtocolStyles as s } from "./fact-protocol-tab.styles";
 
 function FileRow({
   appId,
+  userId,
   file,
 }: {
   appId: number;
+  userId: number;
   file: FactProtocolFile;
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [busy, setBusy] = useState(false);
 
   const onOpen = async () => {
     setBusy(true);
     try {
       const prepared = await prepareStreamedFile(
-        (responseType) => streamFactFile(appId, file.fileId, responseType),
+        (responseType) => streamFactFile(appId, file.fileId, userId, responseType),
         { fileId: file.fileId, fileName: file.fileName },
       );
       // Web already downloaded via the browser; nothing more to open.
@@ -56,8 +51,8 @@ function FileRow({
   };
 
   return (
-    <Pressable
-      style={s.fileRow}
+    <PressableScale
+      className="flex-row items-center gap-2 rounded-md border border-border bg-input px-4 py-2"
       disabled={busy}
       onPress={onOpen}
       accessibilityRole="button"
@@ -66,47 +61,59 @@ function FileRow({
       <MaterialCommunityIcons
         name="file-download-outline"
         size={22}
-        color={LoginPalette.logoRed}
+        color={colors.danger}
       />
-      <View style={s.fileInfo}>
-        <Text style={s.fileName} numberOfLines={2}>
+      <View className="flex-1 gap-0.5">
+        <Text className="text-body text-fg" numberOfLines={2}>
           {file.title}
         </Text>
         {file.uploadedBy ? (
-          <Text style={s.fileMeta}>{file.uploadedBy}</Text>
+          <Text className="text-label text-fg-muted">{file.uploadedBy}</Text>
         ) : null}
         {file.createdDate ? (
-          <Text style={s.fileMeta}>{file.createdDate}</Text>
+          <Text className="text-label text-fg-muted">{file.createdDate}</Text>
         ) : null}
       </View>
       {busy ? (
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+        <ActivityIndicator color={colors.primary} />
       ) : (
         <MaterialCommunityIcons
           name="chevron-right"
           size={20}
-          color={DebtorRegistryPalette.textMuted}
+          color={colors.textMuted}
         />
       )}
-    </Pressable>
+    </PressableScale>
   );
 }
 
-function StatusGroup({ status }: { status: FactProtocolStatus }) {
+function StatusGroup({
+  status,
+  userId,
+}: {
+  status: FactProtocolStatus;
+  userId: number;
+}) {
   const { t } = useTranslation();
   const heading = [status.statusNumber, status.statusName]
     .filter(Boolean)
     .join(" — ");
   return (
-    <View style={s.group}>
-      {heading ? <Text style={s.groupTitle}>{heading}</Text> : null}
-      {status.date ? <Text style={s.groupHint}>{status.date}</Text> : null}
+    <View className="gap-2">
+      {heading ? (
+        <Text className="text-body font-bold text-fg">{heading}</Text>
+      ) : null}
+      {status.date ? (
+        <Text className="text-label text-fg-muted">{status.date}</Text>
+      ) : null}
       {status.files.length > 0 ? (
         status.files.map((f) => (
-          <FileRow key={f.fileId} appId={status.appId} file={f} />
+          <FileRow key={f.fileId} appId={status.appId} userId={userId} file={f} />
         ))
       ) : (
-        <Text style={s.emptyLine}>{t("facts.protocolSectionEmpty")}</Text>
+        <Text className="text-label italic text-fg-muted">
+          {t("facts.protocolSectionEmpty")}
+        </Text>
       )}
     </View>
   );
@@ -114,33 +121,43 @@ function StatusGroup({ status }: { status: FactProtocolStatus }) {
 
 export function FactProtocolTab({ appId }: { appId: number }) {
   const { t } = useTranslation();
-  const { data, isPending } = useFactProtocol(appId);
+  const { colors } = useAppTheme();
+  const { profile } = useSessionUserProfile();
+  const userId = profile?.id ?? null;
+  const { data, isPending } = useFactProtocol(appId, userId);
 
   if (isPending) {
     return (
-      <View style={[d.detailsCard, d.section]}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
-      </View>
+      <Card>
+        <ActivityIndicator color={colors.primary} />
+      </Card>
     );
   }
 
   const statuses = data ?? [];
-  const hasFiles = statuses.some((st) => st.files.length > 0);
 
-  if (statuses.length === 0 || !hasFiles) {
+  // Show the status headings whenever there are statuses — even if a given
+  // status has no (non-confidential) files yet, its "ოქმი ფაქტების
+  // კონსტატაციის შესახებ" heading should still render. Only a truly empty
+  // response falls back to the empty message.
+  if (statuses.length === 0 || userId == null) {
     return (
-      <View style={[d.detailsCard, d.section]}>
-        <Text style={s.intro}>{t("facts.detailProtocolEmpty")}</Text>
-      </View>
+      <Card>
+        <Text className="text-label leading-relaxed text-fg-muted">
+          {t("facts.detailProtocolEmpty")}
+        </Text>
+      </Card>
     );
   }
 
   return (
-    <View style={[d.detailsCard, d.section]}>
-      <Text style={s.intro}>{t("facts.protocolIntro")}</Text>
+    <Card className="gap-4">
+      <Text className="text-label leading-relaxed text-fg-muted">
+        {t("facts.protocolIntro")}
+      </Text>
       {statuses.map((st) => (
-        <StatusGroup key={st.appStatusId} status={st} />
+        <StatusGroup key={st.appStatusId} status={st} userId={userId} />
       ))}
-    </View>
+    </Card>
   );
 }

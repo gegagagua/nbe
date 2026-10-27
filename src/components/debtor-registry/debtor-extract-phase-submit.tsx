@@ -3,14 +3,12 @@ import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { ToastLayout } from '@/constants/toast';
 import type {
   DebtorExtractPaymentMethod,
   DebtorExtractPaymentOptionLabelKey,
 } from '@/types/debtor-extract';
-
-import { debtorExtractPaymentStyles as ps } from './debtor-extract-payment.styles';
-import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 
 const PAYMENT_METHOD_LABEL: Record<DebtorExtractPaymentMethod, DebtorExtractPaymentOptionLabelKey> =
   {
@@ -39,24 +37,32 @@ export function DebtorExtractPhaseSubmit({ applicationNumber, paymentMethod, onS
   };
   return (
     <>
-      <View style={ps.summaryCard}>
-        <View style={ps.summaryRow}>
-          <Text style={ps.summaryLabel}>{t('debtors.extractPaymentStatusLabel')}</Text>
-          <Text style={ps.summaryValue}>{t('debtors.extractPaymentStatusPaid')}</Text>
+      <Card className="gap-4 bg-surface-sunken">
+        <View className="gap-1">
+          <Text className="text-label font-semibold text-fg-secondary">
+            {t('debtors.extractPaymentStatusLabel')}
+          </Text>
+          <Text className="text-body font-bold text-fg">
+            {t('debtors.extractPaymentStatusPaid')}
+          </Text>
         </View>
-        <View style={ps.summaryRow}>
-          <Text style={ps.summaryLabel}>{t('debtors.extractApplicationNoLabel')}</Text>
-          <Text style={ps.summaryValue}>{applicationNumber}</Text>
+        <View className="gap-1">
+          <Text className="text-label font-semibold text-fg-secondary">
+            {t('debtors.extractApplicationNoLabel')}
+          </Text>
+          <Text className="text-body font-bold text-fg">{applicationNumber}</Text>
         </View>
-        <View style={ps.summaryRow}>
-          <Text style={ps.summaryLabel}>{t('debtors.extractMethodsTitle')}</Text>
-          <Text style={ps.summaryValue}>{t(PAYMENT_METHOD_LABEL[paymentMethod])}</Text>
+        <View className="gap-1">
+          <Text className="text-label font-semibold text-fg-secondary">
+            {t('debtors.extractMethodsTitle')}
+          </Text>
+          <Text className="text-body font-bold text-fg">
+            {t(PAYMENT_METHOD_LABEL[paymentMethod])}
+          </Text>
         </View>
-      </View>
-      <Text style={s.hintText}>{t('debtors.extractSubmitHint')}</Text>
-      <View style={s.primaryButtonWrap}>
-        <Button label={t('debtors.extractSubmitButton')} onPress={onSubmit} />
-      </View>
+      </Card>
+      <Text className="text-caption text-fg-muted">{t('debtors.extractSubmitHint')}</Text>
+      <Button label={t('debtors.extractSubmitButton')} onPress={onSubmit} />
     </>
   );
 }

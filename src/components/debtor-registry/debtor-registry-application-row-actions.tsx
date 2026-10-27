@@ -1,11 +1,11 @@
 import type { TFunction } from 'i18next';
 import { useState } from 'react';
-import { Pressable, Share, Text, View } from 'react-native';
+import { Share, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 
 import { CaseDetailFileViewerModal } from '@/components/cases/case-detail-file-viewer-modal';
-import { LoginInteraction } from '@/constants/login';
+import { Button } from '@/components/ui/button';
 import { ToastLayout } from '@/constants/toast';
 import { downloadDebtorAppFile } from '@/lib/download-debtor-file';
 import type { PreparedFile } from '@/lib/download-eps-file';
@@ -16,8 +16,6 @@ import type {
   DebtorRegistryUser,
 } from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
-
-import { debtorRegistryApplicationRowActionsStyles as s } from './debtor-registry-application-row-actions.styles';
 
 // Structural subset shared by the list row (`DebtorRegistryApplication`) and the
 // detail response (`DebtorRegistryApplicationDetail`), so the actions work on both.
@@ -101,25 +99,19 @@ export function DebtorRegistryApplicationRowActions({ app }: Props) {
   };
   return (
     <>
-    <View style={s.row}>
-      <Pressable
-        style={({ pressed }) => [
-          s.btn,
-          (pressed || downloading) && { opacity: LoginInteraction.pressedOpacity },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={t('debtors.listDownload')}
-        disabled={downloading}
-        onPress={onDownload}>
-        <Text style={s.btnLabel}>{t('debtors.listDownload')}</Text>
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [s.btn, pressed && { opacity: LoginInteraction.pressedOpacity }]}
-        accessibilityRole="button"
-        accessibilityLabel={t('debtors.listShare')}
-        onPress={onShare}>
-        <Text style={s.btnLabel}>{t('debtors.listShare')}</Text>
-      </Pressable>
+    <View className="mt-2 flex-row gap-2">
+      <View className="flex-1">
+        <Button
+          label={t('debtors.listDownload')}
+          variant="secondary"
+          loading={downloading}
+          disabled={downloading}
+          onPress={onDownload}
+        />
+      </View>
+      <View className="flex-1">
+        <Button label={t('debtors.listShare')} variant="secondary" onPress={onShare} />
+      </View>
     </View>
     <CaseDetailFileViewerModal
       file={viewerFile}

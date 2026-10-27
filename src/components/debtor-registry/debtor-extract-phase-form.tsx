@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { Text, TextInput, View } from "react-native";
+import { Text, View } from "react-native";
 
 import { Button } from "@/components/ui/button";
-import { LoginPalette } from "@/constants/login";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { isGuestMode } from "@/lib/guest-mode";
-
-import { debtorExtractRequestStyles as s } from "./debtor-extract-request.styles";
 
 type Props = {
   applicantPersonalId: string;
@@ -34,80 +33,65 @@ export function DebtorExtractPhaseForm({
   const isGuest = isGuestMode();
   return (
     <>
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>
+      <Card className="gap-4">
+        <Text className="text-body font-bold text-fg">
           {t("debtors.extractApplicantSection")}
         </Text>
-        <View style={s.fieldGap}>
-          <Text style={s.fieldLabel}>
+        <View className="gap-2">
+          <Text className="text-label font-semibold text-fg-secondary">
             {t("debtors.extractApplicantPnLabel")}
           </Text>
           {isGuest && onApplicantPersonalId ? (
-            <TextInput
+            <Input
               value={applicantPersonalId}
               onChangeText={onApplicantPersonalId}
               placeholder={t("debtors.searchApplicantPnPlaceholder")}
-              placeholderTextColor={LoginPalette.placeholderMuted}
-              style={s.input}
-              accessibilityLabel={t("debtors.extractApplicantPnLabel")}
             />
           ) : (
-            <Text style={s.readonlyValue}>{applicantPersonalId}</Text>
+            <Text className="text-body font-medium text-fg">{applicantPersonalId}</Text>
           )}
         </View>
-        <View style={s.fieldGap}>
-          <Text style={s.fieldLabel}>
+        <View className="gap-2">
+          <Text className="text-label font-semibold text-fg-secondary">
             {t("debtors.extractApplicantNameLabel")}
           </Text>
           {isGuest && onApplicantFullName ? (
-            <TextInput
+            <Input
               value={applicantFullName}
               onChangeText={onApplicantFullName}
               placeholder={t("debtors.extractSubjectNamePlaceholder")}
-              placeholderTextColor={LoginPalette.placeholderMuted}
-              style={[s.input, s.inputMultiline]}
-              multiline
-              accessibilityLabel={t("debtors.extractApplicantNameLabel")}
             />
           ) : (
-            <Text style={s.readonlyValue}>{applicantFullName}</Text>
+            <Text className="text-body font-medium text-fg">{applicantFullName}</Text>
           )}
         </View>
-      </View>
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("debtors.extractSubjectSection")}</Text>
-        <View style={s.fieldGap}>
-          <Text style={s.fieldLabel}>{t("debtors.extractSubjectIdLabel")}</Text>
-          <TextInput
+      </Card>
+      <Card className="gap-4">
+        <Text className="text-body font-bold text-fg">
+          {t("debtors.extractSubjectSection")}
+        </Text>
+        <View className="gap-2">
+          <Text className="text-label font-semibold text-fg-secondary">
+            {t("debtors.extractSubjectIdLabel")}
+          </Text>
+          <Input
             value={subjectPersonalId}
             onChangeText={onSubjectPersonalId}
             placeholder={t("debtors.extractSubjectIdPlaceholder")}
-            placeholderTextColor={LoginPalette.placeholderMuted}
-            style={s.input}
-            accessibilityLabel={t("debtors.extractSubjectIdLabel")}
           />
         </View>
-        <View style={s.fieldGap}>
-          <Text style={s.fieldLabel}>
+        <View className="gap-2">
+          <Text className="text-label font-semibold text-fg-secondary">
             {t("debtors.extractSubjectNameLabel")}
           </Text>
-          <TextInput
+          <Input
             value={subjectFullName}
             onChangeText={onSubjectFullName}
             placeholder={t("debtors.extractSubjectNamePlaceholder")}
-            placeholderTextColor={LoginPalette.placeholderMuted}
-            style={[s.input, s.inputMultiline]}
-            multiline
-            accessibilityLabel={t("debtors.extractSubjectNameLabel")}
           />
         </View>
-      </View>
-      <View style={s.primaryButtonWrap}>
-        <Button
-          label={t("debtors.extractContinuePayment")}
-          onPress={onContinue}
-        />
-      </View>
+      </Card>
+      <Button label={t("debtors.extractContinuePayment")} onPress={onContinue} />
     </>
   );
 }

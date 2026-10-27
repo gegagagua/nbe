@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
-import { caseListStyles as s } from "@/components/cases/case-list.styles";
+import { Card, EmptyState, Skeleton, SkeletonText } from "@/components/ui";
 import type { FactApplication } from "@/types/facts";
 
 import { FactsListItem } from "./facts-list-item";
@@ -18,15 +18,26 @@ export function FactsList({
   const { t } = useTranslation();
 
   if (loading) {
-    return <Text style={s.stateText}>{t("facts.loadingMessage")}</Text>;
+    return (
+      <View className="gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Card key={i}>
+            <View className="gap-3">
+              <Skeleton height={14} width="40%" />
+              <SkeletonText lines={2} />
+            </View>
+          </Card>
+        ))}
+      </View>
+    );
   }
 
   if (empty) {
-    return <Text style={s.stateText}>{t("facts.emptyMessage")}</Text>;
+    return <EmptyState icon="file-search-outline" title={t("facts.emptyMessage")} />;
   }
 
   return (
-    <View style={s.wrap}>
+    <View className="gap-3">
       {items.map((item, index) => (
         <FactsListItem key={item.id} item={item} index={index} />
       ))}

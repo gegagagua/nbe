@@ -3,14 +3,14 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { updateLegalEntity } from "@/api/users";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { AppHeader } from "@/components/ui/app-header";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { LoginPalette } from "@/constants/login";
 import { useLegalEntities } from "@/hooks/use-legal-entities";
 import { setActiveLegalEntity } from "@/lib/active-legal-entity-storage";
 import { showErrorToast } from "@/lib/show-error-toast";
@@ -19,8 +19,7 @@ import {
   createLegalEntityDetailsSchema,
   type LegalEntityDetailsValues,
 } from "@/schemas/legal-entity-details.schema";
-
-import { profileScreenStyles as s } from "./profile-screen.styles";
+import { useAppTheme } from "@/theme";
 
 /**
  * Shown after the user picks a legal entity in the account switcher. The
@@ -28,6 +27,7 @@ import { profileScreenStyles as s } from "./profile-screen.styles";
  */
 export function LegalEntityDetailsScreen() {
   const { t, i18n } = useTranslation();
+  const { colors } = useAppTheme();
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const entityId = Number(id);
   // Opened from "edit" on the profile: start from the saved values. The switch
@@ -90,95 +90,87 @@ export function LegalEntityDetailsScreen() {
   });
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={{ flex: 1 }}>
-        <View style={s.header}>
-          <Pressable
-            style={s.backButton}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel={t("profile.backA11yLabel")}
-          >
-            <Text style={s.backButtonText}>←</Text>
-          </Pressable>
-          <Text style={s.pageTitle}>{t("login.registerTabLegal")}</Text>
-        </View>
+    <View className="flex-1 bg-bg">
+      <AppHeader title={t("login.registerTabLegal")} />
 
-        {legalEntities.isLoading && !entity ? (
-          <ActivityIndicator
-            style={{ marginTop: 32 }}
-            size="large"
-            color={LoginPalette.primary}
-          />
-        ) : !entity ? (
-          <Text style={[s.statusMessage, s.statusError, { marginTop: 32 }]}>
-            {t("legalEntity.notFound")}
-          </Text>
-        ) : (
-          <KeyboardAwareScrollView
-            style={s.scroll}
-            contentContainerStyle={s.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            bottomOffset={16}
-          >
-            <View style={s.card}>
-              <Text style={s.sectionTitle}>{entity.name}</Text>
-              {!isEdit && (
-                <Text style={s.label}>{t("legalEntity.description")}</Text>
-              )}
+      {legalEntities.isLoading && !entity ? (
+        <ActivityIndicator
+          className="mt-8"
+          size="large"
+          color={colors.primary}
+        />
+      ) : !entity ? (
+        <Text className="mt-8 text-center text-label font-semibold text-danger">
+          {t("legalEntity.notFound")}
+        </Text>
+      ) : (
+        <KeyboardAwareScrollView
+          className="flex-1"
+          contentContainerClassName="gap-4 px-4 py-4 pb-10"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bottomOffset={16}
+        >
+          <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+            <Text className="text-heading font-bold text-fg">{entity.name}</Text>
+            {!isEdit && (
+              <Text className="text-label font-semibold uppercase tracking-wide text-fg-muted">
+                {t("legalEntity.description")}
+              </Text>
+            )}
 
-              <View style={s.fieldGroup}>
-                <View style={s.fieldRow}>
-                  <Text style={s.label}>
-                    {t("profile.labelRealAddress")} *
-                  </Text>
-                  <Controller
-                    control={control}
-                    name="realAddress"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <Input
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                        placeholder={t("profile.labelRealAddress")}
-                        autoCapitalize="sentences"
-                        errorMessage={formState.errors.realAddress?.message}
-                      />
-                    )}
-                  />
-                </View>
-
-                <View style={s.fieldRow}>
-                  <Text style={s.label}>{t("profile.labelEmail")}</Text>
-                  <Controller
-                    control={control}
-                    name="email"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <Input
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                        placeholder={t("profile.labelEmail")}
-                        keyboardType="email-address"
-                        errorMessage={formState.errors.email?.message}
-                      />
-                    )}
-                  />
-                </View>
+            <View className="gap-2">
+              <View className="gap-1">
+                <Text className="text-label font-semibold uppercase tracking-wide text-fg-muted">
+                  {t("profile.labelRealAddress")} *
+                </Text>
+                <Controller
+                  control={control}
+                  name="realAddress"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder={t("profile.labelRealAddress")}
+                      autoCapitalize="sentences"
+                      errorMessage={formState.errors.realAddress?.message}
+                    />
+                  )}
+                />
               </View>
 
-              <Button
-                label={isEdit ? t("profile.saveButton") : t("legalEntity.saveButton")}
-                onPress={() => {
-                  onSubmit();
-                }}
-                disabled={isSaving}
-              />
+              <View className="gap-1">
+                <Text className="text-label font-semibold uppercase tracking-wide text-fg-muted">
+                  {t("profile.labelEmail")}
+                </Text>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder={t("profile.labelEmail")}
+                      keyboardType="email-address"
+                      errorMessage={formState.errors.email?.message}
+                    />
+                  )}
+                />
+              </View>
             </View>
-          </KeyboardAwareScrollView>
-        )}
-      </AppSafeArea>
+
+            <Button
+              label={isEdit ? t("profile.saveButton") : t("legalEntity.saveButton")}
+              onPress={() => {
+                onSubmit();
+              }}
+              disabled={isSaving}
+            />
+          </Card>
+        </KeyboardAwareScrollView>
+      )}
     </View>
   );
 }

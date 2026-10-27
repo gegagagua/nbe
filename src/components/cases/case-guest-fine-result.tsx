@@ -8,8 +8,6 @@ import { showErrorToast } from '@/lib/show-error-toast';
 import type { GuestFineCheckResult } from '@/types/guest-fine';
 
 import { CaseDetailExtraInfoModalView } from './case-detail-extra-info-modal';
-import { caseDetailInternalStyles as cd } from './case-detail-internal.styles';
-import { caseGuestFinePanelStyles as s } from './case-guest-fine-panel.styles';
 import { CasePayAmountField } from './case-pay-amount-field';
 
 type Props = {
@@ -54,35 +52,35 @@ export function CaseGuestFineResult({ result, onPaymentSynced }: Props) {
 
   if (!result.found || (!result.personName && !result.amount)) {
     return (
-      <View style={s.resultCard}>
-        <Text style={s.notFound}>{t('cases.guestFine.notFound')}</Text>
+      <View className="gap-2 rounded-sm bg-surface-sunken p-4">
+        <Text className="text-center text-body font-semibold text-fg">{t('cases.guestFine.notFound')}</Text>
       </View>
     );
   }
 
   return (
     <>
-      <View style={s.resultCard}>
+      <View className="gap-2 rounded-sm bg-surface-sunken p-4">
         {result.personName ? (
           <>
-            <Text style={s.resultLabel}>{t('cases.guestFine.personNameLabel')}</Text>
-            <Text style={s.resultValue}>{result.personName}</Text>
+            <Text className="text-caption font-semibold text-fg-muted">{t('cases.guestFine.personNameLabel')}</Text>
+            <Text className="text-body font-semibold text-fg">{result.personName}</Text>
           </>
         ) : null}
         {result.personIdnumber ? (
           <>
-            <Text style={s.resultLabel}>{t('cases.personalIdNumberLabel')}</Text>
-            <Text style={s.resultMeta}>{result.personIdnumber}</Text>
+            <Text className="text-caption font-semibold text-fg-muted">{t('cases.personalIdNumberLabel')}</Text>
+            <Text className="text-caption font-semibold text-fg">{result.personIdnumber}</Text>
           </>
         ) : null}
         {result.details && result.details.length > 0 ? (
           <Pressable
-            style={[cd.detailsBtn, s.detailsButton]}
+            className="mt-2 self-start rounded-md bg-primary px-4 py-1"
             onPress={() => setDetailsOpen(true)}
             accessibilityRole="button"
             accessibilityLabel={t('cases.detail.detailsButtonA11y')}
           >
-            <Text style={cd.detailsBtnText}>{t('cases.detail.detailsButton')}</Text>
+            <Text className="text-caption font-bold text-on-primary">{t('cases.detail.detailsButton')}</Text>
           </Pressable>
         ) : null}
       </View>

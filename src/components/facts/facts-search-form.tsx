@@ -1,18 +1,13 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 import { CaseFilterField } from "@/components/cases/case-filter-field";
-import { caseFiltersStyles as s } from "@/components/cases/case-filters.styles";
+import { Button, Card, PressableScale } from "@/components/ui";
 import { DatePickerField } from "@/components/ui/date-picker-field";
-import {
-  DebtorRegistryLayout,
-  DebtorRegistryPalette,
-} from "@/constants/debtor-registry";
+import { useAppTheme } from "@/theme";
 import type { FactsSearchFilters } from "@/types/facts";
-
-import { factsSearchFormStyles as fs } from "./facts-search-form.styles";
 
 type Props = {
   values: FactsSearchFilters;
@@ -28,6 +23,7 @@ type Props = {
  */
 export function FactsSearchForm({ values, onChange, onSearch, onClear }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const setValue = <K extends keyof FactsSearchFilters>(
     key: K,
@@ -39,11 +35,13 @@ export function FactsSearchForm({ values, onChange, onSearch, onClear }: Props) 
   const months = t("facts.pickerMonths").split(",");
 
   return (
-    <View style={s.panel}>
-      <View style={s.titleRow}>
-        <Text style={s.title}>{t("facts.filtersTitle")}</Text>
-        <Pressable
-          style={s.toggleButton}
+    <Card className="gap-3">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.filtersTitle")}
+        </Text>
+        <PressableScale
+          className="h-9 w-9 items-center justify-center rounded-md border border-border bg-surface-sunken"
           onPress={() => setIsPanelOpen((v) => !v)}
           accessibilityRole="button"
           accessibilityLabel={
@@ -52,68 +50,72 @@ export function FactsSearchForm({ values, onChange, onSearch, onClear }: Props) 
         >
           <MaterialCommunityIcons
             name={isPanelOpen ? "chevron-up" : "chevron-down"}
-            size={DebtorRegistryLayout.filterPanelIconSize}
-            color={DebtorRegistryPalette.textPrimary}
+            size={22}
+            color={colors.text}
           />
-        </Pressable>
+        </PressableScale>
       </View>
       {isPanelOpen ? (
-        <>
-          <Text style={s.label}>{t("facts.regNumberLabel")}</Text>
-          <CaseFilterField
-            value={values.regnumber ?? ""}
-            onChangeText={(v) => setValue("regnumber", v)}
-            placeholder={t("facts.regNumberPlaceholder")}
-          />
-          <Text style={s.label}>{t("facts.regPeriodLabel")}</Text>
-          <View style={s.row}>
-            <View style={s.half}>
-              <DatePickerField
-                value={values.regDateFrom ?? ""}
-                onChange={(v) => setValue("regDateFrom", v)}
-                placeholder={datePlaceholder}
-                weekdays={weekdays}
-                months={months}
-                clearLabel={t("facts.pickerClear")}
-                closeLabel={t("facts.pickerClose")}
-              />
-            </View>
-            <View style={s.half}>
-              <DatePickerField
-                value={values.regDateTo ?? ""}
-                onChange={(v) => setValue("regDateTo", v)}
-                placeholder={datePlaceholder}
-                weekdays={weekdays}
-                months={months}
-                clearLabel={t("facts.pickerClear")}
-                closeLabel={t("facts.pickerClose")}
-              />
+        <View className="gap-3">
+          <View className="gap-1">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t("facts.regNumberLabel")}
+            </Text>
+            <CaseFilterField
+              value={values.regnumber ?? ""}
+              onChangeText={(v) => setValue("regnumber", v)}
+              placeholder={t("facts.regNumberPlaceholder")}
+            />
+          </View>
+          <View className="gap-1">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t("facts.regPeriodLabel")}
+            </Text>
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <DatePickerField
+                  value={values.regDateFrom ?? ""}
+                  onChange={(v) => setValue("regDateFrom", v)}
+                  placeholder={datePlaceholder}
+                  weekdays={weekdays}
+                  months={months}
+                  clearLabel={t("facts.pickerClear")}
+                  closeLabel={t("facts.pickerClose")}
+                />
+              </View>
+              <View className="flex-1">
+                <DatePickerField
+                  value={values.regDateTo ?? ""}
+                  onChange={(v) => setValue("regDateTo", v)}
+                  placeholder={datePlaceholder}
+                  weekdays={weekdays}
+                  months={months}
+                  clearLabel={t("facts.pickerClear")}
+                  closeLabel={t("facts.pickerClose")}
+                />
+              </View>
             </View>
           </View>
-          <Text style={s.label}>{t("facts.payCodeLabel")}</Text>
-          <CaseFilterField
-            value={values.payCode ?? ""}
-            onChangeText={(v) => setValue("payCode", v)}
-            placeholder={t("facts.payCodePlaceholder")}
-          />
-          <View style={fs.actions}>
-            <Pressable
-              style={fs.searchButton}
-              onPress={onSearch}
-              accessibilityRole="button"
-            >
-              <Text style={fs.searchText}>{t("facts.searchButton")}</Text>
-            </Pressable>
-            <Pressable
-              style={fs.clearButton}
+          <View className="gap-1">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t("facts.payCodeLabel")}
+            </Text>
+            <CaseFilterField
+              value={values.payCode ?? ""}
+              onChangeText={(v) => setValue("payCode", v)}
+              placeholder={t("facts.payCodePlaceholder")}
+            />
+          </View>
+          <View className="gap-2">
+            <Button label={t("facts.searchButton")} onPress={onSearch} />
+            <Button
+              label={t("facts.clearButton")}
               onPress={onClear}
-              accessibilityRole="button"
-            >
-              <Text style={fs.clearText}>{t("facts.clearButton")}</Text>
-            </Pressable>
+              variant="destructive"
+            />
           </View>
-        </>
+        </View>
       ) : null}
-    </View>
+    </Card>
   );
 }

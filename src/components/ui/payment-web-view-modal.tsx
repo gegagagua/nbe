@@ -9,10 +9,7 @@ import {
 import { WebView } from "react-native-webview";
 
 import { Layout } from "@/constants/layout";
-import { LoginPalette } from "@/constants/login";
-import { Space } from "@/constants/theme";
-
-import { paymentWebViewModalStyles as s } from "./payment-web-view-modal.styles";
+import { useAppTheme } from "@/theme";
 
 type BodyProps = {
   url: string;
@@ -51,6 +48,7 @@ function isResolutionUrl(url: string): boolean {
 
 function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const initialUrlRef = useRef(url);
@@ -83,17 +81,15 @@ function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
 
   return (
     <View
-      style={[
-        s.page,
-        {
-          paddingTop: insets.top + Space.small,
-          paddingBottom: insets.bottom + Space.small,
-        },
-      ]}
+      className="flex-1 bg-bg"
+      style={{
+        paddingTop: insets.top + 8,
+        paddingBottom: insets.bottom + 8,
+      }}
     >
-      <View style={s.header}>
+      <View className="flex-row items-center px-4 mb-2">
         <Pressable
-          style={s.closeHit}
+          className="flex-row items-center gap-1 py-2 pr-4"
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t("cases.guestFine.paymentCloseA11yLabel")}
@@ -101,17 +97,17 @@ function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
           <MaterialCommunityIcons
             name="close"
             size={Layout.registerBackIconSize}
-            color={LoginPalette.primary}
+            color={colors.primary}
           />
-          <Text style={s.closeLabel}>
+          <Text className="text-body-lg font-semibold text-primary">
             {t("cases.guestFine.paymentCloseLabel")}
           </Text>
         </Pressable>
       </View>
-      <View style={s.webviewWrap}>
+      <View className="flex-1 mx-4 rounded-sm overflow-hidden bg-surface">
         <WebView
           source={{ uri: url }}
-          style={s.webview}
+          style={{ flex: 1 }}
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
           onNavigationStateChange={handleNavChange}
@@ -121,8 +117,8 @@ function PaymentWebViewModalBody({ url, onClose }: BodyProps) {
           domStorageEnabled
         />
         {loading ? (
-          <View style={s.loadingOverlay}>
-            <ActivityIndicator size="large" color={LoginPalette.primary} />
+          <View className="absolute inset-0 z-[1] items-center justify-center bg-surface">
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : null}
       </View>

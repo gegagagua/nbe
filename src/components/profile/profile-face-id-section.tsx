@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
 
 import { PasswordHistoryModal } from '@/components/home/password-history-modal';
 import { LoginOtpModal } from '@/components/login/login-otp-modal';
-import { AnimatedPressable } from '@/components/ui/animated-pressable';
-import { LoginPalette } from '@/constants/login';
+import { Card } from '@/components/ui/card';
 import { useProfileFaceIdToggle } from '@/hooks/use-profile-face-id-toggle';
+import { useAppTheme } from '@/theme';
 import type { CreateSessionResponse } from '@/types/session';
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from '@/types/users';
 
 import { ProfileFaceIdEnableModal } from './profile-face-id-enable-modal';
 import { ProfileLoginHistoryModal } from './profile-login-history-modal';
-import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
-import { profileScreenStyles as ps } from './profile-screen.styles';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
@@ -32,6 +30,7 @@ export function ProfileFaceIdSection({
   ...rest
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const ctrl = useProfileFaceIdToggle({ username, ...rest });
   const { faceId } = ctrl;
   const [historyVisible, setHistoryVisible] = useState(false);
@@ -53,48 +52,51 @@ export function ProfileFaceIdSection({
         : t('faceId.descriptionDisabled');
 
   return (
-    <View style={ps.card}>
-      <Text style={ps.sectionTitle}>{t('faceId.sectionTitle')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('faceId.sectionTitle')}</Text>
 
-      <View style={s.row}>
-        <View style={s.rowText}>
-          <Text style={s.rowLabel}>{rowLabel}</Text>
-          <Text style={s.rowDescription}>{description}</Text>
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-1 gap-0.5">
+          <Text className="text-body font-semibold text-fg">{rowLabel}</Text>
+          <Text className="text-label leading-[18px] text-fg-muted">{description}</Text>
         </View>
         {faceId.isLoading ? (
-          <ActivityIndicator color={LoginPalette.primary} />
+          <ActivityIndicator color={colors.primary} />
         ) : (
           <Switch
             value={faceId.isEnabled}
             onValueChange={(v) => { ctrl.handleToggle(v); }}
-            trackColor={{ true: LoginPalette.primary, false: '#cfd8ea' }}
-            thumbColor="#ffffff"
-            ios_backgroundColor="#cfd8ea"
+            trackColor={{ true: colors.primary, false: colors.border }}
+            thumbColor={colors.surface}
+            ios_backgroundColor={colors.border}
           />
         )}
       </View>
 
-      <View style={s.actionRow}>
-        <AnimatedPressable
-          style={s.actionButton}
+      <View className="flex-row gap-2">
+        <Pressable
+          className="flex-1 items-center rounded-sm border border-primary px-2 py-1 active:opacity-70"
           onPress={() => setHistoryVisible(true)}
           accessibilityRole="button">
-          <Text style={s.actionButtonText}>{t('passwordHistory.buttonLabel')}</Text>
-        </AnimatedPressable>
-        <AnimatedPressable
-          style={s.actionButton}
+          <Text className="text-label font-semibold text-primary">
+            {t('passwordHistory.buttonLabel')}
+          </Text>
+        </Pressable>
+        <Pressable
+          className="flex-1 items-center rounded-sm border border-primary px-2 py-1 active:opacity-70"
           onPress={() => setLoginHistoryVisible(true)}
           accessibilityRole="button">
-          <Text style={s.actionButtonText}>{t('loginHistory.buttonLabel')}</Text>
-        </AnimatedPressable>
+          <Text className="text-label font-semibold text-primary">
+            {t('loginHistory.buttonLabel')}
+          </Text>
+        </Pressable>
       </View>
 
       {ctrl.statusMessage ? (
         <Text
-          style={[
-            ps.statusMessage,
-            ctrl.statusMessage.type === 'success' ? ps.statusSuccess : ps.statusError,
-          ]}>
+          className={`text-center text-label font-semibold ${
+            ctrl.statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+          }`}>
           {ctrl.statusMessage.text}
         </Text>
       ) : null}
@@ -122,6 +124,6 @@ export function ProfileFaceIdSection({
         entries={loginHistory}
         onClose={() => setLoginHistoryVisible(false)}
       />
-    </View>
+    </Card>
   );
 }

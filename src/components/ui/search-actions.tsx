@@ -1,7 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
 
-import { searchActionsStyles as s } from './search-actions.styles';
-
 type Props = {
   searchLabel: string;
   clearLabel: string;
@@ -20,16 +18,22 @@ export function SearchActions({
   searchDisabled = false,
 }: Props) {
   return (
-    <View style={s.actions}>
+    <View className="flex-row items-center gap-2 mt-1">
       <Pressable
-        style={[s.searchButton, searchDisabled && s.searchButtonDisabled]}
+        className={[
+          'flex-1 h-[50px] rounded-md bg-primary items-center justify-center',
+          searchDisabled ? 'opacity-50' : '',
+        ].join(' ')}
         onPress={onSearch}
         disabled={searchDisabled}
         accessibilityRole="button">
-        <Text style={s.searchText}>{searchLabel}</Text>
+        <Text className="text-on-primary font-bold">{searchLabel}</Text>
       </Pressable>
-      <Pressable style={s.clearButton} onPress={onClear} accessibilityRole="button">
-        <Text style={s.clearText}>{clearLabel}</Text>
+      <Pressable
+        className="w-[50px] h-[50px] rounded-md border border-input-border bg-input items-center justify-center"
+        onPress={onClear}
+        accessibilityRole="button">
+        <Text className="text-fg font-bold">{clearLabel}</Text>
       </Pressable>
     </View>
   );

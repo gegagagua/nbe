@@ -1,7 +1,7 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { profileScreenStyles as s } from './profile-screen.styles';
+import { Button } from '@/components/ui/button';
 
 type Props = {
   editing: boolean;
@@ -27,43 +27,45 @@ export function ProfileInfoActions({
   const { t } = useTranslation();
 
   return (
-    <>
+    <View className="gap-3">
       {statusMessage ? (
         <Text
-          style={[
-            s.statusMessage,
-            statusMessage.type === 'success' ? s.statusSuccess : s.statusError,
-          ]}>
+          className={`text-center text-caption font-semibold ${
+            statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+          }`}>
           {statusMessage.text}
         </Text>
       ) : null}
 
       {editing ? (
-        <View style={s.rowButtons}>
-          <Pressable
-            style={[s.buttonOutline, isSaving && s.buttonDisabled]}
-            onPress={onCancel}
-            disabled={isSaving}
-            accessibilityRole="button">
-            <Text style={s.buttonOutlineText}>{t('profile.cancelButton')}</Text>
-          </Pressable>
-          <Pressable
-            style={[s.buttonPrimary, (isSaving || !isValid) && s.buttonDisabled]}
-            onPress={onSave}
-            disabled={isSaving || !isValid}
-            accessibilityRole="button">
-            <Text style={s.buttonPrimaryText}>{t('profile.saveButton')}</Text>
-          </Pressable>
+        <View className="flex-row gap-3">
+          <View className="flex-1">
+            <Button
+              label={t('profile.cancelButton')}
+              onPress={onCancel}
+              disabled={isSaving}
+              variant="secondary"
+              size="sm"
+            />
+          </View>
+          <View className="flex-1">
+            <Button
+              label={t('profile.saveButton')}
+              onPress={onSave}
+              disabled={isSaving || !isValid}
+              loading={isSaving}
+              size="sm"
+            />
+          </View>
         </View>
       ) : (
-        <Pressable
-          style={[s.buttonOutline, !canEdit && s.buttonDisabled]}
+        <Button
+          label={t('profile.editButton')}
           onPress={onEdit}
           disabled={!canEdit}
-          accessibilityRole="button">
-          <Text style={s.buttonOutlineText}>{t('profile.editButton')}</Text>
-        </Pressable>
+          variant="secondary"
+        />
       )}
-    </>
+    </View>
   );
 }

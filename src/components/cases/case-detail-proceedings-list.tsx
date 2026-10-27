@@ -3,14 +3,11 @@ import { useState } from 'react';
 import { Linking, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import type { CaseDetailData } from '@/types/case-detail-data';
 
 import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
 import { CaseDetailProceedingFiles } from './case-detail-proceeding-files';
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailProceedingsList({
   proceedings,
@@ -18,27 +15,28 @@ export function CaseDetailProceedingsList({
   proceedings: CaseDetailData['proceedings'];
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [expanded, setExpanded] = useState<number | null>(null);
   return (
     <View>
       {proceedings.map((row, idx) => {
         const isOpen = expanded === idx;
         return (
-          <View key={`${row.codeLine}-${idx}`} style={p.panel}>
+          <View key={`${row.codeLine}-${idx}`} className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
             <Pressable
-              style={p.panelHeadRow}
+              className="flex-row items-center justify-between border-b border-border p-2"
               onPress={() => setExpanded(isOpen ? null : idx)}>
-              <Text style={s.primaryText}>
+              <Text className="text-label font-bold text-fg">
                 {row.codeLine ? `${row.codeLine} :: ${row.title}` : row.title}
               </Text>
               <MaterialCommunityIcons
                 name={isOpen ? 'chevron-up' : 'chevron-down'}
                 size={22}
-                color={DebtorRegistryPalette.buttonBg}
+                color={colors.primary}
               />
             </Pressable>
-            <View style={tb.padSm}>
-              <Text style={s.mutedText}>{row.dateTime}</Text>
+            <View className="p-2">
+              <Text className="text-caption text-fg-secondary">{row.dateTime}</Text>
               {isOpen ? (
                 row.appStatusId != null ? (
                   <CaseDetailProceedingFiles
@@ -46,7 +44,7 @@ export function CaseDetailProceedingsList({
                     appStatusId={row.appStatusId}
                   />
                 ) : row.documents.length === 0 ? (
-                  <Text style={[s.mutedText, s.stackGapSm]}>{t('cases.detail.proceedingsNoDocs')}</Text>
+                  <Text className="mt-2 text-caption text-fg-secondary">{t('cases.detail.proceedingsNoDocs')}</Text>
                 ) : (
                   <CaseDetailKvCardList>
                     {row.documents.map((doc, di) => (
@@ -60,7 +58,7 @@ export function CaseDetailProceedingsList({
                                 onPress={() => Linking.openURL(doc.href)}
                                 accessibilityRole="link"
                                 accessibilityLabel={t('cases.detail.docOpenA11y')}>
-                                <Text style={s.linkText}>{doc.title}</Text>
+                                <Text className="text-label text-primary underline">{doc.title}</Text>
                               </Pressable>
                             ),
                           },

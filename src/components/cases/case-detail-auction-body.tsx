@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ActivityIndicator, Linking, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
+import { useAppTheme } from "@/theme";
 import { useAuctionLots } from "@/hooks/use-auction-lots";
 import type { CaseDetailAuctionLot } from "@/types/case-detail-data";
 
@@ -12,46 +12,44 @@ import {
   CaseDetailKvCard,
   CaseDetailKvCardList,
 } from "./case-detail-kv-card";
-import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
-import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
 
 function LotCard({ lot }: { lot: CaseDetailAuctionLot }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [open, setOpen] = useState(true);
   return (
-    <View style={p.panel}>
-      <Pressable style={p.panelHeadRow} onPress={() => setOpen((v) => !v)}>
-        <Text style={s.primaryText}>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Pressable className="flex-row items-center justify-between border-b border-border p-2" onPress={() => setOpen((v) => !v)}>
+        <Text className="text-label font-bold text-fg">
           {t("cases.detail.auctionLotNPrefix")} {lot.lotNo}
         </Text>
         <MaterialCommunityIcons
           name={open ? "chevron-up" : "chevron-down"}
           size={22}
-          color={DebtorRegistryPalette.buttonBg}
+          color={colors.primary}
         />
       </Pressable>
       {open ? (
-        <View style={tb.padSm}>
+        <View className="p-2">
           {lot.category ? (
-            <Text style={s.mutedText}>
+            <Text className="text-caption text-fg-secondary">
               {lot.category} :: {t("cases.detail.auctionQuantityLabel")}
             </Text>
           ) : null}
           {lot.price ? (
-            <Text style={s.mutedText}>
+            <Text className="text-caption text-fg-secondary">
               {t("cases.detail.auctionPriceLabel")}: {lot.price}
             </Text>
           ) : null}
           {lot.winDate ? (
-            <Text style={s.mutedText}>
+            <Text className="text-caption text-fg-secondary">
               {t("cases.detail.auctionWinDateLabel")}: {lot.winDate}
             </Text>
           ) : null}
 
           {lot.stages.length > 0 ? (
             <View>
-              <Text style={[s.primaryText, tb.padSm]}>
+              <Text className="p-2 text-label font-bold text-fg">
                 {t("cases.detail.auctionStagesTitle")}
               </Text>
               <CaseDetailKvCardList>
@@ -78,7 +76,7 @@ function LotCard({ lot }: { lot: CaseDetailAuctionLot }) {
                               "cases.detail.auctionOpenEauction",
                             )}
                           >
-                            <Text style={s.linkText}>
+                            <Text className="text-label text-primary underline">
                               {t("cases.detail.auctionOpenEauction")}
                             </Text>
                           </Pressable>
@@ -100,22 +98,23 @@ function LotCard({ lot }: { lot: CaseDetailAuctionLot }) {
 
 export function CaseDetailAuctionBody() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? "");
   const { data: lots, isLoading } = useAuctionLots(appId);
 
   if (isLoading) {
     return (
-      <View style={tb.padSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="p-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   if (!lots || lots.length === 0) {
     return (
-      <View style={p.panel}>
-        <Text style={[s.mutedText, p.panelBodyPad]}>
+      <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+        <Text className="px-4 py-2 text-caption text-fg-secondary">
           {t("cases.detail.auctionEmpty")}
         </Text>
       </View>

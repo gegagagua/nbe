@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { z } from 'zod';
 
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-
-import { profileScreenStyles as s } from './profile-screen.styles';
 
 const PUNCTUATION_RE = /[~!@#$%^&*()_+`\-={}[\]|\\:";'<>,.?/]/;
 
@@ -62,15 +62,15 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
   });
 
   return (
-    <View style={s.card}>
-      <Text style={s.sectionTitle}>{t('profile.sectionChangePassword')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('profile.sectionChangePassword')}</Text>
 
-      <Text style={{ fontSize: 12, color: '#6b7a90', lineHeight: 18 }}>
+      <Text className="text-caption leading-[18px] text-fg-muted">
         {t('forgotPassword.passwordRequirements')}
       </Text>
 
-      <View style={s.fieldGroup}>
-        <View style={s.fieldRow}>
+      <View className="gap-2">
+        <View className="gap-1">
           <Controller
             control={control}
             name="currentPassword"
@@ -86,11 +86,11 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
             )}
           />
           {formState.errors.currentPassword?.message ? (
-            <Text style={s.fieldError}>{formState.errors.currentPassword.message}</Text>
+            <Text className="text-label text-danger">{formState.errors.currentPassword.message}</Text>
           ) : null}
         </View>
 
-        <View style={s.fieldRow}>
+        <View className="gap-1">
           <Controller
             control={control}
             name="newPassword"
@@ -106,11 +106,11 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
             )}
           />
           {formState.errors.newPassword?.message ? (
-            <Text style={s.fieldError}>{formState.errors.newPassword.message}</Text>
+            <Text className="text-label text-danger">{formState.errors.newPassword.message}</Text>
           ) : null}
         </View>
 
-        <View style={s.fieldRow}>
+        <View className="gap-1">
           <Controller
             control={control}
             name="confirmPassword"
@@ -126,24 +126,25 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
             )}
           />
           {formState.errors.confirmPassword?.message ? (
-            <Text style={s.fieldError}>{formState.errors.confirmPassword.message}</Text>
+            <Text className="text-label text-danger">{formState.errors.confirmPassword.message}</Text>
           ) : null}
         </View>
       </View>
 
       {statusMessage ? (
-        <Text style={[s.statusMessage, statusMessage.type === 'success' ? s.statusSuccess : s.statusError]}>
+        <Text
+          className={`text-center text-label font-semibold ${
+            statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+          }`}>
           {statusMessage.text}
         </Text>
       ) : null}
 
-      <Pressable
-        style={[s.buttonPrimary, (isSubmitting || !formState.isValid) && s.buttonDisabled]}
+      <Button
+        label={t('profile.changePasswordButton')}
         onPress={() => { submitHandler(); }}
         disabled={isSubmitting || !formState.isValid}
-        accessibilityRole="button">
-        <Text style={s.buttonPrimaryText}>{t('profile.changePasswordButton')}</Text>
-      </Pressable>
-    </View>
+      />
+    </Card>
   );
 }

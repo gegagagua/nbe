@@ -11,18 +11,13 @@ import {
   View,
 } from "react-native";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { Layout } from "@/constants/layout";
-import { LoginPalette } from "@/constants/login";
 import { Space } from "@/constants/theme";
+import { useAppTheme } from "@/theme";
 import { useCaseExtraInfo } from "@/hooks/use-case-extra-info";
 import type { CaseDetailExtraInfoRow } from "@/types/case-detail-data";
 
 import { CaseDetailKvCard } from "./case-detail-kv-card";
-import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
-import { caseDetailModalStyles as m } from "./case-detail-modal.styles";
-import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
 
 type Props = {
   visible: boolean;
@@ -47,6 +42,7 @@ export function CaseDetailExtraInfoModalView({
   isLoading,
 }: ViewProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
 
   return (
     <Modal
@@ -55,17 +51,17 @@ export function CaseDetailExtraInfoModalView({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={m.scrimFill}>
+      <View className="flex-1 bg-black/40">
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t("cases.detail.extraInfoCloseA11y")}
         />
-        <View style={x.centerWrap} pointerEvents="box-none">
-          <View style={[p.panel, x.card]}>
-            <View style={p.panelHeadRow}>
-              <Text style={x.title}>{t("cases.detail.extraInfoTitle")}</Text>
+        <View className="flex-1 justify-center px-4" pointerEvents="box-none">
+          <View className="overflow-hidden rounded-md border border-border bg-surface">
+            <View className="flex-row items-center justify-between border-b border-border p-2">
+              <Text className="flex-1 font-bold text-primary">{t("cases.detail.extraInfoTitle")}</Text>
               <Pressable
                 onPress={onClose}
                 hitSlop={Space.small}
@@ -75,22 +71,22 @@ export function CaseDetailExtraInfoModalView({
                 <MaterialCommunityIcons
                   name="close"
                   size={Layout.registerBackIconSize}
-                  color={LoginPalette.primary}
+                  color={colors.primary}
                 />
               </Pressable>
             </View>
             {isLoading ? (
-              <View style={tb.padSm}>
-                <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+              <View className="p-2">
+                <ActivityIndicator color={colors.primary} />
               </View>
             ) : !rows || rows.length === 0 ? (
-              <Text style={[s.mutedText, tb.padSm]}>
+              <Text className="p-2 text-caption text-fg-secondary">
                 {t("cases.detail.extraInfoEmpty")}
               </Text>
             ) : (
               <ScrollView
-                style={x.scroll}
-                contentContainerStyle={tb.padSm}
+                className="max-h-[420px]"
+                contentContainerClassName="p-2"
                 showsVerticalScrollIndicator
               >
                 <CaseDetailKvCard
@@ -129,23 +125,3 @@ export function CaseDetailExtraInfoModal({ visible, onClose }: Props) {
     />
   );
 }
-
-const x = StyleSheet.create({
-  centerWrap: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: Space.medium,
-  },
-  card: {
-    marginBottom: 0,
-    backgroundColor: DebtorRegistryPalette.cardBg,
-  },
-  title: {
-    flex: 1,
-    fontWeight: "700",
-    color: DebtorRegistryPalette.buttonBg,
-  },
-  scroll: {
-    maxHeight: 420,
-  },
-});

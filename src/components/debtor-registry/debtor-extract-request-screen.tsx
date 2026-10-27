@@ -3,8 +3,6 @@ import { router } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { LoginFooter } from '@/components/login/login-footer';
-import { AppSafeArea } from '@/components/ui/app-safe-area';
 import { useDebtorExtractApplicant } from '@/hooks/use-debtor-extract-applicant';
 import { isGuestMode } from '@/lib/guest-mode';
 import type { DebtorExtractFlowPhase, DebtorExtractPaymentMethod } from '@/types/debtor-extract';
@@ -13,7 +11,6 @@ import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-paymen
 import { DebtorExtractPhaseForm } from './debtor-extract-phase-form';
 import { DebtorExtractPhasePayment } from './debtor-extract-phase-payment';
 import { DebtorExtractPhaseSubmit } from './debtor-extract-phase-submit';
-import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 import { DebtorExtractSubheader } from './debtor-extract-subheader';
 
 export function DebtorExtractRequestScreen() {
@@ -48,14 +45,17 @@ export function DebtorExtractRequestScreen() {
   };
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <DebtorExtractSubheader
-          title={t('debtors.extractRequestButton')}
-          backA11y={t('debtors.extractBackA11y')}
-          onBack={handleBack}
-        />
-        <ScrollView style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
+    <View className="flex-1 bg-bg">
+      <DebtorExtractSubheader
+        title={t('debtors.extractRequestButton')}
+        backA11y={t('debtors.extractBackA11y')}
+        onBack={handleBack}
+      />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40, gap: 20 }}
+        keyboardShouldPersistTaps="handled"
+      >
           {phase === 'form' ? (
             <DebtorExtractPhaseForm
               applicantPersonalId={isGuest ? guestApplicantPersonalId : applicant.personalId}
@@ -79,9 +79,7 @@ export function DebtorExtractRequestScreen() {
               onSent={() => router.back()}
             />
           ) : null}
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+      </ScrollView>
     </View>
   );
 }

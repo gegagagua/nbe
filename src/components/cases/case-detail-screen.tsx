@@ -1,14 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { getCaseDetailLayoutMock } from "@/constants/case-detail-layout-mock";
-import { LoginPalette } from "@/constants/login";
 import type { CaseDetailMainTab } from "@/types/case-detail-ui";
 
-import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { AppHeader } from "@/components/ui/app-header";
+import { useAppTheme } from "@/theme";
 import { useCaseDetail } from "@/hooks/use-case-detail";
 
 import { CaseDetailApplicationTab } from "./case-detail-application-tab";
@@ -18,11 +18,11 @@ import { CaseDetailHeaderSummary } from "./case-detail-header-summary";
 import { CaseDetailInfoTab } from "./case-detail-info-tab";
 import { CaseDetailMainTabs } from "./case-detail-main-tabs";
 import { CaseDetailPaySection } from "./case-detail-pay-section";
-import { caseDetailScreenStyles as layout } from "./case-detail-screen.styles";
 
 export function CaseDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { colors } = useAppTheme();
   const { id, personId, amount, payDisplay } = useLocalSearchParams<{
     id: string;
     personId?: string;
@@ -43,34 +43,21 @@ export function CaseDetailScreen() {
 
   if (isLoading && !appData) {
     return (
-      <AppSafeArea style={layout.page}>
-        <View style={[layout.scroll, { flex: 1, justifyContent: "center" }]}>
-          <ActivityIndicator size="large" color={LoginPalette.primary} />
-        </View>
-      </AppSafeArea>
+      <View className="flex-1 items-center justify-center bg-bg">
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
     );
   }
 
   return (
-    <AppSafeArea style={layout.page}>
+    <View className="flex-1 bg-bg">
+      <AppHeader title={t("cases.detailTitle")} onBack={() => router.back()} />
       <KeyboardAwareScrollView
-        contentContainerStyle={layout.scroll}
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 32, gap: 16 }}
         keyboardShouldPersistTaps="handled"
         bottomOffset={16}
       >
-        <View style={layout.headerRow}>
-          <Pressable
-            style={layout.backBtn}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel={t("cases.detailBack")}
-          >
-            <Text style={layout.backText}>{t("cases.detailBack")}</Text>
-          </Pressable>
-          <Text style={layout.title} numberOfLines={1}>
-            {t("cases.detailTitle")}
-          </Text>
-        </View>
         <CaseDetailHeaderSummary data={data} />
         <CaseDetailMainTabs value={tab} onChange={setTab} />
         {tab === "application" ? (
@@ -89,6 +76,6 @@ export function CaseDetailScreen() {
         />
         <CaseDetailCloseRow onClose={() => router.back()} />
       </KeyboardAwareScrollView>
-    </AppSafeArea>
+    </View>
   );
 }

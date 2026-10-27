@@ -3,11 +3,10 @@ import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import type { CaseDetailData } from '@/types/case-detail-data';
 import type { CaseDetailInfoSub } from '@/types/case-detail-ui';
 
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
 import { CaseDetailAuctionBody } from './case-detail-auction-body';
 import { CaseDetailFundsBody } from './case-detail-funds-body';
 import { CaseDetailInstallmentBody } from './case-detail-installment-body';
@@ -25,6 +24,7 @@ const SUB_KEYS: CaseDetailInfoSub[] = [
 
 export function CaseDetailInfoTab({ data }: { data: CaseDetailData }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [sub, setSub] = useState<CaseDetailInfoSub>('proceedings');
   const [sheet, setSheet] = useState(false);
   const labelMap: Record<CaseDetailInfoSub, string> = {
@@ -36,9 +36,11 @@ export function CaseDetailInfoTab({ data }: { data: CaseDetailData }) {
   };
   return (
     <View>
-      <Pressable style={p.subPicker} onPress={() => setSheet(true)}>
-        <Text style={p.subPickerLabel}>{labelMap[sub]}</Text>
-        <MaterialCommunityIcons name="menu-down" size={22} color={DebtorRegistryPalette.buttonBg} />
+      <Pressable
+        className="mb-4 flex-row items-center justify-between rounded-sm border border-input-border bg-input p-2"
+        onPress={() => setSheet(true)}>
+        <Text className="text-label text-fg">{labelMap[sub]}</Text>
+        <MaterialCommunityIcons name="menu-down" size={22} color={colors.primary} />
       </Pressable>
       <CaseDetailSubtabSheet
         visible={sheet}

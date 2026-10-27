@@ -1,15 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 
-import { caseListStyles } from "@/components/cases/case-list.styles";
-import { NotificationsLayout } from "@/constants/notifications";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { AppNotification } from "@/types/notifications";
 
 import { NotificationListItem } from "./notification-list-item";
-
-const styles = StyleSheet.create({
-  wrap: { gap: NotificationsLayout.listGap },
-});
 
 export function NotificationsList({
   items,
@@ -30,22 +26,25 @@ export function NotificationsList({
 
   if (loading) {
     return (
-      <Text style={caseListStyles.stateText}>
-        {t("notifications.loadingMessage")}
-      </Text>
+      <View className="gap-3">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} height={84} radius={16} />
+        ))}
+      </View>
     );
   }
 
   if (empty) {
     return (
-      <Text style={caseListStyles.stateText}>
-        {t("notifications.emptyMessage")}
-      </Text>
+      <EmptyState
+        icon="bell-outline"
+        title={t("notifications.emptyMessage")}
+      />
     );
   }
 
   return (
-    <View style={styles.wrap}>
+    <View className="gap-3">
       {items.map((item) => (
         <NotificationListItem
           key={item.id}

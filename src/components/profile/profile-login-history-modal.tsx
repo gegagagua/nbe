@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { ModalBackdrop } from '@/components/ui/modal-backdrop';
-import { LoginPalette } from '@/constants/login';
-import { Radius, Space, Typography } from '@/constants/theme';
+import { useAppTheme } from '@/theme';
 import type { LoginHistoryEntry } from '@/types/users';
 
 type Props = {
@@ -26,6 +25,7 @@ function formatDateTime(iso: string): string {
 
 export function ProfileLoginHistoryModal({ visible, entries, onClose }: Props) {
   const { t } = useTranslation();
+  const { colors, shadows } = useAppTheme();
 
   return (
     <Modal
@@ -34,36 +34,55 @@ export function ProfileLoginHistoryModal({ visible, entries, onClose }: Props) {
       animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent>
-      <ModalBackdrop onClose={onClose} style={styles.overlay}>
-        <View style={styles.sheet}>
-          <Text style={styles.title}>{t('loginHistory.modalTitle')}</Text>
+      <ModalBackdrop
+        onClose={onClose}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 16,
+          backgroundColor: colors.overlay,
+        }}>
+        <View
+          className="w-full max-w-[480px] gap-3 rounded-lg bg-surface p-4"
+          style={shadows.lg}>
+          <Text className="text-center text-heading font-bold text-fg">
+            {t('loginHistory.modalTitle')}
+          </Text>
 
           {entries.length === 0 ? (
-            <Text style={styles.emptyText}>{t('loginHistory.emptyMessage')}</Text>
+            <Text className="py-3 text-center text-body text-fg-muted">
+              {t('loginHistory.emptyMessage')}
+            </Text>
           ) : (
-            <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-              <View style={{ gap: Space.small }}>
+            <ScrollView className="max-h-[360px]" showsVerticalScrollIndicator={false}>
+              <View className="gap-2">
                 {entries.map((entry, i) => (
-                  <View key={`${entry.date}-${i}`} style={styles.row}>
-                    <View style={styles.rowHeader}>
-                      <Text style={styles.dateText}>{formatDateTime(entry.date)}</Text>
+                  <View
+                    key={`${entry.date}-${i}`}
+                    className="gap-1 rounded-sm border border-border p-2">
+                    <View className="flex-row items-center justify-between gap-2">
+                      <Text className="text-label font-semibold text-fg">
+                        {formatDateTime(entry.date)}
+                      </Text>
                       <Text
-                        style={[
-                          styles.statusBadge,
-                          entry.success ? styles.statusSuccess : styles.statusFail,
-                        ]}>
+                        className={`overflow-hidden rounded-sm px-1 py-0.5 text-caption font-bold ${
+                          entry.success
+                            ? 'bg-success-subtle text-on-success'
+                            : 'bg-danger-subtle text-on-danger'
+                        }`}>
                         {entry.success
                           ? t('loginHistory.statusSuccess')
                           : t('loginHistory.statusFailed')}
                       </Text>
                     </View>
                     {entry.ipAddress ? (
-                      <Text style={styles.metaText}>
+                      <Text className="text-caption text-fg-muted">
                         {t('loginHistory.ipLabel')}: {entry.ipAddress}
                       </Text>
                     ) : null}
                     {entry.userAgent ? (
-                      <Text style={styles.metaText} numberOfLines={2}>
+                      <Text className="text-caption text-fg-muted" numberOfLines={2}>
                         {t('loginHistory.deviceLabel')}: {entry.userAgent}
                       </Text>
                     ) : null}
@@ -73,93 +92,16 @@ export function ProfileLoginHistoryModal({ visible, entries, onClose }: Props) {
             </ScrollView>
           )}
 
-          <Pressable style={styles.closeButton} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.closeButtonText}>{t('passwordHistory.closeButton')}</Text>
+          <Pressable
+            className="items-center rounded-sm bg-primary py-2 active:bg-primary-pressed"
+            onPress={onClose}
+            accessibilityRole="button">
+            <Text className="text-body font-semibold text-on-primary">
+              {t('passwordHistory.closeButton')}
+            </Text>
           </Pressable>
         </View>
       </ModalBackdrop>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Space.large,
-  },
-  sheet: {
-    backgroundColor: '#ffffff',
-    borderRadius: Radius.large,
-    padding: Space.large,
-    width: '100%',
-    maxWidth: 480,
-    gap: Space.medium,
-  },
-  title: {
-    fontSize: Typography.large,
-    fontWeight: '700',
-    color: LoginPalette.titleText,
-    textAlign: 'center',
-  },
-  emptyText: {
-    fontSize: Typography.medium,
-    color: LoginPalette.placeholderMuted,
-    textAlign: 'center',
-    paddingVertical: Space.medium,
-  },
-  scroll: {
-    maxHeight: 360,
-  },
-  row: {
-    borderWidth: 1,
-    borderColor: LoginPalette.inputBorder,
-    borderRadius: Radius.small,
-    padding: Space.small,
-    gap: 4,
-  },
-  rowHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: Space.small,
-  },
-  dateText: {
-    fontSize: Typography.small,
-    fontWeight: '600',
-    color: LoginPalette.bodyText,
-  },
-  statusBadge: {
-    fontSize: Typography.extraSmall,
-    fontWeight: '700',
-    paddingVertical: 2,
-    paddingHorizontal: Space.extraSmall,
-    borderRadius: Radius.small,
-    overflow: 'hidden',
-  },
-  statusSuccess: {
-    backgroundColor: '#dcfce7',
-    color: '#166534',
-  },
-  statusFail: {
-    backgroundColor: '#fee2e2',
-    color: '#991b1b',
-  },
-  metaText: {
-    fontSize: Typography.extraSmall,
-    color: LoginPalette.placeholderMuted,
-  },
-  closeButton: {
-    backgroundColor: LoginPalette.primary,
-    borderRadius: Radius.small,
-    paddingVertical: Space.small,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#ffffff',
-    fontSize: Typography.medium,
-    fontWeight: '600',
-  },
-});

@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import type { LegalEntity } from '@/types/users';
 
 import { ProfileReadOnlyField } from './profile-read-only-field';
-import { profileScreenStyles as s } from './profile-screen.styles';
 
 type Props = {
   entity: LegalEntity;
@@ -15,10 +16,10 @@ export function ProfileLegalEntityInfoSection({ entity, onEdit }: Props) {
   const { t } = useTranslation();
 
   return (
-    <View style={s.card}>
-      <Text style={s.sectionTitle}>{t('legalEntity.sectionInfo')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('legalEntity.sectionInfo')}</Text>
 
-      <View style={s.infoFieldGroup}>
+      <View className="gap-2.5">
         <ProfileReadOnlyField label={t('login.registerLegalCompanyName')} value={entity.name} />
         <ProfileReadOnlyField label={t('cases.legalIdentificationCodeLabel')} value={entity.legalNumber} />
         <ProfileReadOnlyField label={t('legalEntity.labelMemberName')} value={entity.memberName} />
@@ -27,11 +28,7 @@ export function ProfileLegalEntityInfoSection({ entity, onEdit }: Props) {
         <ProfileReadOnlyField label={t('profile.labelEmail')} value={entity.email} />
       </View>
 
-      <View style={s.rowButtons}>
-        <Pressable style={s.buttonOutline} onPress={onEdit} accessibilityRole="button">
-          <Text style={s.buttonOutlineText}>{t('profile.editButton')}</Text>
-        </Pressable>
-      </View>
-    </View>
+      <Button label={t('profile.editButton')} onPress={onEdit} variant="secondary" />
+    </Card>
   );
 }

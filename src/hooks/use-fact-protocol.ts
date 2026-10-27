@@ -14,19 +14,28 @@ import type { FactProtocolStatus } from "@/types/facts";
  * ოქმი tab data: the statement's proceeding status(es) (usually a single
  * "105 — ფაქტების კონსტატაცია" entry) together with each status's downloadable
  * files. Statuses come from `GET app/{id}/status`; files from
- * `POST status/get-files` keyed by `appStatusId`.
+ * `POST status/get-files` keyed by `appStatusId`. Both need the `X-User-ID`
+ * header, so `userId` must be supplied for the query to run.
  */
-export function useFactProtocol(appId: number | null) {
+export function useFactProtocol(appId: number | null, userId: number | null) {
   const query = useQuery<FactProtocolStatus[]>({
-    queryKey: ["fact-protocol", appId],
-    enabled: appId != null,
+    queryKey: ["fact-protocol", appId, userId],
+    enabled: appId != null && userId != null,
     queryFn: async () => {
-      const statuses = (await getFactStatus(appId as number)).data ?? [];
+      const uid = userId as number;
+      const statuses = (await getFactStatus(appId as number, uid)).data ?? [];
       return Promise.all(
         statuses.map(async (entry) => {
-          const files = mapFactStatusFiles(
-            await getFactStatusFiles(entry.id, entry.appId ?? appId),
-          );
+          // Isolate per-status file failures so one bad/empty status can't blank
+          // the whole tab — the status heading still renders.
+          let files: FactProtocolStatus["files"] = [];
+          try {
+            files = mapFactStatusFiles(
+              await getFactStatusFiles(entry.id, entry.appId ?? appId, uid),
+            );
+          } catch {
+            files = [];
+          }
           return mapFactProtocolStatus(entry, files);
         }),
       );

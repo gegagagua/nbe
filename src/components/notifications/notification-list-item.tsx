@@ -2,14 +2,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
-import { LoginInteraction } from "@/constants/login";
-import {
-  NotificationsLayout,
-  NotificationsPalette,
-} from "@/constants/notifications";
+import { PressableScale } from "@/components/ui/pressable-scale";
+import { useAppTheme } from "@/theme";
 import type { AppNotification } from "@/types/notifications";
-
-import { notificationListItemStyles as s } from "./notification-list-item.styles";
 
 type Props = {
   item: AppNotification;
@@ -31,15 +26,18 @@ export function NotificationListItem({
   onPress,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const unread = !item.isRead;
   const moduleLabel = item.module;
 
   return (
     <View
-      style={[s.card, unread ? s.cardUnread : null, selected ? s.cardSelected : null]}
+      className={`flex-row items-start gap-2 rounded-xl border bg-surface p-3 ${
+        unread ? "border-accent" : "border-border"
+      } ${selected ? "bg-primary-subtle" : ""}`}
     >
       <Pressable
-        style={s.checkbox}
+        className="pt-px"
         onPress={() => onToggleSelected(item.id)}
         accessibilityRole="checkbox"
         accessibilityState={{ checked: selected }}
@@ -48,15 +46,14 @@ export function NotificationListItem({
       >
         <MaterialCommunityIcons
           name={selected ? "checkbox-marked" : "checkbox-blank-outline"}
-          size={NotificationsLayout.checkboxSize}
-          color={NotificationsPalette.textPrimary}
+          size={22}
+          color={selected ? colors.accent : colors.textSecondary}
         />
       </Pressable>
-      <Pressable
-        style={({ pressed }) => [
-          s.content,
-          pressed ? { opacity: LoginInteraction.pressedOpacity } : null,
-        ]}
+      <PressableScale
+        className="flex-1 gap-1"
+        pressedScale={0.99}
+        haptic="none"
         accessibilityRole="button"
         accessibilityLabel={`${moduleLabel} ${item.title} #${item.caseNumber} ${item.receivedAt}`.trim()}
         accessibilityHint={
@@ -64,19 +61,23 @@ export function NotificationListItem({
         }
         onPress={() => onPress(item)}
       >
-        <View style={s.metaRow}>
-          <Text style={s.module} numberOfLines={1}>
+        <View className="flex-row items-center justify-between gap-2">
+          <Text className="flex-1 text-caption text-fg-muted" numberOfLines={1}>
             {moduleLabel}
           </Text>
-          <Text style={s.date}>{item.receivedAt}</Text>
+          <Text className="text-caption text-fg-muted">{item.receivedAt}</Text>
         </View>
-        <Text style={[s.title, unread ? s.titleUnread : null]}>
+        <Text
+          className={`text-body text-fg ${unread ? "font-bold" : "font-normal"}`}
+        >
           {item.title}
         </Text>
-        <Text style={[s.caseNumber, unread ? s.caseNumberUnread : null]}>
+        <Text
+          className={`text-body text-fg ${unread ? "font-bold" : "font-normal"}`}
+        >
           {`#${item.caseNumber}`}
         </Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }

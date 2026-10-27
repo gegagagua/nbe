@@ -1,11 +1,11 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-import { LoginFooter } from '@/components/login/login-footer';
-import { AppSafeArea } from '@/components/ui/app-safe-area';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { ToastLayout } from '@/constants/toast';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
@@ -16,9 +16,7 @@ import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
 import { showErrorToast } from '@/lib/show-error-toast';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
-import { debtorAppDetailActionsStyles as da } from './debtor-app-detail-actions.styles';
 import { DebtorAppEditModal } from './debtor-app-edit-modal';
-import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 import { DebtorExtractSubheader } from './debtor-extract-subheader';
 import { DebtorRegistryApplicationRowActions } from './debtor-registry-application-row-actions';
 
@@ -31,9 +29,9 @@ type DetailParams = {
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <View style={s.fieldGap}>
-      <Text style={s.fieldLabel}>{label}</Text>
-      <Text style={s.readonlyValue}>{value}</Text>
+    <View className="gap-2">
+      <Text className="text-label font-semibold text-fg-secondary">{label}</Text>
+      <Text className="text-body font-medium text-fg">{value}</Text>
     </View>
   );
 }
@@ -90,30 +88,35 @@ export function DebtorAppDetailScreen() {
   const requested = app?.requestedPerson;
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <DebtorExtractSubheader
-          title={t('debtors.detailsTitlePrefix')}
-          backA11y={t('debtors.extractBackA11y')}
-          onBack={() => router.back()}
-        />
-        <ScrollView style={s.scroll} contentContainerStyle={s.content}>
-          {query.isPending ? (
-            <Text style={s.hintText}>{t('debtors.loadingMessage')}</Text>
-          ) : null}
-          {app ? (
-            <>
-              {isRegistered ? (
-                <View style={s.sectionCard}>
-                  <Text style={s.sectionTitle}>{t('debtors.detailRegisteredCase')}</Text>
-                  <Field
-                    label={t('debtors.detailLabelRegNumberTime')}
-                    value={`${regnumber} ${formatEnforcementDateTime(app.regDate)}`}
-                  />
-                </View>
-              ) : null}
-              <View style={s.sectionCard}>
-                <Text style={s.sectionTitle}>{t('debtors.extractApplicantSection')}</Text>
+    <View className="flex-1 bg-bg">
+      <DebtorExtractSubheader
+        title={t('debtors.detailsTitlePrefix')}
+        backA11y={t('debtors.extractBackA11y')}
+        onBack={() => router.back()}
+      />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40, gap: 20 }}>
+        {query.isPending ? (
+          <Text className="text-caption text-fg-muted">{t('debtors.loadingMessage')}</Text>
+        ) : null}
+        {app ? (
+          <>
+            {isRegistered ? (
+              <Card className="gap-4">
+                <Text className="text-body font-bold text-fg">
+                  {t('debtors.detailRegisteredCase')}
+                </Text>
+                <Field
+                  label={t('debtors.detailLabelRegNumberTime')}
+                  value={`${regnumber} ${formatEnforcementDateTime(app.regDate)}`}
+                />
+              </Card>
+            ) : null}
+            <Card className="gap-4">
+              <Text className="text-body font-bold text-fg">
+                {t('debtors.extractApplicantSection')}
+              </Text>
                 <Field
                   label={t('debtors.firstNameLabel')}
                   value={applicantName?.trim() || app.createdBy?.name || '—'}
@@ -123,9 +126,11 @@ export function DebtorAppDetailScreen() {
                   value={applicantId?.trim() || '—'}
                 />
                 <Field label={t('debtors.detailLabelPayCode')} value={payCode?.trim() || '—'} />
-              </View>
-              <View style={s.sectionCard}>
-                <Text style={s.sectionTitle}>{t('debtors.extractSubjectSection')}</Text>
+              </Card>
+              <Card className="gap-4">
+                <Text className="text-body font-bold text-fg">
+                  {t('debtors.extractSubjectSection')}
+                </Text>
                 <Field
                   label={t('debtors.extractSubjectNameLabel')}
                   value={requested?.personName || '—'}
@@ -134,14 +139,18 @@ export function DebtorAppDetailScreen() {
                   label={t('debtors.extractSubjectIdLabel')}
                   value={requested?.idnumber || '—'}
                 />
-              </View>
-              <View style={s.sectionCard}>
-                <Text style={s.sectionTitle}>{t('debtors.detailPaymentSection')}</Text>
+              </Card>
+              <Card className="gap-4">
+                <Text className="text-body font-bold text-fg">
+                  {t('debtors.detailPaymentSection')}
+                </Text>
                 {payments.length === 0 ? (
-                  <Text style={s.hintText}>{t('debtors.detailNoPayments')}</Text>
+                  <Text className="text-caption text-fg-muted">
+                    {t('debtors.detailNoPayments')}
+                  </Text>
                 ) : (
                   payments.map((payment) => (
-                    <View key={payment.id} style={s.fieldGap}>
+                    <View key={payment.id} className="gap-2">
                       <Field
                         label={t('debtors.detailLabelPaidAmount')}
                         value={
@@ -167,32 +176,31 @@ export function DebtorAppDetailScreen() {
                     </View>
                   ))
                 )}
-              </View>
+              </Card>
               {isRegistered ? (
                 <DebtorRegistryApplicationRowActions app={app} />
               ) : (
                 // Visual-only actions for recorded (not-yet-registered) cases.
-                <View style={da.row}>
-                  <Pressable
-                    style={[da.btn, da.editBtn]}
-                    accessibilityRole="button"
-                    onPress={() => setEditVisible(true)}>
-                    <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[da.btn, da.payBtn, isPaying && da.btnDisabled]}
-                    accessibilityRole="button"
-                    disabled={isPaying}
-                    onPress={handlePay}>
-                    <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
-                  </Pressable>
+                <View className="flex-row gap-2">
+                  <View className="flex-1">
+                    <Button
+                      label={t('debtors.detailEditButton')}
+                      variant="secondary"
+                      onPress={() => setEditVisible(true)}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Button
+                      label={t('debtors.extractPayButton')}
+                      disabled={isPaying}
+                      onPress={handlePay}
+                    />
+                  </View>
                 </View>
               )}
             </>
           ) : null}
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+      </ScrollView>
       <PaymentWebViewModal
         visible={paymentUrl != null}
         url={paymentUrl}

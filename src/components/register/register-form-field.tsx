@@ -1,11 +1,7 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Input } from '@/components/ui/input';
-import { LoginPalette } from '@/constants/login';
-import { Space, Typography } from '@/constants/theme';
-
-import { registerFormFieldStyles } from './register-form-field.styles';
 
 type RegisterFormFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -31,46 +27,21 @@ export function RegisterFormField<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <View style={registerFormFieldStyles.fieldRow}>
-          <View style={labelStyles.row}>
-            <Text style={labelStyles.placeholder}>{placeholder}</Text>
-            {required ? <Text style={labelStyles.asterisk}> *</Text> : null}
-          </View>
+        <View className="mb-3 gap-1">
           <Input
             value={typeof field.value === 'string' ? field.value : ''}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
+            label={placeholder}
             placeholder={placeholder}
+            required={required}
             secureTextEntry={secureTextEntry}
             keyboardType={keyboardType}
             autoCapitalize={autoCapitalize}
             errorMessage={fieldState.error?.message}
           />
-          {fieldState.error?.message ? (
-            <Text style={registerFormFieldStyles.fieldError}>
-              {fieldState.error.message}
-            </Text>
-          ) : null}
         </View>
       )}
     />
   );
 }
-
-const labelStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Space.extraSmall,
-  },
-  placeholder: {
-    fontSize: Typography.small,
-    color: LoginPalette.bodyText,
-    fontWeight: '500',
-  },
-  asterisk: {
-    fontSize: Typography.small,
-    color: LoginPalette.errorText,
-    fontWeight: '700',
-  },
-});

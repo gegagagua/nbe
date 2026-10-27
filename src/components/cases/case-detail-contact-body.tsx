@@ -3,9 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { CaseDetailData } from '@/types/case-detail-data';
 
-import { caseDetailContactStyles as c } from './case-detail-contact.styles';
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
-
 export function CaseDetailContactBody({ contact }: { contact: CaseDetailData['contact'] }) {
   const { t } = useTranslation();
   const rows: { label: string; value: string }[] = [
@@ -17,11 +14,11 @@ export function CaseDetailContactBody({ contact }: { contact: CaseDetailData['co
     { label: t('cases.detail.contactWebsite'), value: contact.website },
   ];
   return (
-    <View style={p.panel}>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
       {rows.map((r) => (
-        <View key={r.label} style={c.contactRow}>
-          <Text style={c.contactLabel}>{r.label}</Text>
-          <Text style={c.contactValue}>{r.value}</Text>
+        <View key={r.label} className="border-b border-border px-4 py-2">
+          <Text className="text-caption font-bold text-fg">{r.label}</Text>
+          <Text className="mt-1 text-label text-fg-secondary">{r.value}</Text>
         </View>
       ))}
     </View>

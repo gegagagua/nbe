@@ -147,6 +147,11 @@ export type FactPerson = {
   name: string;
   /** პირადი ნომერი / საიდ. კოდი */
   idnumber: string;
+  /** ფაქტობრივი მისამართი */
+  factualAddress: string;
+  /** იურიდიული მისამართი */
+  legalAddress: string;
+  /** Backward-compatible single address (factual, else legal). */
   address: string;
   payCode: string;
 };

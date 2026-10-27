@@ -221,6 +221,14 @@ export const kaAuth = {
     phoneOtpDescription: "შეიყვანეთ ახალ ნომერზე გამოგზავნილი 6-ნიშნა კოდი.",
     phoneOtpCancel: "გაუქმება",
   },
+  appearance: {
+    sectionTitle: "თემა",
+    description: "აირჩიეთ აპლიკაციის თემა. ნაგულისხმევად მოჰყვება სისტემის პარამეტრს.",
+    optionSystem: "სისტემის",
+    optionLight: "ნათელი",
+    optionDark: "მუქი",
+    a11yLabel: "თემის არჩევა",
+  },
   legalEntity: {
     sectionInfo: "კომპანიის ინფორმაცია",
     labelMemberName: "უფლებამოსილება",

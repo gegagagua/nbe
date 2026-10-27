@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import { LoginPalette } from '@/constants/login';
+import { Card } from '@/components/ui/card';
+import { useAppTheme } from '@/theme';
 
 import type { ProfileAccountOption } from './profile-account-switch-modal';
-import { profileAccountSwitchModalStyles as rowS } from './profile-account-switch-modal.styles';
-import { profileScreenStyles as s } from './profile-screen.styles';
 
 type Props = {
   accounts: ProfileAccountOption[];
@@ -22,36 +21,40 @@ type Props = {
  */
 export function ProfileAccountSwitcher({ accounts, selectedId, isLoading = false, onSelect }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
 
   // Only the personal account and nothing to switch to — no switcher needed.
   if (!isLoading && accounts.length <= 1) return null;
 
   return (
-    <View style={s.card}>
-      <Text style={s.sectionTitle}>{t('profile.switchAccountTitle')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('profile.switchAccountTitle')}</Text>
 
       {isLoading && accounts.length === 0 ? (
-        <ActivityIndicator style={rowS.loader} size="small" color={LoginPalette.primary} />
+        <ActivityIndicator className="py-4" size="small" color={colors.primary} />
       ) : (
         accounts.map((account) => {
           const selected = account.id === selectedId;
           return (
             <Pressable
               key={account.id}
-              style={({ pressed }) => [rowS.row, pressed && rowS.rowPressed]}
+              className="flex-row items-center gap-3 py-3 active:opacity-70"
               onPress={() => onSelect(account)}
               accessibilityRole="radio"
               accessibilityState={{ checked: selected }}>
-              <View style={[rowS.radio, selected && rowS.radioSelected]}>
-                {selected ? <View style={rowS.radioDot} /> : null}
+              <View
+                className={`h-[22px] w-[22px] items-center justify-center rounded-full border-2 ${
+                  selected ? 'border-primary' : 'border-fg-muted'
+                }`}>
+                {selected ? <View className="h-[10px] w-[10px] rounded-full bg-primary" /> : null}
               </View>
-              <Text style={rowS.rowText} numberOfLines={2}>
+              <Text className="flex-1 text-body font-semibold uppercase text-fg" numberOfLines={2}>
                 {account.name}
               </Text>
             </Pressable>
           );
         })
       )}
-    </View>
+    </Card>
   );
 }

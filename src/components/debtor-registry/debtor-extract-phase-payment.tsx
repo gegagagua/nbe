@@ -4,12 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { ApplePayBrand, BankOfGeorgiaBrand } from '@/constants/payment-brands';
+import { useAppTheme } from '@/theme';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
 import { getDebtorExtractPaymentOptions } from '@/utils/debtor-extract-payment-options';
 
-import { debtorExtractPaymentStyles as ps } from './debtor-extract-payment.styles';
-import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 import { PaymentMethodBrandIcon } from './payment-method-brand-icon';
 
 type Props = {
@@ -29,6 +28,7 @@ export function DebtorExtractPhasePayment({
   amount,
 }: Props) {
   const { t } = useTranslation();
+  const { colors, shadows } = useAppTheme();
   const methods = useMemo(() => getDebtorExtractPaymentOptions(), []);
   const feeText =
     amount != null
@@ -36,46 +36,51 @@ export function DebtorExtractPhasePayment({
       : t('debtors.extractFeeAmount');
   return (
     <>
-      <View style={ps.feeCard}>
-        <Text style={ps.feeLabel}>{t('debtors.extractFeeTitle')}</Text>
-        <Text style={ps.feeAmount}>{feeText}</Text>
+      <View
+        className="items-center gap-1 rounded-xl border border-border-strong bg-surface-sunken p-5"
+        style={shadows.md}>
+        <Text className="text-label font-semibold text-fg-secondary">
+          {t('debtors.extractFeeTitle')}
+        </Text>
+        <Text className="text-title font-extrabold text-fg">{feeText}</Text>
       </View>
-      <Text style={ps.methodsTitle}>{t('debtors.extractMethodsTitle')}</Text>
-      <View style={[s.fieldGap, ps.methodsList]}>
+      <Text className="mb-1 text-body font-bold text-fg">{t('debtors.extractMethodsTitle')}</Text>
+      <View className="gap-4">
         {methods.map((m) => {
           const isOn = selected === m.id;
+          const accentColor =
+            m.id === 'bankOfGeorgia'
+              ? BankOfGeorgiaBrand.primary
+              : m.id === 'applePay'
+                ? ApplePayBrand.background
+                : undefined;
           return (
             <Pressable
               key={m.id}
               accessibilityRole="radio"
               accessibilityState={{ selected: isOn }}
               onPress={() => onSelect(m.id)}
-              style={[
-                ps.methodPress,
-                isOn && ps.methodPressSelected,
-                m.id === 'bankOfGeorgia' && ps.methodAccentBog,
-                m.id === 'applePay' && ps.methodAccentApplePay,
-              ]}
-            >
+              className={`min-h-[56px] flex-row items-center gap-4 rounded-xl border bg-surface px-4 py-4 ${
+                isOn ? 'border-2 border-fg bg-surface-sunken' : 'border-border'
+              } ${accentColor ? 'border-l-4' : ''}`}
+              style={[shadows.md, accentColor ? { borderLeftColor: accentColor } : null]}>
               <PaymentMethodBrandIcon
                 methodId={m.id}
                 fallbackIcon={m.icon as keyof typeof MaterialCommunityIcons.glyphMap}
               />
-              <Text style={ps.methodLabel} numberOfLines={2}>
+              <Text className="flex-1 text-body font-semibold text-fg" numberOfLines={2}>
                 {t(m.labelKey)}
               </Text>
               {isOn ? (
-                <MaterialCommunityIcons name="check-circle" size={24} color={DebtorRegistryPalette.buttonBg} />
+                <MaterialCommunityIcons name="check-circle" size={24} color={colors.primary} />
               ) : (
-                <View style={ps.methodRadioOuter} />
+                <View className="h-[22px] w-[22px] rounded-full border-2 border-input-border" />
               )}
             </Pressable>
           );
         })}
       </View>
-      <View style={s.primaryButtonWrap}>
-        <Button label={t('debtors.extractPayButton')} onPress={onPay} disabled={paying} />
-      </View>
+      <Button label={t('debtors.extractPayButton')} onPress={onPay} disabled={paying} />
     </>
   );
 }
