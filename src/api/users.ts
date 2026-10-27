@@ -9,6 +9,7 @@ import type {
   GetLegalEntitiesResponse,
   GetUserResponse,
   LegalEntity,
+  RawLegalEntity,
   UpdateLegalEntityRequest,
   UpdateUserPasswordRequest,
   UpdateUserRequest,
@@ -64,11 +65,30 @@ export async function getUserMe(): Promise<UserDetail> {
   return response.data.data;
 }
 
+/**
+ * The legal (registered) address arrives under `legalAddress` — the key the
+ * physical-user record also uses — not `address`, which is why it was coming
+ * through empty. Read either key (plus the actual-address variants) so the
+ * юridical address is always surfaced regardless of which the backend sends.
+ */
+function normalizeLegalEntity(raw: RawLegalEntity): LegalEntity {
+  return {
+    id: raw.id,
+    name: raw.name,
+    legalNumber: raw.legalNumber,
+    memberTypeId: raw.memberTypeId ?? null,
+    memberName: raw.memberName ?? null,
+    address: raw.legalAddress ?? raw.address ?? null,
+    realAddress: raw.realAddress ?? raw.actualAddress ?? null,
+    email: raw.email ?? null,
+  };
+}
+
 export async function getLegalEntities(): Promise<LegalEntity[]> {
   const response = await apiClient.get<GetLegalEntitiesResponse>(
     ApiPaths.legalEntities,
   );
-  return response.data.data ?? [];
+  return (response.data.data ?? []).map(normalizeLegalEntity);
 }
 
 export async function updateLegalEntity(

@@ -120,8 +120,22 @@ export type LegalEntity = {
   email: string | null;
 };
 
+/**
+ * Raw legal-entity item as it may arrive from the backend. The registered
+ * (legal) address is sent under `legalAddress` — the same key the physical-user
+ * record uses — while older/summary payloads used `address`; the actual address
+ * may arrive as `realAddress` or `actualAddress`. `getLegalEntities` normalizes
+ * these into the canonical `LegalEntity` so the юridical address always shows.
+ */
+export type RawLegalEntity = Omit<LegalEntity, "address" | "realAddress"> & {
+  address?: string | null;
+  legalAddress?: string | null;
+  realAddress?: string | null;
+  actualAddress?: string | null;
+};
+
 export type GetLegalEntitiesResponse = {
-  data: LegalEntity[];
+  data: RawLegalEntity[];
 };
 
 export type UpdateLegalEntityRequest = {

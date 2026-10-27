@@ -100,40 +100,72 @@ export function FactStatementForm({
       {/* განმცხადებელი */}
       <View style={s.sectionCard}>
         <Text style={s.sectionTitle}>{t("facts.stApplicantSection")}</Text>
-        <View style={s.fieldGap}>
-          <FieldLabel label={t("facts.stFirstNameLabel")} required />
-          <TextInput
-            value={form.applicantFirstName}
-            onChangeText={(v) => onChange("applicantFirstName", v)}
-            editable={!lockApplicant}
-            style={[s.input, lockApplicant && s.inputDisabled]}
-            placeholderTextColor={LoginPalette.placeholderMuted}
-            accessibilityLabel={t("facts.stFirstNameLabel")}
-          />
-        </View>
-        <View style={s.fieldGap}>
-          <FieldLabel label={t("facts.stLastNameLabel")} required />
-          <TextInput
-            value={form.applicantLastName}
-            onChangeText={(v) => onChange("applicantLastName", v)}
-            editable={!lockApplicant}
-            style={[s.input, lockApplicant && s.inputDisabled]}
-            placeholderTextColor={LoginPalette.placeholderMuted}
-            accessibilityLabel={t("facts.stLastNameLabel")}
-          />
-        </View>
-        <View style={s.fieldGap}>
-          <FieldLabel label={t("facts.stPersonalIdLabel")} required />
-          <TextInput
-            value={form.applicantPersonalId}
-            onChangeText={(v) => onChange("applicantPersonalId", v)}
-            editable={!lockApplicant}
-            keyboardType="number-pad"
-            style={[s.input, lockApplicant && s.inputDisabled]}
-            placeholderTextColor={LoginPalette.placeholderMuted}
-            accessibilityLabel={t("facts.stPersonalIdLabel")}
-          />
-        </View>
+        {form.applicantKind === "legal" ? (
+          <>
+            {/* იურიდიული პირი: დასახელება + საიდენტიფიკაციო კოდი */}
+            <View style={s.fieldGap}>
+              <FieldLabel label={t("facts.stOrgNameLabel")} required />
+              <TextInput
+                value={form.applicantOrgName}
+                onChangeText={(v) => onChange("applicantOrgName", v)}
+                editable={!lockApplicant}
+                style={[s.input, lockApplicant && s.inputDisabled]}
+                placeholderTextColor={LoginPalette.placeholderMuted}
+                accessibilityLabel={t("facts.stOrgNameLabel")}
+              />
+            </View>
+            <View style={s.fieldGap}>
+              <FieldLabel label={t("facts.stIdCodeLabel")} required />
+              <TextInput
+                value={form.applicantPersonalId}
+                onChangeText={(v) => onChange("applicantPersonalId", v)}
+                editable={!lockApplicant}
+                keyboardType="number-pad"
+                style={[s.input, lockApplicant && s.inputDisabled]}
+                placeholderTextColor={LoginPalette.placeholderMuted}
+                accessibilityLabel={t("facts.stIdCodeLabel")}
+              />
+            </View>
+          </>
+        ) : (
+          <>
+            {/* ფიზიკური პირი: სახელი + გვარი + პირადი ნომერი */}
+            <View style={s.fieldGap}>
+              <FieldLabel label={t("facts.stFirstNameLabel")} required />
+              <TextInput
+                value={form.applicantFirstName}
+                onChangeText={(v) => onChange("applicantFirstName", v)}
+                editable={!lockApplicant}
+                style={[s.input, lockApplicant && s.inputDisabled]}
+                placeholderTextColor={LoginPalette.placeholderMuted}
+                accessibilityLabel={t("facts.stFirstNameLabel")}
+              />
+            </View>
+            <View style={s.fieldGap}>
+              <FieldLabel label={t("facts.stLastNameLabel")} required />
+              <TextInput
+                value={form.applicantLastName}
+                onChangeText={(v) => onChange("applicantLastName", v)}
+                editable={!lockApplicant}
+                style={[s.input, lockApplicant && s.inputDisabled]}
+                placeholderTextColor={LoginPalette.placeholderMuted}
+                accessibilityLabel={t("facts.stLastNameLabel")}
+              />
+            </View>
+            <View style={s.fieldGap}>
+              <FieldLabel label={t("facts.stPersonalIdLabel")} required />
+              <TextInput
+                value={form.applicantPersonalId}
+                onChangeText={(v) => onChange("applicantPersonalId", v)}
+                editable={!lockApplicant}
+                keyboardType="number-pad"
+                style={[s.input, lockApplicant && s.inputDisabled]}
+                placeholderTextColor={LoginPalette.placeholderMuted}
+                accessibilityLabel={t("facts.stPersonalIdLabel")}
+              />
+            </View>
+          </>
+        )}
         <View style={s.fieldGap}>
           <FieldLabel label={t("facts.stActualAddressLabel")} required />
           <TextInput

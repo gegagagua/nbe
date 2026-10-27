@@ -65,6 +65,8 @@ export const enFacts = {
   stFirstNameLabel: "First name",
   stLastNameLabel: "Last name",
   stPersonalIdLabel: "Personal number",
+  stOrgNameLabel: "Name",
+  stIdCodeLabel: "Identification code",
   stActualAddressLabel: "Actual address",
   stLegalAddressLabel: "Legal address",
   stPhoneLabel: "Phone",

@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import {
@@ -25,10 +25,8 @@ import { signOut } from "@/lib/sign-out";
 import type { LoginHistoryEntry, PasswordHistoryApiEntry } from "@/types/users";
 
 import { ProfileAccountCard } from "./profile-account-card";
-import {
-  ProfileAccountSwitchModal,
-  type ProfileAccountOption,
-} from "./profile-account-switch-modal";
+import type { ProfileAccountOption } from "./profile-account-switch-modal";
+import { ProfileAccountSwitcher } from "./profile-account-switcher";
 import { ProfileChangePasswordSection } from "./profile-change-password-section";
 import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
@@ -49,19 +47,19 @@ export function ProfileScreen() {
   const verifyPassword = useVerifyCurrentPassword(profile?.username);
   const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
   const infoSectionY = useRef(0);
-  const [accountSwitchVisible, setAccountSwitchVisible] = useState(false);
   const legalEntities = useLegalEntities();
   const activeLegalEntity = useActiveLegalEntity();
   const activeLegalEntityId = activeLegalEntity.entity?.id;
   const { refetch: refetchLegalEntities } = legalEntities;
 
-  // Refresh the active entity's details from the backend on every focus, so an
+  // Refresh the list on every focus so (a) the inline account switcher is
+  // populated for a personal user who has entities to switch to, and (b) an
   // edit made on the details page shows up on return. The stored copy is only a
   // fallback until the list arrives.
   useFocusEffect(
     useCallback(() => {
-      if (activeLegalEntityId !== undefined) refetchLegalEntities();
-    }, [activeLegalEntityId, refetchLegalEntities]),
+      refetchLegalEntities();
+    }, [refetchLegalEntities]),
   );
 
   // While the list reloads it may still hold pre-edit values, so the stored
@@ -98,26 +96,25 @@ export function ProfileScreen() {
     "";
 
   // The physical user first, then the legal entities they can switch to.
-  // Ids are prefixed so a user id never collides with a legal-entity id.
+  // Ids are prefixed so a user id never collides with a legal-entity id. The
+  // personal account is labelled with the personal number (username), matching
+  // the switcher design, while legal entities use the company name.
   const personalAccountId = profile ? `user-${profile.id}` : null;
+  const personalAccountName = profile?.username || fullName;
   const currentAccountId = activeLegalEntity.entity
     ? `legal-${activeLegalEntity.entity.id}`
     : personalAccountId;
   const accounts: ProfileAccountOption[] = [
-    ...(personalAccountId ? [{ id: personalAccountId, name: fullName }] : []),
+    ...(personalAccountId
+      ? [{ id: personalAccountId, name: personalAccountName }]
+      : []),
     ...legalEntities.entities.map((entity) => ({
       id: `legal-${entity.id}`,
       name: entity.name,
     })),
   ];
 
-  function handleOpenAccountSwitch() {
-    setAccountSwitchVisible(true);
-    legalEntities.refetch();
-  }
-
   function handleSelectAccount(account: ProfileAccountOption) {
-    setAccountSwitchVisible(false);
     if (account.id === currentAccountId) return;
     if (account.id === personalAccountId) {
       activeLegalEntity.switchToPersonal();
@@ -195,7 +192,13 @@ export function ProfileScreen() {
                 : t("profile.viewPersonalInfo")
             }
             onViewInfo={handleViewInfo}
-            onSwitchAccount={handleOpenAccountSwitch}
+          />
+
+          <ProfileAccountSwitcher
+            accounts={accounts}
+            selectedId={currentAccountId}
+            isLoading={legalEntities.isLoading}
+            onSelect={handleSelectAccount}
           />
 
           <View
@@ -259,14 +262,6 @@ export function ProfileScreen() {
           </Pressable>
         </KeyboardAwareScrollView>
       </AppSafeArea>
-      <ProfileAccountSwitchModal
-        visible={accountSwitchVisible}
-        accounts={accounts}
-        selectedId={currentAccountId}
-        isLoading={legalEntities.isLoading}
-        onSelect={handleSelectAccount}
-        onClose={() => setAccountSwitchVisible(false)}
-      />
       <LoginOtpModal
         visible={actions.phoneOtp.visible}
         isSubmitting={actions.phoneOtp.isSubmitting}

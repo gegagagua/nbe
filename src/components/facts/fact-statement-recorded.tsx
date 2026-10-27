@@ -64,9 +64,12 @@ export function FactStatementRecorded({
 }: Props) {
   const { t } = useTranslation();
 
-  const applicantName = [form.applicantFirstName, form.applicantLastName]
-    .filter(Boolean)
-    .join(" ");
+  const isLegalApplicant = form.applicantKind === "legal";
+  const applicantName = isLegalApplicant
+    ? form.applicantOrgName
+    : [form.applicantFirstName, form.applicantLastName]
+        .filter(Boolean)
+        .join(" ");
   const feeLabel = useMemo(
     () =>
       form.fee === "working"
@@ -103,9 +106,20 @@ export function FactStatementRecorded({
       </ReviewSection>
 
       <ReviewSection title={t("facts.stApplicantSection")}>
-        <ReviewRow label={t("facts.stFirstNameLabel")} value={applicantName} />
         <ReviewRow
-          label={t("facts.stPersonalIdLabel")}
+          label={
+            isLegalApplicant
+              ? t("facts.stOrgNameLabel")
+              : t("facts.stFirstNameLabel")
+          }
+          value={applicantName}
+        />
+        <ReviewRow
+          label={
+            isLegalApplicant
+              ? t("facts.stIdCodeLabel")
+              : t("facts.stPersonalIdLabel")
+          }
           value={form.applicantPersonalId}
         />
         <ReviewRow

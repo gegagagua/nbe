@@ -1,5 +1,4 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { LoginPalette } from '@/constants/login';
@@ -10,12 +9,9 @@ type Props = {
   fullName: string;
   subtitle: string;
   onViewInfo: () => void;
-  onSwitchAccount: () => void;
 };
 
-export function ProfileAccountCard({ fullName, subtitle, onViewInfo, onSwitchAccount }: Props) {
-  const { t } = useTranslation();
-
+export function ProfileAccountCard({ fullName, subtitle, onViewInfo }: Props) {
   return (
     <View style={s.card}>
       <Pressable
@@ -34,16 +30,6 @@ export function ProfileAccountCard({ fullName, subtitle, onViewInfo, onSwitchAcc
             {subtitle}
           </Text>
         </View>
-      </Pressable>
-
-      <Pressable
-        style={({ pressed }) => [s.switchButton, pressed && s.pressed]}
-        onPress={onSwitchAccount}
-        accessibilityRole="button"
-        accessibilityLabel={t('profile.switchAccountA11yLabel')}
-        hitSlop={8}
-      >
-        <MaterialCommunityIcons name="autorenew" size={20} color={LoginPalette.primary} />
       </Pressable>
     </View>
   );
