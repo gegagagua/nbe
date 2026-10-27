@@ -26,7 +26,7 @@ export function useRegisterPhysicalForm(
     [t, i18n.language],
   );
 
-  const { control, handleSubmit, formState } = useForm<RegisterPhysicalValues>({
+  const { control, handleSubmit } = useForm<RegisterPhysicalValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
@@ -38,6 +38,5 @@ export function useRegisterPhysicalForm(
   return {
     control,
     onSubmit,
-    submitDisabled: !formState.isValid,
   };
 }

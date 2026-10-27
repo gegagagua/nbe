@@ -35,7 +35,7 @@ export function createRegisterPhysicalSchema(t: TFunction) {
         .refine((v) => /[0-9]/.test(v), { message: t('validation.passwordNoDigit') })
         .refine((v) => PUNCTUATION_RE.test(v), { message: t('validation.passwordNoPunctuation') }),
       confirmPassword: trimmedNonEmpty(t('validation.requiredConfirmPassword')),
-      legalAddress: z.string().trim().optional(),
+      legalAddress: trimmedNonEmpty(t('validation.requiredLegalAddress')),
       email: z
         .string()
         .trim()
