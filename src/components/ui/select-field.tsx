@@ -2,10 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
-import { LoginPalette } from "@/constants/login";
-
-import { selectFieldStyles as s } from "./select-field.styles";
+import { useAppTheme } from "@/theme";
 
 export type SelectOption = { value: string; label: string };
 
@@ -32,6 +29,7 @@ export function SelectField({
   title,
   closeA11yLabel,
 }: Props) {
+  const { colors } = useAppTheme();
   const [open, setOpen] = useState(false);
   const selected = options.find((o) => o.value === value);
 
@@ -43,12 +41,12 @@ export function SelectField({
   return (
     <>
       <Pressable
-        style={s.field}
+        className="w-full flex-row items-center justify-between gap-2 rounded-md border border-input-border bg-input px-3 py-1 min-h-[50px]"
         onPress={() => setOpen(true)}
         accessibilityRole="button"
       >
         <Text
-          style={selected ? s.fieldText : s.placeholder}
+          className={selected ? "flex-1 text-body text-fg" : "flex-1 text-body text-input-placeholder"}
           numberOfLines={1}
         >
           {selected?.label || placeholder}
@@ -56,7 +54,7 @@ export function SelectField({
         <MaterialCommunityIcons
           name="chevron-down"
           size={20}
-          color={DebtorRegistryPalette.textMuted}
+          color={colors.textMuted}
         />
       </Pressable>
 
@@ -66,12 +64,19 @@ export function SelectField({
         animationType="fade"
         onRequestClose={() => setOpen(false)}
       >
-        <Pressable style={s.overlay} onPress={() => setOpen(false)}>
-          <Pressable style={s.card} onPress={(e) => e.stopPropagation()}>
-            <View style={s.header}>
-              <Text style={s.headerTitle}>{title}</Text>
+        <Pressable
+          className="flex-1 items-center justify-center p-4"
+          style={{ backgroundColor: colors.overlay }}
+          onPress={() => setOpen(false)}
+        >
+          <Pressable
+            className="w-full max-w-[360px] max-h-[70%] rounded-xl bg-surface p-4 gap-3"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View className="flex-row items-center justify-between gap-2">
+              <Text className="flex-1 text-subtitle font-bold text-fg">{title}</Text>
               <Pressable
-                style={s.navBtn}
+                className="p-1 rounded-md"
                 onPress={() => setOpen(false)}
                 accessibilityRole="button"
                 accessibilityLabel={closeA11yLabel}
@@ -79,7 +84,7 @@ export function SelectField({
                 <MaterialCommunityIcons
                   name="close"
                   size={22}
-                  color={DebtorRegistryPalette.textPrimary}
+                  color={colors.text}
                 />
               </Pressable>
             </View>
@@ -89,13 +94,19 @@ export function SelectField({
                 return (
                   <Pressable
                     key={o.value}
-                    style={[s.option, isOn && s.optionSelected]}
+                    className={[
+                      "flex-row items-center justify-between gap-2 py-4 px-3 rounded-md",
+                      isOn ? "bg-surface-sunken" : "",
+                    ].join(" ")}
                     onPress={() => pick(o.value)}
                     accessibilityRole="button"
                     accessibilityState={{ selected: isOn }}
                   >
                     <Text
-                      style={[s.optionText, isOn && s.optionTextSelected]}
+                      className={[
+                        "flex-1 text-body text-fg",
+                        isOn ? "font-bold" : "",
+                      ].join(" ")}
                     >
                       {o.label}
                     </Text>
@@ -103,7 +114,7 @@ export function SelectField({
                       <MaterialCommunityIcons
                         name="check"
                         size={20}
-                        color={LoginPalette.logoRed}
+                        color={colors.primary}
                       />
                     ) : null}
                   </Pressable>

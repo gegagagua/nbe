@@ -1,14 +1,12 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
-import { debtorExtractPaymentStyles as ps } from "@/components/debtor-registry/debtor-extract-payment.styles";
-import { debtorExtractRequestStyles as s } from "@/components/debtor-registry/debtor-extract-request.styles";
 import { PaymentMethodBrandIcon } from "@/components/debtor-registry/payment-method-brand-icon";
-import { Button } from "@/components/ui/button";
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
+import { Button, Card, PressableScale } from "@/components/ui";
 import { getFactStatementPaymentOptions } from "@/constants/fact-statement";
+import { useAppTheme } from "@/theme";
 import type { FactStatementPaymentMethod } from "@/types/fact-statement";
 
 type Props = {
@@ -26,31 +24,30 @@ export function FactStatementPayment({
   amount,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const methods = useMemo(() => getFactStatementPaymentOptions(), []);
 
   return (
     <>
-      <View style={ps.feeCard}>
-        <Text style={ps.feeLabel}>{t("facts.stFeeTitle")}</Text>
-        <Text style={ps.feeAmount}>
+      <Card className="items-center gap-1 bg-surface-sunken">
+        <Text className="text-label text-fg-muted">{t("facts.stFeeTitle")}</Text>
+        <Text className="text-title font-bold text-fg">
           {t("facts.stAmountValue", { amount: amount.toFixed(2) })}
         </Text>
-      </View>
-      <Text style={ps.methodsTitle}>{t("facts.stMethodsTitle")}</Text>
-      <View style={[s.fieldGap, ps.methodsList]}>
+      </Card>
+      <Text className="text-subtitle font-bold text-fg">
+        {t("facts.stMethodsTitle")}
+      </Text>
+      <View className="gap-2">
         {methods.map((m) => {
           const isOn = selected === m.id;
           return (
-            <Pressable
+            <PressableScale
               key={m.id}
               accessibilityRole="radio"
               accessibilityState={{ selected: isOn }}
               onPress={() => onSelect(m.id)}
-              style={[
-                ps.methodPress,
-                isOn && ps.methodPressSelected,
-                m.id === "applePay" && ps.methodAccentApplePay,
-              ]}
+              className={`flex-row items-center gap-3 rounded-md border bg-input px-4 py-3 ${isOn ? "border-fg bg-surface-sunken" : "border-border"}`}
             >
               <PaymentMethodBrandIcon
                 methodId={m.id === "applePay" ? "applePay" : "bankTransfer"}
@@ -58,25 +55,23 @@ export function FactStatementPayment({
                   m.icon as keyof typeof MaterialCommunityIcons.glyphMap
                 }
               />
-              <Text style={ps.methodLabel} numberOfLines={2}>
+              <Text className="flex-1 text-body text-fg" numberOfLines={2}>
                 {t(m.labelKey)}
               </Text>
               {isOn ? (
                 <MaterialCommunityIcons
                   name="check-circle"
                   size={24}
-                  color={DebtorRegistryPalette.buttonBg}
+                  color={colors.primary}
                 />
               ) : (
-                <View style={ps.methodRadioOuter} />
+                <View className="h-6 w-6 rounded-full border-2 border-border" />
               )}
-            </Pressable>
+            </PressableScale>
           );
         })}
       </View>
-      <View style={s.primaryButtonWrap}>
-        <Button label={t("facts.stPayButton")} onPress={onPay} />
-      </View>
+      <Button label={t("facts.stPayButton")} onPress={onPay} />
     </>
   );
 }

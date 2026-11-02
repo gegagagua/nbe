@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 
-import { DebtorExtractSubheader } from "@/components/debtor-registry/debtor-extract-subheader";
-import { debtorExtractRequestStyles as s } from "@/components/debtor-registry/debtor-extract-request.styles";
-import { LoginFooter } from "@/components/login/login-footer";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { AppHeader } from "@/components/ui";
 import {
   FactStatementFee,
   defaultFactStatementPaymentMethod,
@@ -21,6 +18,7 @@ import {
   mintStatementIdentifiers,
 } from "@/lib/fact-statement-helpers";
 import { getActiveLegalEntity } from "@/lib/active-legal-entity-storage";
+import { resolveUserEmail, resolveUserPhone } from "@/lib/resolve-user-contacts";
 import { getSessionUserProfile } from "@/lib/session-user-profile-storage";
 import type {
   FactStatementForm as FactStatementFormState,
@@ -52,8 +50,6 @@ export function FactStatementScreen() {
   // Dates shown next to the case numbers (Confluence parity).
   const [recordedDate, setRecordedDate] = useState<string | null>(null);
   const [registeredDate, setRegisteredDate] = useState<string | null>(null);
-  // When editing an already-recorded statement the applicant fields are locked.
-  const [lockApplicant, setLockApplicant] = useState(false);
 
   // Auto-fill the applicant segment. When the user has switched to a legal
   // entity, the applicant IS that entity: the form shows the company field set
@@ -71,9 +67,21 @@ export function FactStatementScreen() {
     getActiveLegalEntity().then((entity) => {
       if (!active) return;
       if (entity) {
-        // Acting as a legal entity — fill from the entity, skip the physical
-        // person lookups so the company fields aren't overwritten.
+        // Acting as a legal entity — the applicant IS that entity (name + code
+        // + addresses + email from the entity). The entity has no phone of its
+        // own, so the phone (and email, if the entity lacks one) is pulled from
+        // the signed-in physical person's contacts.
         setForm((prev) => mergeApplicantLegalEntity(prev, entity));
+        getUserMe()
+          .then((user) => {
+            apply({
+              applicantPhone: resolveUserPhone(user.contacts) || "",
+              applicantEmail: resolveUserEmail(user.contacts) || "",
+            });
+          })
+          .catch(() => {
+            // Best effort — entity email (if any) stays; phone may need backend.
+          });
         return;
       }
 
@@ -94,6 +102,10 @@ export function FactStatementScreen() {
             applicantPersonalId: user.idnumber || user.username || "",
             applicantActualAddress: user.realAddress || "",
             applicantLegalAddress: user.legalAddress || "",
+            // Phone & email live in the contacts[] array, not as top-level
+            // fields — resolve them the same way the profile screen does.
+            applicantPhone: resolveUserPhone(user.contacts) || "",
+            applicantEmail: resolveUserEmail(user.contacts) || "",
           });
         })
         .catch(() => {
@@ -133,8 +145,6 @@ export function FactStatementScreen() {
       setPayIdentifier(ids.payIdentifier);
       setRecordedDate(formatCaseDate(now));
     }
-    // Editing resumes an existing record — unlock for the next recorded view.
-    setLockApplicant(false);
     setPhase("recorded");
   };
 
@@ -163,25 +173,23 @@ export function FactStatementScreen() {
   };
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <DebtorExtractSubheader
-          title={t("facts.makeStatementButton")}
-          backA11y={t("facts.backA11yLabel")}
-          onBack={handleBack}
-        />
-        <ScrollView
-          style={s.scroll}
-          contentContainerStyle={s.content}
-          keyboardShouldPersistTaps="handled"
-        >
-          {phase === "form" ? (
+    <View className="flex-1 bg-bg">
+      <AppHeader title={t("facts.makeStatementButton")} onBack={handleBack} />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 16 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {phase === "form" ? (
             <FactStatementForm
               form={form}
               onChange={setField}
               error={error}
               onContinue={onRecord}
-              lockApplicant={lockApplicant}
+              /* Applicant fields are auto-filled and never editable — not
+                 before recording and not after (spec). */
+              lockApplicant={true}
             />
           ) : null}
           {phase === "recorded" && payIdentifier && preliminaryNumber ? (
@@ -191,9 +199,7 @@ export function FactStatementScreen() {
               preliminaryNumber={preliminaryNumber}
               preliminaryDate={recordedDate}
               onEdit={() => {
-                // On a recorded statement everything is editable except the
-                // applicant's data (spec), so lock those fields on the way back.
-                setLockApplicant(true);
+                // Back to the form — applicant fields stay locked (always).
                 setPhase("form");
               }}
               onPay={() => setPhase("payment")}
@@ -216,9 +222,7 @@ export function FactStatementScreen() {
               onSent={() => router.back()}
             />
           ) : null}
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+      </ScrollView>
     </View>
   );
 }

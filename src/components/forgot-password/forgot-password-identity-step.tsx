@@ -6,13 +6,12 @@ import { Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   createForgotPasswordIdentitySchema,
   type ForgotPasswordIdentityValues,
 } from '@/schemas/password-reset.schema';
-
-import { forgotPasswordIdentityStepStyles as s } from './forgot-password-identity-step.styles';
 
 type Props = {
   onSubmit: (username: string) => void;
@@ -37,48 +36,49 @@ export function ForgotPasswordIdentityStep({ onSubmit, isSubmitting, statusMessa
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={s.card}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       bottomOffset={16}>
-      <Text style={s.title}>{t('forgotPassword.pageTitle')}</Text>
-      <Text style={s.description}>{t('forgotPassword.identityDescription')}</Text>
-
-      <View style={s.fieldRow}>
-        <Controller
-          control={control}
-          name="username"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={t('forgotPassword.identityPlaceholder')}
-              autoCapitalize="none"
-              errorMessage={formState.errors.username?.message}
-            />
-          )}
-        />
-        {formState.errors.username?.message ? (
-          <Text style={s.fieldError}>{formState.errors.username.message}</Text>
-        ) : null}
-      </View>
-
-      {statusMessage ? (
-        <Text
-          style={[
-            s.statusMessage,
-            statusMessage.type === 'success' ? s.statusSuccess : s.statusError,
-          ]}>
-          {statusMessage.text}
+      <Card padding="lg" elevation="lg" className="gap-4 rounded-2xl">
+        <Text className="text-center text-heading font-bold text-fg">
+          {t('forgotPassword.pageTitle')}
         </Text>
-      ) : null}
+        <Text className="text-center text-body text-fg-secondary">
+          {t('forgotPassword.identityDescription')}
+        </Text>
 
-      <Button
-        label={t('forgotPassword.submitButton')}
-        onPress={() => { submitHandler(); }}
-        disabled={isSubmitting || !formState.isValid || statusMessage?.type === 'success'}
-      />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="username"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={t('forgotPassword.identityPlaceholder')}
+                autoCapitalize="none"
+                errorMessage={formState.errors.username?.message}
+              />
+            )}
+          />
+        </View>
+
+        {statusMessage ? (
+          <Text
+            className={`text-center text-caption font-semibold ${
+              statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+            }`}>
+            {statusMessage.text}
+          </Text>
+        ) : null}
+
+        <Button
+          label={t('forgotPassword.submitButton')}
+          onPress={() => { submitHandler(); }}
+          disabled={isSubmitting || !formState.isValid || statusMessage?.type === 'success'}
+        />
+      </Card>
     </KeyboardAwareScrollView>
   );
 }

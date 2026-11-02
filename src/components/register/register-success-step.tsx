@@ -1,10 +1,12 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useAppTheme } from '@/theme';
 import type { CheckVerificationResult } from '@/types/users';
-
-import { registerScreenBodyStyles as s } from './register-screen-body.styles';
 
 type RegisterSuccessStepProps = {
   /** Verification-check payload; its top-level fields are listed on the card. */
@@ -29,38 +31,44 @@ function formatValue(value: unknown): string {
 
 export function RegisterSuccessStep({ result }: RegisterSuccessStepProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const entries = result ? Object.entries(result) : [];
 
   return (
     <ScrollView
-      style={s.scroll}
-      contentContainerStyle={s.scrollContentCenter}>
-      <View style={[s.card, s.successCard]}>
-        <Text style={s.successIcon}>✓</Text>
-        <Text style={s.successTitle}>{t('login.registerSuccessTitle')}</Text>
-        <Text style={s.successMessage}>{t('login.registerSuccessMessage')}</Text>
+      className="w-full max-w-[420px] flex-1 self-stretch"
+      contentContainerClassName="grow justify-center pb-4">
+      <Card padding="lg" elevation="lg" className="w-full items-center gap-4 self-center rounded-2xl">
+        <MaterialCommunityIcons name="check-circle" size={48} color={colors.success} />
+        <Text className="text-center text-title font-bold text-success">
+          {t('login.registerSuccessTitle')}
+        </Text>
+        <Text className="text-center text-body leading-[22px] text-fg-secondary">
+          {t('login.registerSuccessMessage')}
+        </Text>
         {entries.length > 0 ? (
-          <View style={s.resultList}>
+          <View className="self-stretch overflow-hidden rounded-sm border border-border">
             {entries.map(([key, value], i) => (
               <View
                 key={key}
-                style={[
-                  s.resultRow,
-                  i === entries.length - 1 ? s.resultRowLast : null,
-                ]}>
-                <Text style={s.resultLabel}>{humanizeKey(key)}</Text>
-                <Text style={s.resultValue}>{formatValue(value)}</Text>
+                className={`flex-row items-start justify-between gap-4 px-4 py-2 ${
+                  i === entries.length - 1 ? '' : 'border-b border-border'
+                }`}>
+                <Text className="flex-1 text-caption text-fg-secondary">{humanizeKey(key)}</Text>
+                <Text className="flex-1 text-right text-caption font-bold text-fg">
+                  {formatValue(value)}
+                </Text>
               </View>
             ))}
           </View>
         ) : null}
-        <Pressable
-          style={s.successButton}
-          onPress={() => router.replace('/')}
-          accessibilityRole="button">
-          <Text style={s.successButtonText}>{t('login.registerSuccessButton')}</Text>
-        </Pressable>
-      </View>
+        <View className="mt-1 self-stretch">
+          <Button
+            label={t('login.registerSuccessButton')}
+            onPress={() => router.replace('/')}
+          />
+        </View>
+      </Card>
     </ScrollView>
   );
 }

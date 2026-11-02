@@ -3,13 +3,12 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { HomeTabsLayout, HomeTabsPalette } from '@/constants/home-tabs';
+import { useAppTheme } from '@/theme';
 import type { HomeFaqItem } from '@/types/home-tabs';
-
-import { homeFaqScreenStyles } from './home-faq-screen.styles';
 
 export function HomeFaqScreen() {
   const { t, i18n } = useTranslation();
+  const { colors } = useAppTheme();
   const [expandedIdx, setExpandedIdx] = useState(0);
   const items = useMemo(
     () => t('homeFaq.items', { returnObjects: true }) as HomeFaqItem[],
@@ -18,32 +17,34 @@ export function HomeFaqScreen() {
 
   return (
     <ScrollView
-      style={homeFaqScreenStyles.scroll}
-      contentContainerStyle={homeFaqScreenStyles.content}
+      className="flex-1"
+      contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 32, marginTop: 16, gap: 8 }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled">
-      <Text style={homeFaqScreenStyles.heading}>{t('homeTabs.faqTitle')}</Text>
+      <Text className="mb-1 text-title font-bold text-fg">{t('homeTabs.faqTitle')}</Text>
       {items.map((item, index) => {
         const isExpanded = expandedIdx === index;
         return (
-          <View key={item.question} style={homeFaqScreenStyles.card}>
+          <View
+            key={item.question}
+            className="overflow-hidden rounded-lg border border-border bg-surface">
             <Pressable
-              style={homeFaqScreenStyles.trigger}
+              className="flex-row items-center justify-between gap-2 px-4 py-3"
               onPress={() =>
                 setExpandedIdx((prev) => (prev === index ? -1 : index))
               }
               accessibilityRole="button"
               accessibilityLabel={item.question}>
-              <Text style={homeFaqScreenStyles.question}>{item.question}</Text>
+              <Text className="flex-1 text-body-lg font-semibold text-fg">{item.question}</Text>
               <MaterialCommunityIcons
                 name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                size={HomeTabsLayout.iconSize}
-                color={HomeTabsPalette.inactiveText}
+                size={20}
+                color={colors.text}
               />
             </Pressable>
             {isExpanded ? (
-              <View style={homeFaqScreenStyles.answerWrap}>
-                <Text style={homeFaqScreenStyles.answer}>{item.answer}</Text>
+              <View className="bg-surface-sunken px-4 pb-4 pt-1">
+                <Text className="text-body-lg text-fg-secondary">{item.answer}</Text>
               </View>
             ) : null}
           </View>

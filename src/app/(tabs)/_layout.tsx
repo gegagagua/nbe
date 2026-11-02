@@ -1,24 +1,24 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { homeNativeTabsStyles } from "@/components/home/home-native-tabs.styles";
-import { homeRouteGuardStyles } from "@/components/home/home-route-guard.styles";
-import { HomeTabsPalette } from "@/constants/home-tabs";
-import { LoginPalette } from "@/constants/login";
+import { BottomTabBar, BOTTOM_TAB_SPACE } from "@/components/ui/bottom-tab-bar";
+import { useAppTheme } from "@/theme";
 import { useHomeRouteSessionGuard } from "@/hooks/use-session-navigation";
 
 export default function AppTabsLayout() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const canShowTabs = useHomeRouteSessionGuard();
 
   if (!canShowTabs) {
     return (
-      <View style={homeRouteGuardStyles.boot}>
+      <View className="flex-1 items-center justify-center bg-bg">
         <ActivityIndicator
           size="large"
-          color={LoginPalette.primary}
+          color={colors.primary}
           accessibilityLabel={t("login.sessionBootLoadingA11yLabel")}
         />
       </View>
@@ -28,24 +28,10 @@ export default function AppTabsLayout() {
   return (
     <Tabs
       initialRouteName="dashboard"
+      tabBar={(props) => <BottomTabBar {...(props as unknown as BottomTabBarProps)} />}
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: HomeTabsPalette.activeText,
-        tabBarInactiveTintColor: HomeTabsPalette.onBarInactive,
-        tabBarActiveBackgroundColor: HomeTabsPalette.onBarHighlight,
-        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
-        tabBarIconStyle: { marginTop: 0 },
-        tabBarItemStyle: [
-          homeNativeTabsStyles.tabItem,
-          {
-            borderRadius: 20,
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-          },
-        ],
-        tabBarStyle: homeNativeTabsStyles.tabBar,
-        sceneStyle: { paddingBottom: 82 },
+        sceneStyle: { paddingBottom: BOTTOM_TAB_SPACE, backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen

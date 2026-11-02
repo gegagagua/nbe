@@ -2,9 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
-
-import { datePickerFieldStyles as s } from "./date-picker-field.styles";
+import { useAppTheme } from "@/theme";
 
 type Props = {
   /** Selected date as `YYYY-MM-DD`, or "" when unset. */
@@ -41,6 +39,7 @@ export function DatePickerField({
   clearLabel,
   closeLabel,
 }: Props) {
+  const { colors } = useAppTheme();
   const [open, setOpen] = useState(false);
   const selected = parse(value);
   const [view, setView] = useState(() => {
@@ -48,13 +47,21 @@ export function DatePickerField({
     return { y: selected?.y ?? now.getFullYear(), m: selected?.m ?? now.getMonth() };
   });
 
-  const cells = useMemo(() => {
+  // Lay the month out as fixed rows of 7. Rendering each week as a `flex-row`
+  // of `flex-1` cells (instead of a single `flex-wrap` list of `w-[14.2857%]`
+  // cells) guarantees exactly 7 columns per row: 7×14.2857% rounds just over
+  // 100% at some pixel densities, which wrapped the 7th day onto the next line
+  // and left the Sunday column empty, shifting every date off its weekday.
+  const weeks = useMemo(() => {
     const firstWeekday = (new Date(view.y, view.m, 1).getDay() + 6) % 7; // Mon-first
     const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
-    const out: (number | null)[] = [];
-    for (let i = 0; i < firstWeekday; i += 1) out.push(null);
-    for (let d = 1; d <= daysInMonth; d += 1) out.push(d);
-    return out;
+    const flat: (number | null)[] = [];
+    for (let i = 0; i < firstWeekday; i += 1) flat.push(null);
+    for (let d = 1; d <= daysInMonth; d += 1) flat.push(d);
+    while (flat.length % 7 !== 0) flat.push(null); // pad the final row to 7
+    const rows: (number | null)[][] = [];
+    for (let i = 0; i < flat.length; i += 7) rows.push(flat.slice(i, i + 7));
+    return rows;
   }, [view.y, view.m]);
 
   const openPicker = () => {
@@ -76,14 +83,18 @@ export function DatePickerField({
 
   return (
     <>
-      <Pressable style={s.field} onPress={openPicker} accessibilityRole="button">
-        <Text style={value ? s.fieldText : s.placeholder}>
+      <Pressable
+        className="w-full flex-row items-center justify-between rounded-md border border-input-border bg-input px-3 min-h-[50px]"
+        onPress={openPicker}
+        accessibilityRole="button"
+      >
+        <Text className={value ? "text-body text-fg" : "text-body text-input-placeholder"}>
           {value || placeholder}
         </Text>
         <MaterialCommunityIcons
           name="calendar-month-outline"
           size={18}
-          color={DebtorRegistryPalette.textMuted}
+          color={colors.textMuted}
         />
       </Pressable>
 
@@ -93,89 +104,117 @@ export function DatePickerField({
         animationType="fade"
         onRequestClose={() => setOpen(false)}
       >
-        <Pressable style={s.overlay} onPress={() => setOpen(false)}>
-          <Pressable style={s.card} onPress={(e) => e.stopPropagation()}>
-            <View style={s.header}>
+        <Pressable
+          className="flex-1 items-center justify-center p-4"
+          style={{ backgroundColor: colors.overlay }}
+          onPress={() => setOpen(false)}
+        >
+          <Pressable
+            className="w-full max-w-[340px] rounded-xl bg-surface p-4 gap-3"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View className="flex-row items-center justify-between">
               <Pressable
-                style={s.navBtn}
+                className="p-1 rounded-md"
                 onPress={() => shiftMonth(-1)}
                 accessibilityRole="button"
               >
                 <MaterialCommunityIcons
                   name="chevron-left"
                   size={24}
-                  color={DebtorRegistryPalette.textPrimary}
+                  color={colors.text}
                 />
               </Pressable>
-              <Text style={s.headerTitle}>
+              <Text className="text-subtitle font-bold text-fg">
                 {months[view.m]} {view.y}
               </Text>
               <Pressable
-                style={s.navBtn}
+                className="p-1 rounded-md"
                 onPress={() => shiftMonth(1)}
                 accessibilityRole="button"
               >
                 <MaterialCommunityIcons
                   name="chevron-right"
                   size={24}
-                  color={DebtorRegistryPalette.textPrimary}
+                  color={colors.text}
                 />
               </Pressable>
             </View>
 
-            <View style={s.weekRow}>
+            <View className="flex-row">
               {weekdays.map((w) => (
-                <View key={w} style={s.weekCell}>
-                  <Text style={s.weekText}>{w}</Text>
+                <View key={w} className="flex-1 items-center py-1">
+                  <Text className="text-label font-semibold text-fg-muted">{w}</Text>
                 </View>
               ))}
             </View>
 
-            <View style={s.grid}>
-              {cells.map((day, index) => {
-                if (day === null) {
-                  // eslint-disable-next-line react/no-array-index-key
-                  return <View key={`blank-${index}`} style={s.dayCell} />;
-                }
-                const isSelected =
-                  !!selected &&
-                  selected.y === view.y &&
-                  selected.m === view.m &&
-                  selected.d === day;
-                return (
-                  <Pressable
-                    key={day}
-                    style={s.dayCell}
-                    onPress={() => pick(day)}
-                    accessibilityRole="button"
-                  >
-                    <View style={[s.dayInner, isSelected && s.daySelected]}>
-                      <Text style={isSelected ? s.daySelectedText : s.dayText}>
-                        {day}
-                      </Text>
-                    </View>
-                  </Pressable>
-                );
-              })}
+            <View>
+              {weeks.map((week, wi) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <View key={`week-${wi}`} className="flex-row">
+                  {week.map((day, di) => {
+                    if (day === null) {
+                      return (
+                        <View
+                          // eslint-disable-next-line react/no-array-index-key
+                          key={`blank-${wi}-${di}`}
+                          className="flex-1 aspect-square items-center justify-center"
+                        />
+                      );
+                    }
+                    const isSelected =
+                      !!selected &&
+                      selected.y === view.y &&
+                      selected.m === view.m &&
+                      selected.d === day;
+                    return (
+                      <Pressable
+                        key={day}
+                        className="flex-1 aspect-square items-center justify-center"
+                        onPress={() => pick(day)}
+                        accessibilityRole="button"
+                      >
+                        <View
+                          className={[
+                            "w-[34px] h-[34px] rounded-full items-center justify-center",
+                            isSelected ? "bg-primary" : "",
+                          ].join(" ")}
+                        >
+                          <Text
+                            className={
+                              isSelected
+                                ? "text-on-primary font-bold"
+                                : "text-fg"
+                            }
+                          >
+                            {day}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ))}
             </View>
 
-            <View style={s.footer}>
+            <View className="flex-row justify-end gap-4 mt-1">
               <Pressable
-                style={s.footerBtn}
+                className="py-1 px-2"
                 onPress={() => {
                   onChange("");
                   setOpen(false);
                 }}
                 accessibilityRole="button"
               >
-                <Text style={s.footerClear}>{clearLabel}</Text>
+                <Text className="text-primary font-bold">{clearLabel}</Text>
               </Pressable>
               <Pressable
-                style={s.footerBtn}
+                className="py-1 px-2"
                 onPress={() => setOpen(false)}
                 accessibilityRole="button"
               >
-                <Text style={s.footerText}>{closeLabel}</Text>
+                <Text className="text-fg font-semibold">{closeLabel}</Text>
               </Pressable>
             </View>
           </Pressable>

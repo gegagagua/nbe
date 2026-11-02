@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import type { AppLocale } from '@/types/app-locale';
 import { persistLocale } from '@/lib/locale-storage';
 
-import { localeToggleStyles as s } from './locale-toggle.styles';
-
 export function LocaleToggle() {
   const { t, i18n } = useTranslation();
   const active: AppLocale = i18n.language.startsWith('en') ? 'en' : 'ka';
@@ -16,24 +14,42 @@ export function LocaleToggle() {
   }
 
   return (
-    <View style={s.row} accessibilityRole="toolbar">
+    <View
+      className="flex-row rounded-sm border border-input-border overflow-hidden bg-input"
+      accessibilityRole="toolbar">
       <Pressable
         onPress={() => setLocale('ka')}
-        style={[s.segment, active === 'ka' ? s.segmentActive : null]}
+        className={[
+          'py-1 px-2 min-w-[36px] items-center justify-center',
+          active === 'ka' ? 'bg-primary' : '',
+        ].join(' ')}
         accessibilityRole="button"
         accessibilityState={{ selected: active === 'ka' }}
-        accessibilityLabel={t('login.langKaA11y')}
-      >
-        <Text style={[s.label, active === 'ka' ? s.labelActive : null]}>KA</Text>
+        accessibilityLabel={t('login.langKaA11y')}>
+        <Text
+          className={[
+            'text-label font-bold',
+            active === 'ka' ? 'text-on-primary' : 'text-fg-secondary',
+          ].join(' ')}>
+          KA
+        </Text>
       </Pressable>
       <Pressable
         onPress={() => setLocale('en')}
-        style={[s.segment, active === 'en' ? s.segmentActive : null]}
+        className={[
+          'py-1 px-2 min-w-[36px] items-center justify-center',
+          active === 'en' ? 'bg-primary' : '',
+        ].join(' ')}
         accessibilityRole="button"
         accessibilityState={{ selected: active === 'en' }}
-        accessibilityLabel={t('login.langEnA11y')}
-      >
-        <Text style={[s.label, active === 'en' ? s.labelActive : null]}>EN</Text>
+        accessibilityLabel={t('login.langEnA11y')}>
+        <Text
+          className={[
+            'text-label font-bold',
+            active === 'en' ? 'text-on-primary' : 'text-fg-secondary',
+          ].join(' ')}>
+          EN
+        </Text>
       </Pressable>
     </View>
   );

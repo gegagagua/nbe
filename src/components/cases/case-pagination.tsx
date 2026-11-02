@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import { formatRecordCount } from '@/utils/format-record-count';
 
-import { casePaginationStyles as s } from './case-pagination.styles';
-
 const WINDOW = 5;
 
 function visiblePages(current: number, total: number): number[] {
@@ -44,34 +42,43 @@ export function CasePagination({
   });
 
   return (
-    <View style={s.wrap}>
-      <Text style={s.totalRecords}>{totalLabel}</Text>
-      <View style={s.navRow}>
+    <View className="w-full mt-6 pb-2 gap-2 items-center">
+      <Text className="text-caption font-semibold text-fg">{totalLabel}</Text>
+      <View className="flex-row flex-wrap items-center justify-center gap-2">
         <Pressable
-          style={[s.edgeBtn, disablePrev && s.edgeBtnDisabled]}
+          className={`rounded-sm border border-border bg-surface px-2 py-2 min-w-[44px] items-center${
+            disablePrev ? ' opacity-45' : ''
+          }`}
           disabled={disablePrev}
           onPress={() => onPageChange(Math.max(0, pageNumber - 1))}>
-          <Text style={s.edgeBtnText}>{t('cases.previousPage')}</Text>
+          <Text className="text-caption font-bold text-fg">{t('cases.previousPage')}</Text>
         </Pressable>
         {pages.map((idx) => {
           const active = idx === pageNumber;
           return (
             <Pressable
               key={idx}
-              style={[s.pageBtn, active && s.pageBtnActive]}
+              className={`min-w-[36px] h-9 rounded-sm border items-center justify-center ${
+                active ? 'bg-primary border-primary' : 'border-border bg-surface'
+              }`}
               onPress={() => onPageChange(idx)}>
-              <Text style={[s.pageBtnText, active && s.pageBtnTextActive]}>{idx + 1}</Text>
+              <Text
+                className={`text-caption font-bold ${active ? 'text-on-primary' : 'text-fg'}`}>
+                {idx + 1}
+              </Text>
             </Pressable>
           );
         })}
         <Pressable
-          style={[s.edgeBtn, disableNext && s.edgeBtnDisabled]}
+          className={`rounded-sm border border-border bg-surface px-2 py-2 min-w-[44px] items-center${
+            disableNext ? ' opacity-45' : ''
+          }`}
           disabled={disableNext}
           onPress={() => onPageChange(Math.min(last, pageNumber + 1))}>
-          <Text style={s.edgeBtnText}>{t('cases.nextPage')}</Text>
+          <Text className="text-caption font-bold text-fg">{t('cases.nextPage')}</Text>
         </Pressable>
       </View>
-      <Text style={s.pageIndicator}>
+      <Text className="text-caption font-semibold text-fg-muted mx-2">
         {pageNumber + 1} / {tp}
       </Text>
     </View>

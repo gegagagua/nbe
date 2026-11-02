@@ -1,8 +1,6 @@
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-
 type PartyLike = {
   titleLine: string;
   addressLines: readonly string[] | string[];
@@ -13,13 +11,13 @@ export function CaseDetailPartyCell({ party }: { party: PartyLike }) {
   const { t } = useTranslation();
   return (
     <View>
-      <Text style={s.primaryText}>{party.titleLine}</Text>
+      <Text className="text-label font-bold text-fg">{party.titleLine}</Text>
       {party.addressLines.map((line) => (
-        <Text key={line} style={s.mutedText}>
+        <Text key={line} className="text-caption text-fg-secondary">
           {line}
         </Text>
       ))}
-      <Text style={s.paymentId}>
+      <Text className="mt-1 text-caption text-fg-secondary">
         {t('cases.detail.paymentIdLine', { id: party.paymentIdentifier })}
       </Text>
     </View>

@@ -5,14 +5,13 @@ import { AppSafeArea } from "@/components/ui/app-safe-area";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
 
 import { HomeHeader } from "./home-header";
-import { homeTabContentShellStyles } from "./home-tab-content-shell.styles";
 
 export function HomeTabContentShell({ children }: PropsWithChildren) {
   const { displayName } = useSessionUserProfile();
 
   return (
-    <View style={homeTabContentShellStyles.page}>
-      <AppSafeArea style={homeTabContentShellStyles.body}>
+    <View className="flex-1 bg-bg">
+      <AppSafeArea style={{ flex: 1 }}>
         <HomeHeader displayName={displayName} />
         {children}
       </AppSafeArea>

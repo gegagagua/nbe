@@ -3,13 +3,8 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
-import {
-  NotificationsLayout,
-  NotificationsPalette,
-} from "@/constants/notifications";
+import { useAppTheme } from "@/theme";
 import type { NotificationSelectPreset } from "@/types/notifications";
-
-import { notificationsToolbarStyles as s } from "./notifications-toolbar.styles";
 
 const SELECT_PRESETS: NotificationSelectPreset[] = ["all", "read", "unread"];
 
@@ -39,6 +34,7 @@ export function NotificationsToolbar({
   busy,
 }: Props) {
   const { t } = useTranslation();
+  const { colors, shadows } = useAppTheme();
   const toggleRef = useRef<View>(null);
   const [anchor, setAnchor] = useState<MenuAnchor | null>(null);
 
@@ -47,7 +43,7 @@ export function NotificationsToolbar({
 
   const openMenu = () => {
     toggleRef.current?.measureInWindow((x, y, _width, height) => {
-      setAnchor({ top: y + height + NotificationsLayout.menuOffset, left: x });
+      setAnchor({ top: y + height + 4, left: x });
     });
   };
 
@@ -58,36 +54,34 @@ export function NotificationsToolbar({
       : "checkbox-blank-outline";
 
   return (
-    <View style={s.bar}>
+    <View className="flex-row items-center justify-between gap-2">
       <View ref={toggleRef} collapsable={false}>
         <Pressable
-          style={s.toggle}
+          className="h-10 flex-row items-center gap-1 rounded-lg border border-border bg-surface px-2"
           onPress={openMenu}
           accessibilityRole="button"
           accessibilityLabel={t("notifications.selectMenuA11yLabel")}
         >
           <MaterialCommunityIcons
             name={checkboxIcon}
-            size={NotificationsLayout.checkboxSize}
-            color={NotificationsPalette.textPrimary}
+            size={22}
+            color={colors.text}
           />
-          <MaterialCommunityIcons
-            name="menu-down"
-            size={NotificationsLayout.checkboxSize}
-            color={NotificationsPalette.textPrimary}
-          />
+          <MaterialCommunityIcons name="menu-down" size={22} color={colors.text} />
         </Pressable>
       </View>
 
       <Pressable
-        style={s.action}
+        className="h-10 justify-center px-2"
         disabled={actionDisabled}
         onPress={hasSelection ? onMarkSelectedRead : onMarkAllRead}
         accessibilityRole="button"
         accessibilityState={{ disabled: actionDisabled }}
       >
         <Text
-          style={[s.actionLabel, actionDisabled ? s.actionLabelDisabled : null]}
+          className={`text-label font-semibold ${
+            actionDisabled ? "text-fg-disabled" : "text-primary"
+          }`}
         >
           {hasSelection
             ? t("notifications.markSelectedRead", { count: selectedCount })
@@ -101,7 +95,7 @@ export function NotificationsToolbar({
         animationType="fade"
         onRequestClose={() => setAnchor(null)}
       >
-        <View style={s.menuScrim}>
+        <View className="flex-1">
           <Pressable
             style={StyleSheet.absoluteFill}
             onPress={() => setAnchor(null)}
@@ -109,19 +103,24 @@ export function NotificationsToolbar({
             accessibilityLabel={t("notifications.selectMenuCloseA11yLabel")}
           />
           {anchor && (
-            <View style={[s.menu, { top: anchor.top, left: anchor.left }]}>
-              <Text style={s.menuHeader}>{t("notifications.selectMenuTitle")}</Text>
+            <View
+              className="absolute min-w-[180px] rounded-lg border border-border bg-surface-elevated py-1"
+              style={[{ top: anchor.top, left: anchor.left }, shadows.lg]}
+            >
+              <Text className="px-4 py-2 text-caption text-fg-muted">
+                {t("notifications.selectMenuTitle")}
+              </Text>
               {SELECT_PRESETS.map((preset) => (
                 <Pressable
                   key={preset}
-                  style={s.menuItem}
+                  className="px-4 py-2 active:bg-surface-pressed"
                   accessibilityRole="button"
                   onPress={() => {
                     onSelectPreset(preset);
                     setAnchor(null);
                   }}
                 >
-                  <Text style={s.menuItemText}>
+                  <Text className="text-body text-fg">
                     {t(`notifications.selectOptions.${preset}`)}
                   </Text>
                 </Pressable>

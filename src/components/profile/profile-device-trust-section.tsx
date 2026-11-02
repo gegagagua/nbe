@@ -3,13 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Switch, Text, View } from 'react-native';
 
 import { LoginDeviceTrustPrompt } from '@/components/login/login-device-trust-prompt';
-import { LoginPalette } from '@/constants/login';
+import { Card } from '@/components/ui/card';
 import { useDeviceTrust } from '@/hooks/use-device-trust';
 import { showErrorToast } from '@/lib/show-error-toast';
+import { useAppTheme } from '@/theme';
 import type { RegisterDeviceResult } from '@/types/passkey';
-
-import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
-import { profileScreenStyles as ps } from './profile-screen.styles';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
@@ -20,6 +18,7 @@ type StatusMessage = { type: 'success' | 'error'; text: string };
  */
 export function ProfileDeviceTrustSection() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const trust = useDeviceTrust();
   const [modalVisible, setModalVisible] = useState(false);
   const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
@@ -91,44 +90,42 @@ export function ProfileDeviceTrustSection() {
   );
 
   return (
-    <View style={ps.card}>
-      <Text style={ps.sectionTitle}>{t('deviceTrust.sectionTitle')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('deviceTrust.sectionTitle')}</Text>
 
-      <View style={s.row}>
-        <View style={s.rowText}>
-          <Text style={s.rowLabel}>{t('deviceTrust.rowLabel')}</Text>
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-1 gap-0.5">
+          <Text className="text-body font-semibold text-fg">{t('deviceTrust.rowLabel')}</Text>
           {/* On/off status indicator (NM-318): green "აქტიური" when trusted. */}
           <Text
-            style={[
-              s.statusText,
-              trust.isTrusted ? s.statusActive : s.statusInactive,
-            ]}>
+            className={`text-label font-bold ${
+              trust.isTrusted ? 'text-success' : 'text-fg-muted'
+            }`}>
             {trust.isTrusted
               ? t('deviceTrust.statusActive')
               : t('deviceTrust.statusInactive')}
           </Text>
-          <Text style={s.rowDescription}>{description}</Text>
+          <Text className="text-label leading-[18px] text-fg-muted">{description}</Text>
         </View>
         {trust.isLoading || trust.isBusy ? (
-          <ActivityIndicator color={LoginPalette.primary} />
+          <ActivityIndicator color={colors.primary} />
         ) : (
           <Switch
             value={trust.isTrusted}
             onValueChange={(v) => { handleToggle(v); }}
             disabled={!trust.isSupported && !trust.isTrusted}
-            trackColor={{ true: LoginPalette.primary, false: '#cfd8ea' }}
-            thumbColor="#ffffff"
-            ios_backgroundColor="#cfd8ea"
+            trackColor={{ true: colors.primary, false: colors.border }}
+            thumbColor={colors.surface}
+            ios_backgroundColor={colors.border}
           />
         )}
       </View>
 
       {statusMessage ? (
         <Text
-          style={[
-            ps.statusMessage,
-            statusMessage.type === 'success' ? ps.statusSuccess : ps.statusError,
-          ]}>
+          className={`text-center text-label font-semibold ${
+            statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+          }`}>
           {statusMessage.text}
         </Text>
       ) : null}
@@ -141,6 +138,6 @@ export function ProfileDeviceTrustSection() {
         onConfirm={() => { handleConfirm(); }}
         onClose={() => setModalVisible(false)}
       />
-    </View>
+    </Card>
   );
 }

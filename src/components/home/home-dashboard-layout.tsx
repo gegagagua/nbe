@@ -1,18 +1,15 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 import type { HomeDashboardLayoutProps } from '@/types/home-dashboard';
-
-import { homeDashboardLayoutStyles } from './home-dashboard-layout.styles';
 
 export function HomeDashboardLayout({ children }: HomeDashboardLayoutProps) {
   return (
     <ScrollView
-      style={homeDashboardLayoutStyles.scroll}
-      contentContainerStyle={homeDashboardLayoutStyles.scrollContent}
+      className="flex-1"
+      contentContainerClassName="grow px-4 pt-2 pb-6"
+      showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled">
-        <View style={homeDashboardLayoutStyles.container}>
-          {children}
-        </View>
+      {children}
     </ScrollView>
   );
 }

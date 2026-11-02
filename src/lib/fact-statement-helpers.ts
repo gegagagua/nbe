@@ -76,6 +76,8 @@ export type ApplicantProfilePatch = {
   applicantPersonalId?: string | null;
   applicantActualAddress?: string | null;
   applicantLegalAddress?: string | null;
+  applicantPhone?: string | null;
+  applicantEmail?: string | null;
 };
 
 /**
@@ -97,6 +99,8 @@ export function mergeApplicantProfile(
       form.applicantActualAddress || patch.applicantActualAddress || "",
     applicantLegalAddress:
       form.applicantLegalAddress || patch.applicantLegalAddress || "",
+    applicantPhone: form.applicantPhone || patch.applicantPhone || "",
+    applicantEmail: form.applicantEmail || patch.applicantEmail || "",
   };
 }
 

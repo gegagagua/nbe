@@ -1,7 +1,5 @@
 import { Pressable, Text } from 'react-native';
 
-import { caseFiltersStyles as s } from './case-filters.styles';
-
 export function CaseFilterToggleRow({
   label,
   value,
@@ -12,9 +10,9 @@ export function CaseFilterToggleRow({
   onChange: (next: boolean) => void;
 }) {
   return (
-    <Pressable style={s.checkRow} onPress={() => onChange(!value)}>
+    <Pressable className="flex-row items-center gap-1" onPress={() => onChange(!value)}>
       <Text>{value ? '☑' : '☐'}</Text>
-      <Text style={s.label}>{label}</Text>
+      <Text className="text-label font-semibold text-fg">{label}</Text>
     </Pressable>
   );
 }

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { GuestPersonType } from '@/types/guest-fine';
 
-import { registerSegmentedTabsStyles as s } from '../register/register-segmented-tabs.styles';
-
 type Props = {
   value: GuestPersonType;
   onChange: (value: GuestPersonType) => void;
@@ -14,22 +12,36 @@ export function CaseGuestPersonTabs({ value, onChange }: Props) {
   const { t } = useTranslation();
 
   return (
-    <View style={s.row}>
+    <View className="flex-row gap-1 mb-4">
       <Pressable
-        style={[s.tab, value === 'physical' && s.tabSelected]}
+        className={`flex-1 items-center rounded-sm border py-1 ${
+          value === 'physical'
+            ? 'border-primary bg-primary'
+            : 'border-border bg-input'
+        }`}
         onPress={() => onChange('physical')}
         accessibilityRole="tab"
         accessibilityState={{ selected: value === 'physical' }}>
-        <Text style={[s.tabLabel, value === 'physical' && s.tabLabelSelected]}>
+        <Text
+          className={`py-2 text-center text-body ${
+            value === 'physical' ? 'font-semibold text-on-primary' : 'text-fg'
+          }`}>
           {t('login.registerTabPhysical')}
         </Text>
       </Pressable>
       <Pressable
-        style={[s.tab, value === 'legal' && s.tabSelected]}
+        className={`flex-1 items-center rounded-sm border py-1 ${
+          value === 'legal'
+            ? 'border-primary bg-primary'
+            : 'border-border bg-input'
+        }`}
         onPress={() => onChange('legal')}
         accessibilityRole="tab"
         accessibilityState={{ selected: value === 'legal' }}>
-        <Text style={[s.tabLabel, value === 'legal' && s.tabLabelSelected]}>
+        <Text
+          className={`py-2 text-center text-body ${
+            value === 'legal' ? 'font-semibold text-on-primary' : 'text-fg'
+          }`}>
           {t('login.registerTabLegal')}
         </Text>
       </Pressable>

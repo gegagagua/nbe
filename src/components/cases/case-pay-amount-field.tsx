@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
-import { casePayAmountFieldStyles as s } from './case-pay-amount-field.styles';
+import { Button } from '@/components/ui/button';
 
 type Props = {
   /**
@@ -73,10 +73,10 @@ export function CasePayAmountField({
 
   return (
     <>
-      <View style={s.payAmountWrap}>
-        <Text style={s.payAmountLabel}>{t('cases.detailPayAmountLabel')}</Text>
+      <View className="mt-2 gap-1">
+        <Text className="text-label font-bold text-fg">{t('cases.detailPayAmountLabel')}</Text>
         <TextInput
-          style={s.payInput}
+          className="h-11 rounded-sm border border-input bg-input px-4 text-body text-fg"
           value={amountInput}
           onChangeText={handleAmountChange}
           onBlur={handleAmountBlur}
@@ -87,14 +87,13 @@ export function CasePayAmountField({
           accessibilityLabel={t('cases.detailPayAmountLabel')}
         />
       </View>
-      <Pressable
-        style={[s.payButton, (isPaying || isNonPayable) && s.payButtonDisabled]}
+      <Button
+        label={payButtonLabel}
         onPress={handlePress}
         disabled={isPaying || isNonPayable}
-        accessibilityRole="button"
-        accessibilityLabel={t('cases.detailPayButton')}>
-        <Text style={s.payButtonText}>{payButtonLabel}</Text>
-      </Pressable>
+        accessibilityLabel={t('cases.detailPayButton')}
+        style={{ marginTop: 8 }}
+      />
     </>
   );
 }

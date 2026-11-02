@@ -8,10 +8,8 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { LoginPalette } from '@/constants/login';
+import { useAppTheme } from '@/theme';
 import type { ForcedPwdChangeState } from '@/types/login';
-
-import { forcedPasswordChangeModalStyles as s } from './forced-password-change-modal.styles';
 
 const PUNCTUATION_RE = /[~!@#$%^&*()_+`\-={}[\]|\\:";'<>,.?/]/;
 
@@ -37,6 +35,7 @@ type FormValues = { newPassword: string; confirmPassword: string };
 
 export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: ForcedPwdChangeState) {
   const { t, i18n } = useTranslation();
+  const { colors } = useAppTheme();
   const schema = useMemo(() => createSchema(t), [t, i18n.language]);
 
   const { control, handleSubmit, formState } = useForm<FormValues>({
@@ -52,16 +51,21 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
   return (
     <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
       <KeyboardAwareScrollView
-        contentContainerStyle={s.backdrop}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 16 }}
+        style={{ backgroundColor: colors.overlay }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         bottomOffset={16}>
-        <View style={s.card}>
-          <Text style={s.title}>{t('login.forcedPwdChangeTitle')}</Text>
-          <Text style={s.subtitle}>{t('login.forcedPwdChangeSubtitle')}</Text>
-          <Text style={s.requirementsHint}>{t('login.registerPasswordRequirements')}</Text>
+        <View className="gap-3 rounded-md bg-surface p-4">
+          <Text className="text-heading font-bold text-fg">{t('login.forcedPwdChangeTitle')}</Text>
+          <Text className="text-label leading-5 text-fg-muted">
+            {t('login.forcedPwdChangeSubtitle')}
+          </Text>
+          <Text className="text-label leading-[18px] text-fg-muted">
+            {t('login.registerPasswordRequirements')}
+          </Text>
 
-          <View style={s.fields}>
+          <View className="gap-2">
             <Controller
               control={control}
               name="newPassword"
@@ -77,7 +81,9 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
               )}
             />
             {formState.errors.newPassword?.message ? (
-              <Text style={s.errorText}>{formState.errors.newPassword.message}</Text>
+              <Text className="text-caption text-danger">
+                {formState.errors.newPassword.message}
+              </Text>
             ) : null}
 
             <Controller
@@ -95,13 +101,15 @@ export function ForcedPasswordChangeModal({ visible, isSubmitting, onSubmit }: F
               )}
             />
             {formState.errors.confirmPassword?.message ? (
-              <Text style={s.errorText}>{formState.errors.confirmPassword.message}</Text>
+              <Text className="text-caption text-danger">
+                {formState.errors.confirmPassword.message}
+              </Text>
             ) : null}
           </View>
 
           {isSubmitting ? (
-            <Pressable disabled style={s.loadingWrap}>
-              <ActivityIndicator color={LoginPalette.primary} />
+            <Pressable disabled className="items-center py-3">
+              <ActivityIndicator color={colors.primary} />
             </Pressable>
           ) : (
             <Button

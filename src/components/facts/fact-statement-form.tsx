@@ -3,21 +3,17 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, TextInput, View } from "react-native";
 
-import { debtorExtractRequestStyles as s } from "@/components/debtor-registry/debtor-extract-request.styles";
-import { Button } from "@/components/ui/button";
+import { Button, Card, PressableScale } from "@/components/ui";
 import { DatePickerField } from "@/components/ui/date-picker-field";
 import { SelectField, type SelectOption } from "@/components/ui/select-field";
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
 import { FactStatementHourOptions } from "@/constants/fact-statement";
-import { LoginPalette } from "@/constants/login";
 import { parseOptionList } from "@/lib/fact-statement-helpers";
+import { useAppTheme } from "@/theme";
 import type {
   FactFeeKind,
   FactOwnerKind,
   FactStatementForm as FactStatementFormState,
 } from "@/types/fact-statement";
-
-import { factStatementStyles as fs } from "./fact-statement.styles";
 
 type Props = {
   form: FactStatementFormState;
@@ -38,12 +34,15 @@ type Props = {
 /** "ლეიბლი *" — appends a red asterisk for required fields. */
 function FieldLabel({ label, required }: { label: string; required?: boolean }) {
   return (
-    <Text style={s.fieldLabel}>
+    <Text className="text-label font-semibold text-fg-secondary">
       {label}
-      {required ? <Text style={s.requiredMark}> *</Text> : null}
+      {required ? <Text className="text-danger"> *</Text> : null}
     </Text>
   );
 }
+
+const INPUT_CLASS =
+  "rounded-md border border-input-border bg-input px-3 py-2 text-body text-fg min-h-[50px]";
 
 export function FactStatementForm({
   form,
@@ -53,6 +52,13 @@ export function FactStatementForm({
   lockApplicant = false,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
+
+  const inputProps = {
+    placeholderTextColor: colors.inputPlaceholder,
+  };
+  const disabledClass = (locked: boolean) =>
+    locked ? "bg-surface-sunken text-fg-muted" : "";
 
   const bureauOptions = useMemo(
     () => parseOptionList(t("facts.stBureauOptions")),
@@ -85,7 +91,7 @@ export function FactStatementForm({
   return (
     <>
       {/* ორგანიზაცია */}
-      <View style={s.sectionCard}>
+      <Card className="gap-2">
         <FieldLabel label={t("facts.stOrganizationLabel")} required />
         <SelectField
           value={form.organization}
@@ -95,114 +101,116 @@ export function FactStatementForm({
           title={t("facts.stOrganizationLabel")}
           closeA11yLabel={closeA11y}
         />
-      </View>
+      </Card>
 
       {/* განმცხადებელი */}
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("facts.stApplicantSection")}</Text>
+      <Card className="gap-3">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.stApplicantSection")}
+        </Text>
         {form.applicantKind === "legal" ? (
           <>
             {/* იურიდიული პირი: დასახელება + საიდენტიფიკაციო კოდი */}
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stOrgNameLabel")} required />
               <TextInput
                 value={form.applicantOrgName}
                 onChangeText={(v) => onChange("applicantOrgName", v)}
                 editable={!lockApplicant}
-                style={[s.input, lockApplicant && s.inputDisabled]}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
                 accessibilityLabel={t("facts.stOrgNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stIdCodeLabel")} required />
               <TextInput
                 value={form.applicantPersonalId}
                 onChangeText={(v) => onChange("applicantPersonalId", v)}
                 editable={!lockApplicant}
                 keyboardType="number-pad"
-                style={[s.input, lockApplicant && s.inputDisabled]}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
                 accessibilityLabel={t("facts.stIdCodeLabel")}
+                {...inputProps}
               />
             </View>
           </>
         ) : (
           <>
             {/* ფიზიკური პირი: სახელი + გვარი + პირადი ნომერი */}
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stFirstNameLabel")} required />
               <TextInput
                 value={form.applicantFirstName}
                 onChangeText={(v) => onChange("applicantFirstName", v)}
                 editable={!lockApplicant}
-                style={[s.input, lockApplicant && s.inputDisabled]}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
                 accessibilityLabel={t("facts.stFirstNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stLastNameLabel")} required />
               <TextInput
                 value={form.applicantLastName}
                 onChangeText={(v) => onChange("applicantLastName", v)}
                 editable={!lockApplicant}
-                style={[s.input, lockApplicant && s.inputDisabled]}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
                 accessibilityLabel={t("facts.stLastNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stPersonalIdLabel")} required />
               <TextInput
                 value={form.applicantPersonalId}
                 onChangeText={(v) => onChange("applicantPersonalId", v)}
                 editable={!lockApplicant}
                 keyboardType="number-pad"
-                style={[s.input, lockApplicant && s.inputDisabled]}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
                 accessibilityLabel={t("facts.stPersonalIdLabel")}
+                {...inputProps}
               />
             </View>
           </>
         )}
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stActualAddressLabel")} required />
           <TextInput
             value={form.applicantActualAddress}
             onChangeText={(v) => onChange("applicantActualAddress", v)}
             editable={!lockApplicant}
-            style={[s.input, s.inputMultiline, lockApplicant && s.inputDisabled]}
+            className={`${INPUT_CLASS} min-h-[80px] ${disabledClass(lockApplicant)}`}
             multiline
-            placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stActualAddressLabel")}
+            {...inputProps}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stLegalAddressLabel")} />
           <TextInput
             value={form.applicantLegalAddress}
             onChangeText={(v) => onChange("applicantLegalAddress", v)}
             editable={!lockApplicant}
-            style={[s.input, s.inputMultiline, lockApplicant && s.inputDisabled]}
+            className={`${INPUT_CLASS} min-h-[80px] ${disabledClass(lockApplicant)}`}
             multiline
-            placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stLegalAddressLabel")}
+            {...inputProps}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stPhoneLabel")} required />
           <TextInput
             value={form.applicantPhone}
             onChangeText={(v) => onChange("applicantPhone", v)}
             editable={!lockApplicant}
             keyboardType="phone-pad"
-            style={[s.input, lockApplicant && s.inputDisabled]}
-            placeholderTextColor={LoginPalette.placeholderMuted}
+            className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
             accessibilityLabel={t("facts.stPhoneLabel")}
+            {...inputProps}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stEmailLabel")} />
           <TextInput
             value={form.applicantEmail}
@@ -210,23 +218,25 @@ export function FactStatementForm({
             editable={!lockApplicant}
             keyboardType="email-address"
             autoCapitalize="none"
-            style={[s.input, lockApplicant && s.inputDisabled]}
-            placeholderTextColor={LoginPalette.placeholderMuted}
+            className={`${INPUT_CLASS} ${disabledClass(lockApplicant)}`}
             accessibilityLabel={t("facts.stEmailLabel")}
+            {...inputProps}
           />
         </View>
-      </View>
+      </Card>
 
       {/* საფასური */}
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("facts.stFeeSection")}</Text>
-        <View style={fs.radioList}>
+      <Card className="gap-3">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.stFeeSection")}
+        </Text>
+        <View className="gap-2">
           {feeOptions.map((opt) => {
             const isOn = form.fee === opt.id;
             return (
-              <Pressable
+              <PressableScale
                 key={opt.id}
-                style={[fs.radioRow, isOn && fs.radioRowSelected]}
+                className={`flex-row items-center gap-2 rounded-md border bg-input px-4 py-2 ${isOn ? "border-fg bg-surface-sunken" : "border-border"}`}
                 onPress={() => onChange("fee", opt.id)}
                 accessibilityRole="radio"
                 accessibilityState={{ selected: isOn }}
@@ -234,23 +244,21 @@ export function FactStatementForm({
                 <MaterialCommunityIcons
                   name={isOn ? "radiobox-marked" : "radiobox-blank"}
                   size={22}
-                  color={
-                    isOn
-                      ? LoginPalette.logoRed
-                      : DebtorRegistryPalette.inputBorder
-                  }
+                  color={isOn ? colors.danger : colors.inputBorder}
                 />
-                <Text style={fs.radioLabel}>{opt.label}</Text>
-              </Pressable>
+                <Text className="flex-1 text-body text-fg">{opt.label}</Text>
+              </PressableScale>
             );
           })}
         </View>
-      </View>
+      </Card>
 
       {/* ფაქტის დადგენის თარიღი */}
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("facts.stFactDateSection")}</Text>
-        <View style={s.fieldGap}>
+      <Card className="gap-3">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.stFactDateSection")}
+        </Text>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stDateFrom")} required />
           <DatePickerField
             value={form.factDateFrom}
@@ -262,7 +270,7 @@ export function FactStatementForm({
             closeLabel={t("facts.pickerClose")}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stDateTo")} required />
           <DatePickerField
             value={form.factDateTo}
@@ -275,9 +283,11 @@ export function FactStatementForm({
           />
         </View>
         <FieldLabel label={t("facts.stTimeLabel")} required />
-        <View style={fs.timeRow}>
-          <View style={fs.timeCol}>
-            <Text style={s.fieldLabel}>{t("facts.stTimeFrom")}</Text>
+        <View className="flex-row items-end gap-2">
+          <View className="flex-1 gap-1">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t("facts.stTimeFrom")}
+            </Text>
             <SelectField
               value={form.factHourFrom}
               onChange={(v) => onChange("factHourFrom", v)}
@@ -287,8 +297,10 @@ export function FactStatementForm({
               closeA11yLabel={closeA11y}
             />
           </View>
-          <View style={fs.timeCol}>
-            <Text style={s.fieldLabel}>{t("facts.stTimeTo")}</Text>
+          <View className="flex-1 gap-1">
+            <Text className="text-label font-semibold text-fg-secondary">
+              {t("facts.stTimeTo")}
+            </Text>
             <SelectField
               value={form.factHourTo}
               onChange={(v) => onChange("factHourTo", v)}
@@ -300,21 +312,25 @@ export function FactStatementForm({
           </View>
         </View>
         <Pressable
-          style={fs.timeClear}
+          className="self-start px-4 py-2"
           onPress={() => {
             onChange("factHourFrom", "");
             onChange("factHourTo", "");
           }}
           accessibilityRole="button"
         >
-          <Text style={fs.timeClearText}>{t("facts.stTimeClear")}</Text>
+          <Text className="text-label font-bold text-fg">
+            {t("facts.stTimeClear")}
+          </Text>
         </Pressable>
-      </View>
+      </Card>
 
       {/* ფაქტების დადგენის ადგილი */}
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("facts.stPlaceSection")}</Text>
-        <View style={s.fieldGap}>
+      <Card className="gap-3">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.stPlaceSection")}
+        </Text>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stPropertyTypeLabel")} required />
           <SelectField
             value={form.propertyType}
@@ -325,33 +341,35 @@ export function FactStatementForm({
             closeA11yLabel={closeA11y}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stCadCodeLabel")} />
           <TextInput
             value={form.cadCode}
             onChangeText={(v) => onChange("cadCode", v)}
-            style={s.input}
-            placeholderTextColor={LoginPalette.placeholderMuted}
+            className={INPUT_CLASS}
             accessibilityLabel={t("facts.stCadCodeLabel")}
+            {...inputProps}
           />
         </View>
-        <View style={s.fieldGap}>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stPlaceAddressLabel")} required />
           <TextInput
             value={form.placeAddress}
             onChangeText={(v) => onChange("placeAddress", v)}
-            style={[s.input, s.inputMultiline]}
+            className={`${INPUT_CLASS} min-h-[80px]`}
             multiline
-            placeholderTextColor={LoginPalette.placeholderMuted}
             accessibilityLabel={t("facts.stPlaceAddressLabel")}
+            {...inputProps}
           />
         </View>
-      </View>
+      </Card>
 
       {/* მესაკუთრე */}
-      <View style={s.sectionCard}>
-        <Text style={s.sectionTitle}>{t("facts.stOwnerSection")}</Text>
-        <View style={s.fieldGap}>
+      <Card className="gap-3">
+        <Text className="text-subtitle font-bold text-fg">
+          {t("facts.stOwnerSection")}
+        </Text>
+        <View className="gap-1">
           <FieldLabel label={t("facts.stOwnerTypeLabel")} />
           <SelectField
             value={form.ownerKind}
@@ -364,106 +382,106 @@ export function FactStatementForm({
         </View>
         {form.ownerKind === "physical" ? (
           <>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stPersonalIdLabel")} required />
               <TextInput
                 value={form.ownerPersonalId}
                 onChangeText={(v) => onChange("ownerPersonalId", v)}
                 keyboardType="number-pad"
-                style={s.input}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={INPUT_CLASS}
                 accessibilityLabel={t("facts.stPersonalIdLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stFirstNameLabel")} required />
               <TextInput
                 value={form.ownerFirstName}
                 onChangeText={(v) => onChange("ownerFirstName", v)}
-                style={s.input}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={INPUT_CLASS}
                 accessibilityLabel={t("facts.stFirstNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stLastNameLabel")} required />
               <TextInput
                 value={form.ownerLastName}
                 onChangeText={(v) => onChange("ownerLastName", v)}
-                style={s.input}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={INPUT_CLASS}
                 accessibilityLabel={t("facts.stLastNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stOwnerAddressLabel")} required />
               <TextInput
                 value={form.ownerAddress}
                 onChangeText={(v) => onChange("ownerAddress", v)}
-                style={[s.input, s.inputMultiline]}
+                className={`${INPUT_CLASS} min-h-[80px]`}
                 multiline
-                placeholderTextColor={LoginPalette.placeholderMuted}
                 accessibilityLabel={t("facts.stOwnerAddressLabel")}
+                {...inputProps}
               />
             </View>
           </>
         ) : null}
         {form.ownerKind === "legal" ? (
           <>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stOwnerLegalCodeLabel")} required />
               <TextInput
                 value={form.ownerLegalCode}
                 onChangeText={(v) => onChange("ownerLegalCode", v)}
                 keyboardType="number-pad"
-                style={s.input}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={INPUT_CLASS}
                 accessibilityLabel={t("facts.stOwnerLegalCodeLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stOwnerLegalNameLabel")} required />
               <TextInput
                 value={form.ownerLegalName}
                 onChangeText={(v) => onChange("ownerLegalName", v)}
-                style={s.input}
-                placeholderTextColor={LoginPalette.placeholderMuted}
+                className={INPUT_CLASS}
                 accessibilityLabel={t("facts.stOwnerLegalNameLabel")}
+                {...inputProps}
               />
             </View>
-            <View style={s.fieldGap}>
+            <View className="gap-1">
               <FieldLabel label={t("facts.stOwnerAddressLabel")} required />
               <TextInput
                 value={form.ownerAddress}
                 onChangeText={(v) => onChange("ownerAddress", v)}
-                style={[s.input, s.inputMultiline]}
+                className={`${INPUT_CLASS} min-h-[80px]`}
                 multiline
-                placeholderTextColor={LoginPalette.placeholderMuted}
                 accessibilityLabel={t("facts.stOwnerAddressLabel")}
+                {...inputProps}
               />
             </View>
           </>
         ) : null}
-      </View>
+      </Card>
 
       {/* მოთხოვნა */}
-      <View style={s.sectionCard}>
+      <Card className="gap-2">
         <FieldLabel label={t("facts.stRequestLabel")} required />
         <TextInput
           value={form.request}
           onChangeText={(v) => onChange("request", v)}
-          style={[s.input, s.inputMultiline]}
+          className={`${INPUT_CLASS} min-h-[80px]`}
           multiline
-          placeholderTextColor={LoginPalette.placeholderMuted}
           accessibilityLabel={t("facts.stRequestLabel")}
+          {...inputProps}
         />
-      </View>
+      </Card>
 
-      {error ? <Text style={s.errorText}>{error}</Text> : null}
-      <Text style={s.hintText}>{t("facts.stRequiredHint")}</Text>
-      <View style={s.primaryButtonWrap}>
-        <Button label={t("facts.stRecordButton")} onPress={onContinue} />
-      </View>
+      {error ? <Text className="text-caption text-danger">{error}</Text> : null}
+      <Text className="text-caption text-fg-muted">
+        {t("facts.stRequiredHint")}
+      </Text>
+      <Button label={t("facts.stRecordButton")} onPress={onContinue} />
     </>
   );
 }

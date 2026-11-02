@@ -2,14 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { createOtpSchema, type OtpFormValues } from '@/schemas/password-reset.schema';
-
-import { registerOtpStepStyles as os } from './register-otp-step.styles';
-import { registerScreenBodyStyles as s } from './register-screen-body.styles';
 
 const OTP_TTL_SECONDS = 180;
 
@@ -58,47 +57,67 @@ export function RegisterOtpStep({ onVerify, onBack, isVerifying }: RegisterOtpSt
   );
 
   return (
-    <ScrollView style={s.scroll} contentContainerStyle={s.scrollContentCenter}>
-      <View style={os.card}>
-        <Text style={os.title}>{t('login.registerOtpTitle')}</Text>
-        <Text style={os.description}>{t('login.registerOtpDescription')}</Text>
+    <ScrollView
+      className="w-full max-w-[420px] flex-1 self-stretch"
+      contentContainerClassName="grow justify-center pb-4">
+      <Card padding="lg" elevation="lg" className="w-full self-center rounded-2xl">
+        <View className="gap-4">
+          <Text className="text-center text-heading font-bold text-fg">
+            {t('login.registerOtpTitle')}
+          </Text>
+          <Text className="text-center text-body text-fg-secondary">
+            {t('login.registerOtpDescription')}
+          </Text>
 
-        <View style={os.timerRow}>
-          <Text style={[os.timerText, isExpired && os.timerExpired]}>{timerLabel}</Text>
-        </View>
+          <View className="flex-row items-center justify-center gap-1">
+            <Text
+              className={`text-body font-semibold ${isExpired ? 'text-danger' : 'text-primary'}`}>
+              {timerLabel}
+            </Text>
+          </View>
 
-        {isExpired ? (
-          <Text style={os.expiredMessage}>{t('login.registerOtpExpiredMessage')}</Text>
-        ) : null}
+          {isExpired ? (
+            <Text className="text-center text-caption text-danger">
+              {t('login.registerOtpExpiredMessage')}
+            </Text>
+          ) : null}
 
-        <View style={os.fieldRow}>
-          <Controller
-            control={control}
-            name="code"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder={t('login.registerOtpPlaceholder')}
-                keyboardType="number-pad"
-                otp
-                errorMessage={formState.errors.code?.message}
-              />
-            )}
+          <View className="gap-1">
+            <Controller
+              control={control}
+              name="code"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder={t('login.registerOtpPlaceholder')}
+                  keyboardType="number-pad"
+                  otp
+                  errorMessage={formState.errors.code?.message}
+                />
+              )}
+            />
+          </View>
+
+          <Button
+            label={t('login.registerOtpVerifyButton')}
+            onPress={() => { onSubmit(); }}
+            disabled={isVerifying || !formState.isValid || isExpired}
           />
+
+          <PressableScale
+            haptic="none"
+            pressedScale={0.98}
+            onPress={onBack}
+            accessibilityRole="button"
+            className="items-center pt-1">
+            <Text className="text-caption text-primary underline">
+              {t('login.registerOtpBackButton')}
+            </Text>
+          </PressableScale>
         </View>
-
-        <Button
-          label={t('login.registerOtpVerifyButton')}
-          onPress={() => { onSubmit(); }}
-          disabled={isVerifying || !formState.isValid || isExpired}
-        />
-
-        <Pressable style={os.backButton} onPress={onBack} accessibilityRole="button">
-          <Text style={os.backButtonText}>{t('login.registerOtpBackButton')}</Text>
-        </Pressable>
-      </View>
+      </Card>
     </ScrollView>
   );
 }

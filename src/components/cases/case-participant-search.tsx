@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 import type { CaseFiltersProps, CaseSearchFilters } from '@/types/case-management';
 
 import { CaseFilterField } from './case-filter-field';
-import { caseFiltersStyles as s } from './case-filters.styles';
 
 export function CaseParticipantSearch({ values, onChange }: Pick<CaseFiltersProps, 'onChange' | 'values'>) {
   const { t } = useTranslation();
@@ -12,8 +11,8 @@ export function CaseParticipantSearch({ values, onChange }: Pick<CaseFiltersProp
     onChange({ ...values, [key]: value });
 
   return (
-    <View style={s.participantBlock}>
-      <Text style={s.sectionTitle}>{t('cases.participantSearchTitle')}</Text>
+    <View className="w-full gap-2">
+      <Text className="text-label font-bold text-fg mb-1">{t('cases.participantSearchTitle')}</Text>
       <CaseFilterField
         placeholder={t('cases.participantFilterRegnumberPlaceholder')}
         value={values.appRegNo ?? ''}

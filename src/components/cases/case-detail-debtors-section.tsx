@@ -3,12 +3,9 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import type { CaseDetailData } from '@/types/case-detail-data';
 
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 import { CaseDetailPartyCell } from './case-detail-party-cell';
 
 export function CaseDetailDebtorsSection({
@@ -17,20 +14,23 @@ export function CaseDetailDebtorsSection({
   debtors: CaseDetailData['debtors'];
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [open, setOpen] = useState(true);
   return (
-    <View style={p.panel}>
-      <Pressable style={p.panelHeadRow} onPress={() => setOpen((v) => !v)}>
-        <Text style={s.primaryText}>{t('cases.detail.sectionDebtors')}</Text>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Pressable
+        className="flex-row items-center justify-between border-b border-border p-2"
+        onPress={() => setOpen((v) => !v)}>
+        <Text className="text-label font-bold text-fg">{t('cases.detail.sectionDebtors')}</Text>
         <MaterialCommunityIcons
           name={open ? 'chevron-up' : 'chevron-down'}
           size={22}
-          color={DebtorRegistryPalette.buttonBg}
+          color={colors.primary}
         />
       </Pressable>
       {open
         ? debtors.map((d, idx) => (
-            <View key={`${d.titleLine}-${idx}`} style={[tb.tableCell, tb.padSm, tb.borderBottom]}>
+            <View key={`${d.titleLine}-${idx}`} className="flex-1 gap-1 border-b border-border p-2">
               <CaseDetailPartyCell
                 party={{ titleLine: d.titleLine, addressLines: d.addressLines, paymentIdentifier: d.paymentIdentifier }}
               />
