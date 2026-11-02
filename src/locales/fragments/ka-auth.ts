@@ -29,7 +29,7 @@ export const kaAuth = {
     registerPhysicalLastName: "გვარი",
     registerPhysicalPersonalId: "პირადი ნომერი",
     registerPhysicalActualAddress: "ფაქტობრივი მისამართი",
-    registerPhysicalLegalAddress: "იურიდიული მისამართი (არასავალდებულო)",
+    registerPhysicalLegalAddress: "იურიდიული მისამართი",
     registerPhysicalEmail: "ელ-ფოსტა (არასავალდებულო)",
     registerPhysicalPhone: "ტელეფონი",
     registerPhysicalPassword: "პაროლი",

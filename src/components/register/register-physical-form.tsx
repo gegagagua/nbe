@@ -17,7 +17,7 @@ type Props = {
 
 export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
   const { t } = useTranslation();
-  const { control, onSubmit, submitDisabled } = useRegisterPhysicalForm(
+  const { control, onSubmit } = useRegisterPhysicalForm(
     onValidSubmit,
     initialValues,
   );
@@ -35,6 +35,13 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
       />
       <RegisterFormField
         control={control}
+        name="phone"
+        placeholder={t('login.registerPhysicalPhone')}
+        required
+        keyboardType="phone-pad"
+      />
+      <RegisterFormField
+        control={control}
         name="actualAddress"
         placeholder={t('login.registerPhysicalActualAddress')}
         required
@@ -42,19 +49,13 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
       />
       <RegisterFormField
         control={control}
-        name="phone"
-        placeholder={t('login.registerPhysicalPhone')}
+        name="legalAddress"
+        placeholder={t('login.registerPhysicalLegalAddress')}
         required
-        keyboardType="phone-pad"
+        autoCapitalize="sentences"
       />
 
       {/* Optional fields */}
-      <RegisterFormField
-        control={control}
-        name="legalAddress"
-        placeholder={t('login.registerPhysicalLegalAddress')}
-        autoCapitalize="sentences"
-      />
       <RegisterFormField
         control={control}
         name="email"
@@ -81,7 +82,6 @@ export function RegisterPhysicalForm({ onValidSubmit, initialValues }: Props) {
         <Button
           label={t('login.registerSubmit')}
           onPress={() => { onSubmit(); }}
-          disabled={submitDisabled}
         />
       </View>
     </View>
