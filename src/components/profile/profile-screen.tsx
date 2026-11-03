@@ -32,6 +32,7 @@ import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
 import { ProfileLegalEntityInfoSection } from "./profile-legal-entity-info-section";
+import { ProfilePushSection } from "./profile-push-section";
 import { profileScreenStyles as s } from "./profile-screen.styles";
 
 export function ProfileScreen() {
@@ -242,6 +243,10 @@ export function ProfileScreen() {
           <View style={s.divider} />
 
           <ProfileDeviceTrustSection />
+
+          <View style={s.divider} />
+
+          <ProfilePushSection userId={profile.id} />
 
           <View style={s.divider} />
 

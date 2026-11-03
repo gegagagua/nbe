@@ -29,4 +29,15 @@ export const kaNotifications = {
   detailNotFound: "შეტყობინება ვერ მოიძებნა",
   detailCaseLabel: "საქმის ნომერი",
   openCaseA11yLabel: "საქმის გახსნა #{{caseNumber}}",
+  push: {
+    rowLabel: "Push შეტყობინებები",
+    descriptionEnabled: "ამ მოწყობილობაზე მიიღებთ Push შეტყობინებებს.",
+    descriptionDisabled: "ამ მოწყობილობაზე Push შეტყობინებები გამორთულია.",
+    unavailable: "ამ მოწყობილობაზე Push შეტყობინებები მიუწვდომელია.",
+    enableSuccess: "Push შეტყობინებები ჩაირთო",
+    disableSuccess: "Push შეტყობინებები გამოირთო",
+    permissionDenied:
+      "შეტყობინებების ნებართვა არ არის — ჩართეთ ის მოწყობილობის პარამეტრებში.",
+    errorFailed: "პარამეტრის შეცვლა ვერ მოხერხდა. სცადეთ თავიდან.",
+  },
 } as const;

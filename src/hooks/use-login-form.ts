@@ -10,6 +10,7 @@ import { getBiometricAvailability } from "@/lib/biometric-auth";
 import { resolveDeviceName } from "@/lib/device-info";
 import { setGuestMode } from "@/lib/guest-mode";
 import { getPasskeyCredentialId } from "@/lib/passkey-storage";
+import { syncPushDeviceRegistration } from "@/lib/push-notifications";
 import {
     isPasskeySupported,
     registerDevicePasskey,
@@ -77,6 +78,7 @@ export function useLoginForm(): LoginFormState {
           // pwdChngDate arrives nested on `user`.
           pwdChngDate: user.pwdChngDate ?? null,
         });
+        syncPushDeviceRegistration(user.id).catch(() => undefined);
       }
       setGuestMode(false);
       // NOTE (PEN073 F-3/F-4): we no longer silently refresh stored Face ID

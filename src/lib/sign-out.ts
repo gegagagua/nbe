@@ -1,6 +1,8 @@
+import { deactivatePushDevice } from "@/api/notifications";
 import { logoutSession } from "@/api/sessions";
 import { clearActiveLegalEntity } from "@/lib/active-legal-entity-storage";
 import { setGuestMode } from "@/lib/guest-mode";
+import { getOrCreateInstallationId } from "@/lib/passkey-storage";
 import { clearPasswordHistory } from "@/lib/password-history-storage";
 import { clearAppQueryCache } from "@/lib/query-client";
 import { resetStackTo } from "@/lib/reset-navigation";
@@ -8,16 +10,30 @@ import {
   clearSessionToken,
   getSessionToken,
 } from "@/lib/session-token-storage";
-import { clearSessionUserProfile } from "@/lib/session-user-profile-storage";
+import {
+  clearSessionUserProfile,
+  getSessionUserProfile,
+} from "@/lib/session-user-profile-storage";
 
 export async function signOut(): Promise<void> {
   // Invalidate the session server-side (PEN073 F-12). Read the token first and
   // hand it to logoutSession, since we clear local storage below and the
   // request interceptor would otherwise race the delete. Fire-and-forget: a
   // slow or failed logout must never block the user from signing out locally.
-  const token = await getSessionToken();
+  const [token, profile, installationId] = await Promise.all([
+    getSessionToken(),
+    getSessionUserProfile(),
+    getOrCreateInstallationId(),
+  ]);
   if (token) {
-    logoutSession(token).catch(() => undefined);
+    const deactivation = profile?.id
+      ? deactivatePushDevice(profile.id, installationId, token).catch(
+          () => undefined,
+        )
+      : Promise.resolve();
+    deactivation
+      .then(() => logoutSession(token))
+      .catch(() => undefined);
   }
 
   clearAppQueryCache();
