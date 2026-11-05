@@ -13,6 +13,8 @@ type Props = {
   selected: FactStatementPaymentMethod;
   onSelect: (m: FactStatementPaymentMethod) => void;
   onPay: () => void;
+  /** Payment intent in flight — the pay button shows a spinner. */
+  paying?: boolean;
   /** Payable amount in GEL (200 working / 300 non-working). */
   amount: number;
 };
@@ -21,6 +23,7 @@ export function FactStatementPayment({
   selected,
   onSelect,
   onPay,
+  paying = false,
   amount,
 }: Props) {
   const { t } = useTranslation();
@@ -71,7 +74,7 @@ export function FactStatementPayment({
           );
         })}
       </View>
-      <Button label={t("facts.stPayButton")} onPress={onPay} />
+      <Button label={t("facts.stPayButton")} onPress={onPay} loading={paying} />
     </>
   );
 }

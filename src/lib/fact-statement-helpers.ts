@@ -128,20 +128,3 @@ export function mergeApplicantLegalEntity(
   };
 }
 
-/**
- * ჩაწერა mints two distinct identifiers: a 5-digit preliminary case number
- * (საქმის წინასწარი ნომერი) and a longer, separate payment identifier
- * (გადახდის იდენტიფიკატორი).
- */
-export function mintStatementIdentifiers(now: Date): {
-  preliminaryNumber: string;
-  payIdentifier: string;
-} {
-  const ms = String(now.getTime());
-  return { preliminaryNumber: ms.slice(-5), payIdentifier: ms.slice(-11) };
-}
-
-/** The registration (case) number minted once payment goes through. */
-export function mintRegistrationNumber(now: Date): string {
-  return `F${now.getFullYear()}${String(now.getTime()).slice(-6)}`;
-}

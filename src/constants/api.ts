@@ -65,6 +65,10 @@ export const ApiPaths = {
   epsFilesStream: "/file-portal/v1/eps/files/stream",
 
   // EPS-FACT-API — ფაქტების კონსტატაცია / statement of facts (gateway maps `fact-portal` → fact-api `/portal`)
+  // Create (ჩაწერა, POST) and update (რედაქტირება, PUT …/{id}) a statement —
+  // mirrors the debtor-portal create/update pair. NOTE: confirm the request
+  // schema with backend; see buildFactAppPayload.
+  factApps: "/fact-portal/v1/apps",
   factAppsSearch: "/fact-portal/v1/apps/search",
   factAppById: (id: number | string) => `/fact-portal/v1/apps/${id}`,
   factAppPersons: (appId: number | string) =>
@@ -131,7 +135,14 @@ export const NotificationsApiPaths = {
   countUnread: "/notif-portal/v1/notifications/count-unread",
   search: "/notif-portal/v1/notifications/search",
   markAsRead: "/notif-portal/v1/notifications/mark-as-read",
+  // Registers this install's Expo push token so the backend can deliver
+  // remote pushes via https://exp.host/--/api/v2/push/send.
+  registerDevice: "/notif-portal/v1/notifications/register-device",
 } as const;
+
+// Last Expo push token successfully registered with the backend; used to skip
+// re-registering the same token on every dashboard mount.
+export const PushTokenSyncedStorageKey = "nbe_push_token_synced" as const;
 
 // ── Legacy keys kept for backward compatibility ───────────────────────────────
 export const ApiConfig = {

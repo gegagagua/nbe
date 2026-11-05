@@ -54,8 +54,8 @@ export function Input({
 
   const labelStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateY: interpolate(progress.value, [0, 1], [0, -11]) },
-      { scale: interpolate(progress.value, [0, 1], [1, 0.82]) },
+      { translateY: interpolate(progress.value, [0, 1], [0, -16]) },
+      { scale: interpolate(progress.value, [0, 1], [1, 0.78]) },
     ],
     color: interpolateColor(
       progress.value,
@@ -86,7 +86,7 @@ export function Input({
       <View
         className={[
           'w-full flex-row items-center rounded-md border px-3',
-          floating ? 'min-h-[50px]' : 'min-h-[45px]',
+          floating ? 'min-h-[56px]' : 'min-h-[45px]',
           borderClass,
           focused && !errorMessage ? 'border-[1.5px]' : '',
           isEditable ? 'bg-input' : 'bg-surface-sunken',
@@ -136,7 +136,7 @@ export function Input({
             textContentType={otp ? 'oneTimeCode' : undefined}
             autoComplete={otp ? 'sms-otp' : undefined}
             importantForAutofill={otp ? 'yes' : undefined}
-            className={`text-body text-fg py-2 ${floating ? 'pt-3' : ''}`}
+            className={`text-body text-fg py-2 ${floating ? 'pt-5' : ''}`}
             style={{ color: isEditable ? colors.inputText : colors.textMuted }}
           />
         </View>

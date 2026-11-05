@@ -1,12 +1,15 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 
 import { AppHeader, Button, Card, EmptyState } from "@/components/ui";
+import { PaymentWebViewModal } from "@/components/ui/payment-web-view-modal";
 import { useFactApp } from "@/hooks/use-fact-app";
 import { useFactPersons } from "@/hooks/use-fact-persons";
+import { useGuestFinePayment } from "@/hooks/use-guest-fine-payment";
 import { useAppTheme } from "@/theme";
 import type { FactAppDetail, FactPerson } from "@/types/facts";
 
@@ -66,10 +69,18 @@ function ApplicationTab({
   app,
   applicants,
   owners,
+  onEdit,
+  onPay,
+  isPaying,
+  canPay,
 }: {
   app: FactAppDetail;
   applicants: FactPerson[];
   owners: FactPerson[];
+  onEdit: () => void;
+  onPay: () => void;
+  isPaying: boolean;
+  canPay: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -162,19 +173,22 @@ function ApplicationTab({
       {/* Recorded (not yet registered) cases only — a registered case has a
           regnumber and can no longer be edited or paid from here. */}
       {!app.regnumber ? (
-        // Edit / Pay are visual only until the "ჩაწერა" and payment endpoints
-        // exist; Close simply leaves the opened case (spec: რედაქტირება / გადახდა / დახურვა).
         <>
           <View className="flex-row gap-3">
             <View className="flex-1">
               <Button
                 label={t("facts.detailEditButton")}
                 variant="secondary"
-                onPress={() => {}}
+                onPress={onEdit}
               />
             </View>
             <View className="flex-1">
-              <Button label={t("facts.detailPayButton")} onPress={() => {}} />
+              <Button
+                label={t("facts.detailPayButton")}
+                onPress={onPay}
+                loading={isPaying}
+                disabled={!canPay}
+              />
             </View>
           </View>
           <Button
@@ -207,6 +221,40 @@ export function FactsDetailScreen() {
   const applicants = cardApplicant.length > 0 ? cardApplicant : allApplicants;
   const app = query.data;
   const [tab, setTab] = useState<FactsDetailTab>("application");
+
+  // Pay on a recorded (not yet registered) statement — same BOG intent flow
+  // as the debtor registry / enforcement cases, destined to the fact-api.
+  const queryClient = useQueryClient();
+  const payment = useGuestFinePayment({
+    onSynced: () => {
+      // Registration may have just happened — refresh this case and the list.
+      queryClient.invalidateQueries({ queryKey: ["fact-app", appId] });
+      queryClient.invalidateQueries({ queryKey: ["fact-persons", appId] });
+      queryClient.invalidateQueries({ queryKey: ["facts-apps"] });
+    },
+  });
+  const payer = applicants[0] ?? allApplicants[0];
+  // Fee amount: trService.price, else the number inside the fee label
+  // ("სამუშაო დრო (200 ლარი)"). Fee-less statements have nothing to pay.
+  const feeFromName = app?.feeName?.match(/\d+/)?.[0];
+  const payAmount =
+    app?.feePrice ?? (feeFromName != null ? Number(feeFromName) : null);
+  const canPay = payer != null && payAmount != null && payAmount > 0;
+  const onPay = () => {
+    if (!canPay || !Number.isFinite(appId)) return;
+    payment.startPayment({
+      destType: "FACT",
+      appId,
+      personId: payer.id,
+      amount: payAmount,
+    });
+  };
+  const onEdit = () => {
+    router.push({
+      pathname: "/facts/statement",
+      params: { appId: String(appId) },
+    });
+  };
 
   return (
     <View className="flex-1 bg-bg">
@@ -255,6 +303,10 @@ export function FactsDetailScreen() {
                 app={app}
                 applicants={applicants}
                 owners={owners}
+                onEdit={onEdit}
+                onPay={onPay}
+                isPaying={payment.isPaying}
+                canPay={canPay}
               />
             ) : (
               <FactProtocolTab appId={appId} />
@@ -262,6 +314,11 @@ export function FactsDetailScreen() {
           </View>
         ) : null}
       </ScrollView>
+      <PaymentWebViewModal
+        visible={payment.paymentUrl != null}
+        url={payment.paymentUrl}
+        onClose={payment.closePayment}
+      />
     </View>
   );
 }

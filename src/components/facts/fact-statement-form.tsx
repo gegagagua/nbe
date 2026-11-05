@@ -23,6 +23,8 @@ type Props = {
   ) => void;
   error: string | null;
   onContinue: () => void;
+  /** ჩაწერა in flight — the record button shows a spinner and ignores taps. */
+  submitting?: boolean;
   /**
    * When editing an already-recorded statement, the applicant segment is
    * read-only — everything else stays editable (per spec: on a recorded
@@ -49,6 +51,7 @@ export function FactStatementForm({
   onChange,
   error,
   onContinue,
+  submitting = false,
   lockApplicant = false,
 }: Props) {
   const { t } = useTranslation();
@@ -481,7 +484,11 @@ export function FactStatementForm({
       <Text className="text-caption text-fg-muted">
         {t("facts.stRequiredHint")}
       </Text>
-      <Button label={t("facts.stRecordButton")} onPress={onContinue} />
+      <Button
+        label={t("facts.stRecordButton")}
+        onPress={onContinue}
+        loading={submitting}
+      />
     </>
   );
 }

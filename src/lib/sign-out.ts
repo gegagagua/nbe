@@ -8,6 +8,7 @@ import {
   clearSessionToken,
   getSessionToken,
 } from "@/lib/session-token-storage";
+import { clearSyncedPushToken } from "@/lib/push-token-sync";
 import { clearSessionUserProfile } from "@/lib/session-user-profile-storage";
 
 export async function signOut(): Promise<void> {
@@ -27,6 +28,7 @@ export async function signOut(): Promise<void> {
     clearSessionUserProfile(),
     clearActiveLegalEntity(),
     clearPasswordHistory(),
+    clearSyncedPushToken(),
   ]);
   resetStackTo("/");
 }

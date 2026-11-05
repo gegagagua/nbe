@@ -3,7 +3,9 @@ import { apiClient } from "@/lib/api-client";
 import { epsUserHeaders } from "@/lib/eps-user-headers";
 import { mapFactsResponse } from "@/lib/map-facts-response";
 import type {
+  FactAppCreateResponse,
   FactAppDetailResponse,
+  FactAppPayload,
   FactPersonResponse,
   FactsPage,
   FactsSearchFilters,
@@ -54,6 +56,33 @@ export async function searchFacts(
   return mapFactsResponse(response.data);
 }
 
+/**
+ * POST /fact-portal/v1/apps — ჩაწერა: record a statement on the backend. The
+ * backend mints the preliminary case number (the app id) and the applicant's
+ * payment identifier (payCode, F…) — nothing is generated client-side.
+ * Returns the created app id.
+ */
+export async function createFactApp(payload: FactAppPayload): Promise<number> {
+  const response = await apiClient.post<FactAppCreateResponse>(
+    ApiPaths.factApps,
+    payload,
+  );
+  const data = response.data?.data;
+  const id = typeof data === "number" ? data : data?.id;
+  if (id == null) {
+    throw new Error("fact-portal create returned no app id");
+  }
+  return id;
+}
+
+/** PUT /fact-portal/v1/apps/{id} — რედაქტირება: update a recorded statement. */
+export async function updateFactApp(
+  id: number | string,
+  payload: FactAppPayload,
+): Promise<void> {
+  await apiClient.put(ApiPaths.factAppById(id), payload);
+}
+
 /** GET /fact-portal/v1/apps/{id} — single fact statement (opened case). */
 export async function getFactById(
   id: number | string,
@@ -96,7 +125,10 @@ export async function getFactStatusFiles(
   appId: number | string,
   userId: number | string,
   pageNumber = 0,
-  pageSize = 10,
+  // A status carries the generated protocol cover page, the constatation
+  // protocol docs AND the multimedia uploads — a small page silently drops
+  // the tail of that list.
+  pageSize = 50,
 ): Promise<FactStatusFilesResponse> {
   const response = await apiClient.post<FactStatusFilesResponse>(
     ApiPaths.factStatusGetFiles,

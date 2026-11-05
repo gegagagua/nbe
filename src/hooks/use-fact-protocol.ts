@@ -24,21 +24,27 @@ export function useFactProtocol(appId: number | null, userId: number | null) {
     queryFn: async () => {
       const uid = userId as number;
       const statuses = (await getFactStatus(appId as number, uid)).data ?? [];
-      return Promise.all(
+      // Isolate per-status file failures so one bad status can't blank the
+      // whole tab — but surface the failure instead of swallowing it, else a
+      // broken get-files call is indistinguishable from "no files yet".
+      let filesError: unknown = null;
+      const mapped = await Promise.all(
         statuses.map(async (entry) => {
-          // Isolate per-status file failures so one bad/empty status can't blank
-          // the whole tab — the status heading still renders.
           let files: FactProtocolStatus["files"] = [];
           try {
             files = mapFactStatusFiles(
               await getFactStatusFiles(entry.id, entry.appId ?? appId, uid),
             );
-          } catch {
-            files = [];
+          } catch (error) {
+            filesError ??= error;
           }
           return mapFactProtocolStatus(entry, files);
         }),
       );
+      if (filesError != null) {
+        showErrorToast(i18n.t("facts.protocolFilesError"), filesError);
+      }
+      return mapped;
     },
   });
 

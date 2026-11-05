@@ -53,3 +53,19 @@ export async function markAllNotificationsRead(): Promise<void> {
   const unreadIds = all.filter((item) => !item.isRead).map((item) => item.id);
   await markNotificationsRead(unreadIds);
 }
+
+/**
+ * Registers this install's Expo push token with the backend
+ * (`POST /notif-portal/v1/notifications/register-device`). The backend stores
+ * the token against the authenticated user and uses it as the `to` field when
+ * sending through Expo's push API. `deviceId` is the same per-install UUID the
+ * device-trust flow uses, so re-registering replaces the row instead of
+ * accumulating stale tokens.
+ */
+export async function registerPushToken(payload: {
+  token: string;
+  deviceId: string;
+  platform: string;
+}): Promise<void> {
+  await apiClient.post(NotificationsApiPaths.registerDevice, { data: payload });
+}

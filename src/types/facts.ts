@@ -81,6 +81,52 @@ export type FactsSearchRequest = {
 // ── Single statement (GET /fact-portal/v1/apps/{id}) ──────────────────────────
 type FactNamedRef = { id: number; name: string };
 
+// ── Create / update (POST /fact-portal/v1/apps, PUT …/{id}) ───────────────────
+export type FactAppPersonAddressPayload = {
+  /** Same tokens the persons GET returns (FACTUAL / LEGAL). */
+  type: string;
+  address: string;
+};
+
+export type FactAppPersonPayload = {
+  /** 1 = applicant, 3 = owner (FactPersonType). */
+  appPersonType: { id: number };
+  firstName?: string | null;
+  lastName?: string | null;
+  /** Company name when the party is a legal entity. */
+  organization?: string | null;
+  idnumber: string;
+  phone?: string | null;
+  email?: string | null;
+  addresses: FactAppPersonAddressPayload[];
+};
+
+/** Request body of the statement create/update — inverse of the detail GET. */
+export type FactAppPayload = {
+  data: {
+    agency: { name: string };
+    trService: { name: string; price: number };
+    fixedDayFrom: string; // YYYY-MM-DD
+    fixedDayTo: string; // YYYY-MM-DD
+    fixedHourFrom: number | null;
+    fixedHourTo: number | null;
+    appNote: {
+      request: string;
+      propertyAddress: string;
+      cadCode: string | null;
+      propertyType: { name: string } | null;
+    };
+    persons: FactAppPersonPayload[];
+  };
+};
+
+export type FactAppCreateResponse = {
+  data:
+    | number
+    | { id?: number | null; regnumber?: string | null }
+    | null;
+};
+
 export type FactAppNote = {
   request: string | null;
   otherDocs: string | null;
@@ -226,5 +272,7 @@ export type FactAppDetail = {
   cadCode: string;
   propertyAddress: string;
   feeName: string;
+  /** Service fee in GEL (`trService.price`) — the payable amount. */
+  feePrice: number | null;
   request: string;
 };

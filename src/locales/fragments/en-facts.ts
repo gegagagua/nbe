@@ -52,6 +52,7 @@ export const enFacts = {
   protocolDownloadA11y: "Download: {{name}}",
   protocolSectionEmpty: "No files available yet",
   protocolDownloadError: "Failed to download the file",
+  protocolFilesError: "Failed to load the protocol files",
 
   // ── Make a statement ─────────────────────────────────────────────────────
   makeStatementButton: "Make a statement",
@@ -95,6 +96,9 @@ export const enFacts = {
   stOwnerAddressLabel: "Address",
   stRequestLabel: "Request",
   stRecordButton: "Record",
+  stCreateError: "Failed to record the application",
+  stPayPendingInfo:
+    "The payment is not confirmed yet — try again or check the application in the list",
   stValidationError:
     "A required field (or fields) is empty, or filled with an invalid value",
   stRequiredHint: "Required fields are marked with a red asterisk",

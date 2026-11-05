@@ -2,6 +2,7 @@ import type {
   FactProtocolFile,
   FactProtocolStatus,
   FactStatusEntryResponse,
+  FactStatusFileEntryResponse,
   FactStatusFilesResponse,
 } from "@/types/facts";
 
@@ -15,14 +16,38 @@ function formatDateTime(raw: string | null | undefined): string {
   return hhmm ? `${date} ${hhmm}` : date;
 }
 
+/**
+ * The rows may sit directly under `data` (EPS parity) or one level deeper
+ * (`data.content` / `data.data` — the paged wrappers other fact-portal routes
+ * use). Accept all three so a wrapper difference can't blank the tab.
+ */
+function fileEntries(
+  envelope: FactStatusFilesResponse,
+): FactStatusFileEntryResponse[] {
+  const data: unknown = envelope?.data;
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object") {
+    const inner = data as { content?: unknown; data?: unknown };
+    if (Array.isArray(inner.content)) return inner.content;
+    if (Array.isArray(inner.data)) return inner.data;
+  }
+  return [];
+}
+
 /** Map the status-files response into downloadable file rows. */
 export function mapFactStatusFiles(
   envelope: FactStatusFilesResponse,
 ): FactProtocolFile[] {
-  return (envelope.data ?? [])
-    .filter((entry) => entry.file != null)
+  return fileEntries(envelope)
     .map((entry) => {
-      const file = entry.file!;
+      // Meta usually nests under `file` (EPS parity), but tolerate rows that
+      // inline the same fields on the entry itself.
+      const file =
+        entry.file ??
+        ((entry as { fileName?: unknown }).fileName != null
+          ? (entry as unknown as NonNullable<FactStatusFileEntryResponse["file"]>)
+          : null);
+      if (file == null || file.id == null) return null;
       const fileName = file.fileName?.trim() ?? "";
       return {
         fileId: file.id,
@@ -32,7 +57,8 @@ export function mapFactStatusFiles(
         uploadedBy: entry.uploadedBy?.name?.trim() ?? "",
         createdDate: formatDateTime(entry.createdDate),
       };
-    });
+    })
+    .filter((row): row is FactProtocolFile => row != null);
 }
 
 /** Combine a status entry with its (separately fetched) files. */
