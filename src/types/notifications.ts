@@ -84,3 +84,12 @@ export type NotificationSelectPreset = "all" | "read" | "unread";
 export type NotificationsSearchFilters = {
   readState?: NotificationFilterValue;
 };
+
+export type PushDevicePlatform = "ANDROID" | "IOS";
+
+export type PushDeviceRegistration = {
+  installationId: string;
+  expoPushToken: string;
+  platform: PushDevicePlatform;
+  deviceName: string;
+};

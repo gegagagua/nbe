@@ -29,4 +29,15 @@ export const enNotifications = {
   detailNotFound: "Notification not found",
   detailCaseLabel: "Case number",
   openCaseA11yLabel: "Open case #{{caseNumber}}",
+  push: {
+    rowLabel: "Push notifications",
+    descriptionEnabled: "You'll receive push notifications on this device.",
+    descriptionDisabled: "Push notifications are off on this device.",
+    unavailable: "Push notifications aren't available on this device.",
+    enableSuccess: "Push notifications turned on",
+    disableSuccess: "Push notifications turned off",
+    permissionDenied:
+      "Notification permission is missing — allow it in your device settings.",
+    errorFailed: "Could not update the setting. Please try again.",
+  },
 } as const;

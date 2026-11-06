@@ -4,6 +4,9 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
+import { registerPushDevice } from '@/api/notifications';
+import { resolveDeviceName } from '@/lib/device-info';
+import { getOrCreateInstallationId } from '@/lib/passkey-storage';
 import type { AppNotification } from '@/types/notifications';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
 
@@ -86,6 +89,30 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
   } catch {
     return null;
   }
+}
+
+/**
+ * Fetches this device's Expo push token and registers it for `userId` on the
+ * backend. Returns `false` when no token is available (web, simulator, denied
+ * permission); network errors are thrown to the caller.
+ */
+export async function syncPushDeviceRegistration(
+  userId: number | string,
+): Promise<boolean> {
+  if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+    return false;
+  }
+  const expoPushToken = await registerForPushNotificationsAsync();
+  if (!expoPushToken) {
+    return false;
+  }
+  await registerPushDevice(userId, {
+    installationId: await getOrCreateInstallationId(),
+    expoPushToken,
+    platform: Platform.OS === 'ios' ? 'IOS' : 'ANDROID',
+    deviceName: resolveDeviceName(),
+  });
+  return true;
 }
 
 /**
