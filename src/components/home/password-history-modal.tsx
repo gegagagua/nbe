@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, ScrollView, Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
 import { ModalBackdrop } from '@/components/ui/modal-backdrop';
-import { LoginPalette } from '@/constants/login';
-import { Radius, Space, Typography } from '@/constants/theme';
+import { useAppTheme } from '@/theme';
 import { getPasswordHistory, type PasswordHistoryEntry } from '@/lib/password-history-storage';
 import type { PasswordHistoryApiEntry } from '@/types/users';
 
@@ -34,6 +34,7 @@ type Row = { changedAt: string; key: string };
 
 export function PasswordHistoryModal({ visible, onClose, apiEntries }: PasswordHistoryModalProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [history, setHistory] = useState<PasswordHistoryEntry[]>([]);
 
   useEffect(() => {
@@ -53,118 +54,56 @@ export function PasswordHistoryModal({ visible, onClose, apiEntries }: PasswordH
       animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent>
-      <ModalBackdrop onClose={onClose} style={styles.overlay}>
-        <View style={styles.sheet}>
-          <Text style={styles.title}>{t('passwordHistory.modalTitle')}</Text>
+      <ModalBackdrop
+        onClose={onClose}
+        style={{
+          flex: 1,
+          backgroundColor: colors.overlay,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 24,
+        }}>
+        <View className="w-full max-w-[480px] gap-4 rounded-lg bg-surface p-6">
+          <Text className="text-center text-body-lg font-bold text-fg">
+            {t('passwordHistory.modalTitle')}
+          </Text>
 
           {rows.length === 0 ? (
-            <Text style={styles.emptyText}>{t('passwordHistory.emptyMessage')}</Text>
+            <Text className="py-4 text-center text-body text-fg-muted">
+              {t('passwordHistory.emptyMessage')}
+            </Text>
           ) : (
-            <ScrollView style={styles.tableScroll} showsVerticalScrollIndicator={false}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.headerCell, styles.colLabel]}>
+            <ScrollView style={{ maxHeight: 240 }} showsVerticalScrollIndicator={false}>
+              <View className="mb-1 flex-row border-b border-border pb-1">
+                <Text className="flex-1 text-label font-bold text-fg-secondary">
                   {t('passwordHistory.lastChange')}
                 </Text>
-                <Text style={[styles.headerCell, styles.colDate]}>
+                <Text className="w-[90px] text-center text-label font-bold text-fg-secondary">
                   {t('passwordHistory.tableHeaderDate')}
                 </Text>
-                <Text style={[styles.headerCell, styles.colTime]}>
+                <Text className="w-[80px] text-center text-label font-bold text-fg-secondary">
                   {t('passwordHistory.tableHeaderTime')}
                 </Text>
               </View>
               {rows.map((row, i) => (
-                <View key={row.key} style={[styles.tableRow, i % 2 === 0 && styles.tableRowAlt]}>
-                  <Text style={[styles.cell, styles.colLabel]}>#{i + 1}</Text>
-                  <Text style={[styles.cell, styles.colDate]}>{formatDate(row.changedAt)}</Text>
-                  <Text style={[styles.cell, styles.colTime]}>{formatTime(row.changedAt)}</Text>
+                <View
+                  key={row.key}
+                  className={`flex-row py-1 ${i % 2 === 0 ? 'bg-surface-sunken' : ''}`}>
+                  <Text className="flex-1 text-label text-fg-secondary">#{i + 1}</Text>
+                  <Text className="w-[90px] text-center text-label text-fg-secondary">
+                    {formatDate(row.changedAt)}
+                  </Text>
+                  <Text className="w-[80px] text-center text-label text-fg-secondary">
+                    {formatTime(row.changedAt)}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
           )}
 
-          <Pressable style={styles.closeButton} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.closeButtonText}>{t('passwordHistory.closeButton')}</Text>
-          </Pressable>
+          <Button label={t('passwordHistory.closeButton')} onPress={onClose} />
         </View>
       </ModalBackdrop>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Space.large,
-  },
-  sheet: {
-    backgroundColor: '#ffffff',
-    borderRadius: Radius.large,
-    padding: Space.large,
-    width: '100%',
-    maxWidth: 480,
-    gap: Space.medium,
-  },
-  title: {
-    fontSize: Typography.large,
-    fontWeight: '700',
-    color: LoginPalette.titleText,
-    textAlign: 'center',
-  },
-  emptyText: {
-    fontSize: Typography.medium,
-    color: LoginPalette.placeholderMuted,
-    textAlign: 'center',
-    paddingVertical: Space.medium,
-  },
-  tableScroll: {
-    maxHeight: 240,
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: LoginPalette.inputBorder,
-    paddingBottom: Space.extraSmall,
-    marginBottom: Space.extraSmall,
-  },
-  headerCell: {
-    fontSize: Typography.small,
-    fontWeight: '700',
-    color: LoginPalette.bodyText,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: Space.extraSmall,
-  },
-  tableRowAlt: {
-    backgroundColor: '#f5f7fa',
-  },
-  cell: {
-    fontSize: Typography.small,
-    color: LoginPalette.bodyText,
-  },
-  colLabel: {
-    flex: 1,
-  },
-  colDate: {
-    width: 90,
-    textAlign: 'center',
-  },
-  colTime: {
-    width: 80,
-    textAlign: 'center',
-  },
-  closeButton: {
-    backgroundColor: LoginPalette.primary,
-    borderRadius: Radius.small,
-    paddingVertical: Space.small,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#ffffff',
-    fontSize: Typography.medium,
-    fontWeight: '600',
-  },
-});

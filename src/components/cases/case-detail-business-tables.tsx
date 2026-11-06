@@ -2,23 +2,22 @@ import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { DebtorRegistryPalette } from '@/constants/debtor-registry';
+import { useAppTheme } from '@/theme';
 import { useBusinessRegistry } from '@/hooks/use-business-registry';
 
 import { CaseDetailKvCard, CaseDetailKvCardList } from './case-detail-kv-card';
-import { caseDetailInternalStyles as s } from './case-detail-internal.styles';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
 
 export function CaseDetailBusinessTables() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? '');
   const { data, isLoading } = useBusinessRegistry(appId);
 
   if (isLoading) {
     return (
-      <View style={tb.padSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="p-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -28,9 +27,9 @@ export function CaseDetailBusinessTables() {
 
   return (
     <View>
-      <Text style={tb.subSectionTitle}>{t('cases.detail.businessNotifyTitle')}</Text>
+      <Text className="bg-surface-sunken p-2 text-label font-bold text-fg">{t('cases.detail.businessNotifyTitle')}</Text>
       {notify.length === 0 ? (
-        <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>
+        <Text className="p-2 text-caption text-fg-secondary">{t('cases.detail.emptyTable')}</Text>
       ) : (
         <CaseDetailKvCardList>
           {notify.map((row, i) => (
@@ -60,9 +59,9 @@ export function CaseDetailBusinessTables() {
           ))}
         </CaseDetailKvCardList>
       )}
-      <Text style={tb.subSectionTitle}>{t('cases.detail.businessSharesTitle')}</Text>
+      <Text className="bg-surface-sunken p-2 text-label font-bold text-fg">{t('cases.detail.businessSharesTitle')}</Text>
       {shares.length === 0 ? (
-        <Text style={[s.mutedText, tb.padSm]}>{t('cases.detail.emptyTable')}</Text>
+        <Text className="p-2 text-caption text-fg-secondary">{t('cases.detail.emptyTable')}</Text>
       ) : (
         <CaseDetailKvCardList>
           {shares.map((row, i) => (

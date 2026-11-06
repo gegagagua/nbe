@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { Card } from '@/components/ui/card';
 import { formatGeorgianPhoneForInput } from '@/lib/phone';
 import {
   createProfileInfoEditSchema,
@@ -12,7 +13,6 @@ import {
 import { ProfileInfoActions } from './profile-info-actions';
 import { ProfileInfoEditableFields } from './profile-info-editable-fields';
 import { ProfileReadOnlyField } from './profile-read-only-field';
-import { profileScreenStyles as s } from './profile-screen.styles';
 
 type Props = {
   firstName: string | null;
@@ -79,10 +79,10 @@ export function ProfileInfoSection({
   });
 
   return (
-    <View style={s.card}>
-      <Text style={s.sectionTitle}>{t('profile.sectionInfo')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('profile.sectionInfo')}</Text>
 
-      <View style={s.infoFieldGroup}>
+      <View className="gap-3">
         <ProfileReadOnlyField label={t('profile.labelFirstName')} value={firstName ?? ''} />
         <ProfileReadOnlyField label={t('profile.labelLastName')} value={lastName ?? ''} />
         {idnumber ? (
@@ -111,6 +111,6 @@ export function ProfileInfoSection({
         onCancel={handleCancel}
         onSave={() => { onSubmit(); }}
       />
-    </View>
+    </Card>
   );
 }

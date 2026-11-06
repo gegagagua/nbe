@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
-import { factsDetailStyles as s } from "./facts-detail.styles";
+import { PressableScale } from "@/components/ui";
 
 export type FactsDetailTab = "application" | "protocol";
 
@@ -17,21 +17,26 @@ export function FactsDetailTabs({ value, onChange }: Props) {
     { key: "protocol", label: t("facts.detailTabProtocol") },
   ];
   return (
-    <View style={s.tabBar} accessibilityRole="tablist">
+    <View
+      className="flex-row gap-1 rounded-lg border border-border bg-surface-sunken p-1"
+      accessibilityRole="tablist"
+    >
       {items.map((it) => {
         const active = value === it.key;
         return (
-          <Pressable
+          <PressableScale
             key={it.key}
-            style={[s.tab, active && s.tabActive]}
+            className={`flex-1 items-center rounded-md py-2 ${active ? "bg-surface" : ""}`}
             onPress={() => onChange(it.key)}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
           >
-            <Text style={[s.tabLabel, active && s.tabLabelActive]}>
+            <Text
+              className={`text-label ${active ? "font-bold text-fg" : "text-fg-secondary"}`}
+            >
               {it.label}
             </Text>
-          </Pressable>
+          </PressableScale>
         );
       })}
     </View>

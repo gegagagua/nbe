@@ -20,6 +20,9 @@ const SHARE_TYPE_BY_EXT: Record<string, { mimeType: string; uti: string }> = {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     uti: "org.openxmlformats.spreadsheetml.sheet",
   },
+  // Multimedia — the protocol tab can carry an uploaded video (webm).
+  webm: { mimeType: "video/webm", uti: "org.webmproject.webm" },
+  mp4: { mimeType: "video/mp4", uti: "public.mpeg-4" },
 };
 
 function shareTypeForName(name: string) {

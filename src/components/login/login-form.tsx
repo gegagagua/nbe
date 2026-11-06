@@ -1,15 +1,14 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { LoginPalette } from '@/constants/login';
+import { PressableScale } from '@/components/ui/pressable-scale';
 import type { LoginFormProps } from '@/types/login';
 
 import { LoginBrandHeader } from './login-brand-header';
-import { loginFormStyles } from './login-form.styles';
 
 export function LoginForm({
   control,
@@ -26,113 +25,103 @@ export function LoginForm({
   const { t } = useTranslation();
 
   return (
-    <View style={loginFormStyles.stack}>
+    <View className="w-full max-w-[420px] self-center">
       <LoginBrandHeader />
-      <View style={loginFormStyles.card}>
-        <View style={loginFormStyles.fields}>
-          <View style={loginFormStyles.fieldRow}>
-            <Controller
-              control={control}
-              name="username"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder={t('login.usernamePlaceholder')}
-                  errorMessage={errors.username?.message}
-                />
-              )}
-            />
-            {errors.username?.message ? (
-              <Text style={loginFormStyles.fieldError}>
-                {errors.username.message}
-              </Text>
-            ) : null}
-          </View>
-          <View style={loginFormStyles.fieldRow}>
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder={t('login.passwordPlaceholder')}
-                  secureTextEntry
-                  errorMessage={errors.password?.message}
-                />
-              )}
-            />
-            {errors.password?.message ? (
-              <Text style={loginFormStyles.fieldError}>
-                {errors.password.message}
-              </Text>
-            ) : null}
-          </View>
+      <Card padding="lg" elevation="lg" className="rounded-2xl">
+        <View className="mb-4 gap-4">
+          <Controller
+            control={control}
+            name="username"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                label={t('login.usernamePlaceholder')}
+                placeholder={t('login.usernamePlaceholder')}
+                leftIcon="account-outline"
+                errorMessage={errors.username?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                label={t('login.passwordPlaceholder')}
+                placeholder={t('login.passwordPlaceholder')}
+                leftIcon="lock-outline"
+                secureTextEntry
+                errorMessage={errors.password?.message}
+              />
+            )}
+          />
         </View>
+
         <Button
           label={t('login.submit')}
           onPress={() => { onSubmit(); }}
           disabled={submitDisabled}
+          size="lg"
         />
+
         {faceId?.show ? (
-          <Pressable
-            style={[
-              loginFormStyles.faceIdButton,
-              faceId.disabled && loginFormStyles.faceIdButtonDisabled,
-            ]}
-            onPress={faceId.onPress}
-            disabled={faceId.disabled}
-            accessibilityRole="button"
-            accessibilityLabel={faceId.label}>
-            <MaterialCommunityIcons
-              name={faceId.iconName}
-              size={20}
-              color={LoginPalette.primary}
+          <View className="mt-2">
+            <Button
+              label={faceId.label}
+              onPress={faceId.onPress}
+              disabled={faceId.disabled}
+              variant="secondary"
+              leftIcon={faceId.iconName}
             />
-            <Text style={loginFormStyles.faceIdButtonText}>{faceId.label}</Text>
-          </Pressable>
+          </View>
         ) : null}
+
         {passkey?.show ? (
-          <Pressable
-            style={[
-              loginFormStyles.faceIdButton,
-              passkey.disabled && loginFormStyles.faceIdButtonDisabled,
-            ]}
-            onPress={passkey.onPress}
-            disabled={passkey.disabled}
-            accessibilityRole="button"
-            accessibilityLabel={passkey.label}>
-            <MaterialCommunityIcons
-              name="key-variant"
-              size={20}
-              color={LoginPalette.primary}
+          <View className="mt-2">
+            <Button
+              label={passkey.label}
+              onPress={passkey.onPress}
+              disabled={passkey.disabled}
+              variant="secondary"
+              leftIcon="key-variant"
             />
-            <Text style={loginFormStyles.faceIdButtonText}>{passkey.label}</Text>
-          </Pressable>
+          </View>
         ) : null}
-        <Pressable
-          style={loginFormStyles.forgotPasswordLink}
+
+        <PressableScale
+          haptic="none"
+          pressedScale={0.98}
           onPress={onForgotPasswordPress}
-          accessibilityRole="button">
-          <Text style={loginFormStyles.forgotPasswordLinkText}>
+          accessibilityRole="button"
+          className="mt-5 min-h-[44px] items-center justify-center">
+          <Text className="text-label font-semibold text-primary underline">
             {t('forgotPassword.pageTitle')}
           </Text>
-        </Pressable>
-        <Pressable
-          style={loginFormStyles.registerLink}
+        </PressableScale>
+
+        <PressableScale
+          haptic="none"
+          pressedScale={0.98}
           onPress={onRegisterPress}
-          accessibilityRole="link">
-          <Text style={loginFormStyles.registerLinkText}>
-            {t('login.registrationLink')}
-          </Text>
-        </Pressable>
-        <Pressable style={loginFormStyles.guestLink} onPress={onGuestPress}>
-          <Text style={loginFormStyles.guestLinkText}>{t('login.guestLink')}</Text>
-        </Pressable>
-      </View>
+          accessibilityRole="link"
+          className="mt-1 min-h-[44px] items-center justify-center">
+          <Text className="text-label text-fg-muted">{t('login.registrationLink')}</Text>
+        </PressableScale>
+
+        <PressableScale
+          haptic="none"
+          pressedScale={0.98}
+          onPress={onGuestPress}
+          accessibilityRole="button"
+          className="min-h-[44px] items-center justify-center">
+          <Text className="text-label text-fg-muted underline">{t('login.guestLink')}</Text>
+        </PressableScale>
+      </Card>
     </View>
   );
 }

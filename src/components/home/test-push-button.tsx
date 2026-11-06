@@ -1,10 +1,8 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
 import { mockPushNotification } from '@/constants/mock-notification';
-import { LoginInteraction, LoginPalette } from '@/constants/login';
-import { Radius, Space } from '@/constants/theme';
 import { showErrorToast } from '@/lib/show-error-toast';
 import { showSuccessToast } from '@/lib/show-success-toast';
 import { sendTestNotification } from '@/lib/push-notifications';
@@ -37,42 +35,14 @@ export function TestPushButton() {
   };
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={busy}
-      accessibilityRole="button"
-      accessibilityLabel="ტესტ შეტყობინების გამოგზავნა"
-      style={({ pressed }) => [
-        styles.button,
-        pressed ? { opacity: LoginInteraction.pressedOpacity } : null,
-        busy ? styles.buttonDisabled : null,
-      ]}
-    >
-      <MaterialCommunityIcons name="bell-ring-outline" size={20} color={LoginPalette.onPrimary} />
-      <Text style={styles.label}>test push</Text>
-    </Pressable>
+    <View className="mx-4 mt-4">
+      <Button
+        label="test push"
+        onPress={onPress}
+        disabled={busy}
+        leftIcon="bell-ring-outline"
+        accessibilityLabel="ტესტ შეტყობინების გამოგზავნა"
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Space.small,
-    backgroundColor: LoginPalette.primary,
-    paddingVertical: Space.medium,
-    paddingHorizontal: Space.large,
-    borderRadius: Radius.small,
-    marginTop: Space.medium,
-    marginHorizontal: Space.medium,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  label: {
-    color: LoginPalette.onPrimary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

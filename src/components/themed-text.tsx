@@ -1,73 +1,41 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { Platform, Text, type TextProps } from 'react-native';
 
-import { FontSize, Fonts, TemplateHeadingFontSize, ThemeColor } from '@/constants/theme';
+import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
   themeColor?: ThemeColor;
+  className?: string;
 };
 
-export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
+const VARIANT: Record<NonNullable<ThemedTextProps['type']>, string> = {
+  default: 'text-[16px] leading-6 font-medium',
+  title: 'text-[48px] leading-[52px] font-semibold',
+  small: 'text-[14px] leading-5 font-medium',
+  smallBold: 'text-[14px] leading-5 font-bold',
+  subtitle: 'text-[32px] leading-[44px] font-semibold',
+  link: 'text-[14px] leading-[30px]',
+  linkPrimary: 'text-[14px] leading-[30px]',
+  code: 'text-[12px]',
+};
+
+export function ThemedText({ style, type = 'default', themeColor, className, ...rest }: ThemedTextProps) {
   const theme = useTheme();
 
   return (
     <Text
+      className={`${VARIANT[type]} ${className ?? ''}`}
       style={[
         { color: theme[themeColor ?? 'text'] },
-        type === 'default' && styles.default,
-        type === 'title' && styles.title,
-        type === 'small' && styles.small,
-        type === 'smallBold' && styles.smallBold,
-        type === 'subtitle' && styles.subtitle,
-        type === 'link' && styles.link,
-        type === 'linkPrimary' && styles.linkPrimary,
-        type === 'code' && styles.code,
+        type === 'linkPrimary' && { color: '#3c87f7' },
+        type === 'code' && {
+          fontFamily: Fonts.mono,
+          fontWeight: Platform.select({ android: '700' as const }) ?? ('500' as const),
+        },
         style,
       ]}
       {...rest}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  small: {
-    fontSize: FontSize.md,
-    lineHeight: 20,
-    fontWeight: 500,
-  },
-  smallBold: {
-    fontSize: FontSize.md,
-    lineHeight: 20,
-    fontWeight: 700,
-  },
-  default: {
-    fontSize: FontSize.xl,
-    lineHeight: 24,
-    fontWeight: 500,
-  },
-  title: {
-    fontSize: TemplateHeadingFontSize.title,
-    fontWeight: 600,
-    lineHeight: 52,
-  },
-  subtitle: {
-    fontSize: TemplateHeadingFontSize.subtitle,
-    lineHeight: 44,
-    fontWeight: 600,
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: FontSize.md,
-  },
-  linkPrimary: {
-    lineHeight: 30,
-    fontSize: FontSize.md,
-    color: '#3c87f7',
-  },
-  code: {
-    fontFamily: Fonts.mono,
-    fontWeight: Platform.select({ android: 700 }) ?? 500,
-    fontSize: FontSize.sm,
-  },
-});

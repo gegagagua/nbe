@@ -76,6 +76,8 @@ export type ApplicantProfilePatch = {
   applicantPersonalId?: string | null;
   applicantActualAddress?: string | null;
   applicantLegalAddress?: string | null;
+  applicantPhone?: string | null;
+  applicantEmail?: string | null;
 };
 
 /**
@@ -97,6 +99,8 @@ export function mergeApplicantProfile(
       form.applicantActualAddress || patch.applicantActualAddress || "",
     applicantLegalAddress:
       form.applicantLegalAddress || patch.applicantLegalAddress || "",
+    applicantPhone: form.applicantPhone || patch.applicantPhone || "",
+    applicantEmail: form.applicantEmail || patch.applicantEmail || "",
   };
 }
 
@@ -124,20 +128,3 @@ export function mergeApplicantLegalEntity(
   };
 }
 
-/**
- * ჩაწერა mints two distinct identifiers: a 5-digit preliminary case number
- * (საქმის წინასწარი ნომერი) and a longer, separate payment identifier
- * (გადახდის იდენტიფიკატორი).
- */
-export function mintStatementIdentifiers(now: Date): {
-  preliminaryNumber: string;
-  payIdentifier: string;
-} {
-  const ms = String(now.getTime());
-  return { preliminaryNumber: ms.slice(-5), payIdentifier: ms.slice(-11) };
-}
-
-/** The registration (case) number minted once payment goes through. */
-export function mintRegistrationNumber(now: Date): string {
-  return `F${now.getFullYear()}${String(now.getTime()).slice(-6)}`;
-}

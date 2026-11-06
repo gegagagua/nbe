@@ -6,7 +6,6 @@ import type { CaseSearchFilters } from '@/types/case-management';
 import { CaseFilterField } from './case-filter-field';
 import { CaseFiltersAdvancedDates } from './case-filters-advanced-dates';
 import { CaseFilterToggleRow } from './case-filter-toggle-row';
-import { caseFiltersStyles as s } from './case-filters.styles';
 
 const initialSource: ('MANUAL' | 'ELECTRONIC')[] = ['MANUAL', 'ELECTRONIC'];
 
@@ -48,11 +47,14 @@ export function CaseFiltersAdvancedFields({ values, setValue }: Props) {
         value={values.transferStatusId ?? ''}
         onChangeText={(v) => setValue('transferStatusId', v)}
       />
-      <Text style={s.label}>{t('cases.sourceLabel')}</Text>
-      <View style={s.row}>
+      <Text className="text-label font-semibold text-fg">{t('cases.sourceLabel')}</Text>
+      <View className="flex-row gap-2">
         {initialSource.map((item) => (
-          <Pressable key={item} style={[s.input, s.half]} onPress={() => setValue('sourceType', item)}>
-            <Text>{item}</Text>
+          <Pressable
+            key={item}
+            className="flex-1 h-9 border border-border rounded-sm bg-input px-2 justify-center"
+            onPress={() => setValue('sourceType', item)}>
+            <Text className="text-fg">{item}</Text>
           </Pressable>
         ))}
       </View>

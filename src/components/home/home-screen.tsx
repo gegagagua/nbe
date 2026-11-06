@@ -1,13 +1,14 @@
-import { lazy, Suspense } from "react";
+import { StatusBar } from "expo-status-bar";
+import { lazy, Suspense, useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 
-import { AppSafeArea } from "@/components/ui/app-safe-area";
-import { LoginPalette } from "@/constants/login";
 import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
+import { isGuestMode } from "@/lib/guest-mode";
+import { syncPushTokenToBackend } from "@/lib/push-token-sync";
+import { useAppTheme } from "@/theme";
 
 import { HomeDashboardLayout } from "./home-dashboard-layout";
 import { HomeHeader } from "./home-header";
-import { homeScreenStyles } from "./home-screen.styles";
 import { TestPushButton } from "./test-push-button";
 
 // Code-split the nav grid into its own web chunk so the header (hero) paints
@@ -18,24 +19,33 @@ const HomeNavGrid = lazy(() =>
 
 export function HomeScreen() {
   const { displayName } = useSessionUserProfile();
+  const { colors } = useAppTheme();
+
+  // Register this device for remote pushes once the user lands signed-in on
+  // the dashboard (covers both fresh logins and already-signed-in cold starts).
+  useEffect(() => {
+    if (!isGuestMode()) {
+      syncPushTokenToBackend();
+    }
+  }, []);
 
   return (
-    <View style={homeScreenStyles.page}>
-      <AppSafeArea style={homeScreenStyles.body}>
-        <HomeHeader displayName={displayName} />
-        <HomeDashboardLayout>
-          <Suspense
-            fallback={
-              <View style={homeScreenStyles.navFallback}>
-                <ActivityIndicator color={LoginPalette.primary} />
-              </View>
-            }
-          >
-            <HomeNavGrid />
-          </Suspense>
-          <TestPushButton />
-        </HomeDashboardLayout>
-      </AppSafeArea>
+    <View className="flex-1 bg-bg">
+      {/* Navy hero header sits under the status bar — keep its icons light. */}
+      <StatusBar style="light" />
+      <HomeHeader displayName={displayName} />
+      <HomeDashboardLayout>
+        <Suspense
+          fallback={
+            <View className="items-center justify-center py-6">
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          }
+        >
+          <HomeNavGrid />
+        </Suspense>
+        <TestPushButton />
+      </HomeDashboardLayout>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Modal, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -9,13 +9,11 @@ import {
 import { WebView } from "react-native-webview";
 
 import { Layout } from "@/constants/layout";
-import { LoginPalette } from "@/constants/login";
 import { Space } from "@/constants/theme";
+import { useAppTheme } from "@/theme";
 import type { PreparedFile } from "@/lib/download-eps-file";
 import { shareCachedFile } from "@/lib/download-eps-file";
 import { showErrorToast } from "@/lib/show-error-toast";
-
-import { paymentWebViewModalStyles as s } from "@/components/ui/payment-web-view-modal.styles";
 
 type BodyProps = {
   file: PreparedFile;
@@ -33,6 +31,7 @@ function dirOf(uri: string): string {
 
 function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyProps) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
 
@@ -46,17 +45,15 @@ function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyPro
 
   return (
     <View
-      style={[
-        s.page,
-        {
-          paddingTop: insets.top + Space.small,
-          paddingBottom: insets.bottom + Space.small,
-        },
-      ]}
+      className="flex-1 bg-bg"
+      style={{
+        paddingTop: insets.top + Space.small,
+        paddingBottom: insets.bottom + Space.small,
+      }}
     >
-      <View style={[s.header, { justifyContent: "space-between" }]}>
+      <View className="mb-2 flex-row items-center justify-between px-4">
         <Pressable
-          style={s.closeHit}
+          className="flex-row items-center gap-1 py-2 pr-4"
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t("cases.detail.fileViewerCloseA11y")}
@@ -64,12 +61,12 @@ function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyPro
           <MaterialCommunityIcons
             name="close"
             size={Layout.registerBackIconSize}
-            color={LoginPalette.primary}
+            color={colors.primary}
           />
-          <Text style={s.closeLabel}>{t("cases.detail.fileViewerClose")}</Text>
+          <Text className="text-body font-semibold text-primary">{t("cases.detail.fileViewerClose")}</Text>
         </Pressable>
         <Pressable
-          style={s.closeHit}
+          className="flex-row items-center gap-1 py-2 pr-4"
           onPress={() => {
             handleShare();
           }}
@@ -79,17 +76,17 @@ function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyPro
           <MaterialCommunityIcons
             name={actionIcon ?? "export-variant"}
             size={Layout.registerBackIconSize}
-            color={LoginPalette.primary}
+            color={colors.primary}
           />
-          <Text style={s.closeLabel}>
+          <Text className="text-body font-semibold text-primary">
             {actionLabel ?? t("cases.detail.fileViewerShare")}
           </Text>
         </Pressable>
       </View>
-      <View style={s.webviewWrap}>
+      <View className="mx-4 flex-1 overflow-hidden rounded-sm bg-surface">
         <WebView
           source={{ uri: file.uri }}
-          style={s.webview}
+          style={{ flex: 1 }}
           originWhitelist={["*"]}
           allowFileAccess
           allowingReadAccessToURL={dirOf(file.uri)}
@@ -97,8 +94,11 @@ function FileViewerModalBody({ file, onClose, actionLabel, actionIcon }: BodyPro
           onLoadEnd={() => setLoading(false)}
         />
         {loading ? (
-          <View style={s.loadingOverlay}>
-            <ActivityIndicator size="large" color={LoginPalette.primary} />
+          <View
+            className="z-10 items-center justify-center bg-surface"
+            style={StyleSheet.absoluteFill}
+          >
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : null}
       </View>

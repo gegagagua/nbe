@@ -14,22 +14,37 @@ import type { FactProtocolStatus } from "@/types/facts";
  * ოქმი tab data: the statement's proceeding status(es) (usually a single
  * "105 — ფაქტების კონსტატაცია" entry) together with each status's downloadable
  * files. Statuses come from `GET app/{id}/status`; files from
- * `POST status/get-files` keyed by `appStatusId`.
+ * `POST status/get-files` keyed by `appStatusId`. Both need the `X-User-ID`
+ * header, so `userId` must be supplied for the query to run.
  */
-export function useFactProtocol(appId: number | null) {
+export function useFactProtocol(appId: number | null, userId: number | null) {
   const query = useQuery<FactProtocolStatus[]>({
-    queryKey: ["fact-protocol", appId],
-    enabled: appId != null,
+    queryKey: ["fact-protocol", appId, userId],
+    enabled: appId != null && userId != null,
     queryFn: async () => {
-      const statuses = (await getFactStatus(appId as number)).data ?? [];
-      return Promise.all(
+      const uid = userId as number;
+      const statuses = (await getFactStatus(appId as number, uid)).data ?? [];
+      // Isolate per-status file failures so one bad status can't blank the
+      // whole tab — but surface the failure instead of swallowing it, else a
+      // broken get-files call is indistinguishable from "no files yet".
+      let filesError: unknown = null;
+      const mapped = await Promise.all(
         statuses.map(async (entry) => {
-          const files = mapFactStatusFiles(
-            await getFactStatusFiles(entry.id, entry.appId ?? appId),
-          );
+          let files: FactProtocolStatus["files"] = [];
+          try {
+            files = mapFactStatusFiles(
+              await getFactStatusFiles(entry.id, entry.appId ?? appId, uid),
+            );
+          } catch (error) {
+            filesError ??= error;
+          }
           return mapFactProtocolStatus(entry, files);
         }),
       );
+      if (filesError != null) {
+        showErrorToast(i18n.t("facts.protocolFilesError"), filesError);
+      }
+      return mapped;
     },
   });
 

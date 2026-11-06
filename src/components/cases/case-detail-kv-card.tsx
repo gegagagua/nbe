@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 import { Text, View } from "react-native";
 
-import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
-
 export type KeyValueRow = {
   label: string;
   /** A string is rendered as right-aligned value text; a node is rendered as-is. */
@@ -27,23 +24,27 @@ export function CaseDetailKvCard({
 }) {
   return (
     <View
-      style={[
-        tb.borderBox,
-        accentColor
-          ? { borderLeftWidth: 4, borderLeftColor: accentColor }
-          : null,
-      ]}
+      className="rounded-md border border-border"
+      style={
+        accentColor ? { borderLeftWidth: 4, borderLeftColor: accentColor } : null
+      }
     >
-      {title ? <Text style={p.panelTitle}>{title}</Text> : null}
+      {title ? (
+        <Text className="border-b border-border p-2 text-label font-bold text-primary">
+          {title}
+        </Text>
+      ) : null}
       {rows.map((row, i) => (
         <View
           key={`${row.label}-${i}`}
-          style={[tb.kvRow, i < rows.length - 1 ? tb.borderBottom : null]}
+          className={`flex-row items-start gap-2 p-2 ${
+            i < rows.length - 1 ? "border-b border-border" : ""
+          }`}
         >
-          <Text style={tb.kvLabel}>{row.label}</Text>
-          <View style={tb.kvValue}>
+          <Text className="flex-1 text-caption text-fg-secondary">{row.label}</Text>
+          <View className="flex-1 items-end gap-1">
             {typeof row.value === "string" || typeof row.value === "number" ? (
-              <Text style={tb.kvValueText}>{row.value}</Text>
+              <Text className="text-right text-label text-fg">{row.value}</Text>
             ) : (
               row.value
             )}
@@ -56,5 +57,5 @@ export function CaseDetailKvCard({
 
 /** Vertical stack of cards with consistent spacing. */
 export function CaseDetailKvCardList({ children }: { children: ReactNode }) {
-  return <View style={tb.kvCardList}>{children}</View>;
+  return <View className="mt-2 gap-4">{children}</View>;
 }

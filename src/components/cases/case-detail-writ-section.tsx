@@ -3,9 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { CaseDetailData } from '@/types/case-detail-data';
 
-import { caseDetailPanelStyles as p } from './case-detail-panels.styles';
-import { caseDetailTableStyles as tb } from './case-detail-tables.styles';
-
 export function CaseDetailWritSection({
   writRows,
 }: {
@@ -13,18 +10,20 @@ export function CaseDetailWritSection({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={p.panel}>
-      <Text style={p.panelTitle}>{t('cases.detail.sectionWrit')}</Text>
-      <View style={tb.tableHead}>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.colCourt')}</Text>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.colOrderNo')}</Text>
-        <Text style={tb.tableHeadCell}>{t('cases.detail.colOrderDate')}</Text>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Text className="border-b border-border p-2 text-label font-bold text-primary">
+        {t('cases.detail.sectionWrit')}
+      </Text>
+      <View className="flex-row border-b border-border bg-surface-sunken">
+        <Text className="flex-1 p-2 text-caption text-fg">{t('cases.detail.colCourt')}</Text>
+        <Text className="flex-1 p-2 text-caption text-fg">{t('cases.detail.colOrderNo')}</Text>
+        <Text className="flex-1 p-2 text-caption text-fg">{t('cases.detail.colOrderDate')}</Text>
       </View>
       {writRows.map((row) => (
-        <View key={`${row.orderNo}-${row.orderDate}`} style={tb.tableRow}>
-          <Text style={tb.tableCell}>{row.court}</Text>
-          <Text style={tb.tableCell}>{row.orderNo}</Text>
-          <Text style={tb.tableCell}>{row.orderDate}</Text>
+        <View key={`${row.orderNo}-${row.orderDate}`} className="flex-row border-b border-border">
+          <Text className="flex-1 p-2 text-label">{row.court}</Text>
+          <Text className="flex-1 p-2 text-label">{row.orderNo}</Text>
+          <Text className="flex-1 p-2 text-label">{row.orderDate}</Text>
         </View>
       ))}
     </View>

@@ -1,12 +1,11 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-import { LoginFooter } from '@/components/login/login-footer';
-import { AppSafeArea } from '@/components/ui/app-safe-area';
-import { LoginPalette } from '@/constants/login';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { ToastLayout } from '@/constants/toast';
 import { getUserMe } from '@/api/users';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
@@ -17,14 +16,13 @@ import { useDebtorPayment } from '@/hooks/use-debtor-payment';
 import { useUpdateDebtorApp } from '@/hooks/use-update-debtor-app';
 import { showErrorToast } from '@/lib/show-error-toast';
 import { isGuestMode } from '@/lib/guest-mode';
+import { useAppTheme } from '@/theme';
 import type { UserDetail } from '@/types/users';
 import type { DebtorExtractPaymentMethod } from '@/types/debtor-extract';
 import { defaultDebtorExtractPaymentMethod } from '@/utils/debtor-extract-payment-options';
 
-import { debtorAppDetailActionsStyles as da } from './debtor-app-detail-actions.styles';
 import { DebtorAppEditModal } from './debtor-app-edit-modal';
 import { DebtorExtractPhasePayment } from './debtor-extract-phase-payment';
-import { debtorExtractRequestStyles as s } from './debtor-extract-request.styles';
 import { DebtorExtractSubheader } from './debtor-extract-subheader';
 
 type Params = {
@@ -50,21 +48,25 @@ function Field({
   maxLength?: number;
   required?: boolean;
 }) {
+  const { colors } = useAppTheme();
   const editable = Boolean(onChangeText);
   return (
-    <View style={s.fieldGap}>
-      <Text style={s.fieldLabel}>
-        {label}
-        {required ? <Text style={s.requiredMark}> *</Text> : null}
-      </Text>
+    <View className="gap-2">
+      <View className="flex-row items-center gap-0.5">
+        <Text className="text-label font-semibold text-fg-secondary">{label}</Text>
+        {required ? <Text className="text-label font-semibold text-danger">*</Text> : null}
+      </View>
       <TextInput
         value={value}
         onChangeText={onChangeText}
         editable={editable}
         keyboardType={keyboardType}
         maxLength={maxLength}
-        placeholderTextColor={LoginPalette.placeholderMuted}
-        style={[s.input, !editable && s.inputDisabled]}
+        placeholderTextColor={colors.inputPlaceholder}
+        className={`min-h-[50px] rounded-md border border-input-border px-4 py-2 text-body ${
+          editable ? 'bg-input text-fg' : 'bg-surface-sunken text-fg-secondary'
+        }`}
+        style={{ color: editable ? colors.inputText : colors.textSecondary }}
       />
     </View>
   );
@@ -238,98 +240,96 @@ export function DebtorAppExtractRequestScreen() {
   };
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <DebtorExtractSubheader
-          title={t('debtors.extractRequestButton')}
-          backA11y={t('debtors.extractBackA11y')}
-          onBack={() => (phase === 'payment' ? setPhase('form') : router.back())}
-        />
-        <ScrollView
-          style={s.scroll}
-          contentContainerStyle={s.content}
-          keyboardShouldPersistTaps="handled">
-          {phase === 'payment' ? (
-            <DebtorExtractPhasePayment
-              selected={method}
-              onSelect={setMethod}
-              onPay={handlePay}
-              paying={isPaying}
-              amount={app?.payableAmount ?? createdPayable}
+    <View className="flex-1 bg-bg">
+      <DebtorExtractSubheader
+        title={t('debtors.extractRequestButton')}
+        backA11y={t('debtors.extractBackA11y')}
+        onBack={() => (phase === 'payment' ? setPhase('form') : router.back())}
+      />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40, gap: 20 }}
+        keyboardShouldPersistTaps="handled">
+        {phase === 'payment' ? (
+          <DebtorExtractPhasePayment
+            selected={method}
+            onSelect={setMethod}
+            onPay={handlePay}
+            paying={isPaying}
+            amount={app?.payableAmount ?? createdPayable}
+          />
+        ) : (
+          <>
+            <Card className="gap-4">
+              <Text className="text-body font-bold text-fg">
+                {t('debtors.extractApplicantSection')}
+              </Text>
+              <Field label={t('debtors.extractApplicantPnLabel')} value={applicantPnValue} />
+              <Field
+                label={t('debtors.extractApplicantNameLabel')}
+                value={applicantNameValue}
+              />
+              {payCode ? (
+                <Field label={t('debtors.detailLabelPayCode')} value={payCode} />
+              ) : null}
+            </Card>
+            <Card className="gap-4">
+              <Text className="text-body font-bold text-fg">
+                {t('debtors.extractSubjectSection')}
+              </Text>
+              <Field
+                label={t('debtors.extractSubjectIdLabel')}
+                value={subjectId}
+                onChangeText={
+                  subjectEditable
+                    ? (v) => {
+                        setSubjectId(v.replace(/\D/g, ''));
+                        if (subjectIdError) setSubjectIdError(false);
+                      }
+                    : undefined
+                }
+                keyboardType="number-pad"
+                maxLength={11}
+                required={subjectEditable}
+              />
+              {subjectIdError ? (
+                <Text className="text-caption text-danger">{t('debtors.detailEditIdError')}</Text>
+              ) : null}
+              <Field
+                label={t('debtors.extractSubjectNameLabel')}
+                value={subjectName}
+                onChangeText={subjectEditable ? setSubjectName : undefined}
+                required={subjectEditable}
+              />
+            </Card>
+            <Button
+              label={t('debtors.extractRecordButton')}
+              disabled={createMutation.isPending || isRecorded}
+              loading={createMutation.isPending}
+              onPress={handleRecord}
             />
-          ) : (
-            <>
-          <View style={s.sectionCard}>
-            <Text style={s.sectionTitle}>{t('debtors.extractApplicantSection')}</Text>
-            <Field label={t('debtors.extractApplicantPnLabel')} value={applicantPnValue} />
-            <Field
-              label={t('debtors.extractApplicantNameLabel')}
-              value={applicantNameValue}
-            />
-            {payCode ? (
-              <Field label={t('debtors.detailLabelPayCode')} value={payCode} />
+            {/* Editing and paying only make sense once the application exists. */}
+            {isRecorded ? (
+              <View className="flex-row gap-2">
+                <View className="flex-1">
+                  <Button
+                    label={t('debtors.detailEditButton')}
+                    variant="secondary"
+                    onPress={() => setEditVisible(true)}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Button
+                    label={t('debtors.extractPayButton')}
+                    disabled={isPaying}
+                    onPress={handlePay}
+                  />
+                </View>
+              </View>
             ) : null}
-          </View>
-          <View style={s.sectionCard}>
-            <Text style={s.sectionTitle}>{t('debtors.extractSubjectSection')}</Text>
-            <Field
-              label={t('debtors.extractSubjectIdLabel')}
-              value={subjectId}
-              onChangeText={
-                subjectEditable
-                  ? (v) => {
-                      setSubjectId(v.replace(/\D/g, ''));
-                      if (subjectIdError) setSubjectIdError(false);
-                    }
-                  : undefined
-              }
-              keyboardType="number-pad"
-              maxLength={11}
-              required={subjectEditable}
-            />
-            {subjectIdError ? (
-              <Text style={s.errorText}>{t('debtors.detailEditIdError')}</Text>
-            ) : null}
-            <Field
-              label={t('debtors.extractSubjectNameLabel')}
-              value={subjectName}
-              onChangeText={subjectEditable ? setSubjectName : undefined}
-              required={subjectEditable}
-            />
-          </View>
-          <Pressable
-            style={[
-              da.fullBtn,
-              (createMutation.isPending || isRecorded) && da.btnDisabled,
-            ]}
-            accessibilityRole="button"
-            disabled={createMutation.isPending || isRecorded}
-            onPress={handleRecord}>
-            <Text style={da.payLabel}>{t('debtors.extractRecordButton')}</Text>
-          </Pressable>
-          {/* Editing and paying only make sense once the application exists. */}
-          {isRecorded ? (
-            <View style={da.row}>
-              <Pressable
-                style={[da.btn, da.editBtn]}
-                accessibilityRole="button"
-                onPress={() => setEditVisible(true)}>
-                <Text style={da.editLabel}>{t('debtors.detailEditButton')}</Text>
-              </Pressable>
-              <Pressable
-                style={[da.btn, da.payBtn, isPaying && da.btnDisabled]}
-                accessibilityRole="button"
-                disabled={isPaying}
-                onPress={handlePay}>
-                <Text style={da.payLabel}>{t('debtors.extractPayButton')}</Text>
-              </Pressable>
-            </View>
-          ) : null}
-            </>
-          )}
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+          </>
+        )}
+      </ScrollView>
       <PaymentWebViewModal
         visible={paymentUrl != null}
         url={paymentUrl}

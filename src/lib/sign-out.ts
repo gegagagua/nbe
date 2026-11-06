@@ -10,6 +10,7 @@ import {
   clearSessionToken,
   getSessionToken,
 } from "@/lib/session-token-storage";
+import { clearSyncedPushToken } from "@/lib/push-token-sync";
 import {
   clearSessionUserProfile,
   getSessionUserProfile,
@@ -43,6 +44,7 @@ export async function signOut(): Promise<void> {
     clearSessionUserProfile(),
     clearActiveLegalEntity(),
     clearPasswordHistory(),
+    clearSyncedPushToken(),
   ]);
   resetStackTo("/");
 }

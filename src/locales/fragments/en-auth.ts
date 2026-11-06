@@ -224,6 +224,14 @@ export const enAuth = {
     phoneOtpDescription: "Enter the 6-digit code sent to the new number.",
     phoneOtpCancel: "Cancel",
   },
+  appearance: {
+    sectionTitle: "Theme",
+    description: "Choose the app theme. Defaults to following your system setting.",
+    optionSystem: "System",
+    optionLight: "Light",
+    optionDark: "Dark",
+    a11yLabel: "Select theme",
+  },
   legalEntity: {
     sectionInfo: "Company information",
     labelMemberName: "Role",

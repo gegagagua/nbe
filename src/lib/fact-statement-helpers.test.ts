@@ -5,8 +5,6 @@ import {
   hasMissingRequired,
   mergeApplicantLegalEntity,
   mergeApplicantProfile,
-  mintRegistrationNumber,
-  mintStatementIdentifiers,
   parseOptionList,
 } from "@/lib/fact-statement-helpers";
 import type { FactStatementForm } from "@/types/fact-statement";
@@ -219,20 +217,3 @@ describe("mergeApplicantLegalEntity", () => {
   });
 });
 
-describe("mintStatementIdentifiers / mintRegistrationNumber", () => {
-  it("mints a 5-digit preliminary number and a distinct 11-digit payment id (bugs 6-8)", () => {
-    const now = new Date(2026, 9, 22, 13, 47, 12);
-    const { preliminaryNumber, payIdentifier } = mintStatementIdentifiers(now);
-    expect(preliminaryNumber).toMatch(/^\d{5}$/);
-    expect(payIdentifier).toMatch(/^\d{11}$/);
-    // The two identifiers are not the same value.
-    expect(preliminaryNumber).not.toBe(payIdentifier);
-    // The preliminary number is the tail of the longer payment id.
-    expect(payIdentifier.endsWith(preliminaryNumber)).toBe(true);
-  });
-
-  it("mints an F{year}… registration number", () => {
-    const now = new Date(2026, 9, 22, 13, 47, 12);
-    expect(mintRegistrationNumber(now)).toMatch(/^F2026\d{6}$/);
-  });
-});

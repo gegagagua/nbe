@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
-import { profileScreenStyles as s } from './profile-screen.styles';
-
 type Props = {
   label: string;
   editing: boolean;
@@ -12,9 +10,15 @@ type Props = {
 
 export function ProfileFieldRow({ label, editing, displayValue, children }: Props) {
   return (
-    <View style={s.infoFieldRow}>
-      <Text style={s.label}>{label}</Text>
-      {editing ? children : <Text style={s.valueText}>{displayValue || '—'}</Text>}
+    <View className="gap-1.5">
+      <Text className="text-label font-semibold uppercase tracking-wide text-fg-muted">{label}</Text>
+      {editing ? (
+        children
+      ) : (
+        <Text className="rounded-md bg-surface-sunken px-3 py-2 text-body text-fg">
+          {displayValue || '—'}
+        </Text>
+      )}
     </View>
   );
 }

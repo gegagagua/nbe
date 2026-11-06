@@ -2,7 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { DebtorRegistryPalette } from "@/constants/debtor-registry";
+import { useAppTheme } from "@/theme";
 import { useCaseFundsExtra } from "@/hooks/use-case-funds-extra";
 import { useMoney } from "@/hooks/use-money";
 import type {
@@ -15,9 +15,6 @@ import {
   CaseDetailKvCard,
   CaseDetailKvCardList,
 } from "./case-detail-kv-card";
-import { caseDetailInternalStyles as s } from "./case-detail-internal.styles";
-import { caseDetailPanelStyles as p } from "./case-detail-panels.styles";
-import { caseDetailTableStyles as tb } from "./case-detail-tables.styles";
 
 function FundsPartyCard({
   title,
@@ -28,27 +25,27 @@ function FundsPartyCard({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={p.panel}>
-      <Text style={p.panelTitle}>{title}</Text>
-      <View style={tb.padSm}>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Text className="border-b border-border p-2 text-label font-bold text-primary">{title}</Text>
+      <View className="p-2">
         {info.partyLines.map((line) => (
-          <Text key={line} style={s.mutedText}>
+          <Text key={line} className="text-caption text-fg-secondary">
             {line}
           </Text>
         ))}
 
         {info.totalDue ? (
-          <Text style={s.mutedText}>
+          <Text className="text-caption text-fg-secondary">
             {t("cases.detail.fundsTotalDue")}: {info.totalDue}
           </Text>
         ) : null}
         {info.totalPaid ? (
-          <Text style={s.mutedText}>
+          <Text className="text-caption text-fg-secondary">
             {t("cases.detail.fundsTotalPaid")}: {info.totalPaid}
           </Text>
         ) : null}
         {info.totalDebt ? (
-          <Text style={s.primaryText}>
+          <Text className="text-label font-bold text-fg">
             {t("cases.detail.fundsTotalDebt")}: {info.totalDebt}
           </Text>
         ) : null}
@@ -76,12 +73,6 @@ function FundsPartyCard({
   );
 }
 
-/** In-progress transactions are red, completed ones green. */
-const PAYMENT_STATUS_COLORS = {
-  current: "#CC0000",
-  finished: "#339900",
-} as const;
-
 /**
  * A single credited-payment section for one party (creditor or debtor). The
  * status color drives the participant/amount/remaining/distribution text —
@@ -95,6 +86,7 @@ function PaymentsSection({
   rows: CaseDetailPaymentRow[];
 }) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   if (rows.length === 0) return null;
   // Unfinished (in-progress) transactions bubble to the top; stable otherwise.
   const ordered = [...rows].sort(
@@ -102,21 +94,15 @@ function PaymentsSection({
   );
   const colored = (value: string, finished: boolean) => (
     <Text
-      style={[
-        tb.kvValueText,
-        {
-          color: finished
-            ? PAYMENT_STATUS_COLORS.finished
-            : PAYMENT_STATUS_COLORS.current,
-        },
-      ]}
+      className="text-right text-label"
+      style={{ color: finished ? colors.success : colors.danger }}
     >
       {value || t("cases.detail.emptyTable")}
     </Text>
   );
   return (
-    <View style={tb.padSm}>
-      <Text style={s.primaryText}>{title}</Text>
+    <View className="p-2">
+      <Text className="text-label font-bold text-fg">{title}</Text>
       <CaseDetailKvCardList>
         {ordered.map((row) => (
           <CaseDetailKvCard
@@ -168,8 +154,8 @@ function PaymentsCard({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={p.panel}>
-      <Text style={p.panelTitle}>{t("cases.detail.fundsPaymentsTitle")}</Text>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Text className="border-b border-border p-2 text-label font-bold text-primary">{t("cases.detail.fundsPaymentsTitle")}</Text>
       <PaymentsSection
         title={t("cases.detail.fundsCreditorTitle")}
         rows={creditorRows}
@@ -185,9 +171,9 @@ function PaymentsCard({
 function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
   const { t } = useTranslation();
   return (
-    <View style={p.panel}>
-      <Text style={p.panelTitle}>{t("cases.detail.fundsTransfersTitle")}</Text>
-      <View style={tb.padSm}>
+    <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+      <Text className="border-b border-border p-2 text-label font-bold text-primary">{t("cases.detail.fundsTransfersTitle")}</Text>
+      <View className="p-2">
         <CaseDetailKvCardList>
           {rows.map((row) => (
             <CaseDetailKvCard
@@ -200,7 +186,7 @@ function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
                 {
                   label: t("cases.detail.fundsTransferStatus"),
                   value: (
-                    <Text style={tb.kvValueText}>
+                    <Text className="text-right text-label text-fg">
                       <Text
                         style={
                           row.statusColor ? { color: row.statusColor } : undefined
@@ -223,6 +209,7 @@ function TransfersCard({ rows }: { rows: CaseDetailTransferRow[] }) {
 
 export function CaseDetailFundsBody() {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const appId = Array.isArray(id) ? id[0] : (id ?? "");
   const { data: funds, isLoading } = useMoney(appId);
@@ -230,8 +217,8 @@ export function CaseDetailFundsBody() {
 
   if (isLoading || extraLoading) {
     return (
-      <View style={tb.padSm}>
-        <ActivityIndicator color={DebtorRegistryPalette.buttonBg} />
+      <View className="p-2">
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -256,8 +243,8 @@ export function CaseDetailFundsBody() {
     transfers.length === 0
   ) {
     return (
-      <View style={p.panel}>
-        <Text style={[s.mutedText, p.panelBodyPad]}>
+      <View className="mb-4 overflow-hidden rounded-md border border-border bg-surface">
+        <Text className="px-4 py-2 text-caption text-fg-secondary">
           {t("cases.detail.fundsEmpty")}
         </Text>
       </View>

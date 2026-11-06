@@ -52,6 +52,7 @@ export const kaFacts = {
   protocolDownloadA11y: "ჩამოტვირთვა: {{name}}",
   protocolSectionEmpty: "ფაილები ჯერ არ არის ხელმისაწვდომი",
   protocolDownloadError: "ფაილის ჩამოტვირთვა ვერ მოხერხდა",
+  protocolFilesError: "ოქმის ფაილების ჩატვირთვა ვერ მოხერხდა",
 
   // ── განცხადების გაკეთება (make a statement) ──────────────────────────────
   makeStatementButton: "განცხადების გაკეთება",
@@ -95,6 +96,9 @@ export const kaFacts = {
   stOwnerAddressLabel: "მისამართი",
   stRequestLabel: "მოთხოვნა",
   stRecordButton: "ჩაწერა",
+  stCreateError: "განცხადების ჩაწერა ვერ მოხერხდა",
+  stPayPendingInfo:
+    "გადახდა ჯერ არ არის დადასტურებული — სცადეთ ხელახლა ან შეამოწმეთ განცხადება სიაში",
   stValidationError:
     "არ არის შევსებული აუცილებელი ველ(ებ)ი, ან შევსებულია დაუშვებელი მნიშვნელობით",
   stRequiredHint: "სავალდებულო ველები მონიშნულია წითელი ფიფქით",

@@ -1,19 +1,17 @@
 import Logo from '@/assets/images/logo.png';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Image } from 'expo-image';
-
-import { loginBrandHeaderStyles } from './login-brand-header.styles';
 
 export function LoginBrandHeader() {
   const { t } = useTranslation();
 
   return (
-    <View style={loginBrandHeaderStyles.container}>
+    <View className="mb-6 flex-row items-center justify-center gap-4">
       <Image
         source={Logo}
-        style={{ width: 50, height: 50 }}
+        style={{ width: 52, height: 52 }}
         contentFit="contain"
         cachePolicy="memory-disk"
         priority="high"
@@ -21,11 +19,17 @@ export function LoginBrandHeader() {
         accessibilityLabel={t('login.brandGeo')}
       />
       <View>
-        <Text style={loginBrandHeaderStyles.brandEn} numberOfLines={3}>
+        <Text
+          className="text-label font-bold uppercase text-primary"
+          style={{ letterSpacing: 0.6 }}
+          numberOfLines={3}>
           {t('login.brandGeo')}
         </Text>
-        <View style={loginBrandHeaderStyles.brandDivider} />
-        <Text style={loginBrandHeaderStyles.brandGeo} numberOfLines={2}>
+        <View className="my-1 h-px self-stretch bg-danger" />
+        <Text
+          className="text-label font-bold text-primary"
+          style={{ letterSpacing: Platform.select({ ios: 0.35, default: 0 }) }}
+          numberOfLines={2}>
           {t('login.brandEn')}
         </Text>
       </View>

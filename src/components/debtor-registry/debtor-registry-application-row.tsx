@@ -3,12 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { AnimatedPressable } from '@/components/ui/animated-pressable';
-import { LoginPalette } from '@/constants/login';
+import { Card } from '@/components/ui/card';
 import type { DebtorRegistryApplication } from '@/types/debtor-registry';
 import { formatEnforcementDateTime } from '@/utils/format-enforcement-datetime';
-
-import { debtorRegistryApplicationRowStyles as s } from './debtor-registry-application-row.styles';
 
 // Registered case → registration number + preliminary number, e.g. "DE26714477 (2588690)".
 // Not yet registered (no regnumber) → preliminary number only, e.g. "2588691".
@@ -35,10 +32,9 @@ export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
   return (
     <Animated.View
       entering={FadeInDown.duration(280).delay(Math.min(index, 8) * 40).springify().damping(18)}>
-      <AnimatedPressable
-        style={s.press}
-        accessibilityRole="button"
-        accessibilityHint={t('debtors.detailsOpenHint')}
+      <Card
+        className="gap-2 border-l-4 border-l-primary"
+        accessibilityLabel={applicationNo(app)}
         onPress={() =>
           // Applicant details only exist in the search response, not in
           // GET /apps/{id} — hand them to the detail screen via params.
@@ -52,32 +48,30 @@ export function DebtorRegistryApplicationRow({ app, index = 0 }: Props) {
             },
           })
         }>
-        <View style={[s.card, { borderLeftColor: LoginPalette.primary }]}>
-          <Text style={s.caseNumber}>
-            {t('debtors.detailsLabelCaseNo')}: {applicationNo(app)}
+        <Text className="text-label font-bold text-fg">
+          {t('debtors.detailsLabelCaseNo')}: {applicationNo(app)}
+        </Text>
+        <Text className="text-caption text-fg-muted">
+          {t('debtors.listCreatedDateLabel')}: {createdDate}
+        </Text>
+        {isRegistered ? (
+          <Text className="text-caption text-fg-muted">
+            {t('debtors.listRegDateLabel')}: {regDate}
           </Text>
-          <Text style={s.caseDate}>
-            {t('debtors.listCreatedDateLabel')}: {createdDate}
+        ) : null}
+        <Text className="text-caption font-semibold text-fg">
+          {t('debtors.listApplicantPrefix')} {applicantName}
+          {applicantId ? ` (${applicantId})` : ''}
+        </Text>
+        <View className="mt-2 gap-2 rounded-md border border-border bg-surface-sunken p-2">
+          <Text className="text-caption font-bold text-fg-muted">
+            {t('debtors.listRequestedSubject', { name: requested?.personName ?? '—' })}
           </Text>
-          {isRegistered ? (
-            <Text style={s.caseDate}>
-              {t('debtors.listRegDateLabel')}: {regDate}
-            </Text>
-          ) : null}
-          <Text style={s.applicantLine}>
-            {t('debtors.listApplicantPrefix')} {applicantName}
-            {applicantId ? ` (${applicantId})` : ''}
+          <Text className="text-caption font-semibold text-fg">
+            {t('debtors.listRequestedSubjectId', { identifier: requested?.idnumber ?? '—' })}
           </Text>
-          <View style={s.requestedBox}>
-            <Text style={s.requestedLabel}>
-              {t('debtors.listRequestedSubject', { name: requested?.personName ?? '—' })}
-            </Text>
-            <Text style={s.requestedLine}>
-              {t('debtors.listRequestedSubjectId', { identifier: requested?.idnumber ?? '—' })}
-            </Text>
-          </View>
         </View>
-      </AnimatedPressable>
+      </Card>
     </Animated.View>
   );
 }

@@ -2,10 +2,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
-import { LoginPalette } from '@/constants/login';
-
-import { profileFaceIdSectionStyles as s } from '../profile/profile-face-id-section.styles';
-import { profileScreenStyles as ps } from '../profile/profile-screen.styles';
+import { Button } from '@/components/ui/button';
+import { useAppTheme } from '@/theme';
 
 type Props = {
   visible: boolean;
@@ -28,6 +26,7 @@ export function LoginDeviceTrustPrompt({
   onClose,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
 
   return (
     <Modal
@@ -35,44 +34,41 @@ export function LoginDeviceTrustPrompt({
       animationType="fade"
       visible={visible}
       onRequestClose={onClose}>
-      <View style={s.modalBackdrop}>
-        <View style={s.modalCard}>
-          <View style={s.modalHeader}>
-            <Text style={s.modalTitle}>{t('deviceTrust.promptTitle')}</Text>
+      <View className="flex-1 justify-center px-5" style={{ backgroundColor: colors.overlay }}>
+        <View className="gap-3 rounded-xl bg-surface p-5">
+          <View className="flex-row items-start justify-between gap-2">
+            <Text className="text-heading font-bold text-fg">{t('deviceTrust.promptTitle')}</Text>
             <Pressable
-              style={s.modalClose}
+              className="-mr-1 -mt-1 p-1"
               onPress={onClose}
               disabled={isSubmitting}
               accessibilityRole="button"
               accessibilityLabel={t('deviceTrust.cancelButton')}>
-              <MaterialCommunityIcons
-                name="close"
-                size={22}
-                color={LoginPalette.titleText}
-              />
+              <MaterialCommunityIcons name="close" size={22} color={colors.text} />
             </Pressable>
           </View>
-          <Text style={s.modalDescription}>
+          <Text className="text-label leading-[18px] text-fg-secondary">
             {t('deviceTrust.promptQuestion')}
           </Text>
-          <Text style={s.modalDescription}>
+          <Text className="text-label leading-[18px] text-fg-secondary">
             {t('deviceTrust.promptDescription')}
           </Text>
-          <View style={s.modalActions}>
-            <Pressable
-              style={[ps.buttonOutline, isSubmitting && ps.buttonDisabled]}
-              onPress={onClose}
-              disabled={isSubmitting}
-              accessibilityRole="button">
-              <Text style={ps.buttonOutlineText}>{t('deviceTrust.promptNo')}</Text>
-            </Pressable>
-            <Pressable
-              style={[ps.buttonPrimary, isSubmitting && ps.buttonDisabled]}
-              onPress={onConfirm}
-              disabled={isSubmitting}
-              accessibilityRole="button">
-              <Text style={ps.buttonPrimaryText}>{t('deviceTrust.promptYes')}</Text>
-            </Pressable>
+          <View className="flex-row gap-2">
+            <View className="flex-1">
+              <Button
+                label={t('deviceTrust.promptNo')}
+                onPress={onClose}
+                disabled={isSubmitting}
+                variant="secondary"
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                label={t('deviceTrust.promptYes')}
+                onPress={onConfirm}
+                disabled={isSubmitting}
+              />
+            </View>
           </View>
         </View>
       </View>

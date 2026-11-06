@@ -29,6 +29,7 @@ export function mapFactDetail(response: FactAppDetailResponse): FactAppDetail {
     cadCode: text(note?.cadCode),
     propertyAddress: text(note?.propertyAddress),
     feeName: text(app.trService?.name),
+    feePrice: app.trService?.price ?? null,
     request: text(note?.request),
   };
 }

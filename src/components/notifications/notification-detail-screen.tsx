@@ -2,22 +2,20 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
-import { caseScreenStyles as s } from "@/components/cases/case-screen.styles";
-import { HomeHeader } from "@/components/home/home-header";
-import { LoginFooter } from "@/components/login/login-footer";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PressableScale } from "@/components/ui/pressable-scale";
+import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
+import { AppHeader } from "@/components/ui/app-header";
 import { useMarkNotificationsRead } from "@/hooks/use-mark-notifications-read";
 import { useNotificationById } from "@/hooks/use-notifications";
-import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
-import { isGuestMode } from "@/lib/guest-mode";
-
-import { notificationDetailStyles as d } from "./notification-detail-screen.styles";
+import { useAppTheme } from "@/theme";
 
 export function NotificationDetailScreen() {
   const { t } = useTranslation();
-  const { displayName } = useSessionUserProfile();
+  const { colors } = useAppTheme();
   const params = useLocalSearchParams<{ id: string }>();
   const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
   const id = Number(rawId);
@@ -45,77 +43,75 @@ export function NotificationDetailScreen() {
   };
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <HomeHeader displayName={isGuestMode() ? "" : displayName} />
-        <ScrollView
-          style={s.scroll}
-          contentContainerStyle={s.content}
-          showsVerticalScrollIndicator
-        >
-          <View style={s.titleRow}>
-            <Pressable
-              onPress={() => router.back()}
-              accessibilityRole="button"
-              accessibilityLabel={t("notifications.backA11yLabel")}
-              style={s.backButton}
-            >
-              <MaterialCommunityIcons
-                name="arrow-left"
-                size={22}
-                color="#2b436c"
-              />
-            </Pressable>
-            <Text style={s.title}>{t("notifications.detailTitle")}</Text>
-          </View>
-
-          {!notification ? (
-            <Text style={d.stateText}>
-              {isLoading
-                ? t("notifications.loadingMessage")
-                : t("notifications.detailNotFound")}
-            </Text>
-          ) : (
-            <View style={d.card}>
-              <View style={d.metaRow}>
-                <Text style={d.module} numberOfLines={1}>
+    <View className="flex-1 bg-bg">
+      <AppHeader
+        title={t("notifications.detailTitle")}
+        onBack={() => router.back()}
+      />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {isLoading ? (
+          <Card>
+            <View className="gap-3">
+              <Skeleton height={14} width="40%" />
+              <Skeleton height={20} width="80%" />
+              <SkeletonText lines={4} />
+            </View>
+          </Card>
+        ) : !notification ? (
+          <EmptyState
+            icon="bell-off-outline"
+            title={t("notifications.detailNotFound")}
+          />
+        ) : (
+          <Card>
+            <View className="gap-2">
+              <View className="flex-row items-center justify-between gap-2">
+                <Text className="flex-1 text-caption text-fg-muted" numberOfLines={1}>
                   {notification.module}
                 </Text>
-                <Text style={d.date}>{notification.receivedAt}</Text>
+                <Text className="text-caption text-fg-muted">
+                  {notification.receivedAt}
+                </Text>
               </View>
-              <Text style={d.title}>{notification.title}</Text>
-              <Text style={d.body}>{notification.body}</Text>
+              <Text className="text-subtitle font-bold text-fg">
+                {notification.title}
+              </Text>
+              <Text className="text-body-lg text-fg">{notification.body}</Text>
 
               {notification.caseNumber ? (
                 <>
-                  <View style={d.divider} />
-                  <Text style={d.caseLabel}>
+                  <View className="my-1 h-px bg-border" />
+                  <Text className="text-label text-fg-muted">
                     {t("notifications.detailCaseLabel")}
                   </Text>
-                  <Pressable
-                    style={d.caseLink}
+                  <PressableScale
+                    className="flex-row items-center gap-1 self-start"
+                    haptic="none"
                     onPress={openCase}
                     accessibilityRole="link"
                     accessibilityLabel={t("notifications.openCaseA11yLabel", {
                       caseNumber: notification.caseNumber,
                     })}
                   >
-                    <Text style={d.caseLinkText}>
+                    <Text className="text-body-lg font-bold text-accent underline">
                       {`#${notification.caseNumber}`}
                     </Text>
                     <MaterialCommunityIcons
                       name="chevron-right"
                       size={20}
-                      color="#2b436c"
+                      color={colors.accent}
                     />
-                  </Pressable>
+                  </PressableScale>
                 </>
               ) : null}
             </View>
-          )}
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+          </Card>
+        )}
+      </ScrollView>
     </View>
   );
 }

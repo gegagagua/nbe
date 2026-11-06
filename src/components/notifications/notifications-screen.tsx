@@ -1,18 +1,14 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { View } from "react-native";
+import Animated from "react-native-reanimated";
 
 import { CasePagination } from "@/components/cases/case-pagination";
-import { caseScreenStyles as s } from "@/components/cases/case-screen.styles";
-import { HomeHeader } from "@/components/home/home-header";
-import { LoginFooter } from "@/components/login/login-footer";
-import { AppSafeArea } from "@/components/ui/app-safe-area";
+import { AppHeader } from "@/components/ui/app-header";
 import { useMarkNotificationsRead } from "@/hooks/use-mark-notifications-read";
 import { useNotifications } from "@/hooks/use-notifications";
-import { useSessionUserProfile } from "@/hooks/use-session-user-profile";
-import { isGuestMode } from "@/lib/guest-mode";
+import { useScrollHeader } from "@/hooks/use-scroll-header";
 import type {
   AppNotification,
   NotificationFilterValue,
@@ -25,7 +21,7 @@ import { NotificationsToolbar } from "./notifications-toolbar";
 
 export function NotificationsScreen() {
   const { t } = useTranslation();
-  const { displayName } = useSessionUserProfile();
+  const { scrollY, scrollHandler } = useScrollHeader();
   const [readState, setReadState] = useState<NotificationFilterValue>("all");
   const [pageNumber, setPageNumber] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -94,29 +90,21 @@ export function NotificationsScreen() {
   };
 
   return (
-    <View style={s.page}>
-      <AppSafeArea style={s.body}>
-        <HomeHeader displayName={isGuestMode() ? "" : displayName} />
-        <ScrollView
-          style={s.scroll}
-          contentContainerStyle={s.content}
-          showsVerticalScrollIndicator
-        >
-          <View style={s.titleRow}>
-            <Pressable
-              onPress={() => router.back()}
-              accessibilityRole="button"
-              accessibilityLabel={t("notifications.backA11yLabel")}
-              style={s.backButton}
-            >
-              <MaterialCommunityIcons
-                name="arrow-left"
-                size={22}
-                color="#2b436c"
-              />
-            </Pressable>
-            <Text style={s.title}>{t("notifications.pageTitle")}</Text>
-          </View>
+    <View className="flex-1 bg-bg">
+      <AppHeader
+        title={t("notifications.pageTitle")}
+        largeTitle
+        scrollY={scrollY}
+        onBack={() => router.back()}
+      />
+      <Animated.ScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="gap-3">
           <NotificationsFilter value={readState} onChange={onReadStateChange} />
           {!isLoading && items.length > 0 && (
             <NotificationsToolbar
@@ -128,27 +116,24 @@ export function NotificationsScreen() {
               busy={isPending}
             />
           )}
-          <View style={s.listWrap}>
-            <NotificationsList
-              items={items}
-              loading={isLoading}
-              empty={emptyList}
-              selectedIds={selectedIds}
-              onToggleSelected={onToggleSelected}
-              onItemPress={onItemPress}
+          <NotificationsList
+            items={items}
+            loading={isLoading}
+            empty={emptyList}
+            selectedIds={selectedIds}
+            onToggleSelected={onToggleSelected}
+            onItemPress={onItemPress}
+          />
+          {!isLoading && items.length > 0 && data.totalPages > 1 && (
+            <CasePagination
+              pageNumber={pageNumber}
+              totalPages={data.totalPages}
+              totalRecords={data.totalRecords}
+              onPageChange={onPageChange}
             />
-            {!isLoading && items.length > 0 && data.totalPages > 1 && (
-              <CasePagination
-                pageNumber={pageNumber}
-                totalPages={data.totalPages}
-                totalRecords={data.totalRecords}
-                onPageChange={onPageChange}
-              />
-            )}
-          </View>
-        </ScrollView>
-      </AppSafeArea>
-      <LoginFooter />
+          )}
+        </View>
+      </Animated.ScrollView>
     </View>
   );
 }
