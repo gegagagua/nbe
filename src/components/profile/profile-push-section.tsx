@@ -2,11 +2,9 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Switch, Text, View } from 'react-native';
 
-import { LoginPalette } from '@/constants/login';
+import { Card } from '@/components/ui/card';
 import { usePushPreference } from '@/hooks/use-push-preference';
-
-import { profileFaceIdSectionStyles as s } from './profile-face-id-section.styles';
-import { profileScreenStyles as ps } from './profile-screen.styles';
+import { useAppTheme } from '@/theme';
 
 type StatusMessage = { type: 'success' | 'error'; text: string };
 
@@ -20,6 +18,7 @@ type Props = {
  */
 export function ProfilePushSection({ userId }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const push = usePushPreference(userId);
   const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
 
@@ -54,46 +53,44 @@ export function ProfilePushSection({ userId }: Props) {
       : t('notifications.push.descriptionDisabled');
 
   return (
-    <View style={ps.card}>
-      <Text style={ps.sectionTitle}>{t('notifications.pageTitle')}</Text>
+    <Card padding="lg" elevation="sm" className="gap-4 rounded-2xl">
+      <Text className="text-heading font-bold text-fg">{t('notifications.pageTitle')}</Text>
 
-      <View style={s.row}>
-        <View style={s.rowText}>
-          <Text style={s.rowLabel}>{t('notifications.push.rowLabel')}</Text>
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-1 gap-0.5">
+          <Text className="text-body font-semibold text-fg">{t('notifications.push.rowLabel')}</Text>
           <Text
-            style={[
-              s.statusText,
-              push.isEnabled ? s.statusActive : s.statusInactive,
-            ]}>
+            className={`text-label font-bold ${
+              push.isEnabled ? 'text-success' : 'text-fg-muted'
+            }`}>
             {push.isEnabled
               ? t('deviceTrust.statusActive')
               : t('deviceTrust.statusInactive')}
           </Text>
-          <Text style={s.rowDescription}>{description}</Text>
+          <Text className="text-label leading-[18px] text-fg-muted">{description}</Text>
         </View>
         {push.isLoading || push.isBusy ? (
-          <ActivityIndicator color={LoginPalette.primary} />
+          <ActivityIndicator color={colors.primary} />
         ) : (
           <Switch
             value={push.isEnabled}
             onValueChange={(v) => { handleToggle(v); }}
             disabled={!push.isSupported || !userId}
-            trackColor={{ true: LoginPalette.primary, false: '#cfd8ea' }}
-            thumbColor="#ffffff"
-            ios_backgroundColor="#cfd8ea"
+            trackColor={{ true: colors.primary, false: colors.border }}
+            thumbColor={colors.surface}
+            ios_backgroundColor={colors.border}
           />
         )}
       </View>
 
       {statusMessage ? (
         <Text
-          style={[
-            ps.statusMessage,
-            statusMessage.type === 'success' ? ps.statusSuccess : ps.statusError,
-          ]}>
+          className={`text-center text-label font-semibold ${
+            statusMessage.type === 'success' ? 'text-success' : 'text-danger'
+          }`}>
           {statusMessage.text}
         </Text>
       ) : null}
-    </View>
+    </Card>
   );
 }
