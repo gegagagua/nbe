@@ -22,8 +22,9 @@ export function useMarkNotificationsRead() {
         : markNotificationsRead(input.ids),
     onSuccess: () => {
       showSuccessToast(i18n.t("notifications.markReadSuccess"));
+      // Both the list and the header bell badge read the `["notifications"]`
+      // feed, so a single invalidation refreshes everything.
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
     },
     onError: (error) => {
       showErrorToast(i18n.t("notifications.markReadError"), error);

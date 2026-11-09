@@ -9,7 +9,6 @@ import { useAppTheme } from "@/theme";
 
 import { HomeDashboardLayout } from "./home-dashboard-layout";
 import { HomeHeader } from "./home-header";
-import { TestPushButton } from "./test-push-button";
 
 // Code-split the nav grid into its own web chunk so the header (hero) paints
 // first and the grid streams in right after.
@@ -44,7 +43,6 @@ export function HomeScreen() {
         >
           <HomeNavGrid />
         </Suspense>
-        <TestPushButton />
       </HomeDashboardLayout>
     </View>
   );

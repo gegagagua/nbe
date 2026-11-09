@@ -3,8 +3,8 @@ import { router } from 'expo-router';
 import { useEffect } from 'react';
 
 /**
- * Reads the `appId` a notification carries (see {@link sendTestNotification})
- * and opens the matching enforcement proceeding at `/cases/[id]` — the same
+ * Reads the `appId` a notification carries and opens the matching enforcement
+ * proceeding at `/cases/[id]` — the same
  * destination the in-app notification detail links to.
  */
 function openCaseFromResponse(

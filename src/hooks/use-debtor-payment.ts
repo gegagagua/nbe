@@ -69,7 +69,6 @@ export function useDebtorPayment() {
         for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
           const status = await syncBogPaymentIntentStatus(intentId);
           if (status && status.toUpperCase() !== 'CREATED') {
-            console.log('[PAY STATUS]', status.toUpperCase());
             setPaymentStatus(status.toUpperCase());
             break;
           }
