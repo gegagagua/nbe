@@ -34,6 +34,7 @@ import { ProfileDeviceTrustSection } from "./profile-device-trust-section";
 import { ProfileFaceIdSection } from "./profile-face-id-section";
 import { ProfileInfoSection } from "./profile-info-section";
 import { ProfileLegalEntityInfoSection } from "./profile-legal-entity-info-section";
+import { ProfilePushSection } from "./profile-push-section";
 
 export function ProfileScreen() {
   const { t } = useTranslation();
@@ -223,6 +224,10 @@ export function ProfileScreen() {
           <View className="h-px bg-border" />
 
           <ProfileDeviceTrustSection />
+
+          <View className="h-px bg-border" />
+
+          <ProfilePushSection userId={profile.id} />
 
           <View className="h-px bg-border" />
 

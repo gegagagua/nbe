@@ -135,6 +135,9 @@ export const NotificationsApiPaths = {
   countUnread: "/notif-portal/v1/notifications/count-unread",
   search: "/notif-portal/v1/notifications/search",
   markAsRead: "/notif-portal/v1/notifications/mark-as-read",
+  pushDevice: "/notif-portal/v1/push-notifications/device",
+  pushPreference: "/notif-portal/v1/push-notifications/preference",
+  pushDeactivate: "/notif-portal/v1/push-notifications/devices/deactivate",
   // Registers this install's Expo push token so the backend can deliver
   // remote pushes via https://exp.host/--/api/v2/push/send.
   registerDevice: "/notif-portal/v1/notifications/register-device",
@@ -167,3 +170,4 @@ export const FaceIdCredentialsStorageKey = "nbe_face_id_credentials" as const;
 export const PasskeyCredentialIdStorageKey = "nbe_passkey_credential_id" as const;
 export const PasskeyInstallationIdStorageKey =
   "nbe_passkey_installation_id" as const;
+export const PushEnabledStorageKeyPrefix = "nbe_push_enabled_" as const;

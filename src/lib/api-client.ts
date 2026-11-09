@@ -6,6 +6,7 @@ import {
   ApiPaths,
   BASE_URL,
   LegalEntityIdHeader,
+  NotificationsApiPaths,
 } from "@/constants/api";
 import i18n from "@/i18n/i18n";
 import { logApiError, logApiRequest, logApiResponse } from "@/lib/api-log";
@@ -27,6 +28,7 @@ function isAuthRequest(config: InternalAxiosRequestConfig) {
   const url = config.url ?? "";
   return (
     url.endsWith(ApiPaths.logout) ||
+    url.endsWith(NotificationsApiPaths.pushDeactivate) ||
     url.endsWith(ApiPaths.sessions) ||
     url.endsWith(ApiPaths.otpVerify) ||
     isSessionOtpVerify(url)
