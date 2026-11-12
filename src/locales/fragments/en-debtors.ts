@@ -85,6 +85,7 @@ export const enDebtors = {
   payError: 'Could not start the payment.',
   payRecordFirst: 'Record the application first.',
   payNoAmount: 'The payable amount is not set.',
+  paySuccess: 'Payment completed successfully.',
   detailEditButton: 'Edit',
   detailEditModalTitle: 'Edit requested person',
   detailEditSave: 'Save',

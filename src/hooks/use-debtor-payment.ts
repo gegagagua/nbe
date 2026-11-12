@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 
 import {
   createBogPaymentIntent,
   syncBogPaymentIntentStatus,
 } from '@/api/guest-fine-payment';
+import { ToastLayout } from '@/constants/toast';
 import { showErrorToast } from '@/lib/show-error-toast';
 
 const SETTLE_ATTEMPTS = 5;
@@ -70,6 +72,16 @@ export function useDebtorPayment() {
           const status = await syncBogPaymentIntentStatus(intentId);
           if (status && status.toUpperCase() !== 'CREATED') {
             setPaymentStatus(status.toUpperCase());
+            const settled = status.toUpperCase();
+            setPaymentStatus(settled);
+            if (PAID_STATUSES.includes(settled)) {
+              Toast.show({
+                type: 'success',
+                text1: t('debtors.paySuccess'),
+                visibilityTime: ToastLayout.visibilityMs,
+                position: 'top',
+              });
+            }
             break;
           }
           if (attempt < SETTLE_ATTEMPTS - 1) {
