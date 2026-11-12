@@ -86,6 +86,7 @@ export const kaDebtors = {
   payRecordFirst: "ჯერ ჩაწერეთ განცხადება.",
   payNoAmount: "გადასახდელი თანხა არ არის განსაზღვრული.",
   paySuccess: "გადახდა წარმატებით შესრულდა.",
+  paySettling: "გადახდის სტატუსი მოწმდება…",
   detailEditButton: "რედაქტირება",
   detailEditModalTitle: "მოთხოვნილი პირის რედაქტირება",
   detailEditSave: "შენახვა",

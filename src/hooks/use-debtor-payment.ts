@@ -28,6 +28,7 @@ export function useDebtorPayment() {
   const appIdRef = useRef<number | null>(null);
   // Final provider status once the intent settles; drives post-payment routing.
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [isSettling, setIsSettling] = useState(false);
 
   const mutation = useMutation({
     mutationFn: ({ appId, personId, amount }: DebtorPaymentInput) =>
@@ -63,6 +64,7 @@ export function useDebtorPayment() {
     intentIdRef.current = null;
     if (intentId == null) return;
 
+    setIsSettling(true);
     void (async () => {
       try {
         // The WebView closes the moment the provider redirects, while the intent
@@ -91,6 +93,7 @@ export function useDebtorPayment() {
       } catch (error) {
         showErrorToast(t('debtors.payError'), error);
       } finally {
+        setIsSettling(false);
         queryClient.invalidateQueries({ queryKey: ['debtor-payments', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-app', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-apps'] });
@@ -103,6 +106,7 @@ export function useDebtorPayment() {
     startPayment,
     closePayment,
     isPaying: mutation.isPending,
+    isSettling,
     paymentStatus,
     isPaid: paymentStatus != null && PAID_STATUSES.includes(paymentStatus),
   };

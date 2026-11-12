@@ -86,6 +86,7 @@ export const enDebtors = {
   payRecordFirst: 'Record the application first.',
   payNoAmount: 'The payable amount is not set.',
   paySuccess: 'Payment completed successfully.',
+  paySettling: 'Checking the payment status…',
   detailEditButton: 'Edit',
   detailEditModalTitle: 'Edit requested person',
   detailEditSave: 'Save',
