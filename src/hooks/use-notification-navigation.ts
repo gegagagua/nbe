@@ -2,23 +2,30 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 
+import { logPushPayload } from '@/lib/push-log';
+
 /**
- * Reads the `appId` a notification carries (see {@link sendTestNotification})
- * and opens the matching enforcement proceeding at `/cases/[id]` — the same
- * destination the in-app notification detail links to.
+ * Reads the `notificationId` a notification carries (see
+ * {@link sendTestNotification}) and opens its detail at `/notifications/[id]`,
+ * which links on to the case. Without an id it opens the notifications feed.
  */
-function openCaseFromResponse(
+function openNotificationFromResponse(
   response: Notifications.NotificationResponse | null,
 ) {
-  const data = response?.notification.request.content.data as
-    | { appId?: number | string }
+  if (!response) {
+    return;
+  }
+  logPushPayload('tapped', response.notification);
+  const data = response.notification.request.content.data as
+    | { notificationId?: number | string }
     | undefined;
-  if (data?.appId == null) {
+  if (data?.notificationId == null) {
+    router.push('/notifications');
     return;
   }
   router.push({
-    pathname: '/cases/[id]',
-    params: { id: String(data.appId) },
+    pathname: '/notifications/[id]',
+    params: { id: String(data.notificationId) },
   });
 }
 
@@ -29,12 +36,20 @@ function openCaseFromResponse(
  */
 export function useNotificationNavigation() {
   useEffect(() => {
-    Notifications.getLastNotificationResponseAsync().then(openCaseFromResponse);
+    Notifications.getLastNotificationResponseAsync().then(
+      openNotificationFromResponse,
+    );
 
     const subscription =
       Notifications.addNotificationResponseReceivedListener(
-        openCaseFromResponse,
+        openNotificationFromResponse,
       );
-    return () => subscription.remove();
+    const receivedSubscription = Notifications.addNotificationReceivedListener(
+      (notification) => logPushPayload('received', notification),
+    );
+    return () => {
+      subscription.remove();
+      receivedSubscription.remove();
+    };
   }, []);
 }

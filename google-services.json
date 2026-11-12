@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64372678321",
+    "project_id": "national-bureau-of-enfor-28f1b",
+    "storage_bucket": "national-bureau-of-enfor-28f1b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64372678321:android:303c8e4e426abda15b0c90",
+        "android_client_info": {
+          "package_name": "ge.gov.nbe.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZIkqYnlE_Sy_-XQHVQv5W3RG1OKd3rL4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
