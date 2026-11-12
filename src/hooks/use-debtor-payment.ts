@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 
 import {
   createBogPaymentIntent,
   syncBogPaymentIntentStatus,
 } from '@/api/guest-fine-payment';
+import { ToastLayout } from '@/constants/toast';
 import { showErrorToast } from '@/lib/show-error-toast';
 
 const SETTLE_ATTEMPTS = 5;
@@ -26,6 +28,7 @@ export function useDebtorPayment() {
   const appIdRef = useRef<number | null>(null);
   // Final provider status once the intent settles; drives post-payment routing.
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [isSettling, setIsSettling] = useState(false);
 
   const mutation = useMutation({
     mutationFn: ({ appId, personId, amount }: DebtorPaymentInput) =>
@@ -61,6 +64,7 @@ export function useDebtorPayment() {
     intentIdRef.current = null;
     if (intentId == null) return;
 
+    setIsSettling(true);
     void (async () => {
       try {
         // The WebView closes the moment the provider redirects, while the intent
@@ -69,7 +73,23 @@ export function useDebtorPayment() {
         for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
           const status = await syncBogPaymentIntentStatus(intentId);
           if (status && status.toUpperCase() !== 'CREATED') {
-            setPaymentStatus(status.toUpperCase());
+            const settled = status.toUpperCase();
+            setPaymentStatus(settled);
+            if (PAID_STATUSES.includes(settled)) {
+              Toast.show({
+                type: 'success',
+                text1: t('debtors.paySuccess'),
+                visibilityTime: ToastLayout.visibilityMs,
+                position: 'top',
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: t('debtors.payFailed'),
+                visibilityTime: ToastLayout.visibilityMs,
+                position: 'top',
+              });
+            }
             break;
           }
           if (attempt < SETTLE_ATTEMPTS - 1) {
@@ -79,6 +99,7 @@ export function useDebtorPayment() {
       } catch (error) {
         showErrorToast(t('debtors.payError'), error);
       } finally {
+        setIsSettling(false);
         queryClient.invalidateQueries({ queryKey: ['debtor-payments', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-app', appId] });
         queryClient.invalidateQueries({ queryKey: ['debtor-apps'] });
@@ -91,6 +112,7 @@ export function useDebtorPayment() {
     startPayment,
     closePayment,
     isPaying: mutation.isPending,
+    isSettling,
     paymentStatus,
     isPaid: paymentStatus != null && PAID_STATUSES.includes(paymentStatus),
   };
