@@ -37,6 +37,17 @@ function kaOption(picked: string, localizedJoined: string, kaJoined: string): st
 
 const text = (value: string | null | undefined) => value?.trim() ?? "";
 
+/** Phone / email are rows in `persons[].contacts[]`, keyed by `type`. */
+function contactByType(
+  contacts: FactPersonResponse["contacts"],
+  types: string[],
+): string {
+  const match = (contacts ?? []).find((c) =>
+    types.includes((c.type ?? "").toUpperCase()),
+  );
+  return text(match?.contact);
+}
+
 /**
  * Build the create/update body for `POST|PUT /fact-portal/v1/apps` from the
  * statement form. The shape is the inverse of the detail GET
@@ -164,6 +175,15 @@ export function factAppToFormPatch(
     patch.applicantPersonalId = text(applicantRaw.idnumber);
     patch.applicantActualAddress = applicantMapped?.factualAddress ?? "";
     patch.applicantLegalAddress = applicantMapped?.legalAddress ?? "";
+    // Phone & email are auto-filled + required: without carrying them back from
+    // the saved statement the edit form opens with an empty (required) phone
+    // and the statement can no longer be closed/re-recorded. They live in the
+    // `contacts[]` array (keyed by type), not as top-level person fields.
+    patch.applicantPhone = contactByType(applicantRaw.contacts, [
+      "PHONE",
+      "MOBILE",
+    ]);
+    patch.applicantEmail = contactByType(applicantRaw.contacts, ["EMAIL"]);
   }
 
   if (ownerRaw) {

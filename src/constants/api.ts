@@ -147,6 +147,16 @@ export const NotificationsApiPaths = {
 // re-registering the same token on every dashboard mount.
 export const PushTokenSyncedStorageKey = "nbe_push_token_synced" as const;
 
+// ── News portal — FAQ (ხშირად დასმული კითხვები) ───────────────────────────────
+// News service reached through the gateway with the session bearer.
+export const NewsApiPaths = {
+  faqs: "/news-portal-pub/v1/faqs",
+  faqById: (id: number | string) => `/news-portal-pub/v1/faqs/${id}`,
+  faqCategories: "/news-portal-pub/v1/faq-categories",
+  faqCategoryById: (id: number | string) =>
+    `/news-portal-pub/v1/faq-categories/${id}`,
+} as const;
+
 // ── Legacy keys kept for backward compatibility ───────────────────────────────
 export const ApiConfig = {
   baseUrl: BASE_URL,

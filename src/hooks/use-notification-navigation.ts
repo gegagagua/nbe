@@ -8,6 +8,7 @@ import { logPushPayload } from '@/lib/push-log';
  * Reads the `notificationId` a notification carries (see
  * {@link sendTestNotification}) and opens its detail at `/notifications/[id]`,
  * which links on to the case. Without an id it opens the notifications feed.
+
  */
 function openNotificationFromResponse(
   response: Notifications.NotificationResponse | null,

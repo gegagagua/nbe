@@ -175,6 +175,14 @@ export type FactPersonResponse = {
   lastName: string | null;
   organization: string | null;
   idnumber: string | null;
+  /**
+   * Phone & email live here, NOT as top-level fields — each is a row keyed by
+   * `type` ("PHONE"/"MOBILE" for the number, "EMAIL" for the address). The
+   * top-level `phone`/`email` the create payload sends come back null.
+   */
+  contacts:
+    | { id?: number; type: string | null; contact: string | null }[]
+    | null;
   addresses:
     | {
         id: number;
