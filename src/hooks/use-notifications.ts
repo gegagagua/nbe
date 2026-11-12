@@ -78,6 +78,7 @@ export function useNotificationById(id: number): {
   const query = useQuery({
     queryKey: ["notifications"],
     queryFn: fetchNotifications,
+    refetchOnMount: "always",
   });
 
   const notification = useMemo(
@@ -85,5 +86,8 @@ export function useNotificationById(id: number): {
     [query.data, id],
   );
 
-  return { notification, isLoading: query.isLoading };
+  return {
+    notification,
+    isLoading: query.isLoading || (!notification && query.isFetching),
+  };
 }
