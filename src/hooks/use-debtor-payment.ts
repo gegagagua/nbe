@@ -73,13 +73,19 @@ export function useDebtorPayment() {
         for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
           const status = await syncBogPaymentIntentStatus(intentId);
           if (status && status.toUpperCase() !== 'CREATED') {
-            setPaymentStatus(status.toUpperCase());
             const settled = status.toUpperCase();
             setPaymentStatus(settled);
             if (PAID_STATUSES.includes(settled)) {
               Toast.show({
                 type: 'success',
                 text1: t('debtors.paySuccess'),
+                visibilityTime: ToastLayout.visibilityMs,
+                position: 'top',
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: t('debtors.payFailed'),
                 visibilityTime: ToastLayout.visibilityMs,
                 position: 'top',
               });
