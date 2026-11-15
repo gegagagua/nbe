@@ -7,6 +7,7 @@ import Toast from 'react-native-toast-message';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ToastLayout } from '@/constants/toast';
+import { PaymentSettlingOverlay } from '@/components/ui/payment-settling-overlay';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
 import { useDebtorAppPayments } from '@/hooks/use-debtor-app-payments';
@@ -53,7 +54,7 @@ export function DebtorAppDetailScreen() {
   const paymentsQuery = useDebtorAppPayments(Number.isFinite(appId) ? appId : null);
   const payments = paymentsQuery.data ?? [];
   const { personId } = useDebtorAppPersons(Number.isFinite(appId) ? appId : null);
-  const { paymentUrl, startPayment, closePayment, isPaying, isPaid } =
+  const { paymentUrl, startPayment, closePayment, isPaying, isSettling, isPaid } =
     useDebtorPayment();
 
   // A settled, successful payment ends the flow — go back to the list. A failed
@@ -206,6 +207,7 @@ export function DebtorAppDetailScreen() {
         url={paymentUrl}
         onClose={closePayment}
       />
+      <PaymentSettlingOverlay visible={isSettling} />
       <DebtorAppEditModal
         visible={editVisible}
         name={requested?.personName ?? ''}

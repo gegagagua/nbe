@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ToastLayout } from '@/constants/toast';
 import { getUserMe } from '@/api/users';
+import { PaymentSettlingOverlay } from '@/components/ui/payment-settling-overlay';
 import { PaymentWebViewModal } from '@/components/ui/payment-web-view-modal';
 import { useCreateDebtorApp } from '@/hooks/use-create-debtor-app';
 import { useDebtorApp } from '@/hooks/use-debtor-app';
@@ -126,7 +127,7 @@ export function DebtorAppExtractRequestScreen() {
   const updateMutation = useUpdateDebtorApp(createdAppId);
 
   const { personId } = useDebtorAppPersons(payAppId);
-  const { paymentUrl, startPayment, closePayment, isPaying, isPaid } =
+  const { paymentUrl, startPayment, closePayment, isPaying, isSettling, isPaid } =
     useDebtorPayment();
 
   // A settled, successful payment ends the flow — go back to the list. A failed
@@ -335,6 +336,7 @@ export function DebtorAppExtractRequestScreen() {
         url={paymentUrl}
         onClose={closePayment}
       />
+      <PaymentSettlingOverlay visible={isSettling} />
       <DebtorAppEditModal
         visible={editVisible}
         name={subjectName}
