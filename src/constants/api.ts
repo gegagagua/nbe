@@ -1,4 +1,4 @@
-export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
+export const BASE_URL = "https://eps-gateway.nbe.gov.ge";
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {
@@ -105,7 +105,7 @@ export const ApiPaths = {
   appPaymentsByType: "/payment-portal-pub/v1/payments/by-app-and-app-prsn-type",
   // EPS-TRANSFER-API — გადარიცხვები (transfers on the funds sub-tab)
   appTransfers: (appId: number | string) =>
-    `/transfer-portal-pub/v1/schemas/app/${appId}`,
+    `/transfer-portal/v1/schemas/app/${appId}`,
 
   // EPS-INSTALLMENT-API
   installmentById: (id: number | string) =>

@@ -27,7 +27,7 @@ export async function getCasePayments(
 }
 
 /**
- * GET /transfer-portal-pub/v1/schemas/app/{appId} — transfer schemas (with
+ * GET /transfer-portal/v1/schemas/app/{appId} — transfer schemas (with
  * their current status) registered against the application.
  */
 export async function getCaseTransfers(

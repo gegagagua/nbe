@@ -446,7 +446,7 @@ export type EpsAppPaymentsResponse = {
 };
 
 // ── Transfers (გადარიცხვები) ──────────────────────────────────────────────────
-// GET /transfer-portal-pub/v1/schemas/app/{appId}
+// GET /transfer-portal/v1/schemas/app/{appId}
 
 export type EpsTransferStatus = {
   id: number;
