@@ -11,7 +11,7 @@
       "icon": "./assets/images/ios-icon.png",
       "bundleIdentifier": "ge.gov.nbe.app",
       "associatedDomains": [
-        "webcredentials:eps-gateway-testing.nbe.gov.ge"
+        "webcredentials:eps-gateway.nbe.gov.ge"
       ],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
