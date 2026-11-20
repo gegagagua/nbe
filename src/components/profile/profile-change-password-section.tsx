@@ -70,50 +70,65 @@ export function ProfileChangePasswordSection({ onSubmit, isSubmitting, statusMes
       </Text>
 
       <View className="gap-2">
-        <Controller
-          control={control}
-          name="currentPassword"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={t('profile.currentPasswordPlaceholder')}
-              secureTextEntry
-              errorMessage={formState.errors.currentPassword?.message}
-            />
-          )}
-        />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="currentPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={t('profile.currentPasswordPlaceholder')}
+                secureTextEntry
+                errorMessage={formState.errors.currentPassword?.message}
+              />
+            )}
+          />
+          {formState.errors.currentPassword?.message ? (
+            <Text className="text-label text-danger">{formState.errors.currentPassword.message}</Text>
+          ) : null}
+        </View>
 
-        <Controller
-          control={control}
-          name="newPassword"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={t('profile.newPasswordPlaceholder')}
-              secureTextEntry
-              errorMessage={formState.errors.newPassword?.message}
-            />
-          )}
-        />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="newPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={t('profile.newPasswordPlaceholder')}
+                secureTextEntry
+                errorMessage={formState.errors.newPassword?.message}
+              />
+            )}
+          />
+          {formState.errors.newPassword?.message ? (
+            <Text className="text-label text-danger">{formState.errors.newPassword.message}</Text>
+          ) : null}
+        </View>
 
-        <Controller
-          control={control}
-          name="confirmPassword"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={t('profile.confirmPasswordPlaceholder')}
-              secureTextEntry
-              errorMessage={formState.errors.confirmPassword?.message}
-            />
-          )}
-        />
+        <View className="gap-1">
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={t('profile.confirmPasswordPlaceholder')}
+                secureTextEntry
+                errorMessage={formState.errors.confirmPassword?.message}
+              />
+            )}
+          />
+          {formState.errors.confirmPassword?.message ? (
+            <Text className="text-label text-danger">{formState.errors.confirmPassword.message}</Text>
+          ) : null}
+        </View>
       </View>
 
       {statusMessage ? (

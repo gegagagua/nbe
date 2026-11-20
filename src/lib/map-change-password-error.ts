@@ -10,10 +10,8 @@ export function mapChangePasswordError(error: unknown): string {
     }
     const status = error.response?.status;
     if (status === 401 || status === 403) {
-      // The backend returns a hardcoded Georgian message (with a typo) for a wrong
-      // current password, so it leaks into the English UI. Always use our own
-      // localized string for this well-known case instead of the backend body.
-      return i18n.t('profile.changePasswordInvalidCurrent');
+      const fromBody = extractApiErrorMessage(error.response?.data);
+      return fromBody ?? i18n.t('profile.changePasswordInvalidCurrent');
     }
     const fromBody = extractApiErrorMessage(error.response?.data);
     if (fromBody) {
