@@ -195,9 +195,17 @@ export async function registerDevicePasskey(
 /**
  * Reconcile this device's trust state against the backend list, so the profile
  * switch reflects server truth (e.g. registered on a previous install whose local
- * credentialId was lost — the 409 case). Matches this device by installationId
- * (falling back to a lone active credential) and, when found, persists its
- * credentialId so passkey login works and the switch stays on.
+ * credentialId was lost — the 409 case). Matches this device STRICTLY by its own
+ * installationId and, when found, persists that credentialId so passkey login
+ * works and the switch stays on.
+ *
+ * We deliberately do NOT fall back to "a lone active credential" when the
+ * installationId doesn't match: the passkey private key is bound to the device
+ * that minted it, so adopting another device's credential marks this phone as
+ * trusted while every passkey login fails ("device trust couldn't be done"), and
+ * re-running on each login-screen focus keeps resurrecting it after the user
+ * turns it off. A credential only counts here if it was registered from THIS
+ * install.
  *
  * Returns:
  *  - true  → this device has an active credential server-side (credentialId stored)
@@ -208,9 +216,7 @@ export async function reconcileDeviceTrust(): Promise<boolean | null> {
   try {
     const installationId = await getOrCreateInstallationId();
     const active = (await listTrustedCredentials()).filter((c) => !c.revokedDate);
-    const match =
-      active.find((c) => c.installationId === installationId) ??
-      (active.length === 1 ? active[0] : undefined);
+    const match = active.find((c) => c.installationId === installationId);
     if (match?.credentialId) {
       await setPasskeyCredentialId(match.credentialId);
       return true;
