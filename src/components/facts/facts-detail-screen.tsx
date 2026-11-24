@@ -10,6 +10,7 @@ import { PaymentWebViewModal } from "@/components/ui/payment-web-view-modal";
 import { useFactApp } from "@/hooks/use-fact-app";
 import { useFactPersons } from "@/hooks/use-fact-persons";
 import { useGuestFinePayment } from "@/hooks/use-guest-fine-payment";
+import { showErrorToast } from "@/lib/show-error-toast";
 import { useAppTheme } from "@/theme";
 import type { FactAppDetail, FactPerson } from "@/types/facts";
 
@@ -72,7 +73,6 @@ function ApplicationTab({
   onEdit,
   onPay,
   isPaying,
-  canPay,
 }: {
   app: FactAppDetail;
   applicants: FactPerson[];
@@ -80,7 +80,6 @@ function ApplicationTab({
   onEdit: () => void;
   onPay: () => void;
   isPaying: boolean;
-  canPay: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -187,7 +186,7 @@ function ApplicationTab({
                 label={t("facts.detailPayButton")}
                 onPress={onPay}
                 loading={isPaying}
-                disabled={!canPay}
+                disabled={isPaying}
               />
             </View>
           </View>
@@ -239,9 +238,18 @@ export function FactsDetailScreen() {
   const feeFromName = app?.feeName?.match(/\d+/)?.[0];
   const payAmount =
     app?.feePrice ?? (feeFromName != null ? Number(feeFromName) : null);
-  const canPay = payer != null && payAmount != null && payAmount > 0;
+  // Don't silently disable the button (the old behaviour read as "unresponsive"
+  // on both platforms). Keep it pressable and explain, via a toast, why a
+  // payment can't start — mirrors the debtor-registry / enforcement pay flow.
   const onPay = () => {
-    if (!canPay || !Number.isFinite(appId)) return;
+    if (!Number.isFinite(appId) || payer == null) {
+      showErrorToast(t("facts.payError"), new Error("missing payer"));
+      return;
+    }
+    if (payAmount == null || !(payAmount > 0)) {
+      showErrorToast(t("facts.payError"), new Error("missing payable amount"));
+      return;
+    }
     payment.startPayment({
       destType: "FACT",
       appId,
@@ -306,7 +314,6 @@ export function FactsDetailScreen() {
                 onEdit={onEdit}
                 onPay={onPay}
                 isPaying={payment.isPaying}
-                canPay={canPay}
               />
             ) : (
               <FactProtocolTab appId={appId} />

@@ -2,15 +2,24 @@ import { FactStatementFee } from "@/constants/fact-statement";
 import i18n from "@/i18n/i18n";
 import { parseOptionList } from "@/lib/fact-statement-helpers";
 import { mapFactPersons } from "@/lib/map-fact-persons";
-import { kaFacts } from "@/locales/fragments/ka-facts";
 import type { FactStatementForm } from "@/types/fact-statement";
 import {
   FactPersonType,
   type FactAppDetailResponse,
   type FactAppPayload,
+  type FactAppPersonContactPayload,
   type FactAppPersonPayload,
   type FactPersonResponse,
 } from "@/types/facts";
+
+/** 4 = სამუშაო დრო (200₾), 5 = არასამუშაო დრო (300₾). */
+const TR_SERVICE_ID: Record<FactStatementForm["fee"], number> = {
+  working: 4,
+  nonworking: 5,
+};
+/** 1 = ფიზიკური, 2 = იურიდიული. */
+const PERSON_TYPE_PHYSICAL = 1;
+const PERSON_TYPE_LEGAL = 2;
 
 /** "09:00" → 9; "" → null — `fixedHourFrom/To` are whole hours on the backend. */
 function hourNumber(value: string): number | null {
@@ -25,17 +34,35 @@ function hourText(hour: number | null | undefined): string {
 
 /**
  * The form stores the LOCALIZED option label the user picked, but the backend
- * dictionaries are Georgian — translate a label back to its canonical KA name
- * by list position (the option lists are parallel across locales).
+ * dictionaries are keyed by id. The option lists are parallel across locales
+ * and ordered to match the backend dictionary, so the picked label's position
+ * (+1, ids are 1-based) is its dictionary id. `fallback` is used when nothing
+ * matches (e.g. an empty optional field).
  */
-function kaOption(picked: string, localizedJoined: string, kaJoined: string): string {
-  const localized = parseOptionList(localizedJoined);
-  const ka = parseOptionList(kaJoined);
-  const index = localized.findIndex((option) => option.label === picked.trim());
-  return index >= 0 && ka[index] ? ka[index].label : picked.trim();
+function optionId(
+  picked: string,
+  localizedJoined: string,
+  fallback: number | null,
+): number | null {
+  const options = parseOptionList(localizedJoined);
+  const index = options.findIndex((option) => option.label === picked.trim());
+  return index >= 0 ? index + 1 : fallback;
 }
 
 const text = (value: string | null | undefined) => value?.trim() ?? "";
+
+/** Phone / email → keyed `contacts[]` rows; empty values are dropped. */
+function buildContacts(
+  phone: string | null | undefined,
+  email: string | null | undefined,
+): FactAppPersonContactPayload[] {
+  const contacts: FactAppPersonContactPayload[] = [];
+  const mobile = text(phone);
+  if (mobile) contacts.push({ type: "MOBILE", contact: mobile });
+  const mail = text(email);
+  if (mail) contacts.push({ type: "EMAIL", contact: mail });
+  return contacts;
+}
 
 /** Phone / email are rows in `persons[].contacts[]`, keyed by `type`. */
 function contactByType(
@@ -50,83 +77,92 @@ function contactByType(
 
 /**
  * Build the create/update body for `POST|PUT /fact-portal/v1/apps` from the
- * statement form. The shape is the inverse of the detail GET
- * (`FactAppDetailResponse`) with dictionary refs sent by Georgian name, the
- * same convention the search payload uses.
- *
- * NOTE: the fact-api create schema could not be verified against a live
- * backend (gateway rejects unauthenticated calls; no spec in-repo). If the
- * backend rejects this body, this builder is the only place to adjust — the
- * rest of the record/pay flow is wired to the shared, verified infrastructure.
+ * statement form. Live-verified contract (test gateway, 2026-11-09): dictionary
+ * rows are referenced by **id** (agencyId / trServiceId / propertyTypeId /
+ * appPersonTypeId / personTypeId), addresses use REAL/LEGAL with region ids,
+ * and phone + email are `contacts[]` rows — NOT top-level fields. The backend
+ * also overrides the applicant with the authenticated user's identity.
  */
 export function buildFactAppPayload(form: FactStatementForm): FactAppPayload {
   const applicant: FactAppPersonPayload = {
-    appPersonType: { id: FactPersonType.applicant },
-    ...(form.applicantKind === "legal"
-      ? { organization: text(form.applicantOrgName) }
-      : {
-          firstName: text(form.applicantFirstName),
-          lastName: text(form.applicantLastName),
-        }),
+    appPersonTypeId: FactPersonType.applicant,
+    personTypeId:
+      form.applicantKind === "legal" ? PERSON_TYPE_LEGAL : PERSON_TYPE_PHYSICAL,
+    firstName: form.applicantKind === "legal" ? null : text(form.applicantFirstName),
+    lastName: form.applicantKind === "legal" ? null : text(form.applicantLastName),
+    organization:
+      form.applicantKind === "legal" ? text(form.applicantOrgName) : null,
     idnumber: text(form.applicantPersonalId),
-    phone: text(form.applicantPhone) || null,
-    email: text(form.applicantEmail) || null,
+    pasport: false,
+    contactInfo: null,
     addresses: [
-      { type: "FACTUAL", address: text(form.applicantActualAddress) },
+      {
+        type: "REAL",
+        regionId: 0,
+        districtId: 0,
+        cityId: 0,
+        address: text(form.applicantActualAddress),
+      },
       ...(text(form.applicantLegalAddress)
-        ? [{ type: "LEGAL", address: text(form.applicantLegalAddress) }]
+        ? [
+            {
+              type: "LEGAL",
+              regionId: 0,
+              districtId: 0,
+              cityId: 0,
+              address: text(form.applicantLegalAddress),
+            },
+          ]
         : []),
     ],
+    contacts: buildContacts(form.applicantPhone, form.applicantEmail),
   };
 
   const persons: FactAppPersonPayload[] = [applicant];
   if (form.ownerKind !== "none") {
     persons.push({
-      appPersonType: { id: FactPersonType.owner },
-      ...(form.ownerKind === "legal"
-        ? { organization: text(form.ownerLegalName) }
-        : {
-            firstName: text(form.ownerFirstName),
-            lastName: text(form.ownerLastName),
-          }),
+      appPersonTypeId: FactPersonType.owner,
+      personTypeId:
+        form.ownerKind === "legal" ? PERSON_TYPE_LEGAL : PERSON_TYPE_PHYSICAL,
+      firstName: form.ownerKind === "legal" ? null : text(form.ownerFirstName),
+      lastName: form.ownerKind === "legal" ? null : text(form.ownerLastName),
+      organization: form.ownerKind === "legal" ? text(form.ownerLegalName) : null,
       idnumber: text(
         form.ownerKind === "legal" ? form.ownerLegalCode : form.ownerPersonalId,
       ),
-      addresses: [{ type: "FACTUAL", address: text(form.ownerAddress) }],
+      pasport: false,
+      contactInfo: null,
+      addresses: [
+        {
+          type: "REAL",
+          regionId: 0,
+          districtId: 0,
+          cityId: 0,
+          address: text(form.ownerAddress),
+        },
+      ],
+      contacts: [],
     });
   }
 
   return {
     data: {
-      agency: {
-        name: kaOption(
-          form.organization,
-          i18n.t("facts.stBureauOptions"),
-          kaFacts.stBureauOptions,
-        ),
-      },
-      trService: {
-        name:
-          form.fee === "working" ? kaFacts.stFeeWorking : kaFacts.stFeeNonworking,
-        price: FactStatementFee[form.fee],
-      },
+      agencyId: optionId(form.organization, i18n.t("facts.stBureauOptions"), 1) ?? 1,
+      trServiceId: TR_SERVICE_ID[form.fee],
       fixedDayFrom: form.factDateFrom,
       fixedDayTo: form.factDateTo,
       fixedHourFrom: hourNumber(form.factHourFrom),
       fixedHourTo: hourNumber(form.factHourTo),
       appNote: {
-        request: text(form.request),
-        propertyAddress: text(form.placeAddress),
-        cadCode: text(form.cadCode) || null,
-        propertyType: text(form.propertyType)
-          ? {
-              name: kaOption(
-                form.propertyType,
-                i18n.t("facts.stPropertyTypeOptions"),
-                kaFacts.stPropertyTypeOptions,
-              ),
-            }
+        propertyTypeId: text(form.propertyType)
+          ? optionId(form.propertyType, i18n.t("facts.stPropertyTypeOptions"), null)
           : null,
+        cadCode: text(form.cadCode) || null,
+        propertyAddress: text(form.placeAddress),
+        request: text(form.request),
+        otherDocs: null,
+        note: null,
+        officeNote: null,
       },
       persons,
     },

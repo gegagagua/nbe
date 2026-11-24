@@ -271,7 +271,10 @@ export function FactStatementScreen() {
   });
 
   const onPay = () => {
-    if (appId == null || applicantPersonId == null) return;
+    if (appId == null || applicantPersonId == null) {
+      showErrorToast(t("facts.payError"), new Error("statement not recorded"));
+      return;
+    }
     payment.startPayment({
       destType: FACT_PAYMENT_DEST_TYPE,
       appId,

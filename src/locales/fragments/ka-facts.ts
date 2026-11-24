@@ -27,6 +27,7 @@ export const kaFacts = {
   pickerClear: "გასუფთავება",
   pickerClose: "დახურვა",
   detailLoadError: "განცხადების ჩატვირთვა ვერ მოხერხდა",
+  payError: "გადახდის დაწყება ვერ მოხერხდა",
   detailTabApplication: "განცხადება",
   detailTabProtocol: "ოქმი",
   detailEditButton: "რედაქტირება",

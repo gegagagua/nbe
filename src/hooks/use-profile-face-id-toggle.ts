@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert } from 'react-native';
 
 import { verifyLoginOtp } from '@/api/sessions';
 import { useFaceId } from '@/hooks/use-face-id';
+import { openBiometricSettings } from '@/lib/open-biometric-settings';
 import { showErrorToast } from '@/lib/show-error-toast';
 import type { CreateSessionResponse } from '@/types/session';
 
@@ -44,7 +46,26 @@ export function useProfileFaceIdToggle({ username, verifyPassword, onStatus }: A
   const handleToggle = useCallback(
     async (next: boolean) => {
       if (next) {
-        if (!faceId.availability.isAvailable) return;
+        if (!faceId.availability.isAvailable) {
+          // Don't fail silently (NM-319 #3). If the device has a biometric
+          // reader but nothing is enrolled, tell the user and offer to jump to
+          // the OS enrollment screen — Android has no in-app way to enable it.
+          // With no reader at all, there's nowhere to send them, so just say so.
+          if (faceId.availability.hasHardware) {
+            Alert.alert(t('faceId.sectionTitle'), t('faceId.enrollPrompt'), [
+              { text: t('faceId.cancelButton'), style: 'cancel' },
+              {
+                text: t('faceId.openSettingsButton'),
+                onPress: () => {
+                  openBiometricSettings();
+                },
+              },
+            ]);
+          } else {
+            showErrorToast(t('faceId.unavailableHardware'));
+          }
+          return;
+        }
         setModalError(null);
         setModalVisible(true);
         return;

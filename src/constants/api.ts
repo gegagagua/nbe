@@ -1,4 +1,5 @@
-export const BASE_URL = "https://eps-gateway.nbe.gov.ge";
+// export const BASE_URL = "https://eps-gateway.nbe.gov.ge";
+export const BASE_URL = "https://eps-gateway-testing.nbe.gov.ge";
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 export const ApiPaths = {

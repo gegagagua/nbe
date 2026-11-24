@@ -27,6 +27,7 @@ export const enFacts = {
   pickerClear: "Clear",
   pickerClose: "Close",
   detailLoadError: "Failed to load the application",
+  payError: "Could not start the payment",
   detailTabApplication: "Application",
   detailTabProtocol: "Protocol",
   detailEditButton: "Edit",

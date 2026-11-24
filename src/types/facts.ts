@@ -82,39 +82,62 @@ export type FactsSearchRequest = {
 type FactNamedRef = { id: number; name: string };
 
 // ── Create / update (POST /fact-portal/v1/apps, PUT …/{id}) ───────────────────
+// Live-verified against the test gateway (2026-11-09): the create/update body
+// references dictionary rows by **id**, never by name object, and phone/email
+// live in `contacts[]`. Sending name objects / top-level phone+email is the
+// old guess the backend rejected — the root cause of "ჩაწერა ვერ მოხერხდა".
 export type FactAppPersonAddressPayload = {
-  /** Same tokens the persons GET returns (FACTUAL / LEGAL). */
+  /** "REAL" (ფაქტობრივი) / "LEGAL". region/district/city id 0 = unknown. */
   type: string;
+  regionId: number;
+  districtId: number;
+  cityId: number;
   address: string;
+};
+
+export type FactAppPersonContactPayload = {
+  /** "MOBILE" | "PHONE" → phone; "EMAIL" → email address. */
+  type: string;
+  contact: string;
 };
 
 export type FactAppPersonPayload = {
   /** 1 = applicant, 3 = owner (FactPersonType). */
-  appPersonType: { id: number };
+  appPersonTypeId: number;
+  /** 1 = ფიზიკური, 2 = იურიდიული. */
+  personTypeId: number;
   firstName?: string | null;
   lastName?: string | null;
   /** Company name when the party is a legal entity. */
   organization?: string | null;
   idnumber: string;
-  phone?: string | null;
-  email?: string | null;
+  pasport: boolean;
+  contactInfo: string | null;
   addresses: FactAppPersonAddressPayload[];
+  /** Phone & email as keyed rows — NOT top-level fields. */
+  contacts: FactAppPersonContactPayload[];
 };
 
 /** Request body of the statement create/update — inverse of the detail GET. */
 export type FactAppPayload = {
   data: {
-    agency: { name: string };
-    trService: { name: string; price: number };
+    /** Enforcement bureau dictionary id (1 = თბილისის სააღსრულებო ბიურო). */
+    agencyId: number;
+    /** 4 = სამუშაო დრო (200₾), 5 = არასამუშაო დრო (300₾). */
+    trServiceId: number;
     fixedDayFrom: string; // YYYY-MM-DD
     fixedDayTo: string; // YYYY-MM-DD
     fixedHourFrom: number | null;
     fixedHourTo: number | null;
     appNote: {
-      request: string;
-      propertyAddress: string;
+      /** 1 = პირადი საკუთრება, 2 = საზოგადოებრივი. */
+      propertyTypeId: number | null;
       cadCode: string | null;
-      propertyType: { name: string } | null;
+      propertyAddress: string;
+      request: string;
+      otherDocs: string | null;
+      note: string | null;
+      officeNote: string | null;
     };
     persons: FactAppPersonPayload[];
   };
