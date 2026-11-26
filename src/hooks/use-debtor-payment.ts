@@ -3,6 +3,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
 
+import { getDebtorApp, getDebtorAppPayments } from '@/api/debtor-apps';
 import {
   createBogPaymentIntent,
   syncBogPaymentIntentStatus,
@@ -10,9 +11,30 @@ import {
 import { ToastLayout } from '@/constants/toast';
 import { showErrorToast } from '@/lib/show-error-toast';
 
-const SETTLE_ATTEMPTS = 5;
-const SETTLE_DELAY_MS = 1500;
-const PAID_STATUSES = ['COMPLETED', 'PAID', 'SUCCESS', 'SUCCEEDED'];
+const SETTLE_ATTEMPTS = 12;
+const SETTLE_DELAY_MS = 2000;
+
+type DebtorPaymentBaseline = {
+  paymentCount: number;
+  regnumber: string | null;
+};
+
+async function loadBaseline(appId: number): Promise<DebtorPaymentBaseline> {
+  const [payments, app] = await Promise.all([
+    getDebtorAppPayments(appId),
+    getDebtorApp(appId),
+  ]);
+  return { paymentCount: payments.length, regnumber: app.regnumber ?? null };
+}
+
+async function isPaymentConfirmed(
+  appId: number,
+  baseline: DebtorPaymentBaseline,
+): Promise<boolean> {
+  const current = await loadBaseline(appId);
+  if (current.paymentCount > baseline.paymentCount) return true;
+  return baseline.regnumber == null && current.regnumber != null;
+}
 
 export type DebtorPaymentInput = {
   appId: number;
@@ -26,22 +48,26 @@ export function useDebtorPayment() {
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const intentIdRef = useRef<string | null>(null);
   const appIdRef = useRef<number | null>(null);
-  // Final provider status once the intent settles; drives post-payment routing.
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const baselineRef = useRef<DebtorPaymentBaseline | null>(null);
+  const [isPaid, setIsPaid] = useState(false);
   const [isSettling, setIsSettling] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: ({ appId, personId, amount }: DebtorPaymentInput) =>
-      createBogPaymentIntent({
+    mutationFn: async ({ appId, personId, amount }: DebtorPaymentInput) => {
+      const baseline = await loadBaseline(appId);
+      const intent = await createBogPaymentIntent({
         destType: 'DEBTOR',
         appId,
         personId,
         amount,
         paymentMethod: 'CARD',
-      }),
-    onSuccess: (result) => {
-      setPaymentUrl(result.paymentUrl);
-      intentIdRef.current = result.paymentIntentId;
+      });
+      return { intent, baseline };
+    },
+    onSuccess: ({ intent, baseline }) => {
+      baselineRef.current = baseline;
+      setPaymentUrl(intent.paymentUrl);
+      intentIdRef.current = intent.paymentIntentId;
     },
     onError: (error) => showErrorToast(t('debtors.payError'), error),
   });
@@ -49,7 +75,8 @@ export function useDebtorPayment() {
   const startPayment = useCallback(
     (input: DebtorPaymentInput) => {
       appIdRef.current = input.appId;
-      setPaymentStatus(null);
+      baselineRef.current = null;
+      setIsPaid(false);
       mutation.mutate(input);
     },
     [mutation],
@@ -60,41 +87,40 @@ export function useDebtorPayment() {
   const closePayment = useCallback(() => {
     const intentId = intentIdRef.current;
     const appId = appIdRef.current;
+    const baseline = baselineRef.current;
     setPaymentUrl(null);
     intentIdRef.current = null;
-    if (intentId == null) return;
+    if (intentId == null || appId == null || baseline == null) return;
 
     setIsSettling(true);
     void (async () => {
       try {
-        // The WebView closes the moment the provider redirects, while the intent
-        // can still be CREATED on their side. Keep syncing until it settles so
-        // the payment actually reaches the debtor record.
+        let confirmed = false;
         for (let attempt = 0; attempt < SETTLE_ATTEMPTS; attempt += 1) {
-          const status = await syncBogPaymentIntentStatus(intentId);
-          if (status && status.toUpperCase() !== 'CREATED') {
-            const settled = status.toUpperCase();
-            setPaymentStatus(settled);
-            if (PAID_STATUSES.includes(settled)) {
-              Toast.show({
-                type: 'success',
-                text1: t('debtors.paySuccess'),
-                visibilityTime: ToastLayout.visibilityMs,
-                position: 'top',
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: t('debtors.payFailed'),
-                visibilityTime: ToastLayout.visibilityMs,
-                position: 'top',
-              });
-            }
+          await syncBogPaymentIntentStatus(intentId);
+          if (await isPaymentConfirmed(appId, baseline)) {
+            confirmed = true;
             break;
           }
           if (attempt < SETTLE_ATTEMPTS - 1) {
             await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY_MS));
           }
+        }
+        if (confirmed) {
+          setIsPaid(true);
+          Toast.show({
+            type: 'success',
+            text1: t('debtors.paySuccess'),
+            visibilityTime: ToastLayout.visibilityMs,
+            position: 'top',
+          });
+        } else {
+          Toast.show({
+            type: 'info',
+            text1: t('debtors.payPending'),
+            visibilityTime: ToastLayout.visibilityMs,
+            position: 'top',
+          });
         }
       } catch (error) {
         showErrorToast(t('debtors.payError'), error);
@@ -113,7 +139,6 @@ export function useDebtorPayment() {
     closePayment,
     isPaying: mutation.isPending,
     isSettling,
-    paymentStatus,
-    isPaid: paymentStatus != null && PAID_STATUSES.includes(paymentStatus),
+    isPaid,
   };
 }

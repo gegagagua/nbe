@@ -88,6 +88,7 @@ export const enDebtors = {
   paySuccess: 'Payment completed successfully.',
   payFailed: 'The payment was not completed.',
   paySettling: 'Checking the payment status…',
+  payPending: 'The payment is being processed. Its status will update shortly.',
   detailEditButton: 'Edit',
   detailEditModalTitle: 'Edit requested person',
   detailEditSave: 'Save',

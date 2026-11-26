@@ -88,6 +88,7 @@ export const kaDebtors = {
   paySuccess: "გადახდა წარმატებით შესრულდა.",
   payFailed: "გადახდა ვერ განხორციელდა.",
   paySettling: "გადახდის სტატუსი მოწმდება…",
+  payPending: "გადახდა მუშავდება. სტატუსი განახლდება მალე.",
   detailEditButton: "რედაქტირება",
   detailEditModalTitle: "მოთხოვნილი პირის რედაქტირება",
   detailEditSave: "შენახვა",
